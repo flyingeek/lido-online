@@ -1,6 +1,6 @@
 <script context="module">
     import {debounce} from '../utils.js';
-    const kmlRegex = /^[A-F0-9]{8}$/i;
+    export const kmlRegex = /^[A-F0-9]{8}$/i;
     const splitKmlColor = (v) => {
         [v.slice(6,8), v.slice(4,6), v.slice(2, 4), v.slice(0, 2)]
     }
@@ -48,7 +48,7 @@
             update(swatch) { /* color was changed */
                 const [hex, range] = swatch;
                 /* kmlColor is abgr */
-                kmlColor = range.toString(16) + hex.slice(5,7) + hex.slice(3,5) + hex.slice(1, 3);
+                kmlColor = (range.toString(16) + hex.slice(5,7) + hex.slice(3,5) + hex.slice(1, 3)).toUpperCase();
                 debounceDispatch("change", {"name": name, "value": kmlColor});
             }
         }
@@ -60,7 +60,7 @@
                     const range = parseInt(kmlColor.slice(0,2), 16);
                     const hex = "#" + kmlColor.slice(6,8) + kmlColor.slice(4,6) + kmlColor.slice(2,4);
                     swatch = [hex, range];
-                    debounceDispatch("change", {"name": name, "value": kmlColor});
+                    debounceDispatch("change", {"name": name, "value": kmlColor.toUpperCase()});
                 }
             }
         }
