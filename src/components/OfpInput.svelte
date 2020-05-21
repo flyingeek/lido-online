@@ -58,11 +58,21 @@
                 .then(
                     (text) => {
                         if (text) {
-                            const ofp = new editolido.Ofp("_PDFJS_" + text);
-                            const kmlGen = KmlGenerator();
-                            kmlGen.reset();
-                            generateKML(ofp, kmlOptions);
-                            resolve(ofp);
+                            try {
+                                const ofp = new editolido.Ofp("_PDFJS_" + text);
+                                try {
+                                    const kmlGen = KmlGenerator();
+                                    generateKML(ofp, kmlOptions);
+                                    resolve(ofp);
+                                } catch (err) {
+                                    console.log(text);
+                                    console.log(ofp.infos);
+                                    reject(err);
+                                }
+                            } catch (err) {
+                                console.log(text);
+                                reject(err);
+                            }
                         } else {
                             reject(Error("OFP non reconnu"));
                         }
