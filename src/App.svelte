@@ -13,15 +13,17 @@
     const validate = (options) => {
         const validated = {};
         for (let [key, value] of Object.entries(options)) {
-            if (key.endsWith('Pin')) {
-                value *= 1; // coalesce to number or NaN
-                if (!isNaN(value)) {
-                    validated[key] = value;
+            if (key in kmlDefaultOptions) { 
+                if (key.endsWith('Pin')) {
+                    value *= 1; // coalesce to number or NaN
+                    if (!isNaN(value)) {
+                        validated[key] = value;
+                    }
+                } else if (key.endsWith('Color') && value.match(kmlRegex)) {
+                    validated[key] = value.toUpperCase();
+                } else if (key.endsWith('Display')) {
+                    validated[key] = !!(value); //coerce to boolean
                 }
-            } else if (key.endsWith('Color') && value.match(kmlRegex)) {
-                validated[key] = value.toUpperCase();
-            } else if (key.endsWith('Display')) {
-                validated[key] = !!(value); //coerce to boolean
             }
         }
         return {...kmlDefaultOptions, ...validated};
