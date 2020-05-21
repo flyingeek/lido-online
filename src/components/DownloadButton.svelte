@@ -6,21 +6,24 @@
 </script>
 <script>
     import {KmlGenerator} from '../kml.js';
-    export let type = "mapsme";
     export let label;
+    let selected = localStorage.getItem("downloadType") || 0;
+    if (typeof selected === 'string') selected = parseInt(selected, 10);
     let url = "";
-    const kmlGen = KmlGenerator();
-    const filename = function (extension = ".kml") {
+    let filename = "";
+
+    const downloadKml = function () {
+        const kmlGen = KmlGenerator();
+        const extension = (selected === 0) ? "_mapsme.kml" : "_avenza.kml";
         let str = kmlGen.name;
         if (!str) {
             console.log("can not compute filename");
-            return "editolido" + '_' + type + extension;
+            filename = "editolido" + extension;
+        } else {
+            str = str.trim();
+            filename = str.replace(/[ \/]/g, "_").replace(/:/g, '') + extension;
         }
-        str = str.trim();
-        return str.replace(/[ \/]/g, "_").replace(/:/g, '') + '_' + type + extension;
-    };
-    const downloadKml = function () {
-        if (type === "mapsme") {
+        if (selected === 0) {
             url = dataURL(kmlGen.render());
         } else {
             url = dataURL(kmlGen.render({
@@ -31,9 +34,22 @@
             }));
         }
     };
+    function save() {
+        localStorage.setItem("downloadType", selected);
+    }
 </script>
 
-<a class="btn btn-success mb-2" download={filename()} href={url} on:click={downloadKml} target={target}>{label}</a>
-
+<div class="input-group">
+  <select bind:value={selected} class="custom-select"aria-label="Example select with button addon" on:change={save}>
+    <option selected={selected === 0} value="{0}">KML Mapsme</option>
+    <option selected={selected === 1} value="{1}">KML Avenza</option>
+  </select>
+  <div class="input-group-append">
+    <a class="btn btn-success" download={filename} href={url} on:click={downloadKml} target={target}>{label}</a>
+  </div>
+</div>
 <style>
+select {
+    border-color: var(--green);
+}
 </style>
