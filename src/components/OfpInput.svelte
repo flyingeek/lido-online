@@ -5,7 +5,7 @@
 
     const pdfjsSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js';
     const pdfjsWorkerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.min.js';
-    const editolidoSrc = 'https://github.com/flyingeek/lidojs/releases/download/v1.1.1/lidojs.js';
+    const editolidoSrc = 'https://github.com/flyingeek/lidojs/releases/download/v1.1.2/lidojs.min.js';
 
     const getPageText = async (pdf, pageNo) => {
         const page = await pdf.getPage(pageNo);
