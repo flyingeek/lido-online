@@ -5,10 +5,9 @@
             return g[1].toUpperCase();
         });
     }
-
-    // function camelCaseToDash(str) {
-    //     return str.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase()
-    // }
+    function camelCaseToDash(str) {
+        return str.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase()
+    }
 </script>
 <script>
     import { createEventDispatcher } from 'svelte';
@@ -16,6 +15,10 @@
     import PinSelector from './PinSelector.svelte';
     const dispatch = createEventDispatcher();
     export let kmlOptions;
+    let storedOptions = JSON.parse(localStorage.getItem("optionsKML")) || kmlDefaultOptions;
+    $: isDefault = compare(kmlDefaultOptions, kmlOptions);
+    $: isChanged = !compare(storedOptions, kmlOptions);
+
     /**
      * e is a component event or a dom checkbox event
      */
@@ -28,64 +31,66 @@
             dispatch('change', {name, value});
         }
     }
-
-    /**
-     * helper function to write the html markup
-     * usage: {...attr('route-color')}
-     */
-    function attr(dashName) {
-        if (dashName.endsWith('-color')) {
-            return {
-                'name': dashName,
-                'kmlColor': kmlOptions[dashToCamelCase(dashName)]
-            }
-        } else if (dashName.endsWith('-display')) {
-            return {
-                'name': dashName,
-                'checked': kmlOptions[dashToCamelCase(dashName)],
-            }
-        } else if (dashName.endsWith('-pin')) {
-            return {
-                'name': dashName,
-                'selected': kmlOptions[dashToCamelCase(dashName)]
+    function dispatchOptions(obj) {
+        for (const [key, value] of Object.entries(obj)) {
+            if (kmlOptions[key] !== value){
+                dispatch('change', { 'name': camelCaseToDash(key), value});
             }
         }
-        console.error(`unknown attribute ${dashName}`);
+    }
+    function compare(obj1, obj2){
+        return JSON.stringify(obj1) === JSON.stringify(obj2);
+    }
+    function reset() {
+        dispatchOptions(kmlDefaultOptions);
+        kmlOptions = {...kmlDefaultOptions};
+    }
+    function restore() {
+        dispatchOptions(storedOptions);
+        kmlOptions = {...storedOptions};
+    }
+    function save() {
+        if (isDefault) {
+            localStorage.removeItem("optionsKML");
+        } else {
+            localStorage.setItem("optionsKML", JSON.stringify(kmlOptions));
+        }
+        storedOptions = {...kmlOptions};
     }
 </script>
 
-<form>
+<form on:submit|preventDefault>
     <fieldset class="form-group">
         <legend>Route</legend>
         <div class="row">
             <div class="col-12 col-sm-6">
-                <KmlColor {...attr('route-color')} on:change={update}/>
+                <KmlColor name="route-color" kmlColor={kmlOptions['routeColor']} on:change={update}/>
             </div>
             <div class="col-12 col-sm-6">
-                <PinSelector {...attr('route-pin')} on:change={update}/>
-            </div>
-        </div>
-    </fieldset>
-    <fieldset class="form-group">
-        <legend><input {...attr('alternate-display')} type="checkbox" on:change={update} />Dégagement</legend>
-        <div class="row">
-            <div class="col-12 col-sm-6">
-                <KmlColor {...attr('alternate-color')} on:change={update}/>
-            </div>
-            <div class="col-12 col-sm-6">
-                <PinSelector {...attr('alternate-pin')} on:change={update}/>
+                <PinSelector name="route-pin" selected={kmlOptions['routePin']} on:change={update}/>
             </div>
         </div>
     </fieldset>
     <fieldset class="form-group">
-        <legend><input {...attr('nat-display')} type="checkbox" on:change={update}/>Tracks</legend>
+        <legend><input name="alternate-display" checked={kmlOptions['alternateDisplay']} type="checkbox" on:change={update} />Dégagement</legend>
         <div class="row">
             <div class="col-12 col-sm-6">
-                <KmlColor  {...attr('nat-color')} on:change={update}/>
+                <KmlColor name="alternate-color" kmlColor={kmlOptions['alternateColor']} on:change={update}/>
+            </div>
+            <div class="col-12 col-sm-6">
+                <PinSelector name="alternate-pin" selected={kmlOptions['alternatePin']} on:change={update}/>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="form-group">
+        <legend><input name="nat-display" checked={kmlOptions['natDisplay']} type="checkbox" on:change={update}/>Tracks</legend>
+        <div class="row">
+            <div class="col-12 col-sm-6">
+                <KmlColor  name="nat-color" kmlColor={kmlOptions['natColor']} on:change={update}/>
                 <small class="form-text text-muted">Un track incomplet sera toujours affiché en rouge.</small>
             </div>
             <div class="ccol-12 col-sm-6">
-                <PinSelector  {...attr('nat-pin')} on:change={update}/>
+                <PinSelector  name="nat-pin" selected={kmlOptions['natPin']} on:change={update}/>
                 <small class="form-text text-muted">Le repère est placé à l'entrée des tracks.</small>
             </div>
         </div>
@@ -93,23 +98,32 @@
     <div class="row">
         <div class="col-12 col-sm-6">
             <fieldset class="form-group">
-                <legend><input {...attr('great-circle-display')} type="checkbox" on:change={update}/>Orthodromie</legend>
+                <legend><input name="great-circle-display" checked={kmlOptions['greatCircleDisplay']} type="checkbox" on:change={update}/>Orthodromie</legend>
                 <div class="row">
                     <div class="col">
-                        <KmlColor {...attr('great-circle-color')} on:change={update}/>
+                        <KmlColor name="great-circle-color" kmlColor={kmlOptions['greatCircleColor']} on:change={update}/>
                     </div>
                 </div>
             </fieldset>
         </div>
         <div class="col-12 col-sm-6">
             <fieldset class="form-group">
-                <legend><input {...attr('ogimet-display')} type="checkbox" on:change={update}/>Route du GRAMET</legend>
+                <legend><input name="ogimet-display" checked={kmlOptions['ogimetDisplay']} type="checkbox" on:change={update}/>Route du GRAMET</legend>
                 <div class="row">
                     <div class="col">
-                        <KmlColor {...attr('ogimet-color')} on:change={update}/>
+                        <KmlColor name="ogimet-color" kmlColor={kmlOptions['ogimetColor']} on:change={update}/>
                     </div>
                 </div>
             </fieldset>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-sm-6">
+        <button disabled={!isChanged} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
+        <button disabled={!isChanged} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
+        </div>
+        <div class="col-12 col-sm-6">
+        {#if !isDefault }<button class="btn btn-link btn-sm float-right" type="button" on:click={reset}>Revenir aux valeurs par défaut</button>{/if}
         </div>
     </div>
 </form>
