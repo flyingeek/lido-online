@@ -1,6 +1,6 @@
 <script>
-    import {KmlGenerator} from "../kml.js";
-    import {runningOnIpad} from "../utils.js";
+    import {KmlGenerator} from "./kml.js";
+    import {runningOnIpad} from "./utils.js";
     let shortcutName = localStorage.getItem("shortcut") || "OFP Demo";
     export let ofp;
     let url;

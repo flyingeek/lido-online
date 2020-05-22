@@ -1,7 +1,7 @@
 <script context="module">
-    import loader from '../async-script-loader.js';
-    import {Deferred} from '../utils.js';
-    import {generateKML, KmlGenerator} from '../kml.js';
+    import loader from './async-script-loader.js';
+    import {Deferred} from './utils.js';
+    import {generateKML, KmlGenerator} from './kml.js';
 
     const pdfjsSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js';
     const pdfjsWorkerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.min.js';

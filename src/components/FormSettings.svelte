@@ -1,5 +1,5 @@
 <script context="module">
-    import {kmlDefaultOptions} from "../kml.js";
+    import {kmlDefaultOptions} from "./kml.js";
     function dashToCamelCase(str) {
         return str.replace(/-([a-z])/g, function (g) {
             return g[1].toUpperCase();

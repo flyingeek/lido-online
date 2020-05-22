@@ -1,5 +1,5 @@
 <script context="module">
-    import {runningOnIpad} from "../utils.js";
+    import {runningOnIpad} from "./utils.js";
     let copyPermission = false;
     try {
         navigator.permissions.query({name: "clipboard-write"}).then((result) => {

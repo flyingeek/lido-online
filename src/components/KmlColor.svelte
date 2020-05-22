@@ -1,5 +1,5 @@
 <script context="module">
-    import {debounce} from '../utils.js';
+    import {debounce} from './utils.js';
     export const kmlRegex = /^[A-F0-9]{8}$/i;
     const splitKmlColor = (v) => {
         [v.slice(6,8), v.slice(4,6), v.slice(2, 4), v.slice(0, 2)]

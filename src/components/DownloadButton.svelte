@@ -5,7 +5,7 @@
     };
 </script>
 <script>
-    import {KmlGenerator} from '../kml.js';
+    import {KmlGenerator} from './kml.js';
     export let label;
     let selected = localStorage.getItem("downloadType") || 0;
     if (typeof selected === 'string') selected = parseInt(selected, 10);

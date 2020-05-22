@@ -1,5 +1,5 @@
 <script>
-    import {KmlGenerator} from '../kml.js';
+    import {KmlGenerator} from './kml.js';
 
     export let kmlOptions;
     let kml = "";

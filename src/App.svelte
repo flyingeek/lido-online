@@ -4,10 +4,11 @@
     import LidoRoute from './components/LidoRoute.svelte';
     import FormSettings from './components/FormSettings.svelte';
     import Kml from './components/Kml.svelte';
+    import GeoJSON from './components/GeoJSON.svelte';
     import {kmlRegex} from './components/KmlColor.svelte';
     import ShortcutsLink from "./components/ShortcutsLink.svelte";
     import DownloadButton from "./components/DownloadButton.svelte";
-    import {updateKml, kmlDefaultOptions} from './kml.js';
+    import {updateKml, kmlDefaultOptions} from './components/kml.js';
     //import 'bulma/css/bulma.css';
     export let promise = undefined;
     const validate = (options) => {
@@ -47,6 +48,7 @@
         <p>👍 {`${ofp.infos['flight']} : ${ofp.infos['departure']} -> ${ofp.infos['destination']}`}</p>
         <LidoRoute {ofp} show={false}/>
         <Kml {kmlOptions}/>
+        <GeoJSON {kmlOptions}/>
         <div class="row download">
             <div class="col-12 col-md-6"><DownloadButton label="Télécharger KML"/></div>
             <div class="col-12 col-md-6"><ShortcutsLink {ofp} /></div>
