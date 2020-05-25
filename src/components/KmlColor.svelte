@@ -189,5 +189,7 @@
         margin-bottom: 0;
         right: 10px;
     }
-
+    label {
+        width: 5em;
+    }
 </style>

@@ -1,15 +1,9 @@
 <script>
     import {KmlGenerator} from './kml.js';
-    import {toGeoJSON} from './geojson.js';
+    import {xml2json} from './geojson.js';
 
     export let kmlOptions;
     let geoJSON = "";
-
-    function xml2json(kml){
-        const xml = (new DOMParser()).parseFromString(kml, 'text/xml');
-        if (!xml) throw 'Could not parse KML';
-        return toGeoJSON.kml(xml);
-    }
 
     function changeKml(node) {
         geoJSON = xml2json(KmlGenerator().render());

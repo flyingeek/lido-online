@@ -23,14 +23,14 @@
     }
 </script>
 <script>
-    import { fly } from 'svelte/transition';
+    import { fade } from 'svelte/transition';
     import {slide} from 'svelte/transition';
-    import { quintOut } from 'svelte/easing';
     export let ofp;
     export let show = false;
     const lidoRoute = (ofp) ? ofp.lidoRoute().join(' ') : '';
     let copied = false;
-    const onClick = (e) => {
+    const click = (e) => {
+        e.target.classList.remove("hasactive");
         const success = copyText(lidoRoute);
         if (!runningOnIpad) {
             copied = success;
@@ -40,37 +40,35 @@
             e.preventDefault();
         }
     };
+    const toggle = (e) => {
+        e.target.classList.remove("hasactive");
+        show = !show;
+    }
 </script>
-
-<h2><input bind:checked={show} name="show-route" type="checkbox" class="form-check-input position-static"/> Route Lido
-    {#if copyPermission}
-        <a on:click={onClick} href='lhs-mpilot://'>
-        {#if runningOnIpad}
-            ouvrir mPilot
-        {:else}
-            <svg><use xlink:href="#clippy"></use></svg>
-        {/if}
-        </a>
+<p>👍 {`${ofp.infos['flight']} : ${ofp.infos['departure']} -> ${ofp.infos['destination']}`}.
+{#if copyPermission}
+    {#if runningOnIpad}
+        Vous pouvez <a role="button" on:click={click} href='lhs-mpilot://'>ouvrir mPilot et y coller la route</a> ou 
+    {:else}
+        Vous pouvez <a role="button" on:click={click} href='lhs-mpilot://'>copier</a> ou 
     {/if}
-    {#if copied}
-        &nbsp;<span transition:fly="{{delay: 0, duration: 300, x: -30, y: 0, opacity: 0.5, easing: quintOut}}">copié!</span>
-    {/if}
-</h2>
+{:else}
+    Vous pouvez 
+{/if}
+<a role="button" href="." on:click|preventDefault={toggle}>{(show) ? "masquer" : "afficher"}</a> la route Lido.
+{#if copied}
+    <span out:fade>copié!</span>
+{/if}
+</p>
 {#if show}
     <div contenteditable="true" class="text-monospace" transition:slide >{lidoRoute}</div>
 {/if}
 <style>
     span {
-        font-size: 0.4em;
-        padding: 2px 3px;
+        padding: 2px 2px;
         color: #fff;
         background-color: #1ea840;
         border-radius: 3px;
-        display: inline-block;
-    }
-    svg {
-        height: 16px;
-        width: 14px;
     }
     div.text-monospace {
         text-align: left;

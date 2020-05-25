@@ -29,6 +29,8 @@ export default function (urls, test, callback) {
                 onload = false
             } else {
                 tag.rel = 'stylesheet'
+                remaining -= 1
+                onload = false
             }
         }
         if (onload) tag.onload = maybeCallback

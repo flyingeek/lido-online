@@ -2,10 +2,16 @@
     import loader from './async-script-loader.js';
     import {Deferred} from './utils.js';
     import {generateKML, KmlGenerator} from './kml.js';
-
-    const pdfjsSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js';
     const pdfjsWorkerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.min.js';
-    const editolidoSrc = 'https://github.com/flyingeek/lidojs/releases/download/v1.1.2/lidojs.min.js';
+    const preloadFiles = [
+        { type: 'script', url: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js' },
+        { type: 'script', url: './lidojs.js' },
+        { type: 'script', url: 'https://unpkg.com/mapbox.js@3.3.1/dist/mapbox.js' },
+        { type: 'link', url: 'https://unpkg.com/mapbox.js@3.3.1/dist/mapbox.css'},
+        { type: 'link', url: 'https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css'},
+        { type: 'link', url: pdfjsWorkerSrc, options: {prefetch: true}}
+    ];
+    //const editolidoSrc = 'https://github.com/flyingeek/lidojs/releases/download/v1.1.2/lidojs.min.js';
 
     const getPageText = async (pdf, pageNo) => {
         const page = await pdf.getPage(pageNo);
@@ -36,15 +42,11 @@
     let disabled = false;
     let ready = new Deferred();
     let name = "file";
-    let label = "Choisir un PDF";
+    let label = "Choisir un OFP";
     let readyClass = false;
 
     function preload() {
-        loader([
-            { type: 'script', url: pdfjsSrc },
-            { type: 'script', url: editolidoSrc },
-            { type: 'link', url: pdfjsWorkerSrc, options: {prefetch: true}}
-        ], () => !!window['pdfjs-dist/build/pdf'], () => {
+        loader(preloadFiles, () => !!window['pdfjs-dist/build/pdf'], () => {
             window['pdfjs-dist/build/pdf'].GlobalWorkerOptions.workerSrc = pdfjsWorkerSrc;
             ready.resolve(true);
             readyClass = true;
@@ -58,6 +60,7 @@
                 .then(
                     (text) => {
                         if (text) {
+                            //console.log(text);
                             try {
                                 const ofp = new editolido.Ofp("_PDFJS_" + text);
                                 try {
@@ -88,8 +91,10 @@
         disabled = true;
         await ready.promise.then(() => {
             const file = e.target.files[0];
-            label = e.target.value.split(/([\\/])/g).pop();
-            promise = getOFP(file);
+            if (file) {
+                label = e.target.value.split(/([\\/])/g).pop();
+                promise = getOFP(file);
+            }
         });
         disabled = false;
     };
@@ -112,5 +117,6 @@ label.ready::after {
 }
 label {
     padding-right: 120px;
+    display: inline-block;
 }
 </style>

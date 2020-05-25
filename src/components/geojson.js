@@ -458,4 +458,9 @@ const toGeoJSON = (function() {
     return t;
 })();
 
-export {toGeoJSON};
+function xml2json(kml){
+    const xml = (new DOMParser()).parseFromString(kml, 'text/xml');
+    if (!xml) throw 'Could not parse KML';
+    return toGeoJSON.kml(xml);
+}
+export {toGeoJSON, xml2json};

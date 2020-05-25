@@ -1,7 +1,12 @@
 <script>
     import {KmlGenerator} from "./kml.js";
     import {runningOnIpad} from "./utils.js";
-    let shortcutName = localStorage.getItem("shortcut") || "OFP Demo";
+    import {storage, stores} from './storage.js';
+    import { createEventDispatcher } from 'svelte';
+    const dispatch = createEventDispatcher();
+    const store = stores.shortcut;
+    const defaultValue = "OFP Demo";
+    let shortcutName = storage.getItem(store) || defaultValue;
     export let ofp;
     let url;
     const lidoRoute = (ofp) ? ofp.lidoRoute().join(' ') : '';
@@ -26,7 +31,13 @@
         }
     };
     function save() {
-        localStorage.setItem("shortcut", shortcutName.trim());
+        const name = shortcutName.trim();
+        if (name === defaultValue) {
+            storage.removeItem(store);
+        } else {
+            storage.setItem(store, name);
+        }
+        dispatch('save', [store, name]);
     };
 </script>
 

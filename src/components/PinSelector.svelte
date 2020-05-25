@@ -35,6 +35,9 @@
 </div>
 
 <style>
+    div.input-group {
+        margin-bottom: 0.4em;
+    }
     select {
         border-left: 0px;
         padding-left: 0.2rem;
@@ -49,5 +52,8 @@
         fill: white;
         height: 1.1rem;
         width: 1.1rem;
+    }
+    label {
+        width: 5em;
     }
 </style>

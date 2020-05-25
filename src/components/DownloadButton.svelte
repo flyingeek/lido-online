@@ -6,15 +6,23 @@
 </script>
 <script>
     import {KmlGenerator} from './kml.js';
+    import {xml2json} from './geojson.js';
+    import {storage, stores} from './storage.js';
+    import { createEventDispatcher } from 'svelte';
+    const dispatch = createEventDispatcher();
+
     export let label;
-    let selected = localStorage.getItem("downloadType") || 0;
+    const store = stores.downloadType;
+    const defaultValue = 0;
+    let selected = storage.getItem(store) || defaultValue;
     if (typeof selected === 'string') selected = parseInt(selected, 10);
     let url = "";
     let filename = "";
 
-    const downloadKml = function () {
+    const download = function (e) {
         const kmlGen = KmlGenerator();
-        const extension = (selected === 0) ? "_mapsme.kml" : "_avenza.kml";
+        const extensions = ['_mapsme.kml', '_avenza.kml', '.geojson']
+        const extension = extensions[selected];
         let str = kmlGen.name;
         if (!str) {
             console.log("can not compute filename");
@@ -25,17 +33,27 @@
         }
         if (selected === 0) {
             url = dataURL(kmlGen.render());
-        } else {
+        } else if (selected === 1) {
             url = dataURL(kmlGen.render({
                 "template": editolido.avenzaTemplate,
                 "styleTemplate": editolido.avenzaStyleTemplate,
                 "iconTemplate": editolido.avenzaIconTemplate,
                 "icons": editolido.AVENZAICONS
             }));
+        } else if (selected === 2) {
+            url = dataURL(JSON.stringify(xml2json(kmlGen.render())), "application/vnd.geo+json");
+        } else {
+            e.preventDefault();
+            return false;
         }
     };
     function save() {
-        localStorage.setItem("downloadType", selected);
+        if (selected === defaultValue){
+            storage.removeItem(store);
+        } else {
+            storage.setItem(store, selected);
+        }
+        dispatch("save", [store, selected]);
     }
 </script>
 
@@ -43,9 +61,10 @@
   <select bind:value={selected} class="custom-select"aria-label="Example select with button addon" on:change={save}>
     <option selected={selected === 0} value="{0}">KML Mapsme</option>
     <option selected={selected === 1} value="{1}">KML Avenza</option>
+    <option selected={selected === 2} value="{2}">GeoJson</option>
   </select>
   <div class="input-group-append">
-    <a class="btn btn-success" download={filename} href={url} on:click={downloadKml} target={target}>{label}</a>
+    <a class="btn btn-success" download={filename} href={url} on:click={download} target={target}>{label}</a>
   </div>
 </div>
 <style>
