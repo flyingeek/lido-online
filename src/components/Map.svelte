@@ -44,9 +44,14 @@
 <div id="map" use:mapbox={kmlOptions} bind:this={container}></div>
 
 <style>
-    div {
+    #map {
         width: 100%;
         height: 400px;
         margin: 1rem 0;
+    }
+    @media (min-width: 768px) and (min-height: 700px) {
+        #map {
+            flex: 1 1 auto;
+        }
     }
 </style>

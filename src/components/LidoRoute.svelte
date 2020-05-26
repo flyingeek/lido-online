@@ -24,9 +24,7 @@
 </script>
 <script>
     import { fade } from 'svelte/transition';
-    import {slide} from 'svelte/transition';
     export let ofp;
-    export let show = false;
     const lidoRoute = (ofp) ? ofp.lidoRoute().join(' ') : '';
     let copied = false;
     const click = (e) => {
@@ -45,24 +43,29 @@
         show = !show;
     }
 </script>
-<p>👍 {`${ofp.infos['flight']} : ${ofp.infos['departure']} -> ${ofp.infos['destination']}`}.
-{#if copyPermission}
-    {#if runningOnIpad}
-        Vous pouvez <a role="button" on:click={click} href='lhs-mpilot://'>ouvrir mPilot et y coller la route</a> ou 
-    {:else}
-        Vous pouvez <a role="button" on:click={click} href='lhs-mpilot://'>copier</a> ou 
+<div class="card mb-3">
+  <!-- <img class="card-img-top" src="./lido1.jpg" alt="Card image cap"> -->
+  <div class="card-body">
+    <h5 class="card-title">Route Lido</h5>
+    <p class="card-text">Cette route est optimisée par rapport à celle de PilotMission car elle utilise les airways. Utiliser cette route permet
+d'avoir une application Lido plus réactive.</p>
+    {#if copyPermission}
+        {#if true || runningOnIpad}
+            <a role="button" class="btn btn-primary" on:click={click} href='lhs-mpilot://'>ouvrir mPilot <sup>*</sup></a>
+        {:else}
+            <a role="button" class="btn btn-primary" on:click={click} href='lhs-mpilot://'>copier la route</a>
+        {/if}
+    <p class="card-text"><small class="text-muted"><sup>*</sup> Une fois dans l'application mPilot, il vous suffit de faire un coller: la route aura été copiée automatiquement.</small></p>
     {/if}
-{:else}
-    Vous pouvez 
-{/if}
-<a role="button" href="." on:click|preventDefault={toggle}>{(show) ? "masquer" : "afficher"}</a> la route Lido.
+
+    <div contenteditable="true" class="text-monospace">{lidoRoute}</div>
 {#if copied}
     <span out:fade>copié!</span>
 {/if}
-</p>
-{#if show}
-    <div contenteditable="true" class="text-monospace" transition:slide >{lidoRoute}</div>
-{/if}
+  </div>
+</div>
+
+
 <style>
     span {
         padding: 2px 2px;

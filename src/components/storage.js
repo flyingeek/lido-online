@@ -89,25 +89,29 @@ export const storeSettingsFromURL = (url) => {
     }
     for (let [key, value] of Object.entries(rawData)) {
         if (key in kmlDefaultOptions) {
+            let valid=undefined;
             if (key.endsWith('Pin')) {
                 value *= 1; // coalesce to number or NaN
                 if (!isNaN(value)) {
-                    validated[key] = value;
+                    valid = value;
                 }
             } else if (key.endsWith('Color') && value.match(kmlRegex)) {
-                validated[key] = value.toUpperCase();
+                valid = value.toUpperCase();
             } else if (key.endsWith('Display')) {
-                validated[key] = !!(value); //coerce to boolean
+                valid = !!(value); //coerce to boolean
             }
-        }else if (key === 'shortcut') {
-            value *= 1;
-            if (!isNaN(value)) {
-                storage.setItem(stores.shortcut, value);
+            if (valid !== undefined) {
+                validated[key] = valid;
             }
         }else if (key === 'downloadType') {
+            value *= 1;
+            if (!isNaN(value)) {
+                storage.setItem(stores.downloadType, value);
+            }
+        }else if (key === 'shortcut') {
             value = value.trim();
             if (value) {
-                storage.setItem(stores.downloadType, value);
+                storage.setItem(stores.shortcut, value);
             }
         }
     }

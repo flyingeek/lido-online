@@ -110,6 +110,12 @@ export function generateKML(ofp, options) {
     kmlGen.addLine('rmain', route);
     kmlGen.addPoints('rmain', route, {'excluded': natmarks});
     kmlGen.addLine('ralt', alternateRoute);
-    //kmlGen.addLine('ogimet', ogimetRoute);
+    const wmoGrid = new editolido.GeoGridIndex();
+    wmoGrid.data = window['WMO'];
+    const data = editolido.ogimetData(ofp, wmoGrid);
+    const ogimetRoute = data.route;
+    ofp.ogimetData = data;
+    ogimetRoute.description = data.wmo.join(' ');
+    kmlGen.addLine('ogimet', ogimetRoute);
     kmlGen.addPoints('ralt', alternateRoute);
   }

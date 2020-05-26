@@ -6,6 +6,7 @@
     const preloadFiles = [
         { type: 'script', url: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js' },
         { type: 'script', url: './lidojs.js' },
+        { type: 'script', url: './wmo.var.js' },
         { type: 'script', url: 'https://unpkg.com/mapbox.js@3.3.1/dist/mapbox.js' },
         { type: 'link', url: 'https://unpkg.com/mapbox.js@3.3.1/dist/mapbox.css'},
         { type: 'link', url: 'https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css'},
@@ -83,7 +84,7 @@
                     (err) => reject(err)
                 );
             };
-            reader.onerror = (err) => { reject(err) };
+            reader.onerror = (err) => { reject(Error("Fichier illisible !")) };
             reader.readAsArrayBuffer(file);
         });
     };
@@ -119,4 +120,5 @@ label {
     padding-right: 120px;
     display: inline-block;
 }
+
 </style>

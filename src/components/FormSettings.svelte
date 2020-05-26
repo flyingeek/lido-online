@@ -19,6 +19,7 @@
     export let kmlOptions;
     export let mode = "col-12 col-sm-6 col-md-12 col-lg-12 col-xl-12";
     let storedOptions = {...kmlDefaultOptions, ...(storage.getItem(store) ||{})};
+    let sidebar;
     $: isDefault = compare(kmlDefaultOptions, kmlOptions);
     $: isChanged = !compare(storedOptions, kmlOptions);
 
@@ -70,75 +71,85 @@
         storedOptions = {...kmlOptions};
     }
 </script>
-
-<form on:submit|preventDefault>
-    <fieldset class="form-group">
-        <legend>Route</legend>
-        <div class="row">
-            <div class={mode}>
-                <KmlColor name="route-color" kmlColor={kmlOptions['routeColor']} on:change={update}/>
-            </div>
-            <div class={mode}>
-                <PinSelector name="route-pin" selected={kmlOptions['routePin']} on:change={update}/>
-            </div>
-        </div>
-    </fieldset>
-    <fieldset class="form-group">
-        <legend><input name="alternate-display" checked={kmlOptions['alternateDisplay']} type="checkbox" on:change={update} />Dégagement</legend>
-        <div class="row">
-            <div class={mode}>
-                <KmlColor name="alternate-color" kmlColor={kmlOptions['alternateColor']} on:change={update}/>
-            </div>
-            <div class={mode}>
-                <PinSelector name="alternate-pin" selected={kmlOptions['alternatePin']} on:change={update}/>
-            </div>
-        </div>
-    </fieldset>
-    <fieldset class="form-group">
-        <legend><input name="nat-display" checked={kmlOptions['natDisplay']} type="checkbox" on:change={update}/>Tracks</legend>
-        <div class="row">
-            <div class={mode}>
-                <KmlColor  name="nat-color" kmlColor={kmlOptions['natColor']} on:change={update}/>
-                <small class="form-text text-muted">Un track incomplet restera rouge.</small>
-            </div>
-            <div class={mode}>
-                <PinSelector  name="nat-pin" selected={kmlOptions['natPin']} on:change={update}/>
-                <small class="form-text text-muted">Positionné à l'entrée des tracks.</small>
-            </div>
-        </div>
-    </fieldset>
-    <div class="row">
-        <div class={mode}>
-            <fieldset class="form-group">
-                <legend><input name="great-circle-display" checked={kmlOptions['greatCircleDisplay']} type="checkbox" on:change={update}/>Orthodromie</legend>
-                <div class="row">
-                    <div class="col">
-                        <KmlColor name="great-circle-color" kmlColor={kmlOptions['greatCircleColor']} on:change={update}/>
-                    </div>
+<div class:sidebar class="settings">
+    <a
+    class="hamburger"
+    role="button"
+    href="."
+    on:click|preventDefault={() => (sidebar = !sidebar)}>
+    <svg>
+        <use xlink:href="#bars" />
+    </svg>
+    </a>
+    <form on:submit|preventDefault>
+        <fieldset class="form-group">
+            <legend>Route</legend>
+            <div class="row">
+                <div class={mode}>
+                    <KmlColor name="route-color" kmlColor={kmlOptions['routeColor']} on:change={update}/>
                 </div>
-            </fieldset>
-        </div>
-        <div class={mode}>
-            <fieldset class="form-group">
-                <legend><input name="ogimet-display" checked={kmlOptions['ogimetDisplay']} type="checkbox" on:change={update}/>Route du GRAMET</legend>
-                <div class="row">
-                    <div class="col">
-                        <KmlColor name="ogimet-color" kmlColor={kmlOptions['ogimetColor']} on:change={update}/>
-                    </div>
+                <div class={mode}>
+                    <PinSelector name="route-pin" selected={kmlOptions['routePin']} on:change={update}/>
                 </div>
-            </fieldset>
+            </div>
+        </fieldset>
+        <fieldset class="form-group">
+            <legend><input name="alternate-display" checked={kmlOptions['alternateDisplay']} type="checkbox" on:change={update} />Dégagement</legend>
+            <div class="row">
+                <div class={mode}>
+                    <KmlColor name="alternate-color" kmlColor={kmlOptions['alternateColor']} on:change={update}/>
+                </div>
+                <div class={mode}>
+                    <PinSelector name="alternate-pin" selected={kmlOptions['alternatePin']} on:change={update}/>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="form-group">
+            <legend><input name="nat-display" checked={kmlOptions['natDisplay']} type="checkbox" on:change={update}/>Tracks</legend>
+            <div class="row">
+                <div class={mode}>
+                    <KmlColor  name="nat-color" kmlColor={kmlOptions['natColor']} on:change={update}/>
+                    <small class="form-text text-muted">Un track incomplet restera rouge.</small>
+                </div>
+                <div class={mode}>
+                    <PinSelector  name="nat-pin" selected={kmlOptions['natPin']} on:change={update}/>
+                    <small class="form-text text-muted">Positionné à l'entrée des tracks.</small>
+                </div>
+            </div>
+        </fieldset>
+        <div class="row">
+            <div class={mode}>
+                <fieldset class="form-group">
+                    <legend><input name="great-circle-display" checked={kmlOptions['greatCircleDisplay']} type="checkbox" on:change={update}/>Orthodromie</legend>
+                    <div class="row">
+                        <div class="col">
+                            <KmlColor name="great-circle-color" kmlColor={kmlOptions['greatCircleColor']} on:change={update}/>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class={mode}>
+                <fieldset class="form-group">
+                    <legend><input name="ogimet-display" checked={kmlOptions['ogimetDisplay']} type="checkbox" on:change={update}/>Route du GRAMET</legend>
+                    <div class="row">
+                        <div class="col">
+                            <KmlColor name="ogimet-color" kmlColor={kmlOptions['ogimetColor']} on:change={update}/>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class={mode}>
-        <button disabled={!isChanged} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
-        <button disabled={!isChanged} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
+        <div class="row">
+            <div class={mode}>
+            <button disabled={!isChanged} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
+            <button disabled={!isChanged} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
+            </div>
+            <div class={mode}>
+            {#if !isDefault }<button class="btn btn-link btn-sm float-right" type="button" on:click={reset}>Revenir aux valeurs par défaut</button>{/if}
+            </div>
         </div>
-        <div class={mode}>
-        {#if !isDefault }<button class="btn btn-link btn-sm float-right" type="button" on:click={reset}>Revenir aux valeurs par défaut</button>{/if}
-        </div>
-    </div>
-</form>
+    </form>
+</div>
 
 <style>
     input[type="checkbox"] {
@@ -152,12 +163,40 @@
     }
     @media (min-width: 768px) and (min-height: 700px) {
         legend {
-        font-size: 1rem;
-        font-weight: bold;
-        font-variant-caps: all-small-caps;
+            font-size: 1rem;
+            font-weight: bold;
+            font-variant-caps: all-small-caps;
         }
         form {
-        width: 250px;
+            width: 250px;
+        }
+        .hamburger {
+            display: block !important;
+            position: absolute;
+            left: -30px;
+            top: 0.7rem;
+        }
+        .settings {
+            position: relative;
+            margin-right: -260px;
+            transition: margin-right 0.15s ease-out;
+            background-color: #eee;
+            padding: 5px;
+        }
+        .settings.sidebar {
+            margin-right: 0;
         }
     }
+    svg {
+      fill:#555;
+      width: 20px;
+      height: 20px;
+    }
+    .hamburger {
+      display: none;
+    }
+    .settings {
+        position: relative;
+    }
+
 </style>
