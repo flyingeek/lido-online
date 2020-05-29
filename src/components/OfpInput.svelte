@@ -71,9 +71,11 @@
                                 } catch (err) {
                                     console.log(text);
                                     console.log(ofp.infos);
+                                    // throw(err);
                                     reject(err);
                                 }
                             } catch (err) {
+                                // throw(err);
                                 console.log(text);
                                 reject(err);
                             }
@@ -90,6 +92,9 @@
     };
     async function process(e) {
         disabled = true;
+        if (window.location.hash !== '#/gramet') {
+            window.location.hash = '#/map';
+        }
         await ready.promise.then(() => {
             const file = e.target.files[0];
             if (file) {
