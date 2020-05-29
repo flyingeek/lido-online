@@ -13,20 +13,30 @@
     let map;
     let geoJSON;
     export let kmlOptions;
+    export let ofp;
     let customLayer;
 
     function mapbox(node) {
         L.mapbox.accessToken = token;
         const GestureHandling = GestureHandler(L);
         L.Map.addInitHook("addHandler", "gestureHandling", GestureHandling);
-        map = L.mapbox.map('map', 'mapbox.streets', {
+        map = L.mapbox.map('map', false, {
             gestureHandling: true,
             gestureHandlingOptions: {
                 text: {},
                 duration: 1000
             }
         });
+        const layer = L.mapbox.tileLayer('mapbox.streets');
         customLayer = makeCustomLayer(L, kmlOptions);
+        let loadedOnce = false;
+        layer.on('load', () => {
+            if (!loadedOnce) {
+                loadedOnce = true;
+                new Image().src = ofp.ogimetData.proxyImg;
+            }
+        });
+        layer.addTo(map);
         addKmlToMap(KmlGenerator().render(), map, customLayer);
         map.fitBounds(customLayer.getBounds());
             

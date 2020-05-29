@@ -139,6 +139,17 @@
                 </fieldset>
             </div>
         </div>
+        <!-- <fieldset class="form-group">
+            <legend><input name="sigmet-display" checked={kmlOptions['sigmetDisplay']} type="checkbox" on:change={update}/>Sigmet</legend>
+            <div class="row">
+                <div class={mode}>
+                    <KmlColor  name="sigmet-color" kmlColor={kmlOptions['sigmetColor']} on:change={update}/>
+                </div>
+                <div class={mode}>
+                    <PinSelector  name="sigmet-pin" selected={kmlOptions['sigmetPin']} on:change={update}/>
+                </div>
+            </div>
+        </fieldset> -->
         <div class="row">
             <div class={mode}>
             <button disabled={!isChanged} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
