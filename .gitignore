@@ -2,3 +2,7 @@
 /public/build/
 
 .DS_Store
+public/wmo.var.js
+public/lidojs.js
+public/favicon-svelte.png
+public/cool-background.jpg
