@@ -13,7 +13,10 @@ export const kmlDefaultOptions = {
     "greatCircleDisplay": true,
     "greatCircleColor": "5F1478FF",
     "ogimetDisplay": true,
-    "ogimetColor": "40FF0000"
+    "ogimetColor": "40FF0000",
+    // "sigmetDisplay": false,
+    // "sigmetPin": 2,
+    // "sigmetColor": "6200FBFF"
 };
 
 function skeleton (kmlGen, kmlOptions) {
@@ -34,7 +37,7 @@ function skeleton (kmlGen, kmlOptions) {
         "color": kmlOptions.natIncompleteColor,
         "pinId": kmlOptions.natPin
     }
-  );
+   );
 }
 
 /**
@@ -114,8 +117,47 @@ export function generateKML(ofp, options) {
     wmoGrid.data = window['WMO'];
     const data = editolido.ogimetData(ofp, wmoGrid);
     const ogimetRoute = data.route;
+    data.proxyImg = "https://editolido.alwaysdata.net/proxy_gramet/" + data.route.name.replace(/[^a-z0-9\-_]/giu, '_') + ".png?url=" + encodeURIComponent(data.url);
     ofp.ogimetData = data;
     ogimetRoute.description = data.wmo.join(' ');
     kmlGen.addLine('ogimet', ogimetRoute);
     kmlGen.addPoints('ralt', alternateRoute);
+    // const ogimetRoute2 = editolido.ogimetRoute(wmoGrid, ofp.route, {'algorithm': 'crs'});
+    // kmlGen.addFolder("ogimet2", {"enabled": true, "color": "4000F900", "pinId": 0});
+    // kmlGen.addLine('ogimet2', ogimetRoute2);
+    // const url = `https://editolido.alwaysdata.net/proxy_sigmet/?url=https://www.aviationweather.gov/gis/scripts/IsigmetJSON.php?type=all`;
+    // fetch(url).then((response) => {
+    //     var contentType = response.headers.get("content-type");
+    //     if(contentType && contentType.indexOf("application/json") !== -1) {
+    //         return response.json().then((json) => {
+    //             kmlSigmet(json);
+    //         });
+    //     }
+    // }, (error) => console.log(error));
   }
+
+// export function kmlSigmet(json) {
+//   const kmlGen = KmlGenerator();
+//   for (const d of json['features']) {
+//     const props = d['properties'];
+//     const geom = d['geometry'];
+//     const name = `${props['firName']}: ${props['qualifier']} ${props['hazard']}`;
+//     const description = props['rawSigmet'];
+//     if (geom['type'] === 'LineString') {
+//       geom['coordinates'] = [geom['coordinates']]
+//     }
+//     if(geom['type'] === 'LineString' || geom['type'] === 'Polygon'){
+//       for (const area of geom['coordinates']) {
+//         const points = area.map(a => new editolido.GeoPoint([a[1], a[0]]));
+//         const route = new editolido.Route(points);
+//         kmlGen.addLine('sigmet', route);
+//         kmlGen.addPoint('sigmet', editolido.GeoPoint.getCenter(points, {name, description}));
+//       }
+//     } else if (geom['type'] === 'Point') {
+//       kmlGen.addPoint('sigmet', new editolido.GeoPoint([geom['coordinates'][1], geom['coordinates'][0]], {name, description}));
+//     } else {
+//       console.error(`unknown geometry type: ${geom['type']}`);
+//       console.log(d);
+//     }
+//   }
+// }
