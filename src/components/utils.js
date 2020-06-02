@@ -21,3 +21,29 @@ export function debounce(func, wait, immediate) {
         if (callNow) func.apply(context, args);
     };
 }
+
+export function folderName(str) {
+    const a = str.split('-');
+    const name = a.slice(0, -1).join('');
+    switch (name) {
+        case "route":
+            return "rmain";
+        case "alternate":
+            return "ralt";
+        case "nat":
+            return "rnat";
+        default:
+            return name;
+    }
+}
+
+export async function addToSWCache(urls, cacheName) {
+    if (window.caches) {
+        try {
+            const myCache = await window.caches.open(cacheName);
+            await myCache.addAll(urls);
+        } catch (err) {
+            console.log('could not cache gramet', err);
+        }
+    }
+}

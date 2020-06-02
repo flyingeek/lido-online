@@ -20,6 +20,7 @@
     export let mode = "col-12 col-sm-6 col-md-12 col-lg-12 col-xl-12";
     let storedOptions = {...kmlDefaultOptions, ...(storage.getItem(store) ||{})};
     let sidebar;
+    let hamburgerBlink = compare(kmlDefaultOptions, kmlOptions); // check only on entry
     $: isDefault = compare(kmlDefaultOptions, kmlOptions);
     $: isChanged = !compare(storedOptions, kmlOptions);
 
@@ -76,8 +77,8 @@
     class="hamburger"
     role="button"
     href="."
-    on:click|preventDefault={() => (sidebar = !sidebar)}>
-    <svg>
+    on:click|preventDefault={() =>  {sidebar = !sidebar; hamburgerBlink = false;}}>
+    <svg class:blink={hamburgerBlink}>
         <use xlink:href="#bars" />
     </svg>
     </a>
@@ -172,42 +173,59 @@
         margin-top: -0.3rem;
         margin-bottom: 0.25rem;
     }
-    @media (min-width: 768px) and (min-height: 700px) {
-        legend {
-            font-size: 1rem;
-            font-weight: bold;
-            font-variant-caps: all-small-caps;
-        }
-        form {
-            width: 250px;
-        }
+    legend {
+        font-size: 1rem;
+        font-weight: bold;
+        font-variant-caps: all-small-caps;
+    }
+    form {
+        width: 250px;
+    }
+    .hamburger {
+        display: block !important;
+        position: absolute;
+        left: -30px;
+        top: 0.7rem;
+    }
+    .settings {
+        position: relative;
+        margin-right: -260px;
+        transition: margin-right 0.15s ease-out;
+        background-color: #eee;
+        padding: 5px;
+    }
+    .settings.sidebar {
+        margin-right: 0;
+    }
+    @media (max-width: 767px), (max-height: 700px) {
         .hamburger {
-            display: block !important;
-            position: absolute;
-            left: -30px;
-            top: 0.7rem;
+            display: none;
         }
         .settings {
-            position: relative;
-            margin-right: -260px;
-            transition: margin-right 0.15s ease-out;
-            background-color: #eee;
-            padding: 5px;
-        }
-        .settings.sidebar {
+            background-color: inherit;
             margin-right: 0;
+        }
+        form {
+            width: auto;
         }
     }
     svg {
       fill:#555;
       width: 20px;
       height: 20px;
+      animation: none;
     }
-    .hamburger {
-      display: none;
+    svg.blink {
+        animation: blink 3s ease infinite;
     }
-    .settings {
-        position: relative;
-    }
+
+
+    @keyframes blink {
+        0% { transform: scale(1.0); }
+        75% { transform: scale(1.0); }
+        80% { transform: scale(1.2); }
+        95% { transform: scale(1.2); }
+        100% { transform: scale(1.0); }
+    } 
 
 </style>

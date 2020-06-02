@@ -6,7 +6,8 @@
  *
  *
 */
-const toGeoJSON = (function() {
+
+export const toGeoJSON = (function() {
     'use strict';
 
     var removeSpace = /\s*/g,
@@ -458,9 +459,8 @@ const toGeoJSON = (function() {
     return t;
 })();
 
-function xml2json(kml){
+export function xml2json(kml){
     const xml = (new DOMParser()).parseFromString(kml, 'text/xml');
     if (!xml) throw 'Could not parse KML';
     return toGeoJSON.kml(xml);
 }
-export {toGeoJSON, xml2json};

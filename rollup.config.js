@@ -3,10 +3,14 @@ import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import livereload from 'rollup-plugin-livereload'
 import { terser } from 'rollup-plugin-terser'
+import replace from 'rollup-plugin-replace';
+import json from '@rollup/plugin-json';
+import watchAssets from 'rollup-plugin-watch-assets';
+const workbox = require('rollup-plugin-workbox-inject');
 
 const production = !process.env.ROLLUP_WATCH
 
-export default {
+export default [{
   input: 'src/main.js',
   output: {
     sourcemap: true,
@@ -24,7 +28,7 @@ export default {
         css.write('public/build/bundle.css')
       }
     }),
-
+    json(),
     // If you have external dependencies installed from
     // npm, you'll most likely need these plugins. In
     // some cases you'll need additional configuration -
@@ -51,7 +55,40 @@ export default {
   watch: {
     clearScreen: false
   }
-}
+},
+{
+  input: 'src/sw.js',
+  output: {
+    sourcemap: true,
+    format: 'iife',
+    name: 'sw',
+    file: 'public/sw.js'
+  },
+  plugins: [
+    replace({
+      'process.env.NODE_ENV': JSON.stringify('production'),
+    }),
+    commonjs(),
+    resolve({
+      browser: true
+    }),
+    watchAssets({ assets: ['public/index.html', 'public/build/*.js', 'public/build/*.css'] }),
+    workbox({
+      "globDirectory": "public/",
+      "globPatterns": [
+        "index.html",
+        "build/bundle.css",
+        "build/bundle.js",
+        "Air_France_Logo.svg",
+        "worldmap.svg",
+        "map*.png",
+        "*-sdf.png",
+      ],
+      "modifyURLPrefix": {'': '/'}
+    }),
+    production && terser()
+  ]
+}]
 
 function serve() {
   let started = false

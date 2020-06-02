@@ -1,9 +1,45 @@
+/* global L */
 import {xml2json} from "./geojson";
+import {GestureHandler} from "./map-gestures.js";
+import {KmlGenerator} from "./kml.js";
 // https://docs.mapbox.com/help/glossary/access-token/
 const token = "pk.eyJ1IjoiZmx5aW5nZWVrIiwiYSI6ImNrYWh3bWwzZDA0cWgyeXMwZmJzYmhnb3AifQ.a9MA0LPrBDBSO2l_CwivzA";
 
 const key = {};
 
+export function mapbox(node, options) {
+    L.mapbox.accessToken = token;
+    const GestureHandling = GestureHandler(L);
+    L.Map.addInitHook("addHandler", "gestureHandling", GestureHandling);
+    let map = L.mapbox.map('map', false, {
+        gestureHandling: true,
+        gestureHandlingOptions: {
+            text: {},
+            duration: 1000
+        }
+    });
+    const layer = L.mapbox.tileLayer('mapbox.streets');
+    let customLayer = makeCustomLayer(L, options);
+    let loadedOnce = false;
+    layer.on('load', () => {
+        if (!loadedOnce) {
+            loadedOnce = true;
+            //new Image().src = ofp.ogimetData.proxyImg;
+        }
+    });
+    layer.addTo(map);
+    addKmlToMap(KmlGenerator().render(), map, options);
+    map.fitBounds(customLayer.getBounds());
+        
+    return {
+        update() {
+            updateMap(KmlGenerator().render(), map, customLayer);
+        },
+        destroy() {
+            map.remove();
+        }
+    }
+}
 
 const makeCustomLayer = (L, options) => {
     let mapIcons = [];

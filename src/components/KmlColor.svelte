@@ -2,15 +2,19 @@
     import {debounce} from './utils.js';
     export const kmlRegex = /^[A-F0-9]{8}$/i;
     const splitKmlColor = (v) => {
-        [v.slice(6,8), v.slice(4,6), v.slice(2, 4), v.slice(0, 2)]
+        return [v.slice(6,8), v.slice(4,6), v.slice(2, 4), v.slice(0, 2)]
     }
     export const kml2hexa = (v) => {
-        const [r, g, b, a] = splitKmlColor();
+        const [r, g, b, a] = splitKmlColor(v);
         return "#" + r + g + b + a;
     }
     export const kml2rgba = (v) => {
-        let [r, g, b, a] = splitKmlColor().map((v) => parseInt(v, 16));
+        let [r, g, b, a] = splitKmlColor(v).map((v) => parseInt(v, 16));
         return `rgba(${r}, ${g}, ${b}, ${a / 255.0})`;
+    }
+    export const kml2mapColor = (v) => {
+        let [hex, range] = kml2swatch(v);
+        return [hex, range / 255.0];
     }
     const kml2swatch = (v) => {
         const range = parseInt(v.slice(0,2), 16);

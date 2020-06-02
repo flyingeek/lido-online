@@ -5,7 +5,7 @@
 <nav class="navbar navbar-expand-md navbar-light bg-light">
   <ul class="navbar-nav mr-auto">
     <li class="nav-item" class:active={route === '/'}>
-      <a class="nav-link" href="#/">    <svg><use xlink:href="#home" /></svg></a>
+      <a class="nav-link" href="#/"><svg><use xlink:href="#home"/></svg></a>
     </li>
     {#if promise || route === '/map'}
     <li class="nav-item" class:active={route === '/map'}>
@@ -14,11 +14,16 @@
     {/if}
     {#if promise || route === '/gramet'}
     <li class="nav-item" class:active={route === '/gramet'}>
-      <a class:disabled={!promise} class="nav-link" href="#/gramet">GRAMET</a>
+      <a class:disabled={!promise} class="nav-link" href="#/gramet" >GRAMET</a>
+    </li>
+    {/if}
+    {#if promise || route === '/route'}
+    <li class="nav-item" class:active={route === '/route'}>
+      <a class:disabled={!promise} class="nav-link" href="#/route" >ROUTE</a>
     </li>
     {/if}
     <li class="nav-item" class:active={route === '/help'}>
-      <a class="nav-link" href="#/help">AIDE</a>
+      <a class="nav-link" href="#/help" >AIDE</a>
     </li>
   </ul>
   <slot></slot>
@@ -38,11 +43,18 @@
       fill: rgba(0,0,0,.9);
     }
     nav {
-        margin: 0 -10px;
+      flex: 0 1 auto;
+      margin: 0 -10px;
     }
-    @media (min-width: 768px) and (min-height: 700px) {
-      nav {
-        flex: 0 1 auto;
+    @media (max-width: 767px){
+      .nav-item.active {
+        border-left: 2px solid var(--pink);
+        border-bottom: none !important;
+      }
+      .nav-item {
+        border-left: 2px solid transparent;
+        padding-left: 1em;
+        margin-left: -1em;
       }
     }
     .nav-item.active {

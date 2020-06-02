@@ -12,6 +12,9 @@ export default function (urls, test, callback) {
       urls.forEach(({ type, url, options = { async: true, defer: true }}) => {
         const isScript = type === 'script'
         const tag = document.createElement(isScript ? 'script': 'link')
+        if (url.startsWith('http') || url.startsWith('//')){
+          tag.crossOrigin = "anonymous";
+        }
         let onload = true
         if (isScript) {
           tag.src = url

@@ -6,3 +6,5 @@ public/wmo.var.js
 public/lidojs.js
 public/favicon-svelte.png
 public/cool-background.jpg
+public/sw.js
+public/sw.js.map

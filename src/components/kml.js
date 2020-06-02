@@ -1,4 +1,6 @@
 /* globals editolido */
+import {folderName} from './utils';
+
 export const kmlDefaultOptions = {
     "routePin": 0,
     "routeColor": "FFDA25A8",
@@ -51,20 +53,6 @@ export const KmlGenerator = () => {
   return window['kmlGen'];
 }
 
-export function folderName(str) {
-  const a = str.split('-');
-  const name = a.slice(0, -1).join('');
-  switch (name) {
-      case "route":
-          return "rmain";
-      case "alternate":
-          return "ralt";
-      case "nat":
-          return "rnat";
-      default:
-          return name;
-  }
-}
 
 export function updateKml(name, value) {
   const kmlGen = KmlGenerator();

@@ -10,22 +10,26 @@
   import Navbar from "./components/Navbar.svelte";
   import OfpInput from './components/OfpInput.svelte';
   import Page from "./components/Page.svelte";
+  import Help from "./components/Help.svelte";
+  import SWUpdate from "./components/SWUpdate.svelte";
   import { updateKml } from "./components/kml.js";
+  import {updateMapLayers} from './components/mapboxgl.js';
   import {storage, stores, validate, saved, storeSettingsFromURL} from "./components/storage.js";
 
   export let promise = undefined;
+  export let map = undefined;
   storeSettingsFromURL(window.location.search);
   export let kmlOptions = validate(storage.getItem(stores.optionsKML) || {});
   let permalink = window.location.href;
   let route = "/";
-  window.onhashchange = () => {
+  const hashchange = () => {
     route = window.location.hash.substr(1) || "/";
-    if (!promise && (route === '/map' || route === '/gramet')) {
+    if (!promise && (route === '/map' || route === '/gramet' || route === '/route')) {
       route = '/';
       window.location.hash = '#/';
     }
   };
-  window.onhashchange();
+  hashchange();
 
   const setHistory = e => {
     const stateObj = saved(kmlOptions);
@@ -41,93 +45,106 @@
   setHistory();
   const update = e => {
     console.log(e.detail.name, e.detail.value);
+    if (map) updateMapLayers(map, e.detail.name, e.detail.value);
     updateKml(e.detail.name, e.detail.value);
     setHistory();
   };
 </script>
 
-<main class="container">
-  <div class="content {route.substr(1) || 'home'}">
+<main class="container {route.substr(1) || 'home'}">
+  <div class="content">
     <Navbar {promise} {route}>
-        <form class:invisible={route === '/help'} class="form-inline my-2 my-lg-0" on:submit|preventDefault>
-          <OfpInput bind:promise {kmlOptions} />
+        <form class:invisible={route === '/help'} class="form-inline" on:submit|preventDefault>
+          <OfpInput bind:promise {kmlOptions}/>
         </form>
     </Navbar>
-    {#if (route === '/gramet' || route === '/map')}
+    <SWUpdate />
+    <!-- START We do not want the map element to disappear from the dom -->
+    {#if promise}
+      {#await promise}
+        <!-- this cause the map to reinitialize-->
+        <Page hidden={route !== '/map'}><div style="margin: auto;">traitement en cours...</div></Page>
+      {:then ofp}
+        <Page hidden={route !== '/map'}>
+          <Map {kmlOptions} {ofp} bind:map/>
+          <Export {ofp} on:save={setHistory} />
+        </Page>
+      {:catch error}
+        <p class:d-none={route !== '/map'}>😱: {error.message}</p>
+      {/await}
+    {/if}
+    <!-- END of We do not want the map element to disappear from the dom (to keep cache)-->
+    {#if (route === '/gramet' || route === '/route')}
       {#await promise}
         <Page><div style="margin: auto;">traitement en cours...</div></Page>
       {:then ofp}
         {#if route === '/gramet'}
             <Page><Gramet {ofp}/></Page>
-        {/if}
-        {#if route === '/map'}
-            <Page>
-                <Map {kmlOptions} {ofp}/>
-                <Export {ofp} on:save={setHistory} />
-            </Page>
+        {:else if route === '/route'}
+            <Page><LidoRoute {ofp}/></Page>
         {/if}
       {:catch error}
         <p>😱: {error.message}</p>
       {/await}
     {:else if route === '/'}
-      <Page classname="world">
+      <Page>
         <Home />
       </Page>
+    {:else if route === '/help'}
+      <Page><Help /></Page>
     {/if}
   </div>
   {#if route === '/map'}
   <FormSettings bind:kmlOptions on:change={update} on:save={setHistory} />
   {/if}
 </main>
-
+<svelte:window on:hashchange={hashchange}/>
 
 <style>
-  .content.home, .content.help, .content.gramet {
-    background-color: #002157;
+  :global(html, body) {
+    height: 100%;
+    min-height: 100%;
+    width: 100%;
+    position: fixed;
+    --blueaf: #002157
+  }
+  .content{
+    background-color:var(--blueaf);
     background-image: url("/worldmap.svg");
     background-attachment: fixed;
     background-size: cover;
     transition:background-position 0.3s ease;
-    /* opacity: 0.4;
-    content: "";
-    display: block;
-    position: absolute;
-    top: 0px;
-    left: 0px;
     width: 100%;
-    height: 100%;
-    z-index: -1;
-    opacity: 0.4; */
+    padding: 0 10px 10px 10px;
+    flex-direction: column;
+    display: flex;
   }
-  .content.help {
+  main.map > .content {
+    background-color: var(--white);
+    background-image: none;
+  }
+  main.help >.content {
     background-position-x: center;
   }
-
-  @media (min-width: 768px) and (min-height: 700px) {
+  main {
+    display: flex;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    overflow-x: hidden;
+    max-width: 1366px;
+    min-height: 100%;
+  }
+  form {
+      margin-right: 25px; /* for hamburger */
+  }
+  @media (max-width: 767px), (max-height: 700px) {
     :global(html, body) {
-      height: 100%;
-      min-height: 100%;
-      width: 100%;
-      position: fixed;
+      position: relative;
     }
-    main {
-      display: flex;
-      margin-left: 0;
-      margin-right: 0;
-      padding-left: 0;
-      padding-right: 0;
-      overflow-x: hidden;
-      max-width: 1366px;
-      min-height: 100%;
-    }
-    .content {
-      width: 100%;
-      padding: 0 10px 10px 10px;
-      flex-direction: column;
-      display: flex;
-    }
-    form {
-        margin-right: 25px; /* for hamburger */
+    main.map {
+      display:block;
     }
   }
   @media (min-width: 1366px) {

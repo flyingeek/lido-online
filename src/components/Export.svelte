@@ -24,9 +24,7 @@
         margin-top: 1em;
         flex: 0 1 auto;
     }
-    @media (min-width: 768px) and (min-height: 700px) {
-        .row, small {
-            flex: 0 1 auto;
-        }
+    .row, small {
+        flex: 0 1 auto;
     }
 </style>

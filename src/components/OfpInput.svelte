@@ -7,9 +7,8 @@
         { type: 'script', url: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js' },
         { type: 'script', url: './lidojs.js' },
         { type: 'script', url: './wmo.var.js' },
-        { type: 'script', url: 'https://unpkg.com/mapbox.js@3.3.1/dist/mapbox.js' },
-        { type: 'link', url: 'https://unpkg.com/mapbox.js@3.3.1/dist/mapbox.css'},
-        { type: 'link', url: 'https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css'},
+        { type: 'script', url: 'https://unpkg.com/mapbox-gl@1.10.1/dist/mapbox-gl.js' },
+        { type: 'link', url: 'https://unpkg.com/mapbox-gl@1.10.1/dist/mapbox-gl.css'},
         { type: 'link', url: pdfjsWorkerSrc, options: {prefetch: true}}
     ];
     //const editolidoSrc = 'https://github.com/flyingeek/lidojs/releases/download/v1.1.2/lidojs.min.js';
@@ -57,16 +56,20 @@
         const reader = new FileReader();
         return new Promise((resolve, reject) => {
             reader.onload = (ev) => {
+                //console.time('start');
                 getOFPText({ data: ev.target.result })
                 .then(
                     (text) => {
                         if (text) {
                             //console.log(text);
                             try {
+                                //console.timeLog('start');
                                 const ofp = new editolido.Ofp("_PDFJS_" + text);
+                                //console.timeLog('start');
                                 try {
                                     const kmlGen = KmlGenerator();
                                     generateKML(ofp, kmlOptions);
+                                    //console.timeEnd('start')
                                     resolve(ofp);
                                 } catch (err) {
                                     console.log(text);
@@ -92,38 +95,51 @@
     };
     async function process(e) {
         disabled = true;
-        if (window.location.hash !== '#/gramet') {
-            window.location.hash = '#/map';
-        }
+        preload()
+
         await ready.promise.then(() => {
             const file = e.target.files[0];
             if (file) {
                 label = e.target.value.split(/([\\/])/g).pop();
                 promise = getOFP(file);
+                if (window.location.hash !== '#/gramet') {
+                    window.location.hash = '#/map';
+                }
             }
         });
         disabled = false;
     };
 </script>
 
-<div class="custom-file">
+<div class="custom-file" class:blink={!promise}>
     <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} class="custom-file-input">
     <label class:ready={readyClass} class="custom-file-label text-truncate" for="{name}">{label}</label>
 </div>
-<svelte:window on:load={preload}/>
+<!-- <svelte:window on:load={preload}/> -->
 
 <style>
 
 input:lang(fr) ~ label::after {
     content: "Sélectionner";
 }
-label.ready::after {
+
+.blink label::after {
     background-color: var(--blue);
     color: var(--white);
 }
+
 label {
     padding-right: 120px;
     display: inline-block;
 }
-
+.custom-file.blink {
+    animation: blink 3s ease infinite;
+}
+@keyframes blink {
+    0% { transform: scale(1.0); }
+    75% { transform: scale(1.0); }
+    80% { transform: scale(1.03); }
+    95% { transform: scale(1.03); }
+    100% { transform: scale(1.0); }
+} 
 </style>
