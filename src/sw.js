@@ -9,15 +9,15 @@ precacheAndRoute(
 });
 
 const thirdPartyUrls = [
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.min.js',
-    'https://unpkg.com/mapbox-gl@1.10.1/dist/mapbox-gl.js',
-    'https://unpkg.com/mapbox-gl@1.10.1/dist/mapbox-gl.css',
-    'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css'
+    'CONF_PDFJS_JS',
+    'CONF_PDFJS_WORKER_JS',
+    'CONF_MAPBOXGL_JS',
+    'CONF_MAPBOXGL_CSS',
+    'CONF_BOOTSTRAP_CSS'
 ];
 const lidoUrls = [
-    './lidojs.js',
-    './wmo.var.js'
+    'CONF_LIDOJS_JS',
+    'CONF_WMO_JS'
 ];
 
 registerRoute(

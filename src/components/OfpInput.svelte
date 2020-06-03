@@ -2,13 +2,13 @@
     import loader from './async-script-loader.js';
     import {Deferred} from './utils.js';
     import {generateKML, KmlGenerator} from './kml.js';
-    const pdfjsWorkerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.min.js';
+    const pdfjsWorkerSrc = 'CONF_PDFJS_WORKER_JS';
     const preloadFiles = [
-        { type: 'script', url: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js' },
-        { type: 'script', url: './lidojs.js' },
-        { type: 'script', url: './wmo.var.js' },
-        { type: 'script', url: 'https://unpkg.com/mapbox-gl@1.10.1/dist/mapbox-gl.js' },
-        { type: 'link', url: 'https://unpkg.com/mapbox-gl@1.10.1/dist/mapbox-gl.css'},
+        { type: 'script', url: 'CONF_PDFJS_JS' },
+        { type: 'script', url: 'CONF_LIDOJS_JS' },
+        { type: 'script', url: 'CONF_WMO_JS' },
+        { type: 'script', url: 'CONF_MAPBOXGL_JS' },
+        { type: 'link', url: 'CONF_MAPBOXGL_CSS'},
         { type: 'link', url: pdfjsWorkerSrc, options: {prefetch: true}}
     ];
     //const editolidoSrc = 'https://github.com/flyingeek/lidojs/releases/download/v1.1.2/lidojs.min.js';
