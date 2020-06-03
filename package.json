@@ -12,6 +12,7 @@
     "@rollup/plugin-commonjs": "11.0.2",
     "@rollup/plugin-json": "^4.0.3",
     "@rollup/plugin-node-resolve": "^7.0.0",
+    "dotenv": "^8.2.0",
     "eslint": "^7.0.0",
     "eslint-plugin-svelte3": "^2.7.3",
     "globby": "^11.0.1",

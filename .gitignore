@@ -8,3 +8,4 @@ public/favicon-svelte.png
 public/cool-background.jpg
 public/sw.js
 public/sw.js.map
+.env

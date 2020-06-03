@@ -7,7 +7,7 @@ import replace from 'rollup-plugin-replace';
 import json from '@rollup/plugin-json';
 import watchAssets from 'rollup-plugin-watch-assets';
 const workbox = require('rollup-plugin-workbox-inject');
-
+require('dotenv').config();
 const production = !process.env.ROLLUP_WATCH
 
 export default [{
@@ -19,6 +19,9 @@ export default [{
     file: 'public/build/bundle.js'
   },
   plugins: [
+    replace({
+      'MAPBOX_TOKEN': (!production) ? `"${process.env.MAPBOX_TOKEN}"`: '"pk.eyJ1IjoiZmx5aW5nZWVrIiwiYSI6ImNrYXpmZzhuYjBpczUycW1pZzZ1b2Z4NjAifQ.5S-VzSXpJkui8NDMlTU51Q"'
+    }),
     svelte({
       // enable run-time checks when not in production
       dev: !production,

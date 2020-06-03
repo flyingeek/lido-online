@@ -1,10 +1,9 @@
-/* global editolido mapboxgl */
+/* global editolido mapboxgl MAPBOX_TOKEN */
 
 import {kml2mapColor} from "./KmlColor.svelte";
 import {folderName} from './utils';
 import { kmlDefaultOptions } from "./kml";
-
-export const token = "pk.eyJ1IjoiZmx5aW5nZWVrIiwiYSI6ImNrYWh3bWwzZDA0cWgyeXMwZmJzYmhnb3AifQ.a9MA0LPrBDBSO2l_CwivzA";
+export const token = MAPBOX_TOKEN;
 
 export const key = {};
 

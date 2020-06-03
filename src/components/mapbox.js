@@ -1,9 +1,9 @@
-/* global L */
+/* global L MAPBOX_TOKEN*/
 import {xml2json} from "./geojson";
 import {GestureHandler} from "./map-gestures.js";
 import {KmlGenerator} from "./kml.js";
 // https://docs.mapbox.com/help/glossary/access-token/
-const token = "pk.eyJ1IjoiZmx5aW5nZWVrIiwiYSI6ImNrYWh3bWwzZDA0cWgyeXMwZmJzYmhnb3AifQ.a9MA0LPrBDBSO2l_CwivzA";
+const token = MAPBOX_TOKEN;
 
 const key = {};
 
