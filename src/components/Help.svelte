@@ -1,9 +1,9 @@
 <script>
-    import {version} from '../../package.json';
+$: lidojsVersion = (window.editolido) ? ' / lidojs: v' + window.editolido.version : '';
 </script>
 
 <div>
-<p>Aplication version: {version}d</p>
+<p>Aplication version: APP_VERSION{lidojsVersion}</p>
 </div>
 
 <style>
