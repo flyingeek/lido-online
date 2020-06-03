@@ -7,6 +7,8 @@ import replace from 'rollup-plugin-replace';
 import json from '@rollup/plugin-json';
 import copy from 'rollup-plugin-copy'
 import watchAssets from 'rollup-plugin-watch-assets'; // also requires globby
+import {version} from './package.json';
+import lidojsPkg from './node_modules/@flyingeek/lidojs/package.json';
 const workbox = require('rollup-plugin-workbox-inject');
 const path = require('path');
 const Mustache = require('mustache');
@@ -20,8 +22,8 @@ const U = {
   'CONF_MAPBOXGL_JS': 'https://unpkg.com/mapbox-gl@1.10.1/dist/mapbox-gl.js',
   'CONF_PDFJS_WORKER_JS': 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.min.js',
   'CONF_PDFJS_JS': 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js',
-  'CONF_LIDOJS_JS': './js/lidojs.min.js',
-  'CONF_WMO_JS': './js/wmo.var.js',
+  'CONF_LIDOJS_JS': `./js/lidojs.${lidojsPkg.version}.min.js`,
+  'CONF_WMO_JS': `./js/wmo.${lidojsPkg.version}.var.js`,
   'CONF_BUNDLE_JS': './js/bundle.js',
   'CONF_BUNDLE_CSS': './css/bundle.css'
 };
@@ -37,7 +39,8 @@ export default [{
   },
   plugins: [
     replace({...U, ...{
-      'MAPBOX_TOKEN': (!production) ? process.env.MAPBOX_TOKEN : 'pk.eyJ1IjoiZmx5aW5nZWVrIiwiYSI6ImNrYXpmZzhuYjBpczUycW1pZzZ1b2Z4NjAifQ.5S-VzSXpJkui8NDMlTU51Q'
+      'MAPBOX_TOKEN': (!production) ? process.env.MAPBOX_TOKEN : 'pk.eyJ1IjoiZmx5aW5nZWVrIiwiYSI6ImNrYXpmZzhuYjBpczUycW1pZzZ1b2Z4NjAifQ.5S-VzSXpJkui8NDMlTU51Q',
+      'APP_VERSION': version
     }}),
     svelte({
       // enable run-time checks when not in production
@@ -124,12 +127,13 @@ export default [{
   plugins: [
     replace({...U, ...{
       'process.env.NODE_ENV': JSON.stringify('production'),
+      'CONF_LIDOJS_VERSION': lidojsPkg.version
     }}),
     commonjs(),
     resolve({
       browser: true
     }),
-    watchAssets({ assets: ['public/index.html', 'public/build/*.js', 'public/build/*.css', 'rollup.config.js'] }),
+    watchAssets({ assets: ['public/index.html', 'public/js/*.js', 'public/css/*.css', 'rollup.config.js'] }),
     workbox({
       "globDirectory": "public/",
       "globPatterns": [

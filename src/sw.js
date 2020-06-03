@@ -27,9 +27,15 @@ registerRoute(
     })
 );
 registerRoute(
-  ({url}) => url.origin === self.location.origin && (url.pathname === '/lidojs.js' || url.pathname === '/wmo.var.js'),
-  new NetworkFirst({
-    cacheName: 'lido-ressources'
+  ({url}) => url.origin === self.location.origin && (url.pathname.match(/\/lidojs.+\.js$/u) || url.pathname.match(/\/wmo.+\.var\.js$/u)),
+  new CacheFirst({
+    cacheName: 'lidojs-' + 'CONF_LIDOJS_VERSION',
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 2,
+        maxAgeSeconds: 24 * 60 * 365, // 1 year
+      }),
+    ],
   })
 );
 registerRoute(
@@ -60,7 +66,7 @@ self.addEventListener('install', (event) => {
         .then((cache) => cache.addAll(thirdPartyUrls))
     );
     event.waitUntil(
-        caches.open("lido-ressources")
+        caches.open("lidojs-" + "CONF_LIDOJS_VERSION")
         .then((cache) => cache.addAll(lidoUrls))
     );
 });
