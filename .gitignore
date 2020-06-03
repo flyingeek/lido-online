@@ -1,11 +1,4 @@
-/node_modules/
-/public/build/
-
+node_modules/
+public/
 .DS_Store
-public/wmo.var.js
-public/lidojs.js
-public/favicon-svelte.png
-public/cool-background.jpg
-public/sw.js
-public/sw.js.map
 .env

@@ -5,24 +5,27 @@ import livereload from 'rollup-plugin-livereload'
 import { terser } from 'rollup-plugin-terser'
 import replace from 'rollup-plugin-replace';
 import json from '@rollup/plugin-json';
+import copy from 'rollup-plugin-copy'
 import watchAssets from 'rollup-plugin-watch-assets'; // also requires globby
 const workbox = require('rollup-plugin-workbox-inject');
-const fs = require('fs');
 const path = require('path');
+const Mustache = require('mustache');
 require('dotenv').config();
 const production = !process.env.ROLLUP_WATCH 
 
-const CONF_LIDOJS_JS = './build/lidojs.min.js';
-const CONF_WMO_JS = './build/wmo.var.js';
-const replaced = {
+// All URL, local or remote
+const U = {
   'CONF_BOOTSTRAP_CSS': 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css',
   'CONF_MAPBOXGL_CSS': 'https://unpkg.com/mapbox-gl@1.10.1/dist/mapbox-gl.css',
   'CONF_MAPBOXGL_JS': 'https://unpkg.com/mapbox-gl@1.10.1/dist/mapbox-gl.js',
   'CONF_PDFJS_WORKER_JS': 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.min.js',
   'CONF_PDFJS_JS': 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js',
-  'CONF_LIDOJS_JS': CONF_LIDOJS_JS,
-  'CONF_WMO_JS': CONF_WMO_JS
+  'CONF_LIDOJS_JS': './js/lidojs.min.js',
+  'CONF_WMO_JS': './js/wmo.var.js',
+  'CONF_BUNDLE_JS': './js/bundle.js',
+  'CONF_BUNDLE_CSS': './css/bundle.css'
 };
+const relPath = (url) => url.replace('./', './public/'); // public path for a local url
 
 export default [{
   input: 'src/main.js',
@@ -30,10 +33,10 @@ export default [{
     sourcemap: true,
     format: 'iife',
     name: 'app',
-    file: 'public/build/bundle.js'
+    file: relPath(U.CONF_BUNDLE_JS)
   },
   plugins: [
-    replace({...replaced, ...{
+    replace({...U, ...{
       'MAPBOX_TOKEN': (!production) ? process.env.MAPBOX_TOKEN : 'pk.eyJ1IjoiZmx5aW5nZWVrIiwiYSI6ImNrYXpmZzhuYjBpczUycW1pZzZ1b2Z4NjAifQ.5S-VzSXpJkui8NDMlTU51Q'
     }}),
     svelte({
@@ -42,7 +45,7 @@ export default [{
       // we'll extract any component CSS out into
       // a separate file - better for performance
       css: css => {
-        css.write('public/build/bundle.css')
+        css.write(relPath(U.CONF_BUNDLE_CSS))
       }
     }),
     json(),
@@ -56,23 +59,40 @@ export default [{
       dedupe: ['svelte']
     }),
     commonjs(),
-    {
-      name: 'copy-lidojs',
-      load() {
-        this.addWatchFile(path.resolve('./node_modules/@flyingeek/lidojs/dist/lidojs.min.js'));
-        this.addWatchFile(path.resolve('./node_modules/@flyingeek/lidojs/dist/wmo.var.js'));
-      },
-      generateBundle() {
-        fs.copyFileSync(
-          path.resolve('./node_modules/@flyingeek/lidojs/dist/lidojs.min.js'),
-          path.resolve('./public/' + CONF_LIDOJS_JS)
-        );
-        fs.copyFileSync(
-          path.resolve('./node_modules/@flyingeek/lidojs/dist/wmo.var.js'),
-          path.resolve('./public/' + CONF_WMO_JS)
-        );
-      }
-    },
+    copy({
+      targets: [
+        {
+          src: './node_modules/@flyingeek/lidojs/dist/lidojs.min.js',
+          dest: path.dirname(relPath(U.CONF_LIDOJS_JS)),
+          rename: path.basename(U.CONF_LIDOJS_JS) },
+        {
+          src: './node_modules/@flyingeek/lidojs/dist/lidojs.min.js.map',
+          dest: path.dirname(relPath(U.CONF_LIDOJS_JS)),
+          rename: path.basename(U.CONF_LIDOJS_JS + '.map') },
+        {
+          src: './node_modules/@flyingeek/lidojs/dist/wmo.var.js',
+          dest: path.dirname(relPath(U.CONF_WMO_JS)),
+          rename: path.basename(U.CONF_WMO_JS)
+        }
+      ],
+      copyOnce: true,
+      verbose: true
+    }),
+    copy({
+      targets: [{ src: 'assets/**/*', dest: 'public' }],
+      flatten: false,
+      copyOnce: true,
+      verbose: true
+    }),
+    copy({
+      targets: [{ 
+        src: 'src/index.html',
+        dest: 'public',
+        transform: (contents) => Mustache.render(contents.toString(), U)
+      }],
+      verbose: true
+    }),
+
     // In dev mode, call `npm run start` once
     // the bundle has been generated
     !production && serve(),
@@ -102,7 +122,7 @@ export default [{
     file: 'public/sw.js'
   },
   plugins: [
-    replace({...replaced, ...{
+    replace({...U, ...{
       'process.env.NODE_ENV': JSON.stringify('production'),
     }}),
     commonjs(),
@@ -114,8 +134,8 @@ export default [{
       "globDirectory": "public/",
       "globPatterns": [
         "index.html",
-        "build/bundle.css",
-        "build/bundle.js",
+        "css/bundle.css",
+        "js/bundle.js",
         "svg/*.svg",
         "sdf/*.png"
       ]
