@@ -117,7 +117,7 @@
   }
   .content{
     background-color:var(--blueaf);
-    background-image: url("/worldmap.svg");
+    background-image: url("../svg/worldmap.svg");
     background-attachment: fixed;
     background-size: cover;
     transition:background-position 0.3s ease;

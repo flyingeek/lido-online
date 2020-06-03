@@ -14,14 +14,14 @@
             'center': [0, 49], // starting position
             'zoom': 2 // starting zoom
         });
-        map.loadImage('maki-marker-sdf.png', function(error, image) {
+        map.loadImage('sdf/maki-marker-sdf.png', function(error, image) {
             if (error) {
                 console.log(error);
             } else {
                 map.addImage('sdf-marker-15', image, { pixelRatio: 2, sdf: true});
             }
         });
-        map.loadImage('map-triangle.png', function(error, image) {
+        map.loadImage('sdf/map-triangle-sdf.png', function(error, image) {
             if (error) {
                 console.log(error);
             } else {

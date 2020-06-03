@@ -1,6 +1,6 @@
 <script>
 </script>
-<h1 class="text-center">Convertir l'OFP <img src="/Air_France_Logo.svg" alt="logo Air France"/> en KML/GeoJSON</h1>
+<h1 class="text-center">Convertir l'OFP <img src="svg/Air_France_Logo.svg" alt="logo Air France"/> en KML/GeoJSON</h1>
 <div class="row">
   <div class="card-deck">
     <div class=" col-12 col-sm-6 col-md-6 col-xl-3"><div class="card avenza">
