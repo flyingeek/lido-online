@@ -1,11 +1,12 @@
 {
   "name": "lido-svelte",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
-    "build": "rollup -c",
+    "build": "npm run clean && rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --host 0.0.0.0",
-    "lint": "eslint . --fix --ext js,svelte"
+    "lint": "eslint . --fix --ext js,svelte",
+    "clean": "rimraf public/**"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "11.0.2",
@@ -16,9 +17,9 @@
     "eslint-plugin-svelte3": "^2.7.3",
     "globby": "^11.0.1",
     "mustache": "^4.0.1",
+    "rimraf": "^3.0.2",
     "rollup": "^1.20.0",
     "rollup-plugin-copy": "^3.3.0",
-    "rollup-plugin-copy-assets": "^2.0.1",
     "rollup-plugin-livereload": "^1.0.0",
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-svelte": "^5.0.3",
