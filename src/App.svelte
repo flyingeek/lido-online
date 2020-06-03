@@ -16,22 +16,26 @@
   import {updateMapLayers} from './components/mapboxgl.js';
   import {storage, stores, validate, saved, storeSettingsFromURL} from "./components/storage.js";
 
-  export let promise = undefined;
-  export let map = undefined;
-  storeSettingsFromURL(window.location.search);
-  export let kmlOptions = validate(storage.getItem(stores.optionsKML) || {});
-  let permalink = window.location.href;
+  let sidebar = false;
   let route = "/";
+  let permalink = window.location.href;
+  let promise = undefined;
+  let map = undefined;
+  storeSettingsFromURL(window.location.search);
+  let kmlOptions = validate(storage.getItem(stores.optionsKML) || {});
   const hashchange = () => {
     route = window.location.hash.substr(1) || "/";
     if (!promise && (route === '/map' || route === '/gramet' || route === '/route')) {
       route = '/';
       window.location.hash = '#/';
     }
+    if (route === '/map') {
+      if (sidebar) sidebar = false;
+    }
   };
   hashchange();
 
-  const setHistory = e => {
+  const setHistory = (e) => {
     const stateObj = saved(kmlOptions);
     let query = Object.entries(stateObj)
       .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
@@ -43,19 +47,22 @@
     history.replaceState(stateObj, "Mon Convertisseur d'OFP", permalink);
   };
   setHistory();
-  const update = e => {
+  const update = (e) => {
     console.log(e.detail.name, e.detail.value);
     if (map) updateMapLayers(map, e.detail.name, e.detail.value);
     updateKml(e.detail.name, e.detail.value);
     setHistory();
   };
+  const ofpChange = () => {
+    if (sidebar) sidebar = false;
+  }
 </script>
 
 <main class="container {route.substr(1) || 'home'}">
   <div class="content">
     <Navbar {promise} {route}>
         <form class:invisible={route === '/help'} class="form-inline" on:submit|preventDefault>
-          <OfpInput bind:promise {kmlOptions}/>
+          <OfpInput bind:promise {kmlOptions} on:change={ofpChange} />
         </form>
     </Navbar>
     <SWUpdate />
@@ -66,7 +73,7 @@
         <Page hidden={route !== '/map'}><div style="margin: auto;">traitement en cours...</div></Page>
       {:then ofp}
         <Page hidden={route !== '/map'}>
-          <Map {kmlOptions} {ofp} bind:map/>
+          <Map {kmlOptions} {ofp} {route} bind:map/>
           <Export {ofp} on:save={setHistory} />
         </Page>
       {:catch error}
@@ -95,7 +102,7 @@
     {/if}
   </div>
   {#if route === '/map'}
-  <FormSettings bind:kmlOptions on:change={update} on:save={setHistory} />
+  <FormSettings bind:kmlOptions bind:sidebar on:change={update} on:save={setHistory} />
   {/if}
 </main>
 <svelte:window on:hashchange={hashchange}/>

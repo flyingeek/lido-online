@@ -4,6 +4,7 @@
     export let map = undefined;
     export let kmlOptions;
     export let ofp;
+    export let route;
 
     function mapbox(node) {
         mapboxgl.accessToken = token;
@@ -85,8 +86,11 @@
 
         });
         return {
-            update() {
-                // nothing to do (updated in App.svelte);
+            update(parameters) {
+                if (route === '/map' && map) {
+                    map.resize();
+                    console.log("map resized");
+                }
             },
             destroy() {
                 map.remove();
@@ -95,7 +99,7 @@
         }
     }
 </script>
-<div id="map" use:mapbox></div>
+<div id="map" use:mapbox={route}></div>
 
 <style>
     #map {

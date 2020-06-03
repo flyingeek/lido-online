@@ -37,6 +37,7 @@
     };
 </script>
 <script>
+    import { createEventDispatcher } from 'svelte';
     export let promise = undefined;
     export let kmlOptions;
     let disabled = false;
@@ -44,6 +45,7 @@
     let name = "file";
     let label = "Choisir un OFP";
     let readyClass = false;
+    const dispatch = createEventDispatcher();
 
     function preload() {
         loader(preloadFiles, () => !!window['pdfjs-dist/build/pdf'], () => {
@@ -95,12 +97,13 @@
     };
     async function process(e) {
         disabled = true;
-        preload()
+        preload(); // in case click event not supported or missed
 
         await ready.promise.then(() => {
             const file = e.target.files[0];
             if (file) {
                 label = e.target.value.split(/([\\/])/g).pop();
+                dispatch('change', label);
                 promise = getOFP(file);
                 if (window.location.hash !== '#/gramet') {
                     window.location.hash = '#/map';
@@ -112,7 +115,7 @@
 </script>
 
 <div class="custom-file" class:blink={!promise}>
-    <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} class="custom-file-input">
+    <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} on:click|once={preload} class="custom-file-input">
     <label class:ready={readyClass} class="custom-file-label text-truncate" for="{name}">{label}</label>
 </div>
 <!-- <svelte:window on:load={preload}/> -->

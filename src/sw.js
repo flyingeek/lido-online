@@ -5,7 +5,7 @@ import {ExpirationPlugin} from 'workbox-expiration';
 
 precacheAndRoute(
     self.__WB_MANIFEST, {
-    "ignoreURLParametersMatching": [/.*/]
+    "ignoreURLParametersMatching": [/.+Pin$/, /.+Display$/, /.+Color$/, /.+PinPosition$/, /^shortcut$/, /^downloadType$/, /^runShortcut$/]
 });
 
 const thirdPartyUrls = [
@@ -70,4 +70,3 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
-console.log('serviceworker running');
