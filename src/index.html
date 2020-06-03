@@ -31,11 +31,20 @@
 <script>
 // make the whole serviceworker process into a promise so later on we can
 // listen to it and in case new content is available a toast will be shown
-window.isSWUpdateAvailable = new Promise(function(resolve, reject) {
-	if ('serviceWorker' in navigator) {
+class Deferred {
+    constructor() {
+        this.promise = new Promise((resolve, reject)=> {
+            this.reject = reject
+            this.resolve = resolve
+        })
+    }
+}
+window.isSWUpdateAvailable = new Deferred();
+if ('serviceWorker' in navigator) {
+	window.addEventListener('load', function() {
 		navigator.serviceWorker.register('/sw.js', {scope: '/'})
 			.then(reg => {
-				if (reg.waiting) resolve(reg);
+				if (reg.waiting) window.isSWUpdateAvailable.resolve(reg);
 				reg.onupdatefound = () => {
 					const installingWorker = reg.installing;
 					installingWorker.onstatechange = () => {
@@ -43,10 +52,10 @@ window.isSWUpdateAvailable = new Promise(function(resolve, reject) {
 							case 'installed':
 								if (navigator.serviceWorker.controller) {
 									// new update available
-									resolve(reg);
+									window.isSWUpdateAvailable.resolve(reg);
 								} else {
 									// no update available
-									resolve(false);
+									window.isSWUpdateAvailable.resolve(false);
 								}
 								break;
 						}
@@ -55,7 +64,7 @@ window.isSWUpdateAvailable = new Promise(function(resolve, reject) {
 			})
 			.catch(err => {
 				console.error('[SW ERROR]', err);
-				resolve(false);
+				window.isSWUpdateAvailable.resolve(false);
 			});
 		// reload once when the new Service Worker starts activating
 		let refreshing;
@@ -64,10 +73,10 @@ window.isSWUpdateAvailable = new Promise(function(resolve, reject) {
 			refreshing = true;
 			window.location.reload();
 		});
-	} else {
-		resolve(false);
-	}
-});
+	});
+} else {
+	window.isSWUpdateAvailable.resolve(false);
+}
 </script>
 </body>
 </html>

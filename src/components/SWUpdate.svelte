@@ -5,7 +5,8 @@
         reg.waiting.postMessage('SKIP_WAITING');
     }
 </script>
-{#await window.isSWUpdateAvailable then registration}
+
+{#await window.isSWUpdateAvailable.promise then registration}
 {#if !!registration && !dismiss}
 <div class="toast" style="position: absolute; top: 0; right: 0;">   
     <div class="toast-header">
