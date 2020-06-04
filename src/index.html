@@ -42,7 +42,7 @@ class Deferred {
 window.isSWUpdateAvailable = new Deferred();
 if ('serviceWorker' in navigator) {
 	window.addEventListener('load', function() {
-		navigator.serviceWorker.register('/sw.js', {scope: '/'})
+		navigator.serviceWorker.register('./sw.js')
 			.then(reg => {
 				if (reg.waiting) window.isSWUpdateAvailable.resolve(reg);
 				reg.onupdatefound = () => {
