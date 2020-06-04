@@ -67,11 +67,13 @@ export default [{
         {
           src: './node_modules/@flyingeek/lidojs/dist/lidojs.min.js',
           dest: path.dirname(relPath(U.CONF_LIDOJS_JS)),
-          rename: path.basename(U.CONF_LIDOJS_JS) },
+          rename: path.basename(U.CONF_LIDOJS_JS)
+        },
         {
           src: './node_modules/@flyingeek/lidojs/dist/lidojs.min.js.map',
-          dest: path.dirname(relPath(U.CONF_LIDOJS_JS)),
-          rename: path.basename(U.CONF_LIDOJS_JS + '.map') },
+          dest: path.dirname(relPath(U.CONF_LIDOJS_JS))
+          //must not be renamed
+        },
         {
           src: './node_modules/@flyingeek/lidojs/dist/wmo.var.js',
           dest: path.dirname(relPath(U.CONF_WMO_JS)),

@@ -19,25 +19,20 @@ const lidoUrls = [
     'CONF_LIDOJS_JS',
     'CONF_WMO_JS'
 ];
+const allUrls = thirdPartyUrls.concat(lidoUrls);
 
 registerRoute(
-    /.+\/(bootstrap\.min\.css|pdf\.min\.js|pdf\.worker\.min\.js|mapbox-gl\.js|mapbox-gl\.css)$/,
+    /.+\/(bootstrap\.min\.css|pdf\.min\.js|pdf\.worker\.min\.js|mapbox-gl\.js|mapbox-gl\.css|lidojs.+\.js|wmo.+\.var\.js)$/,
     new CacheFirst({
-      cacheName: 'lido-3rd-static'
+      cacheName: 'lido-warmup',
+      plugins: [
+        new ExpirationPlugin({
+          maxAgeSeconds: 24 * 60 * 365, // 1 year
+        })
+      ]
     })
 );
-registerRoute(
-  ({url}) => url.origin === self.location.origin && (url.pathname.match(/\/lidojs.+\.js$/u) || url.pathname.match(/\/wmo.+\.var\.js$/u)),
-  new CacheFirst({
-    cacheName: 'lidojs-' + 'CONF_LIDOJS_VERSION',
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 2,
-        maxAgeSeconds: 24 * 60 * 365, // 1 year
-      }),
-    ],
-  })
-);
+
 registerRoute(
   ({url}) => url.origin === 'https://api.mapbox.com' && ( 
      (url.pathname.startsWith('/styles/') || url.pathname.startsWith('/fonts/')) ||
@@ -47,6 +42,7 @@ registerRoute(
     cacheName: 'lido-mapbox'
   })
 );
+
 registerRoute(
   ({url}) => url.origin === 'https://editolido.alwaysdata.net' && url.pathname.startsWith('/proxy_gramet/'),
   new CacheFirst({
@@ -54,7 +50,7 @@ registerRoute(
     plugins: [
       new ExpirationPlugin({
         maxEntries: 10,
-        maxAgeSeconds: 24 * 60, // 24h
+        maxAgeSeconds: 48 * 60, // 48h
       })
     ]
   })
@@ -62,13 +58,52 @@ registerRoute(
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open("lido-3rd-static")
-        .then((cache) => cache.addAll(thirdPartyUrls))
+        caches.open("lido-warmup")
+        .then((cache) => cache.addAll(allUrls))
     );
-    event.waitUntil(
-        caches.open("lidojs-" + "CONF_LIDOJS_VERSION")
-        .then((cache) => cache.addAll(lidoUrls))
-    );
+});
+
+self.addEventListener('activate', function(event) {
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      // cache to delete (as promise array)
+      const cachesToDelete = cacheNames.filter(function(cacheName) {
+        if (cacheName.startsWith('lidojs-')) {
+          return true; // remove
+        } else if (cacheName === 'lido-3rd-static') {
+          return true; //remove
+        } else if (cacheName === 'lido-ressources') {
+          return true;
+        }
+        return false;
+      }).map(function(cacheName) {
+        return caches.delete(cacheName);
+      });
+      // entries to delete (as promise array)
+      let entriesToDelete = [];
+      caches.open('lido-warmup').then(function(cache) {
+        cache.keys()
+          .then(function(keys) {
+            entriesToDelete = keys
+              .filter((request,) => {
+                if (thirdPartyUrls.indexOf(request.url) !== -1) {
+                  return false;
+                }
+                for (const url of lidoUrls) {
+                  if (url.startsWith("http")) {
+                    if (request.url === url) return false;
+                  } else {
+                    if (request.url.indexOf(url.replace(/^\./, '')) !== -1) return false;
+                  }
+                }
+                return true;
+              }).map(request => cache.delete(request));
+          });
+      }).catch(err => console.log(err));
+      return Promise.all(cachesToDelete.concat(entriesToDelete));
+    })
+  );
+  event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener('message', (event) => {

@@ -53,10 +53,7 @@ if ('serviceWorker' in navigator) {
 								if (navigator.serviceWorker.controller) {
 									// new update available
 									window.isSWUpdateAvailable.resolve(reg);
-								} else {
-									// no update available
-									window.isSWUpdateAvailable.resolve(false);
-								}
+								} // else handled by sw activate event (clients.claim)
 								break;
 						}
 					};
@@ -64,7 +61,6 @@ if ('serviceWorker' in navigator) {
 			})
 			.catch(err => {
 				console.error('[SW ERROR]', err);
-				window.isSWUpdateAvailable.resolve(false);
 			});
 		// reload once when the new Service Worker starts activating
 		let refreshing;
@@ -74,8 +70,6 @@ if ('serviceWorker' in navigator) {
 			window.location.reload();
 		});
 	});
-} else {
-	window.isSWUpdateAvailable.resolve(false);
 }
 </script>
 </body>

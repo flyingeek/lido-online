@@ -7,7 +7,7 @@
 </script>
 
 {#await window.isSWUpdateAvailable.promise then registration}
-{#if !!registration && !dismiss}
+{#if !dismiss}
 <div class="toast" style="position: absolute; top: 0; right: 0;">   
     <div class="toast-header">
         <strong class="mr-auto"><span>👨🏻‍✈️</span>Mise à jour disponible</strong>
