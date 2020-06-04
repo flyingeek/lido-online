@@ -25,11 +25,6 @@ registerRoute(
     /.+\/(bootstrap\.min\.css|pdf\.min\.js|pdf\.worker\.min\.js|mapbox-gl\.js|mapbox-gl\.css|lidojs.+\.js|wmo.+\.var\.js)$/,
     new CacheFirst({
       cacheName: 'lido-warmup',
-      plugins: [
-        new ExpirationPlugin({
-          maxAgeSeconds: 24 * 60 * 365, // 1 year
-        })
-      ]
     })
 );
 
@@ -55,11 +50,53 @@ registerRoute(
     ]
   })
 );
+const addAll = function(cache, immutableRequests = [], mutableRequests = []) {
+  // Verify arguments
+  if (!(cache instanceof Cache) || !Array.isArray(immutableRequests) || !Array.isArray(mutableRequests)) {
+    return Promise.reject();
+  }
+
+  let newImmutableRequests = [];
+
+  // Go over immutable requests
+  return Promise.all(
+    immutableRequests.map(function(url) {
+      return caches.match(url).then(function(response) {
+        if (response) {
+          return cache.put(url, response);
+        } else {
+          newImmutableRequests.push(url);
+          return Promise.resolve();
+        }
+      });
+    })
+  // go over mutable requests, and immutable requests not found in any cache
+  ).then(function() {
+    return cache.addAll(newImmutableRequests.concat(mutableRequests));
+  });
+};
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
+        // speed up install prompt by not downloading files already in cache
         caches.open("lido-warmup")
-        .then((cache) => cache.addAll(allUrls))
+          .then((cache) => {
+            addAll(cache, allUrls)
+            // cache.keys().then((keys) => {
+            //   const cachedUrls = keys.map(r => r.url);
+            //   const urlsToAdd = allUrls.filter(url => {
+            //     if (url.startsWith('http')) {
+            //       if (cachedUrls.indexOf(url) !== -1) return false
+            //     } else {
+            //       for (const urlEntry of cachedUrls) {
+            //         if (urlEntry.indexOf(url.replace(/^\./, '')) !== -1) return false;
+            //       }
+            //     }
+            //     return true;
+            //   });
+            //   cache.addAll(urlsToAdd);
+            // });
+          })
     );
 });
 

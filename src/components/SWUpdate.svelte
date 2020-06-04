@@ -1,5 +1,6 @@
 <script>
     let dismiss = false;
+    export let loaded = false;
     const install = (reg) => {
         dismiss = true;
         reg.waiting.postMessage('SKIP_WAITING');
@@ -7,7 +8,7 @@
 </script>
 
 {#await window.isSWUpdateAvailable.promise then registration}
-{#if !dismiss}
+{#if registration && !dismiss}
 <div class="toast" style="position: absolute; top: 0; right: 0;">   
     <div class="toast-header">
         <strong class="mr-auto"><span>👨🏻‍✈️</span>Mise à jour disponible</strong>
@@ -16,8 +17,12 @@
         </button>
     </div>
     <div class="toast-body text-center">
+        {#if !loaded}
         <p>Celà va recharger l'App</p>
-        <button type="button" class="btn btn-success" on:click={() => install(registration)}>Installer</button>
+        {:else}
+        <p>Il faudra recharger l'OFP</p>
+        {/if}
+        <button class:btn-primary={!loaded} class:btn-danger={loaded} type="button" class="btn" on:click={() => install(registration)}>Installer</button>
     </div>
 </div>
 {/if}

@@ -65,7 +65,7 @@
           <OfpInput bind:promise {kmlOptions} on:change={ofpChange} />
         </form>
     </Navbar>
-    <SWUpdate />
+    <SWUpdate loaded={!!promise}/>
     <!-- START We do not want the map element to disappear from the dom -->
     {#if promise}
       {#await promise}
