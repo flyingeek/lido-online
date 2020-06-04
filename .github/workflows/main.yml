@@ -19,7 +19,6 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           scope: '@flyingeek'
       - run: |
-          echo "//npm.pkg.github.com/:_authToken=${{secrets.GH_READ_NPM_PACKAGE}}" > ~/.npmrc
           npm install
           npm run build
         env:
