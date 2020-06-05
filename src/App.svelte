@@ -23,11 +23,10 @@
   let map = undefined;
   storeSettingsFromURL(window.location.search);
   let kmlOptions = validate(storage.getItem(stores.optionsKML) || {});
-  const hashchange = () => {
+  const hashchange = (e) => {
     route = window.location.hash.substr(1) || "/";
     if (!promise && (route === '/map' || route === '/gramet' || route === '/route')) {
       route = '/';
-      window.location.hash = '#/';
     }
     if (route === '/map') {
       if (sidebar) sidebar = false;
@@ -43,12 +42,12 @@
     permalink =
       window.location.origin +
       window.location.pathname +
-      (query ? "?" + query : "");
+      (query ? "?" + query : "") +
+      '#' + route;
     history.replaceState(stateObj, "Mon Convertisseur d'OFP", permalink);
   };
   setHistory();
   const update = (e) => {
-    console.log(e.detail.name, e.detail.value);
     if (map) updateMapLayers(map, e.detail.name, e.detail.value);
     updateKml(e.detail.name, e.detail.value);
     setHistory();
