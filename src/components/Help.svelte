@@ -16,7 +16,7 @@ const skipWaiting = () => {
     }
 }
 const reload = () => {
-    window.location.reload;
+    window.location.reload();
 }
 </script>
 
@@ -26,7 +26,7 @@ const reload = () => {
     {#if control}
     <p>La page est controllée par le service worker.</p>
     {:else}
-    <p>La page n'est pas controllée par le service worker. <a href="." on:click|preventDefault={reload}>Recharger la page</a></p>
+    <p>La page n'est pas controllée par le service worker. <a href="./index.html" on:click={reload}>Recharger la page</a></p>
     {/if}
     {#if status.code === 2}
     <p>Service Worker status: <span data-status={status.code}>{status.msg}</span> <a href="." on:click|preventDefault={skipWaiting}>Installer</a></p>
@@ -34,6 +34,7 @@ const reload = () => {
     <p>Service Worker status: <span data-status={status.code}>{status.msg}</span> </p>
     {/if}
 {/if}
+<p>En cas de problème en mode Application: <a class="btn btn-danger" href="./index.html" on:click={reload}>Recharger la page</a></p>
 </div>
 
 <style>
