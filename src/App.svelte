@@ -54,6 +54,7 @@
   };
   const ofpChange = () => {
     if (sidebar) sidebar = false;
+    window.serviceWorker.update().catch((err) => console.log('failed to update sw'));
   }
 </script>
 
