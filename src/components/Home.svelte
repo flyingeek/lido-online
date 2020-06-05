@@ -4,13 +4,13 @@
 <div class="row">
   <div class="card-deck">
     <div class=" col-12 col-sm-6 col-md-6 col-xl-3"><div class="card avenza">
-      <div class="card-header">Compatible Avenza Maps</div>
+      <div class="card-header">COMPATIBLE OFFLINE</div>
       <div class="card-body">
-        <p class="card-text">Un KML spécifique est disponible, optimisé pour l'affichage dans Avenza Maps</p>
+        <p class="card-text">L'OFP ne quitte pas votre iPad ou votre ordinateur. Fonctionne avec les dernières technologies: PWA, Service Worker, fully responsive, cartes WebGL...</p>
       </div>
     </div></div>
     <div class="col-12 col-sm-6 col-md-6 col-xl-3"><div class="card mapsme">
-      <div class="card-header">Compatible MapsMe</div>
+      <div class="card-header">Compatible MapsMe/Avenza</div>
       <div class="card-body">
         <p class="card-text">Le thème par défaut s'accorde parfaitement avec les fichiers avions, également compatible avec Google Earth</p>
       </div>
