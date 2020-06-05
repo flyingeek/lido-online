@@ -9,6 +9,7 @@
 	<link rel='icon' type='image/png' href='./favicon.png'>
 	<link crossorigin="anonymous" rel='stylesheet' href='{{{CONF_BOOTSTRAP_CSS}}}'>
 	<link rel='stylesheet' href='{{{CONF_BUNDLE_CSS}}}'>
+	<link rel="dns-prefetch" href="https://unpkg.com">
 
 	<script defer src='{{{CONF_BUNDLE_JS}}}'></script>
 </head>
@@ -44,6 +45,7 @@ if ('serviceWorker' in navigator) {
 	window.addEventListener('load', function() {
 		navigator.serviceWorker.register('./sw.js')
 			.then(reg => {
+				window.serviceWorker = reg;
 				if (reg.waiting) window.isSWUpdateAvailable.resolve(reg);
 				reg.onupdatefound = () => {
 					const installingWorker = reg.installing;

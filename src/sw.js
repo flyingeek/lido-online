@@ -101,10 +101,12 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', function(event) {
+  let cachesToDelete = [];
+  let entriesToDelete = [];
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
       // cache to delete (as promise array)
-      const cachesToDelete = cacheNames.filter(function(cacheName) {
+      cachesToDelete = cacheNames.filter(function(cacheName) {
         if (cacheName.startsWith('lidojs-')) {
           return true; // remove
         } else if (cacheName === 'lido-3rd-static') {
@@ -116,31 +118,27 @@ self.addEventListener('activate', function(event) {
       }).map(function(cacheName) {
         return caches.delete(cacheName);
       });
-      // entries to delete (as promise array)
-      let entriesToDelete = [];
-      caches.open('lido-warmup').then(function(cache) {
-        cache.keys()
-          .then(function(keys) {
-            entriesToDelete = keys
-              .filter((request,) => {
-                if (thirdPartyUrls.indexOf(request.url) !== -1) {
-                  return false;
+      return caches.open('lido-warmup')
+    }).then(function(cache) {
+        return cache.keys().then(function(keys) {
+          entriesToDelete = keys
+            .filter((request,) => {
+              if (thirdPartyUrls.indexOf(request.url) !== -1) {
+                return false;
+              }
+              for (const url of lidoUrls) {
+                if (url.startsWith("http")) {
+                  if (request.url === url) return false;
+                } else {
+                  if (request.url.indexOf(url.replace(/^\./, '')) !== -1) return false;
                 }
-                for (const url of lidoUrls) {
-                  if (url.startsWith("http")) {
-                    if (request.url === url) return false;
-                  } else {
-                    if (request.url.indexOf(url.replace(/^\./, '')) !== -1) return false;
-                  }
-                }
-                return true;
-              }).map(request => cache.delete(request));
-          });
-      }).catch(err => console.log(err));
-      return Promise.all(cachesToDelete.concat(entriesToDelete));
-    })
+              }
+              return true;
+            }).map(request => cache.delete(request));
+          return Promise.all(cachesToDelete.concat(entriesToDelete));
+        });
+    }).then(() => self.clients.claim())
   );
-  event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener('message', (event) => {
