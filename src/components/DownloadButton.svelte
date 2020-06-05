@@ -3,6 +3,7 @@
     const dataURL = function (str, type = "application/vnd.google-earth.kml+xml") {
         return "data:" + type + ";base64," + btoa(unescape(encodeURIComponent(str)));
     };
+    const options = ['KML Mapsme', 'KML Avenza', 'GeoJson'];
 </script>
 <script>
     import {KmlGenerator} from './kml.js';
@@ -46,6 +47,14 @@
             e.preventDefault();
             return false;
         }
+        //This will be interesting with navigator.canShare (Web Share API level 2)
+        // if (navigator.share && (selected === 0 || selected === 1)) {
+        //     navigator.share({
+        //         "title": options[selected],
+        //         url
+        //     });
+        //     e.preventDefault();
+        // }
     };
     function save() {
         if (selected === defaultValue){
@@ -59,9 +68,9 @@
 
 <div class="input-group">
   <select bind:value={selected} class="custom-select"aria-label="Example select with button addon" on:change={save}>
-    <option selected={selected === 0} value="{0}">KML Mapsme</option>
-    <option selected={selected === 1} value="{1}">KML Avenza</option>
-    <option selected={selected === 2} value="{2}">GeoJson</option>
+    <option selected={selected === 0} value="{0}">{options[0]}</option>
+    <option selected={selected === 1} value="{1}">{options[1]}</option>
+    <option selected={selected === 2} value="{2}">{options[2]}</option>
   </select>
   <div class="input-group-append">
     <a class="btn btn-success" download={filename} href={url} on:click={download} target={target}>{label}</a>
