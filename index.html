@@ -6,12 +6,18 @@
 
 	<title>OFP app</title>
 
-	<link rel='icon' type='image/png' href='./favicon.png'>
+	<link rel='icon' type='image/png' sizes="128x128" href='./favicon.png'>
 	<link crossorigin="anonymous" rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css'>
 	<link rel='stylesheet' href='./css/bundle.css'>
 	<link rel="dns-prefetch" href="https://unpkg.com">
-
 	<script defer src='./js/bundle.js'></script>
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="msapplication-TileColor" content="#da532c">
+	<meta name="theme-color" content="#ffffff">
 </head>
 
 <body>
@@ -33,12 +39,12 @@
 // make the whole serviceworker process into a promise so later on we can
 // listen to it and in case new content is available a toast will be shown
 class Deferred {
-    constructor() {
-        this.promise = new Promise((resolve, reject)=> {
-            this.reject = reject
-            this.resolve = resolve
-        })
-    }
+	constructor() {
+		this.promise = new Promise((resolve, reject)=> {
+			this.reject = reject
+			this.resolve = resolve
+		})
+	}
 }
 window.isSWUpdateAvailable = new Deferred();
 if ('serviceWorker' in navigator) {
