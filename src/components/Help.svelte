@@ -1,14 +1,14 @@
 <script>
 $: lidojsVersion = (window.editolido) ? ' / lidojs: v' + window.editolido.version : '';
-$: sw = window.serviceWorker;
-$: control = navigator.serviceWorker && navigator.serviceWorker.controller;
+let sw = window.serviceWorker;
+let control = navigator.serviceWorker && navigator.serviceWorker.controller;
 $: status = getStatus(sw)
 
 const getStatus = (reg) => {
-    if (!reg) return '';
-    if (reg.installing) return "installing";
-    if (reg.waiting) return "waiting";
-    if (reg.active) return "active";
+    if (!reg) return {'code': 0, 'msg': '🔺 unknown'};
+    if (reg.installing) return {'code': 1, 'msg': "🔹 installing"};
+    if (reg.waiting) return {'code': 2, 'msg': "🔸 waiting"};
+    if (reg.active) return {'code': 3, 'msg': "🟢"};
 }
 const skipWaiting = () => {
     if (sw.waiting) {
@@ -18,7 +18,6 @@ const skipWaiting = () => {
 const reload = () => {
     window.location.reload;
 }
-
 </script>
 
 <div>
@@ -27,12 +26,12 @@ const reload = () => {
     {#if control}
     <p>La page est controllée par le service worker.</p>
     {:else}
-    <p>La page n'est pas controllée par le service worker. <a href="." on:click|preventDefault={reload}>Installer</a></p>
+    <p>La page n'est pas controllée par le service worker. <a href="." on:click|preventDefault={reload}>Recharger la page</a></p>
     {/if}
-    {#if status === 'waiting'}
-    <p>Service Worker status: <a href="." on:click|preventDefault={skipWaiting}>{status}</a></p>
+    {#if status.code === 2}
+    <p>Service Worker status: <span data-status={status.code}>{status.msg}</span> <a href="." on:click|preventDefault={skipWaiting}>Installer</a></p>
     {:else}
-    <p>Service Worker status: {status} </p>
+    <p>Service Worker status: <span data-status={status.code}>{status.msg}</span> </p>
     {/if}
 {/if}
 </div>

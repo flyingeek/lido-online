@@ -5,6 +5,7 @@ import {ExpirationPlugin} from 'workbox-expiration';
 
 precacheAndRoute(
     self.__WB_MANIFEST, {
+    "directoryIndex": null,
     "ignoreURLParametersMatching": [/.+Pin$/, /.+Display$/, /.+Color$/, /.+PinPosition$/, /^shortcut$/, /^downloadType$/, /^runShortcut$/]
 });
 
@@ -50,6 +51,8 @@ registerRoute(
     ]
   })
 );
+
+// from https://github.com/TalAter/cache.adderall
 const addAll = function(cache, immutableRequests = [], mutableRequests = []) {
   // Verify arguments
   if (!(cache instanceof Cache) || !Array.isArray(immutableRequests) || !Array.isArray(mutableRequests)) {
@@ -78,64 +81,55 @@ const addAll = function(cache, immutableRequests = [], mutableRequests = []) {
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        // speed up install prompt by not downloading files already in cache
-        caches.open("lido-warmup")
-          .then((cache) => {
-            addAll(cache, allUrls)
-            // cache.keys().then((keys) => {
-            //   const cachedUrls = keys.map(r => r.url);
-            //   const urlsToAdd = allUrls.filter(url => {
-            //     if (url.startsWith('http')) {
-            //       if (cachedUrls.indexOf(url) !== -1) return false
-            //     } else {
-            //       for (const urlEntry of cachedUrls) {
-            //         if (urlEntry.indexOf(url.replace(/^\./, '')) !== -1) return false;
-            //       }
-            //     }
-            //     return true;
-            //   });
-            //   cache.addAll(urlsToAdd);
-            // });
-          })
+        caches.open("lido-warmup").then((cache) => {
+          return addAll(cache, allUrls)
+        })
     );
 });
+/**
+ * Check if we should keep the cache based on the name
+ * @param {Array} cacheName
+ * @returns {Boolean}
+ */
+const isOldCache = (cacheName) => {
+  if (cacheName.startsWith('lidojs-')) {
+    return true;
+  } else if (cacheName === 'lido-3rd-static') {
+    return true;
+  } else if (cacheName === 'lido-ressources') {
+    return true;
+  }
+  return false;
+};
+/**
+ * check entries of a cache to find 
+ * old entry (not present in thirdPartyUrls or lidoUrls)
+ * @param {Request} request 
+ * @returns {Boolean} true if should be removed from cache
+ */
+const isOldRequest = (request) => {
+  if (thirdPartyUrls.indexOf(request.url) !== -1) {
+    return false;
+  }
+  for (const url of lidoUrls) {
+    if (url.startsWith("http")) {
+      if (request.url === url) return false;
+    } else {
+      if (request.url.indexOf(url.replace(/^\./, '')) !== -1) return false;
+    }
+  }
+  return true;
+};
 
 self.addEventListener('activate', function(event) {
-  let cachesToDelete = [];
-  let entriesToDelete = [];
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
-      // cache to delete (as promise array)
-      cachesToDelete = cacheNames.filter(function(cacheName) {
-        if (cacheName.startsWith('lidojs-')) {
-          return true; // remove
-        } else if (cacheName === 'lido-3rd-static') {
-          return true; //remove
-        } else if (cacheName === 'lido-ressources') {
-          return true;
-        }
-        return false;
-      }).map(function(cacheName) {
-        return caches.delete(cacheName);
-      });
+      return cacheNames.filter(isOldCache).map((cacheName) => caches.delete(cacheName));
+    }).then(() => {
       return caches.open('lido-warmup')
     }).then(function(cache) {
         return cache.keys().then(function(keys) {
-          entriesToDelete = keys
-            .filter((request,) => {
-              if (thirdPartyUrls.indexOf(request.url) !== -1) {
-                return false;
-              }
-              for (const url of lidoUrls) {
-                if (url.startsWith("http")) {
-                  if (request.url === url) return false;
-                } else {
-                  if (request.url.indexOf(url.replace(/^\./, '')) !== -1) return false;
-                }
-              }
-              return true;
-            }).map(request => cache.delete(request));
-          return Promise.all(cachesToDelete.concat(entriesToDelete));
+          return Promise.all(keys.filter(isOldRequest).map(request => cache.delete(request)));
         });
     }).then(() => self.clients.claim())
   );
