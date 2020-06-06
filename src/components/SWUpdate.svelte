@@ -1,18 +1,18 @@
 <script>
-    let dismiss = false;
+    import {swDismiss} from "../store.js";
     export let loaded = false;
     const install = (reg) => {
-        dismiss = true;
+        //$swDismiss = true;
         reg.waiting.postMessage('SKIP_WAITING');
     }
 </script>
 
 {#await window.isSWUpdateAvailable.promise then registration}
-{#if registration && !dismiss}
+{#if registration && !$swDismiss}
 <div class="toast" style="position: absolute; top: 0; right: 0;">   
     <div class="toast-header">
         <strong class="mr-auto"><span>👨🏻‍✈️</span>Mise à jour disponible</strong>
-        <button type="button" class="ml-2 mb-1 close" aria-label="Close" on:click={() => dismiss=true}>
+        <button type="button" class="ml-2 mb-1 close" aria-label="Close" on:click={() => $swDismiss=true}>
             <span aria-hidden="true">&times;</span>
         </button>
     </div>

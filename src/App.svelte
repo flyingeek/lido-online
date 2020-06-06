@@ -15,6 +15,7 @@
   import { updateKml } from "./components/kml.js";
   import {updateMapLayers} from './components/mapboxgl.js';
   import {storage, stores, validate, saved, storeSettingsFromURL} from "./components/storage.js";
+  import {swDismiss} from "./store.js";
 
   let sidebar = false;
   let route = "/";
@@ -54,6 +55,7 @@
   };
   const ofpChange = () => {
     if (sidebar) sidebar = false;
+    if ($swDismiss) $swDismiss = false;
     window.serviceWorker.update().catch((err) => console.log('failed to update sw'));
   }
 </script>
