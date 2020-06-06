@@ -33,6 +33,16 @@ const skipWaiting = () => {
 const reload = () => {
     window.location.reload();
 }
+const reinit = (e) => {
+    const result = window.confirm("Vous devez être connecté au réseau, ceci ne devrait être utile qu'en cas de bug, Réinitialiser ?");
+    if (result) {
+        if (sw) sw.unregister();
+        reload();
+    } else {
+        e.preventDefault();
+        return false;
+    }
+}
 const checkUpdate = () => {
     updateLabel = "Vérification... ";
     $swDismiss = false;
@@ -68,7 +78,10 @@ const checkUpdate = () => {
     {/if}
 {/if}
 {#if navigator.standalone === true}
-<p>En cas de problème: <a class="btn btn-danger" href="./index.html" on:click={reload}>Réinitialiser l'App</a></p>
+<p>En cas de problème:</p>
+<p><a class="btn btn-primary btn-sm" href="./index.html" on:click={reload}>Recharger l'App</a> c'est l'équivalent d'un rechargement de page.</p>
+<p><a class="btn btn-danger btn-sm" href="./index.html" on:click={reinit}>Réinitialiser l'App</a> va en plus réinitialiser le service Worker (il faut être connecté).</p>
+<p>Dans les 2 cas vos réglages sont conservés mais l'OFP est remis à zéro.</p>
 {/if}
 </div>
 
