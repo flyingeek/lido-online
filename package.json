@@ -1,6 +1,6 @@
 {
   "name": "lido-svelte",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "scripts": {
     "build": "npm run clean && rollup -c",
     "dev": "rollup -c -w",

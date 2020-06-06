@@ -2,11 +2,13 @@
 import {swDismiss} from "../store.js";
 $: lidojsVersion = (window.editolido) ? ' / lidojs: v' + window.editolido.version : '';
 let sw = window.serviceWorker;
+let swRunning = true;
+
 if (!sw && navigator.serviceWorker) {
     navigator.serviceWorker.ready.then((reg) => {
         sw = reg;
         return reg;
-    });
+    }).catch(err => swRunning = false);
 }
 let control = navigator.serviceWorker && navigator.serviceWorker.controller;
 const defaultLabel = 'Vérifier Mise à jour';
@@ -20,6 +22,7 @@ const getStatus = (reg) => {
 }
 
 $: status = getStatus(sw);
+$: controlled = control && swRunning;
 
 const skipWaiting = () => {
     if (sw.waiting) {
@@ -48,12 +51,9 @@ const checkUpdate = () => {
 <div>
 <p>Aplication version: *APP_VERSION{lidojsVersion}</p>
 {#if navigator.serviceWorker}
-    {#if control}
-    <p>La page est controllée par le service worker.</p>
-    {:else}
+    {#if !controlled}
     <p>La page n'est pas controllée par le service worker. <a href="./index.html" on:click={reload}>Recharger la page</a></p>
-    {/if}
-    {#if status.code === 2}
+    {:else if status.code === 2}
     <p>Service Worker status: <span data-status={status.code}>{status.msg}</span><a href="." on:click|preventDefault={skipWaiting}>Installer</a></p>
     {:else}
     <p>Service Worker status: <span data-status={status.code}>{status.msg}</span>
