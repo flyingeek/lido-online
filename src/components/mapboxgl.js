@@ -84,6 +84,12 @@ function markerLayer (folder, selectedPin, kmlcolor, visibility) {
 
 function lineLayer(folder, kmlcolor, visibility) {
     const [hexcolor, opacity] = kml2mapColor(kmlcolor);
+    let lineWidth = 2;
+    let lineDashArray = [1];
+    if (folder.indexOf('-eep') !== -1 || folder.indexOf('-exp') !== -1 || folder.indexOf('-etops') !== -1) {
+        lineWidth = 1;
+        lineDashArray = [10, 10];
+    }
     return {
         'id': `${folder}-line-layer`,
         'type': 'line',
@@ -96,7 +102,8 @@ function lineLayer(folder, kmlcolor, visibility) {
         'paint': {
             'line-color': hexcolor,
             'line-opacity': opacity,
-            'line-width': 2
+            'line-width': lineWidth,
+            'line-dasharray': lineDashArray
         }
     }
 }
@@ -214,13 +221,55 @@ export function addLineToMap(map, id, data, kmlcolor, visibility) {
 export const pinColors = [
     '#FFFFFF', '#6699FF', '#FFFF00',
     '#CC9966', '#FF9922', '#DD5599',
-    '#FF0000', '#22DD44', '#BB11EE'
+    '#FF0000', '#22DD44', '#BB11EE', '#F56'
 ];
 
 export function addPointsToMap(map, id, data, selectedPin, visibility, kmlcolor) {
     const points = data.map(g => jsonPoint(g, g.name.replace(/00\.0/g,'')));
     map.addSource(`${id}-marker-source`, featureCollection(points));
     map.addLayer(markerLayer(id, selectedPin, kmlcolor, visibility));
+}
+
+export function addEtopsToMap(map, id, data, kmlcolor, visibility, etopsTime) {
+    const [hexcolor, opacity] = kml2mapColor(kmlcolor);
+    const points = data.map(g => jsonPoint(g, g.name, g.description));
+    map.addSource(`${id}-marker-source`, featureCollection(points));
+    map.addLayer({
+        'id': `${id}-marker-layer`,
+        'type': 'symbol',
+        'source': `${id}-marker-source`,
+        'layout': {
+            'icon-image': 'sdf-pin0',
+            'icon-size': 1,
+            'icon-anchor': 'center',
+            'icon-offset': [0, 0],
+            //'icon-rotate': ['get', 'orientation'],
+            'icon-allow-overlap': false,
+            'visibility': ( visibility) ? 'visible' : 'none',
+            'text-field': ['get', 'title'],
+            //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+            'text-size': 10,
+            'text-offset': [0, 0.7],
+            'text-anchor': 'top'
+        },
+        'paint': {
+            'icon-color': hexcolor,
+            'icon-halo-width': 1,
+            'icon-halo-color': '#000',
+            'text-color': hexcolor,
+            'text-opacity': 1
+        }
+    });
+    for (let i = 0; i < data.length; i += 1){
+        if (i === 0) {
+            addLineToMap(map, `${id}-eep-circle`, data[0].circle(420), kmlcolor, visibility);
+        } else if (i === 1) {
+            addLineToMap(map, `${id}-exp-circle`, data[1].circle(420), kmlcolor, visibility);
+        } else {
+            addLineToMap(map, `${id}-etops${i-2}-circle`, data[i].circle(7 * etopsTime), kmlcolor, visibility)
+        }
+    }
+
 }
 
 export function changeLayerState(map, folder, value) {
@@ -283,6 +332,40 @@ export function loadMap(ofp, options, map) {
     addLineToMap(map, 'ralt', alternateRoute.points, options.alternateColor, options.alternateDisplay);
     addLineToMap(map, 'rmain', route.points, options.routeColor, true);
     addPointsToMap(map, 'ralt', alternateRoute.points, options.alternatePin, options.alternateDisplay, options.alternateColor);
+
+    map.addSource('airports-source', {
+        type: 'geojson',
+        data: 'data/airports.CONF_AIRAC.geojson'
+    });
+    map.addLayer({
+        'id': `airports-layer`,
+        'type': 'symbol',
+        'source': `airports-source`,
+        'layout': {
+            'icon-image': 'sdf-airport',
+            'icon-size': 0.4,
+            'icon-anchor': 'center',
+            'icon-offset': [0, 0],
+            //'icon-rotate': ['get', 'orientation'],
+            'icon-allow-overlap': true,
+            'visibility': 'visible',
+            'text-field': ['get', 'name'],
+            //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+            'text-size': 8,
+            'text-offset': [0, 0.7],
+            'text-anchor': 'top'
+        },
+        'paint': {
+            'icon-color': ["case",["in", `${ofp.infos.aircraft}`, ["get", "type"]], '#095','#B02'],
+            'icon-halo-width': 0,
+            'icon-halo-color': '#000',
+            'text-color': '#000',
+            'text-opacity': 0.8
+        },
+    });
     addPointsToMap(map, 'rmain', route.points, options.routePin, true, options.routeColor);
     addTracksToMap(map, ofp, options.natColor, options.natPin, options.natDisplay);
+    if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0){
+        addEtopsToMap(map, 'etops', [ofp.infos['EEP'], ofp.infos['EXP']].concat(ofp.infos['raltPoints']), '800324FC', true, ofp.infos['ETOPS']);
+    }
 }

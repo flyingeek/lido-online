@@ -1,0 +1,78 @@
+const Papa = require('papaparse');
+const fs = require('fs');
+
+const dataPath = "data/Global2007.csv";
+const output = "data/airports.json";
+const geojson = "data/airports.geojson";
+
+const file = fs.createReadStream(dataPath);
+let counter = 0;
+const results = {};
+const geojsonResults = [];
+Papa.parse(file, {
+    step: function(result) {
+        // 0: icao 1: name: 3 lat: 4 lon:5 318:18 319:19 320:20 321:21 330:22 340:23 350:24 380:25 787:26 772:27 773:28 77F:29 sur:47
+        //console.log(result);
+        const data = result.data;
+        if (data.length < 48) return;
+        if (data[0].trim() === "OACI") return;
+        //console.log(data[0], data[1], data[3], data[4], data[18], data[29], data[47]);
+        const aircrafts = [];
+        for (let i = 18; i <=29; i++) {
+            const aircraft = data[i].trim()
+            if (!aircraft.endsWith('-0')) {
+                aircrafts.push(aircraft.split('-')[0]);
+            }
+        }
+        let level = 0;
+        switch (data[47].trim()) {
+            case '':
+                break;
+            case 'o':
+                level = 1;
+                break
+            case 'x':
+                level = 2;
+                break;
+            default:
+                console.log(`unkwnown airport level ${data[47]}`);
+        }
+        results[data[0].trim()] = [parseFloat(data[3]),parseFloat(data[4])];
+        geojsonResults.push({
+            'type': 'Feature',
+            'geometry': {
+                'type': 'Point',
+                'coordinates': [parseFloat(data[4]), parseFloat(data[3])]
+            },
+            'properties': {
+                'name': data[0].trim(),
+                'title': data[1].trim(),
+                'type': aircrafts,
+                'level': level
+            }
+        });
+        counter += 1;
+        return;
+    },
+    complete: function() {
+        // this one is for lidojs (etops & eep & exp)
+        fs.writeFile(output, JSON.stringify(results), (err) => {
+            if (err) {
+              throw err;
+            } else {
+              console.log(`Saved ${counter} airports!`);
+            }
+        });
+        const collection = {
+            "type": "FeatureCollection",
+            "features": geojsonResults
+        };
+        fs.writeFile(geojson, JSON.stringify(collection), (err) => {
+            if (err) {
+              throw err;
+            } else {
+              console.log(`Saved ${counter} airports!`);
+            }
+        });
+    }
+});

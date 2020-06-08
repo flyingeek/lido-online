@@ -40,6 +40,18 @@ registerRoute(
 );
 
 registerRoute(
+  ({url}) => url.pathname.endsWith('/data/airports.CONF_AIRAC.geojson'),
+  new CacheFirst({
+    cacheName: 'lido-data',
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 2
+      })
+    ]
+  })
+)
+
+registerRoute(
   ({url}) => url.origin === 'https://editolido.alwaysdata.net' && url.pathname.startsWith('/proxy_gramet/'),
   new CacheFirst({
     cacheName: 'lido-gramet',

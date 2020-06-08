@@ -28,6 +28,13 @@
                 map.addImage('sdf-pin0', image, { pixelRatio: 2, sdf: true});
             }
         });
+        map.loadImage('sdf/map-circle-sdf.png', function(error, image) {
+            if (error) {
+                console.log(error);
+            } else {
+                map.addImage('sdf-airport', image, { pixelRatio: 2, sdf: true});
+            }
+        });
         map.on('load', function() {
             loadMap(ofp, kmlOptions, map);
             addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet');

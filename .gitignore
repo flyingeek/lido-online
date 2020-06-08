@@ -2,3 +2,4 @@ node_modules/
 public/
 .DS_Store
 .env
+data/Global2007.csv

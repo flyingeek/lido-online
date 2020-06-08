@@ -14,6 +14,7 @@ const path = require('path');
 const Mustache = require('mustache');
 require('dotenv').config();
 const production = !process.env.ROLLUP_WATCH 
+const AIRAC = '2007';
 
 // All URL, local or remote
 const U = {
@@ -25,7 +26,8 @@ const U = {
   'CONF_LIDOJS_JS': `./js/lidojs.${lidojsPkg.version}.min.js`,
   'CONF_WMO_JS': `./js/wmo.${lidojsPkg.version}.var.js`,
   'CONF_BUNDLE_JS': './js/bundle.js',
-  'CONF_BUNDLE_CSS': './css/bundle.css'
+  'CONF_BUNDLE_CSS': './css/bundle.css',
+  'CONF_AIRAC': AIRAC
 };
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
 
@@ -78,6 +80,11 @@ export default [{
           src: './node_modules/@flyingeek/lidojs/dist/wmo.var.js',
           dest: path.dirname(relPath(U.CONF_WMO_JS)),
           rename: path.basename(U.CONF_WMO_JS)
+        },
+        {
+          src: './data/airports.geojson',
+          dest: './public/data',
+          rename: `airports.${U.CONF_AIRAC}.geojson`
         }
       ],
       copyOnce: true,
