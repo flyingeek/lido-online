@@ -230,10 +230,11 @@ export function addPointsToMap(map, id, data, selectedPin, visibility, kmlcolor)
     map.addLayer(markerLayer(id, selectedPin, kmlcolor, visibility));
 }
 
-export function addEtopsToMap(map, id, data, kmlcolor, visibility, etopsTime) {
-    const [hexcolor, opacity] = kml2mapColor(kmlcolor);
+export function addEtopsToMap(map, id, data, kmlcolor, visibility, etopsTime, routeKmlColor) {
+    const [hexcolor,] = kml2mapColor(kmlcolor);
+    const [hexcolor2,] = kml2mapColor(routeKmlColor);
     const points = data.map(g => jsonPoint(g, g.name, g.description));
-    map.addSource(`${id}-marker-source`, featureCollection(points));
+    map.addSource(`${id}-marker-source`, featureCollection(points.reverse())); // priority to ETOPS over EEP/EXP
     map.addLayer({
         'id': `${id}-marker-layer`,
         'type': 'symbol',
@@ -253,10 +254,10 @@ export function addEtopsToMap(map, id, data, kmlcolor, visibility, etopsTime) {
             'text-anchor': 'top'
         },
         'paint': {
-            'icon-color': hexcolor,
+            'icon-color': ["case",["==", "ETOPS", ["get", "description"]], hexcolor, hexcolor2],
             'icon-halo-width': 1,
             'icon-halo-color': '#000',
-            'text-color': hexcolor,
+            'text-color': ["case",["==", "ETOPS", ["get", "description"]], hexcolor, hexcolor2],
             'text-opacity': 1
         }
     });
@@ -365,7 +366,8 @@ export function loadMap(ofp, options, map) {
     });
     addPointsToMap(map, 'rmain', route.points, options.routePin, true, options.routeColor);
     addTracksToMap(map, ofp, options.natColor, options.natPin, options.natDisplay);
+    //console.log(ofp.infos, ofp.text);
     if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0){
-        addEtopsToMap(map, 'etops', [ofp.infos['EEP'], ofp.infos['EXP']].concat(ofp.infos['raltPoints']), '800324FC', true, ofp.infos['ETOPS']);
+        addEtopsToMap(map, 'etops', [ofp.infos['EEP'], ofp.infos['EXP']].concat(ofp.infos['raltPoints']), '800324FC', true, ofp.infos['ETOPS'], options.routeColor);
     }
 }

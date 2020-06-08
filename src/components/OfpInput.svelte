@@ -31,6 +31,8 @@
                 processedPages += 1;
             } else if (processedPages !== 0){
                 break;
+            } else if (pageText.includes('FPL SUMMARY')) {
+                ofpPages.push(pageText); // for ETOPS
             }
         }
         return ofpPages.join("\n");

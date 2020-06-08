@@ -1,6 +1,6 @@
 {
   "name": "lido-svelte",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "scripts": {
     "build": "npm run clean && rollup -c",
     "dev": "rollup -c -w",
@@ -33,7 +33,7 @@
     "workbox-build": "^5.1.3"
   },
   "dependencies": {
-    "@flyingeek/lidojs": "^1.2.6",
+    "@flyingeek/lidojs": "^1.2.8",
     "sirv-cli": "^0.4.4"
   }
 }
