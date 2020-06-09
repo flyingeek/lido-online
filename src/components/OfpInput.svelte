@@ -87,7 +87,7 @@
                                 reject(err);
                             }
                         } else {
-                            reject(Error("OFP non reconnu"));
+                            reject(Error("OFP non reconnu, il faut choisir \"Dossier de vol OFP\" dans Pilot Mission."));
                         }
                     },
                     (err) => reject(err)
