@@ -1,13 +1,14 @@
 {
   "name": "lido-svelte",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "scripts": {
     "build": "npm run clean && rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public",
     "lint": "eslint . --fix --ext js,svelte",
     "clean": "rimraf public/**",
-    "makeAirports": "node src/makeAirports.js"
+    "makeAirports": "node src/makeAirports.js",
+    "makeFir": "node src/makeFir.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "11.0.2",
@@ -17,6 +18,7 @@
     "eslint": "^7.0.0",
     "eslint-plugin-html": "^6.0.2",
     "eslint-plugin-svelte3": "^2.7.3",
+    "fast-xml-parser": "^3.17.4",
     "globby": "^11.0.1",
     "mustache": "^4.0.1",
     "papaparse": "^5.2.0",
