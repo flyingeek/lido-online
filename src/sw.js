@@ -50,6 +50,17 @@ registerRoute(
     ]
   })
 )
+registerRoute(
+  ({url}) => url.pathname.endsWith('/data/fir-reg.CONF_AIRAC.geojson'),
+  new CacheFirst({
+    cacheName: 'lido-fir',
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 2
+      })
+    ]
+  })
+)
 
 registerRoute(
   ({url}) => url.origin === 'https://editolido.alwaysdata.net' && url.pathname.startsWith('/proxy_gramet/'),

@@ -25,7 +25,7 @@
             if (error) {
                 console.log(error);
             } else {
-                map.addImage('sdf-pin0', image, { pixelRatio: 2, sdf: true});
+                map.addImage('sdf-triangle', image, { pixelRatio: 2, sdf: true});
             }
         });
         map.loadImage('sdf/map-circle-sdf.png', function(error, image) {
@@ -33,6 +33,13 @@
                 console.log(error);
             } else {
                 map.addImage('sdf-airport', image, { pixelRatio: 2, sdf: true});
+            }
+        });
+        map.loadImage('sdf/map-star-sdf.png', function(error, image) {
+            if (error) {
+                console.log(error);
+            } else {
+                map.addImage('sdf-star', image, { pixelRatio: 2, sdf: true});
             }
         });
         map.on('load', function() {

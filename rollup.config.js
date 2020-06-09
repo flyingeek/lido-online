@@ -14,7 +14,7 @@ const path = require('path');
 const Mustache = require('mustache');
 require('dotenv').config();
 const production = !process.env.ROLLUP_WATCH 
-const AIRAC = '2007';
+const AIRAC = '2007d';
 
 // All URL, local or remote
 const U = {
@@ -85,7 +85,17 @@ export default [{
           src: './data/airports.geojson',
           dest: './public/data',
           rename: `airports.${U.CONF_AIRAC}.geojson`
+        },
+        {
+          src: './data/fir-reg.geojson',
+          dest: './public/data',
+          rename: `fir-reg.${U.CONF_AIRAC}.geojson`
         }
+        // {
+        //   src: './data/fir-oceanic.geojson',
+        //   dest: './public/data',
+        //   rename: `fir-oceanic.geojson`
+        // }
       ],
       copyOnce: true,
       verbose: true

@@ -3,3 +3,5 @@ public/
 .DS_Store
 .env
 data/Global2007.csv
+data/*.kml
+data/airports.json
