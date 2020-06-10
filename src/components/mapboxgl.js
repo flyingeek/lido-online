@@ -113,7 +113,7 @@ export function mapbox(node, parameters) {
         },
         destroy() {
             map.remove();
-            window.map = undefined;
+            window.lidoMap = undefined;
         }
     }
 }
