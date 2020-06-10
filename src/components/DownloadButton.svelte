@@ -14,7 +14,7 @@
 
     export let label;
     const store = stores.downloadType;
-    const defaultValue = 0;
+    const defaultValue = 1;
     let selected = storage.getItem(store) || defaultValue;
     if (typeof selected === 'string') selected = parseInt(selected, 10);
     let url = "";

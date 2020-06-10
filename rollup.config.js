@@ -7,14 +7,13 @@ import replace from 'rollup-plugin-replace';
 import json from '@rollup/plugin-json';
 import copy from 'rollup-plugin-copy'
 import watchAssets from 'rollup-plugin-watch-assets'; // also requires globby
-import {version} from './package.json';
+import {version, AIRAC} from './package.json';
 import lidojsPkg from './node_modules/@flyingeek/lidojs/package.json';
 const workbox = require('rollup-plugin-workbox-inject');
 const path = require('path');
 const Mustache = require('mustache');
 require('dotenv').config();
 const production = !process.env.ROLLUP_WATCH 
-const AIRAC = '2007d';
 
 // All URL, local or remote
 const U = {
