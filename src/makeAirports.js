@@ -1,7 +1,8 @@
 const Papa = require('papaparse');
 const fs = require('fs');
+const config = require('../package.json');
 
-const dataPath = "data/Global2007.csv";
+const dataPath = `data/Global${config.AIRAC.substr(0,4)}.csv`;
 const output = "data/airports.json";
 const geojson = "data/airports.geojson";
 

@@ -1,16 +1,14 @@
 const fs = require('fs');
-const  parser = require('fast-xml-parser');
+const etl = require('etl');
+const unzipper = require('unzipper');
+const parser = require('fast-xml-parser');
+const config = require('../package.json');
 
-// const firPath = "data/fir2002.kml";
-const firRegPath = "data/fir-reg2007.kml";
-// const outputFir = "data/fir-oceanic.geojson";
 const outputFirReg = "data/fir-reg.geojson"
+const zipPath = `data/FIR-REGLEMENTEES-${config.AIRAC.substr(0,4)}.kmz`;
 
 const round = f => Math.round(parseFloat(f) * 10000) / 10000;
-
-fs.readFile(firRegPath, 'utf8', function(err, data) {
-    if (err) throw err;
-    const json = parser.parse(data, []);
+const transformer = (json) => {
     const features = [];
     const feature = (name, type, coordinates) => {
         let coords = coordinates.split(' ').map(v => v.split(',').slice(0, 2)).map(([lon, lat]) => [round(lon), round(lat)])
@@ -64,50 +62,22 @@ fs.readFile(firRegPath, 'utf8', function(err, data) {
         "type": "FeatureCollection",
         "features": features
     };
-    fs.writeFile(outputFirReg, JSON.stringify(collection), (err) => {
-        if (err) {
-          throw err;
+    return collection;
+}
+fs.createReadStream(zipPath)
+    .pipe(unzipper.Parse())
+    .pipe(etl.map(async entry => {
+        if (entry.path == "doc.kml") {
+            const content = await entry.buffer();
+            const json = parser.parse(content.toString(), []);
+            fs.writeFile(outputFirReg, JSON.stringify(transformer(json)), (err) => {
+                if (err) {
+                  throw err;
+                }
+            });
+            entry.autodrain();
+        } else {
+            console.log(entry.path);
+            entry.autodrain();
         }
-    });
-});
-// fs.readFile(firPath, 'utf8', function(err, data) {
-//     if (err) throw err;
-//     const json = parser.parse(data, []);
-//     const features = [];
-
-//     const feature = (name, coordinates) => {
-//         let coords = coordinates.split(' ').map(v => v.split(',').slice(0, 2)).map(([lon, lat]) => [round(lon), round(lat)])
-//         if (coords[0] !== coords[coords.length - 1]) {
-//             coords.push(coords[0]);
-//         }
-//         const obj = {
-//             'type': 'Feature',
-//             'geometry': {
-//                 'type': 'LineString',
-//                 'coordinates': coords
-//             },
-//             'properties': {
-//                 'name': name
-//             }
-//         };
-//         //if (description) obj.properties.description = description;
-//         return obj;
-//     }
-//     for (let obj of json.kml.Document.Placemark) {
-//         let coordinates = [];
-//         let name = obj.name;
-//         if (name.indexOf('OCEANIC') === -1 || ['PIARCO', 'CAYENNE', 'ATLANTICO', 'CANARIES', 'REYKJAVIK', 'NUUK', 'MAGADAN']) continue;
-//         console.log(name);
-//         coordinates = obj.LineString.coordinates;
-//         features.push(feature(name, coordinates));
-//     }
-//     const collection = {
-//         "type": "FeatureCollection",
-//         "features": features
-//     };
-//     fs.writeFile(outputFir, JSON.stringify(collection), (err) => {
-//         if (err) {
-//           throw err;
-//         }
-//     });
-// });
+    }))
