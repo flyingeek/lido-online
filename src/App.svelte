@@ -21,7 +21,7 @@
   let route = "/";
   let permalink = window.location.href;
   let promise = undefined;
-  let map = undefined;
+
   storeSettingsFromURL(window.location.search);
   let kmlOptions = validate(storage.getItem(stores.optionsKML) || {});
   const hashchange = (e) => {
@@ -49,7 +49,7 @@
   };
   setHistory();
   const update = (e) => {
-    if (map) updateMapLayers(map, e.detail.name, e.detail.value);
+    if (window.lidoMap) updateMapLayers(window.lidoMap, e.detail.name, e.detail.value);
     updateKml(e.detail.name, e.detail.value);
     setHistory();
   };
@@ -75,7 +75,7 @@
         <Page hidden={route !== '/map'}><div style="margin: auto;">traitement en cours...</div></Page>
       {:then ofp}
         <Page hidden={route !== '/map'}>
-          <Map {kmlOptions} {ofp} {route} bind:map/>
+          <Map {kmlOptions} {ofp} {route}/>
           <Export {ofp} on:save={setHistory} />
         </Page>
       {:catch error}

@@ -59,7 +59,7 @@ const checkUpdate = () => {
 </script>
 
 <div>
-<p>Aplication version: *APP_VERSION{lidojsVersion}</p>
+<p>Application version: APP_VERSION{lidojsVersion}</p>
 {#if navigator.serviceWorker}
     {#if !controlled}
     <p>La page n'est pas controllée par le service worker. <a href="./index.html" on:click={reload}>Recharger la page</a></p>

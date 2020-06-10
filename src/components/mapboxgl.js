@@ -1,12 +1,122 @@
 /* global editolido mapboxgl */
 
 import {kml2mapColor} from "./KmlColor.svelte";
-import {folderName} from './utils';
+import {folderName, addToSWCache} from './utils';
 import { kmlDefaultOptions } from "./kml";
 export const token = 'MAPBOX_TOKEN';
 
 export const key = {};
 const etopsKmlColor = '800324FC';
+
+export function mapbox(node, parameters) {
+    const ofp = parameters.ofp;
+    const kmlOptions = parameters.kmlOptions;
+    mapboxgl.accessToken = token;
+    const map = new mapboxgl.Map({
+        'container': node.id, // container id
+        'style': 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+        'center': [0, 49], // starting position
+        'zoom': 2 // starting zoom
+    });
+    window.lidoMap = map;
+    map.loadImage('sdf/maki-marker-sdf.png', function(error, image) {
+        if (error) {
+            console.log(error);
+        } else {
+            map.addImage('sdf-marker-15', image, { pixelRatio: 2, sdf: true});
+        }
+    });
+    map.loadImage('sdf/map-triangle-sdf.png', function(error, image) {
+        if (error) {
+            console.log(error);
+        } else {
+            map.addImage('sdf-triangle', image, { pixelRatio: 2, sdf: true});
+        }
+    });
+    map.loadImage('sdf/map-circle-sdf.png', function(error, image) {
+        if (error) {
+            console.log(error);
+        } else {
+            map.addImage('sdf-airport', image, { pixelRatio: 2, sdf: true});
+        }
+    });
+    map.loadImage('sdf/map-star-sdf.png', function(error, image) {
+        if (error) {
+            console.log(error);
+        } else {
+            map.addImage('sdf-star', image, { pixelRatio: 2, sdf: true});
+        }
+    });
+    map.on('load', function() {
+        loadMap(ofp, kmlOptions, map);
+        addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet');
+    });
+    let bbox = undefined;
+    const getBounds = (points, result=[Infinity, Infinity, -Infinity, -Infinity]) => {
+        for (const p of points) {
+            if (result[0] > p.longitude) { result[0] = p.longitude; }
+            if (result[1] > p.latitude) { result[1] = p.latitude; }
+            if (result[2] < p.longitude) { result[2] = p.longitude; }
+            if (result[3] < p.latitude) { result[3] = p.latitude; }
+        }
+        result[0] -= 1;
+        result[1] -= 1;
+        result[2] += 1;
+        result[3] += 1;
+        return result;
+    }
+    let points = [];
+    for (const track of ofp.tracks) {
+        points = points.concat(track.points);
+    }
+    points = points.concat(ofp.route.points, ofp.wptCoordinatesAlternate());
+    bbox = getBounds(points);
+
+    map.fitBounds(bbox, {padding: {top: 30, bottom:80, left: 30, right: 30}});
+    map.addControl(new mapboxgl.FullscreenControl());
+    const geolocate = new mapboxgl.GeolocateControl({
+        positionOptions: {
+            enableHighAccuracy: false
+        },
+        fitBoundsOptions: {maxZoom: 3},
+        trackUserLocation: false
+    });
+    map.addControl(geolocate);
+    //console.log(geolocate);
+    // geolocate.on('geolocate', function(e) {
+    //     console.log('geolocated');
+    //     const zoom = map.getZoom();
+    //     geolocate.options['fitBoundsOptions'] = {maxZoom: zoom};
+    //     //map.setZoom(8);
+    // });
+    // geolocate.on('trackuserlocationstart', function() {
+    //     console.log('A trackuserlocationstart event has occurred.');
+    //     const zoom = map.getZoom();
+    //     geolocate.options['fitBoundsOptions'] = {maxZoom: zoom};
+    // });
+    document.addEventListener("webkitfullscreenchange", function( event ) {
+        if ( document.webkitfullscreen ) {
+            console.log('fullscreen element', document.fullscreenElement);
+            map.resize();
+        }else {
+            console.log('fullscreen exit');
+            map.resize();
+        }
+
+    });
+    return {
+        update(parameters) {
+            if (parameters.route === '/map' && map) {
+                map.resize();
+                console.log("map resized");
+            }
+        },
+        destroy() {
+            map.remove();
+            window.map = undefined;
+        }
+    }
+}
 
 function markerLayer (folder, selectedPin, kmlcolor, visibility) {
     const [hexcolor, opacity] = kml2mapColor(kmlcolor);
@@ -359,7 +469,7 @@ export function loadMap(ofp, options, map) {
 
     map.addSource('airports-source', {
         type: 'geojson',
-        attribution: 'Airports/FIR © Olivier Ravet - Yammer/Maps.me',
+        attribution: `Airports/FIR ${ofp.infos.aircraft} ${"CONF_AIRAC".substring(0,2)}.${"CONF_AIRAC".substring(2,4)} © Olivier Ravet - Yammer/Maps.me`,
         data: 'data/airports.CONF_AIRAC.geojson'
     });
     map.addLayer({

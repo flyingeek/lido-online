@@ -7,7 +7,9 @@ const token = 'MAPBOX_TOKEN';
 
 const key = {};
 
-export function mapbox(node, options) {
+export function mapbox(node, parameters) {
+    const options = parameters.kmlOptions;
+    //const ofp = parameters.ofp;
     L.mapbox.accessToken = token;
     const GestureHandling = GestureHandler(L);
     L.Map.addInitHook("addHandler", "gestureHandling", GestureHandling);
@@ -18,6 +20,7 @@ export function mapbox(node, options) {
             duration: 1000
         }
     });
+    window.lidoMap = map;
     const layer = L.mapbox.tileLayer('mapbox.streets');
     let customLayer = makeCustomLayer(L, options);
     let loadedOnce = false;
@@ -37,6 +40,7 @@ export function mapbox(node, options) {
         },
         destroy() {
             map.remove();
+            window.map = undefined;
         }
     }
 }
