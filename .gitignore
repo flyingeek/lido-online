@@ -6,3 +6,4 @@ data/Global2007.csv
 data/*.kml
 data/*.kmz
 data/airports.json
+data/fir-reg-orig.geojson

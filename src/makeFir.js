@@ -4,7 +4,7 @@ const unzipper = require('unzipper');
 const parser = require('fast-xml-parser');
 const config = require('../package.json');
 
-const outputFirReg = "data/fir-reg.geojson"
+const outputFirReg = "data/fir-reg-orig.geojson"
 const zipPath = `data/FIR-REGLEMENTEES-${config.AIRAC.substr(0,4)}.kmz`;
 
 const round = f => Math.round(parseFloat(f) * 10000) / 10000;
