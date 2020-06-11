@@ -331,9 +331,9 @@ export function addEtopsToMap(map, id, data, etopsKmlColor, visibility, etopsTim
     });
     for (let i = 0; i < data.length; i += 1){
         if (i === 0) {
-            addLineToMap(map, `${id}-eep-circle`, data[0].circle(420), routeKmlColor, visibility);
+            addLineToMap(map, `${id}-eep-circle`, data[0].circle(420, 48), routeKmlColor, visibility);
         } else if (i === 1) {
-            addLineToMap(map, `${id}-exp-circle`, data[1].circle(420), routeKmlColor, visibility);
+            addLineToMap(map, `${id}-exp-circle`, data[1].circle(420, 48), routeKmlColor, visibility);
         } else {
             addLineToMap(map, `${id}-etops${i-2}-circle`, data[i].circle(7 * etopsTime), etopsKmlColor, visibility)
         }
@@ -428,7 +428,7 @@ export function loadMap(ofp, options, map) {
         'source': 'fir-reg-source',
         'layout': {},
         'paint': {
-            'fill-color': ['case', ['==', 'FIR-RED', ['get', 'type']], '#F00', '#FF7F00'],
+            'fill-color': ['case', ['==', 'FIR-RED', ['get', 'type']], '#F00', '#FF8000'],
             'fill-opacity': ['case', ['==', 'FIR-RED', ['get', 'type']], 0.25, 0.2]
         }
     });
@@ -483,16 +483,19 @@ export function loadMap(ofp, options, map) {
             'icon-offset': [0, 0],
             //'icon-rotate': ['get', 'orientation'],
             'icon-allow-overlap': true,
+            'icon-ignore-placement': true,
             'visibility': 'visible',
             'text-field': ['get', 'name'],
             //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
             'text-size': 8,
             'text-offset': [0, 0.7],
             'text-anchor': 'top',
-            'symbol-sort-key': ["get", `${ofp.infos.aircraft}`]
+            'text-allow-overlap': false,
+            'text-ignore-placement': false
+            //'symbol-sort-key': ["get", `${ofp.infos.aircraft}`]
         },
         'paint': {
-            'icon-color': ["case",["==", 1, ["get", "level"]], '#B71', '#B02'],
+            'icon-color': ["case",["==", 1, ["get", "level"]], '#D70', '#B02'],
             'icon-halo-width': 0,
             'icon-halo-color': '#000',
             'text-color': '#000',
@@ -511,16 +514,19 @@ export function loadMap(ofp, options, map) {
             'icon-offset': [0, 0],
             //'icon-rotate': ['get', 'orientation'],
             'icon-allow-overlap': true,
+            'icon-ignore-placement': true,
             'visibility': 'visible',
             'text-field': ['get', 'name'],
             //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
             'text-size': 8,
             'text-offset': [0, 0.7],
             'text-anchor': 'top',
-            'symbol-sort-key': ["get", `${ofp.infos.aircraft}`]
+            'text-allow-overlap': false,
+            'text-ignore-placement': false,
+            'symbol-sort-key':["get", `${ofp.infos.aircraft}`]
         },
         'paint': {
-            'icon-color': ["case",["==", 0, ["get", "level"]], '#095','#B71'],
+            'icon-color':["case", ["==", 0, ["get", "level"]], '#095','#D70'], // normal airports
             'icon-halo-width': 0,
             'icon-halo-color': '#000',
             'text-color': '#000',

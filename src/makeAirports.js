@@ -20,17 +20,26 @@ Papa.parse(file, {
         //console.log(data[0], data[1], data[3], data[4], data[18], data[29], data[47]);
         const aircrafts = [];
         let order = {}; // first
+        let isDest = 0;
+        for (let i = 50; i <=62; i++) {
+            if (data[i].trim().startsWith('DES')) {
+                isDest = 1;
+                break;
+            }
+        }
         for (let i = 18; i <=29; i++) {
             const [aircraft, cat] = data[i].trim().split('-');
             if (cat !== '0') {
                 aircrafts.push(aircraft);
                 if (! isNaN(cat)) { // leaves R or E as order = 0 (first)
-                    order[aircraft] = 4 - parseInt(cat, 10);// 3-> 1 2 -> 2 1 -> 3
+                    // 1 = dest 3=deg(with dest) 3=deg(without dest) 10=emer(with dest) 11=emer(without dest)
+                    let priority = 4 - parseInt(cat, 10);// 3-> 1 2 ->2 3 ->1
+                    order[aircraft] = priority * 2 - isDest; // 1-2-3-4-5-6
                 } else {
                     order[aircraft] = 0; //first
                 }
             } else {
-                order[aircraft] = 10; // last
+                order[aircraft] = 10 - isDest; // last
             }
         }
         let level = 0;
