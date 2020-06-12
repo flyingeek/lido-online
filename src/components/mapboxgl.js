@@ -526,10 +526,19 @@ export function loadMap(ofp, options, map) {
             'symbol-sort-key':["get", `${ofp.infos.aircraft}`]
         },
         'paint': {
-            'icon-color':["case", ["==", 0, ["get", "level"]], '#095','#D70'], // normal airports
-            'icon-halo-width': 0,
-            'icon-halo-color': '#000',
-            'text-color': '#000',
+            'icon-halo-color':["case", ["==", 0, ["get", "level"]], '#095','#D70'], // normal airports
+            'icon-halo-width': 3,
+            'icon-color': ["case",
+                ["==", 6, ["get", `${ofp.infos.aircraft}`]], '#ea80d8',
+                ["==", 5, ["get", `${ofp.infos.aircraft}`]], '#ea80d8',
+                ["==", 4, ["get", `${ofp.infos.aircraft}`]], '#fbfe98',
+                ["==", 3, ["get", `${ofp.infos.aircraft}`]], '#fbfe98',
+                ["==", 2, ["get", `${ofp.infos.aircraft}`]], '#00b0f1',
+                ["==", 1, ["get", `${ofp.infos.aircraft}`]], '#00b0f1',
+                '#000'],
+            'text-color': ["case", ["==", 0, ["get", "level"]], '#000','#C60'],
+            'text-halo-color': "#000",
+            'text-halo-width': ["case", ["==", 0, ["get", "level"]], 0, 0],
             'text-opacity': 0.8
         },
         'filter': ["in", `${ofp.infos.aircraft}`, ["get", "type"]]
