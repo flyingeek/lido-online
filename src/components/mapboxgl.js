@@ -52,7 +52,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
     });
     proj4.defs('WGS84', "+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees");
     proj4.defs("EPSG:3857","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
-
+    //window.proj4 = proj4;
     let affine = (v) => v;
     if (mapOptions.affineTransform) {
         proj4.defs('CUSTOM', mapOptions.proj4);
@@ -110,7 +110,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
             map.addSource('jb-raster',{
                 'type': 'raster',
                 'tiles': [
-                    'tiles/{z}/{x}/{y}.png'
+                    'https://editolido.alwaysdata.net/i/tiles/{z}/{x}/{y}.png'
                 ],
                 'tileSize': 256,
             });
@@ -126,8 +126,14 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
             });
         }
         loadMap(ofp, kmlOptions, map, affine);
+        //const testpoints = [[10, -60], [30,-120], [30, 120], [0, 60]].map(v => new editolido.GeoPoint(v));
+        //addPoints(map,'test', testpoints,affine,5, true, kmlOptions.routeColor);
         addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet');
     });
+    // map.on('click', function(e) {
+    //     e.lngLat.wrap();
+    //     console.log(e.lngLat.wrap());
+    // });
     return map;
 }
 
