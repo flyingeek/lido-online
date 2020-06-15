@@ -92,7 +92,7 @@ d'avoir une application Lido plus réactive.</p>
     .card {
         flex: 0 1 auto; /* pixel size use when not using full screen ipad mode */
         overflow-y: scroll;
-        margin: 5rem 1rem 1rem 1rem;
+        margin: 1rem 1rem 1rem 1rem;
     }
     .btn {
         margin: 1em 0;

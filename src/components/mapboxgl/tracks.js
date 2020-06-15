@@ -3,7 +3,7 @@ import { kmlDefaultOptions } from "../kml";
 import {jsonPoint, jsonLine, featureCollection} from './json.js';
 import {lineLayer, markerLayer} from './layers';
 
-export function addTracks(map, ofp, kmlcolor, selectedPin, visibility) {
+export function addTracks(map, ofp, affine, kmlcolor, selectedPin, visibility) {
     const lines = {
         'rnat': [],
         'rnat-incomplete': []
@@ -14,13 +14,13 @@ export function addTracks(map, ofp, kmlcolor, selectedPin, visibility) {
     };
     for (let track of ofp.tracks) {
         const folder = (track.isComplete) ? 'rnat' : 'rnat-incomplete';
-        const points = track.points.map(g => [g.longitude, g.latitude]);
-        lines[folder].push(jsonLine(points, track.name));
+        const points = track.points.map(g => affine([g.longitude, g.latitude]));
+        lines[folder].push(jsonLine(points, affine, track.name));
         const firstPoint = track.points[0];
-        markers[folder].push(jsonPoint(firstPoint, `${track.name}\n${firstPoint.name}`, track.description));
+        markers[folder].push(jsonPoint(affine([firstPoint.longitude, firstPoint.latitude]), `${track.name}\n${firstPoint.name}`, track.description));
         if (track.isMine) {
             const lastPoint = track.points[track.points.length - 1];
-            markers[folder].push(jsonPoint(lastPoint, `${track.name}\n${lastPoint.name}`, track.description));
+            markers[folder].push(jsonPoint(affine([lastPoint.longitude, lastPoint.latitude]), `${track.name}\n${lastPoint.name}`, track.description));
         }
     }
     map.addSource(`rnat-marker-source`, featureCollection(markers['rnat']));

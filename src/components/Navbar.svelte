@@ -17,9 +17,9 @@
       <a class:disabled={!promise} class="nav-link" href="#/gramet" >GRAMET</a>
     </li>
     {/if}
-    {#if promise || route === '/route'}
-    <li class="nav-item" class:active={route === '/route'}>
-      <a class:disabled={!promise} class="nav-link" href="#/route" >ROUTE</a>
+    {#if promise || route === '/export'}
+    <li class="nav-item" class:active={route === '/export'}>
+      <a class:disabled={!promise} class="nav-link" href="#/export" >EXPORT</a>
     </li>
     {/if}
     <li class="nav-item" class:active={route === '/help'}>

@@ -7,17 +7,17 @@ export const pinColors = [
     '#FF0000', '#22DD44', '#BB11EE', '#F56'
 ];
 
-export function addPoints(map, id, data, selectedPin, visibility, kmlcolor) {
-    const points = data.map(g => jsonPoint(g, g.name.replace(/00\.0/g,'')));
+export function addPoints(map, id, data, affine, selectedPin, visibility, kmlcolor) {
+    const points = data.map(g => jsonPoint(affine([g.longitude, g.latitude]), g.name.replace(/00\.0/g,'')));
     map.addSource(`${id}-marker-source`, featureCollection(points));
     map.addLayer(markerLayer(id, selectedPin, kmlcolor, visibility));
 }
 
 
-export function addLine(map, id, data, kmlcolor, visibility) {
+export function addLine(map, id, data, affine, kmlcolor, visibility) {
     map.addSource(`${id}-line-source`, {
         'type': 'geojson',
-        'data': jsonLine(data.map(g => [g.longitude, g.latitude]))
+        'data': jsonLine(data.map(g => affine([g.longitude, g.latitude])))
     });
     map.addLayer(lineLayer(id, kmlcolor, visibility));
 }

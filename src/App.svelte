@@ -26,7 +26,7 @@
   let kmlOptions = validate(storage.getItem(stores.optionsKML) || {});
   const hashchange = (e) => {
     route = window.location.hash.substr(1) || "/";
-    if (!promise && (route === '/map' || route === '/gramet' || route === '/route')) {
+    if (!promise && (route === '/map' || route === '/gramet' || route === '/export')) {
       route = '/';
     }
     if (route === '/map') {
@@ -75,22 +75,24 @@
         <Page hidden={route !== '/map'}><div style="margin: auto;">traitement en cours...</div></Page>
       {:then ofp}
         <Page hidden={route !== '/map'}>
-          <Map {kmlOptions} {ofp} {route}/>
-          <Export {ofp} on:save={setHistory} />
+          <Map id="map" {kmlOptions} {ofp} {route}/>
         </Page>
       {:catch error}
         <p class:d-none={route !== '/map'}>😱: {error.message}</p>
       {/await}
     {/if}
     <!-- END of We do not want the map element to disappear from the dom (to keep cache)-->
-    {#if (route === '/gramet' || route === '/route')}
+    {#if (route === '/gramet' || route === '/export')}
       {#await promise}
         <Page><div style="margin: auto;">traitement en cours...</div></Page>
       {:then ofp}
         {#if route === '/gramet'}
             <Page><Gramet {ofp}/></Page>
-        {:else if route === '/route'}
-            <Page><LidoRoute {ofp}/></Page>
+        {:else if route === '/export'}
+            <Page>
+            <Export {ofp} on:save={setHistory} />
+            <LidoRoute {ofp} on:save={setHistory}/>
+            </Page>
         {/if}
       {:catch error}
         <p>😱: {error.message}</p>
