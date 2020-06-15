@@ -9,6 +9,7 @@
         {label: 'Mapbox', style: 'mapbox://styles/mapbox/streets-v11'},
         {
             label: 'JB North (beta)',
+            id: 'jb_north',
             style: 'mapbox://styles/mapbox/streets-v11',
             affineTransform: [2.63206100208865, -323662.179369435, 2.63502996130431, -10626687.7639946],
             proj4: '+proj=lcc +lat_1=30 +lat_2=65 +lat_0=47.5 +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'

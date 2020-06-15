@@ -106,7 +106,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
     //     geolocate.options['fitBoundsOptions'] = {maxZoom: zoom};
     // });
     map.on('load', function() {
-        if (mapOptions.label === 'JB North') {
+        if (mapOptions.id === 'jb_north') {
             map.addSource('jb-raster',{
                 'type': 'raster',
                 'tiles': [
