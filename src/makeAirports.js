@@ -29,17 +29,20 @@ Papa.parse(file, {
         }
         for (let i = 18; i <=29; i++) {
             const [aircraft, cat] = data[i].trim().split('-');
-            if (cat !== '0') {
-                aircrafts.push(aircraft);
-                if (! isNaN(cat)) { // leaves R or E as order = 0 (first)
-                    // 1 = dest 3=deg(with dest) 3=deg(without dest) 10=emer(with dest) 11=emer(without dest)
-                    let priority = 4 - parseInt(cat, 10);// 3-> 1 2 ->2 3 ->1
-                    order[aircraft] = priority * 2 - isDest; // 1-2-3-4-5-6
-                } else {
-                    order[aircraft] = 0; //first
-                }
+            if (cat !== '0') aircrafts.push(aircraft);
+            if (cat === '3') {
+                order[aircraft] = 2 - isDest; // 1-2 for status 3
+            } else if (cat === '2'){
+                order[aircraft] = 4 - isDest; // 3-4 for status 2
+            } else if (cat === '1') {
+                order[aircraft] = 8 - isDest; // 7-8 for status 1
+            } else if (cat === 'E' || cat === 'R') {
+                order[aircraft] = 6 - isDest; //5-6 for ERA which otherwise are status 2
+            } else if (cat === '0') {
+                order[aircraft] = 10 - isDest; // 9-10 for emergency
             } else {
-                order[aircraft] = 10 - isDest; // last
+                console.log(`unknow aircraft status: ${cat}`);
+                order[aircraft] = 0; // should not be there but are displayed first
             }
         }
         let level = 0;
