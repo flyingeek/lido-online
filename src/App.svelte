@@ -151,7 +151,7 @@
     position: relative;
   }
   form {
-      margin-right: 25px; /* for hamburger */
+      margin-right: 30px; /* for hamburger */
   }
   @media (max-width: 767px), (max-height: 700px) {
     :global(html, body) {

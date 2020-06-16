@@ -233,7 +233,7 @@
         background-color: #eee;
         padding: 5px;
         z-index: 2;
-        height: 100vh;
+        height: 100%;
     }
     .sidebar .hamburger {
         display: none !important;
@@ -245,7 +245,7 @@
         right: 0;
     }
     .form-group {
-        margin-bottom: 0;
+        margin-bottom: -3px;
     }
     .row.last {
         margin-top: 10px;
