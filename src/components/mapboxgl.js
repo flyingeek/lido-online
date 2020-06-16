@@ -58,9 +58,20 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
     let affine = (v) => v;
     let affineAndClamp = (v) => v;
     let affineOrDrop = (v) => v;
-    if (mapOptions.affineTransform) {
+    if (mapOptions.extent) {
         proj4.defs('CUSTOM', mapOptions.proj4);
-        const [a, b, c, d] = mapOptions.affineTransform;
+        let a, b, c, d;
+        if (mapOptions.affineTransform) {
+            [a, b, c, d] = mapOptions.affineTransform;
+        } else {
+            const [x0, y0, x1, y1] = mapOptions.extent;
+            const [u0, v0, u1, v1] = [-20026376.39, -20048966.10, 20026376.39, 20048966.10];
+            a = (u1 - u0) / (x1 -x0);
+            b = u0 - (a * x0);
+            c = (v1 - v0) / (y1 - y0);
+            d = v0 - (c * y0);
+        }
+        
         const [minX, minY, maxX, maxY] = mapOptions.extent;
         affine = ([lng, lat]) => {
             const [x, y] = proj4('CUSTOM', [lng, lat]);
@@ -127,7 +138,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
             map.addSource('jb-raster',{
                 'type': 'raster',
                 'tiles': [
-                    'https://editolido.alwaysdata.net/i/tiles/{z}/{x}/{y}.png'
+                    mapOptions.tiles
                 ],
                 'tileSize': 256,
             });

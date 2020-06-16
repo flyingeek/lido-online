@@ -17,13 +17,17 @@
         {
             'label': 'JB North (beta)',
             'id': 'jb_north',
-            'extent': [-7485660.17086825, -3575776.54689797, 7731598.37603340, 11641482.00000368],
-            'affineTransform': [2.63206100208865, -323662.179369435, 2.63502996130431, -10626687.7639946],
+            //'extent': [-7485660.17086825, -3575776.54689797, 7731598.37603340, 11641482.00000368],
+            'extent': [-8175821.87799839, -6454871.76800263, 8119308.43076422, 9841890.82868032],
+            //'affineTransform': [2.63206100208865, -323662.179369435, 2.63502996130431, -10626687.7639946],
             'proj4': '+proj=lcc +lat_1=30 +lat_2=65 +lat_0=47.5 +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
             'mapboxOptions': {
                 'style': 'mapbox://styles/flyingeek/ckbhlmwdm0mn51imw8t4dddqs',
-                'renderWorldCopies': false
-            }
+                'renderWorldCopies': false,
+                'maxZoom': 4
+            },
+            //'tiles': 'https://editolido.alwaysdata.net/i/tiles/{z}/{x}/{y}.png'
+            'tiles': 'https://editolido.alwaysdata.net/i/northv1/{z}/{x}/{y}.png'
         }
     ];
     
