@@ -35,6 +35,21 @@ export function addLine(map, id, data, affine, kmlcolor, visibility) {
     map.addLayer(lineLayer(id, kmlcolor, visibility));
 }
 
+export function addLines(map, id, data, affine, kmlcolor, visibility) {
+
+    map.addSource(`${id}-line-source`, featureCollection(data.map((ar) => {
+            return jsonLine(ar.reduce(function(result, g) {
+                const newPair = affine([g.longitude, g.latitude]);
+                if (newPair !== undefined) {
+                    result.push(newPair);
+                }
+                return result;
+            }, []));
+        }))
+    );
+    map.addLayer(lineLayer(id, kmlcolor, visibility));
+}
+
 export function markerLayer (folder, selectedPin, kmlcolor, visibility) {
     const [hexcolor, opacity] = kml2mapColor(kmlcolor);
     return {
@@ -68,7 +83,7 @@ export function lineLayer(folder, kmlcolor, visibility) {
     const [hexcolor, opacity] = kml2mapColor(kmlcolor);
     let lineWidth = 2;
     let lineDashArray = [1];
-    if (folder.indexOf('-eep') !== -1 || folder.indexOf('-exp') !== -1 || folder.indexOf('-etops') !== -1) {
+    if (folder.indexOf('-ep-') !== -1 || folder.indexOf('-etops-') !== -1) {
         lineWidth = 1;
         lineDashArray = [10, 10];
     } else if (folder.indexOf('rnat') !== -1){

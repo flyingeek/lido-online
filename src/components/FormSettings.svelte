@@ -13,6 +13,7 @@
     import { createEventDispatcher } from 'svelte';
     import KmlColor from "./KmlColor.svelte";
     import PinSelector from './PinSelector.svelte';
+    import AirportSelector from './AirportSelector.svelte';
     import {storage, stores} from './storage.js';
     const dispatch = createEventDispatcher();
     const store = stores.optionsKML;
@@ -82,6 +83,15 @@
         <use xlink:href="#bars" />
     </svg>
     </a>
+    <a
+    class="closeB"
+    role="button"
+    href="."
+    on:click|preventDefault={() =>  {sidebar = !sidebar; hamburgerBlink = false;}}>
+    <svg class:blink={hamburgerBlink}>
+        <use xlink:href="#close" />
+    </svg>
+    </a>
     <form on:submit|preventDefault>
         <fieldset class="form-group">
             <legend>Route</legend>
@@ -140,6 +150,28 @@
                 </fieldset>
             </div>
         </div>
+        <div class="row">
+            <div class={mode}>
+                <fieldset class="form-group">
+                    <legend><input name="etops-display" checked={kmlOptions['etopsDisplay']} type="checkbox" on:change={update}/>Etops</legend>
+                    <div class="row">
+                        <div class="col">
+                            <KmlColor name="etops-color" kmlColor={kmlOptions['etopsColor']} on:change={update}/>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class={mode}>
+                <fieldset class="form-group">
+                    <legend><input name="airport-display" checked={kmlOptions['airportDisplay']} type="checkbox" on:change={update}/>Airports</legend>
+                    <div class="row">
+                        <div class="col">
+                            <AirportSelector name="airport-pin" selected={kmlOptions['airportPin']} on:change={update} />
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
         <!-- <fieldset class="form-group">
             <legend><input name="sigmet-display" checked={kmlOptions['sigmetDisplay']} type="checkbox" on:change={update}/>Sigmet</legend>
             <div class="row">
@@ -151,7 +183,7 @@
                 </div>
             </div>
         </fieldset> -->
-        <div class="row">
+        <div class="row last">
             <div class={mode}>
             <button disabled={!isChanged} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
             <button disabled={!isChanged} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
@@ -177,6 +209,7 @@
         font-size: 1rem;
         font-weight: bold;
         font-variant-caps: all-small-caps;
+        margin-bottom: 0;
     }
     form {
         width: 250px;
@@ -187,23 +220,45 @@
         left: -30px;
         top: 0.7rem;
     }
+    .closeB {
+        display: none;
+        position: absolute;
+        left: 230px;
+        top: 0;
+    }
     .settings {
-        position: relative;
-        margin-right: -260px;
-        transition: margin-right 0.15s ease-out;
+        position: absolute;
+        right: -260px;
+        transition: right 0.15s ease-out;
         background-color: #eee;
         padding: 5px;
+        z-index: 2;
+        height: 100vh;
+    }
+    .sidebar .hamburger {
+        display: none !important;
+    }
+    .sidebar .closeB {
+        display: block !important;
     }
     .settings.sidebar {
-        margin-right: 0;
+        right: 0;
+    }
+    .form-group {
+        margin-bottom: 0;
+    }
+    .row.last {
+        margin-top: 10px;
     }
     @media (max-width: 767px), (max-height: 700px) {
-        .hamburger {
+        .hamburger, .closeB {
             display: none;
         }
         .settings {
+            position: relative;
             background-color: inherit;
-            margin-right: 0;
+            right: 0;
+            height: auto;
         }
         form {
             width: auto;

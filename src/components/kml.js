@@ -16,6 +16,10 @@ export const kmlDefaultOptions = {
     "greatCircleColor": "5F1478FF",
     "ogimetDisplay": true,
     "ogimetColor": "40FF0000",
+    "airportDisplay": true,
+    "airportPin": 0,
+    "etopsDisplay": true,
+    "etopsColor": "800324FC"
     // "sigmetDisplay": false,
     // "sigmetPin": 2,
     // "sigmetColor": "6200FBFF"

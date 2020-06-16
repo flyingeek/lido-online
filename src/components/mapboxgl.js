@@ -3,9 +3,9 @@
 import {kml2mapColor} from "./KmlColor.svelte";
 import {folderName, addToSWCache} from './utils';
 import { kmlDefaultOptions } from "./kml";
-import { addAirports } from "./mapboxgl/airports";
+import { addAirports, changeAirportDisplay, changeAirportStyle } from "./mapboxgl/airports";
 import { addFirReg } from "./mapboxgl/fir-reg";
-import { addEtops } from "./mapboxgl/etops";
+import { addEtops, changeEPCircleColor, changeETOPSCircleColor, changeETOPSDisplay } from "./mapboxgl/etops";
 import { addTracks } from "./mapboxgl/tracks";
 import {pinColors, addLine, addPoints} from "./mapboxgl/layers";
 import {clamp, isInside} from './utils';
@@ -23,7 +23,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
         'zoom': 2
     }
     const map = new mapboxgl.Map({...mapOptions.mapboxOptions, ...mapboxOptions});
-
+    window.lidoMap = map;
     map.loadImage('sdf/maki-marker-sdf.png', function(error, image) {
         if (error) {
             console.log(error);
@@ -159,42 +159,42 @@ function folderHasMarker(folder) {
 }
 
 export function changeLayerState(map, folder, value) {
+    if (folder === 'etops') {
+        return changeETOPSDisplay(map, value);
+    } else if (folder === 'airport') {
+        return changeAirportDisplay(map, value);
+    }
     const markerLayer = folder + '-marker-layer';
     const lineLayer = folder + '-line-layer';
-    map.setLayoutProperty(lineLayer, 'visibility', (value) ? 'visible' : 'none');
+    if (map.getLayer(lineLayer)) map.setLayoutProperty(lineLayer, 'visibility', (value) ? 'visible' : 'none');
     if (folderHasMarker(folder)) {
         map.setLayoutProperty(markerLayer, 'visibility', (value) ? 'visible' : 'none');
     }
 }
 
-export function changeLineLayer(map, folder, kmlcolor) {
-    const [hexcolor, opacity] = kml2mapColor(kmlcolor);
+export function changeLineLayer(map, folder, kmlColor) {
+    const [hexcolor, opacity] = kml2mapColor(kmlColor);
+    if (folder === 'etops') {
+        return changeETOPSCircleColor(map, kmlColor);
+    }
     const markerLayer = folder + '-marker-layer';
     const lineLayer = folder + '-line-layer';
-    map.setPaintProperty(lineLayer, 'line-color', hexcolor);
-    map.setPaintProperty(lineLayer, 'line-opacity', opacity);
+    if (map.getLayer(lineLayer)) {
+        map.setPaintProperty(lineLayer, 'line-color', hexcolor);
+        map.setPaintProperty(lineLayer, 'line-opacity', opacity);
+    }
     if (folderHasMarker(folder)) {
         map.setPaintProperty(markerLayer, 'text-color', hexcolor);
     }
     if (folder === 'rmain') {
-        const etopsLayer = 'etops-marker-layer';
-        const eepCircleLayer = 'etops-eep-circle-line-layer';
-        const expCircleLayer = 'etops-exp-circle-line-layer';
-        if (map.getLayer(etopsLayer)) {
-            const prop = map.getPaintProperty(etopsLayer, 'icon-color');
-            prop.pop();
-            prop.push(hexcolor);
-            map.setPaintProperty(etopsLayer, 'icon-color', prop);
-            map.setPaintProperty(etopsLayer, 'text-color', prop);
-            map.setPaintProperty(eepCircleLayer, 'line-color', hexcolor);
-            map.setPaintProperty(expCircleLayer, 'line-color', hexcolor);
-            map.setPaintProperty(eepCircleLayer, 'line-opacity', opacity);
-            map.setPaintProperty(expCircleLayer, 'line-opacity', opacity);
-        }
+        changeEPCircleColor(map, kmlColor);
     }
 }
 
-export function changeMarkerLayer(map, folder, selectedPin) {
+export function changeMarkerLayer(map, folder, selectedPin, aircraftType) {
+    if (folder === 'airport') {
+        return changeAirportStyle(map, selectedPin, aircraftType);
+    }
     const hexcolor = pinColors[selectedPin];
     const markerLayer = folder + '-marker-layer';
     const lineLayer = folder + '-line-layer';
@@ -206,7 +206,7 @@ export function changeMarkerLayer(map, folder, selectedPin) {
     map.setLayoutProperty(markerLayer, 'icon-anchor', (selectedPin !== 0) ? 'bottom' : 'center');
 }
 
-export function updateMapLayers(map, name, value) {
+export function updateMapLayers(map, name, value, aircraftType) {
     const folder = folderName(name);
     if (name.endsWith('-display')) {
         if (folder === 'rnat') {
@@ -214,7 +214,7 @@ export function updateMapLayers(map, name, value) {
         }
         changeLayerState(map, folder, value);
     }else if (name.endsWith('-pin')) {
-        changeMarkerLayer(map, folder, value);
+        changeMarkerLayer(map, folder, value, aircraftType);
     }else if (name.endsWith('-color')) {
         changeLineLayer(map, folder, value);
     }else{
@@ -237,11 +237,15 @@ export function loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDr
     addPoints(map, 'ralt', alternateRoute.points, affineOrDrop, options.alternatePin, options.alternateDisplay, options.alternateColor);
     addPoints(map, 'rmain', route.points, affineOrDrop, options.routePin, true, options.routeColor);
     addFirReg(map, affineAndClamp);
-    addAirports(map, affineOrDrop, ofp.infos.aircraft);
+    let epPoints = [];
+    if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
+        epPoints = [ofp.infos['EEP'], ofp.infos['EXP']];
+    }
+    addAirports(map, affineOrDrop, ofp.infos.aircraft, epPoints, ofp.infos['raltPoints'], options.etopsColor, options.airportPin);
 
     addTracks(map, ofp, affineOrDrop, options.natColor, options.natPin, options.natDisplay);
     //console.log(ofp.infos, ofp.text);
     if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0){
-        addEtops(map, 'etops', [ofp.infos['EEP'], ofp.infos['EXP']].concat(ofp.infos['raltPoints']), affineOrDrop, affineAndClamp, true, ofp.infos['ETOPS'], options.routeColor);
+        addEtops(map, 'etops', [ofp.infos['EEP'], ofp.infos['EXP']].concat(ofp.infos['raltPoints']), affineOrDrop, affineAndClamp, true, ofp.infos['ETOPS'], options.routeColor, options.etopsColor);
     }
 }

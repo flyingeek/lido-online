@@ -49,14 +49,16 @@
   };
   setHistory();
   const update = (e) => {
-    if (window.lidoMap) updateMapLayers(window.lidoMap, e.detail.name, e.detail.value);
-    updateKml(e.detail.name, e.detail.value);
+    if (window.lidoMap && window.ofp) updateMapLayers(window.lidoMap, e.detail.name, e.detail.value, window.ofp.infos.aircraftType || '773');
+    if (!e.detail.name.startsWith('etops-') && !e.detail.name.startsWith('airport-')) {
+      updateKml(e.detail.name, e.detail.value);
+    }
     setHistory();
   };
   const ofpChange = () => {
     if (sidebar) sidebar = false;
     if ($swDismiss) $swDismiss = false;
-    window.serviceWorker.update().catch((err) => console.log('failed to update sw'));
+    if (window.serviceWorker) window.serviceWorker.update().catch((err) => console.log('failed to update sw'));
   }
 </script>
 
@@ -146,6 +148,7 @@
     overflow-x: hidden;
     max-width: 1366px;
     min-height: 100%;
+    position: relative;
   }
   form {
       margin-right: 25px; /* for hamburger */

@@ -5,6 +5,7 @@
     export let route;
     let map = undefined;
     let selected = 0;
+
     const options = [
         {
             'label': 'Mapbox',
@@ -32,6 +33,7 @@
 
     function destroyMap() {
         if (map) map.remove();
+        window.lidoMap = undefined;
     }
 
     function styleChange() {
@@ -76,9 +78,15 @@
         position: absolute;
         width: auto;
         font-size: small;
-        top: 5px;
         left: 5px;
+        top:5px;
     }
+    /* select[name=map-style] {
+        top:5px;
+    }
+    select[name=airport-map-style] {
+        bottom: 5px;
+    } */
     :global(:-webkit-fullscreen button.mapboxgl-ctrl-shrink) {
         display: none;
     }
