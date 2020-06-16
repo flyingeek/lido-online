@@ -4,10 +4,16 @@ import {addLine} from './layers';
 
 const etopsKmlColor = '800324FC';
 
-export function addEtops(map, id, data, affine, visibility, etopsTime, routeKmlColor) {
+export function addEtops(map, id, data, affineOrDrop, affineAndClamp, visibility, etopsTime, routeKmlColor) {
     const [hexcolorEtops,] = kml2mapColor(etopsKmlColor);
     const [hexcolorRoute,] = kml2mapColor(routeKmlColor);
-    const points = data.map(g => jsonPoint(affine([g.longitude, g.latitude]), g.name, g.description));
+    const points = data.flatMap(g => {
+        const newPair = affineOrDrop([g.longitude, g.latitude]);
+        if (newPair != undefined) {
+            return [jsonPoint(newPair, g.name, g.description)];
+        }
+        return [];
+    });
     map.addSource(`${id}-marker-source`, featureCollection(points.reverse())); // priority to ETOPS over EEP/EXP
     map.addLayer({
         'id': `${id}-marker-layer`,
@@ -37,11 +43,11 @@ export function addEtops(map, id, data, affine, visibility, etopsTime, routeKmlC
     });
     for (let i = 0; i < data.length; i += 1){
         if (i === 0) {
-            addLine(map, `${id}-eep-circle`, data[0].circle(420, 48), affine, routeKmlColor, visibility);
+            addLine(map, `${id}-eep-circle`, data[0].circle(420, 48), affineAndClamp, routeKmlColor, visibility);
         } else if (i === 1) {
-            addLine(map, `${id}-exp-circle`, data[1].circle(420, 48), affine, routeKmlColor, visibility);
+            addLine(map, `${id}-exp-circle`, data[1].circle(420, 48), affineAndClamp, routeKmlColor, visibility);
         } else {
-            addLine(map, `${id}-etops${i-2}-circle`, data[i].circle(7 * etopsTime), affine, etopsKmlColor, visibility)
+            addLine(map, `${id}-etops${i-2}-circle`, data[i].circle(7 * etopsTime), affineAndClamp, etopsKmlColor, visibility)
         }
     }
 

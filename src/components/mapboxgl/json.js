@@ -1,17 +1,19 @@
 
 export function jsonPoint(lngLat, title, description) {
-    const json = {
-        'type': 'Feature',
-        'geometry': {
-            'type': 'Point',
-            'coordinates': [lngLat[0], lngLat[1]]
-        },
-        'properties': {
-        }
-    };
-    if (title) json['properties']['title'] = title;
-    if (description) json['properties']['description'] = description;
-    return json;
+    if (lngLat !== undefined) {
+        const json = {
+            'type': 'Feature',
+            'geometry': {
+                'type': 'Point',
+                'coordinates': [lngLat[0], lngLat[1]]
+            },
+            'properties': {
+            }
+        };
+        if (title) json['properties']['title'] = title;
+        if (description) json['properties']['description'] = description;
+        return json;
+    }
 }
 
 export function featureCollection(features) {

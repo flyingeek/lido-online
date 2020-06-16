@@ -8,16 +8,29 @@ export const pinColors = [
 ];
 
 export function addPoints(map, id, data, affine, selectedPin, visibility, kmlcolor) {
-    const points = data.map(g => jsonPoint(affine([g.longitude, g.latitude]), g.name.replace(/00\.0/g,'')));
+    const points = data.flatMap(g => {
+        const newPair = affine([g.longitude, g.latitude]);
+        if (newPair != undefined) {
+            return [jsonPoint(newPair, g.name.replace(/00\.0/g,''))];
+        }
+        return [];
+    });
     map.addSource(`${id}-marker-source`, featureCollection(points));
     map.addLayer(markerLayer(id, selectedPin, kmlcolor, visibility));
 }
 
 
 export function addLine(map, id, data, affine, kmlcolor, visibility) {
+    const reduced = data.reduce(function(result, g) {
+        const newPair = affine([g.longitude, g.latitude]);
+        if (newPair !== undefined) {
+            result.push(newPair);
+        }
+        return result;
+    }, []);
     map.addSource(`${id}-line-source`, {
         'type': 'geojson',
-        'data': jsonLine(data.map(g => affine([g.longitude, g.latitude])))
+        'data': jsonLine(reduced)
     });
     map.addLayer(lineLayer(id, kmlcolor, visibility));
 }

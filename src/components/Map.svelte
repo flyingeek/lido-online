@@ -6,15 +6,26 @@
     let map = undefined;
     let selected = 0;
     const options = [
-        {label: 'Mapbox', style: 'mapbox://styles/mapbox/streets-v11'},
         {
-            label: 'JB North (beta)',
-            id: 'jb_north',
-            style: 'mapbox://styles/mapbox/streets-v11',
-            affineTransform: [2.63206100208865, -323662.179369435, 2.63502996130431, -10626687.7639946],
-            proj4: '+proj=lcc +lat_1=30 +lat_2=65 +lat_0=47.5 +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+            'label': 'Mapbox',
+            'id': 'mapbox_streets_v11',
+            'mapboxOptions': {
+                'style': 'mapbox://styles/mapbox/streets-v11'
+            }
+        },
+        {
+            'label': 'JB North (beta)',
+            'id': 'jb_north',
+            'extent': [-7485660.17086825, -3575776.54689797, 7731598.37603340, 11641482.00000368],
+            'affineTransform': [2.63206100208865, -323662.179369435, 2.63502996130431, -10626687.7639946],
+            'proj4': '+proj=lcc +lat_1=30 +lat_2=65 +lat_0=47.5 +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
+            'mapboxOptions': {
+                'style': 'mapbox://styles/flyingeek/ckbhlmwdm0mn51imw8t4dddqs',
+                'renderWorldCopies': false
+            }
         }
     ];
+    
     $: mapOptions = options[selected];
     const name = 'map-style';
     export let id = 'map';

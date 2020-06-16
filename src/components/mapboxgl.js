@@ -8,6 +8,8 @@ import { addFirReg } from "./mapboxgl/fir-reg";
 import { addEtops } from "./mapboxgl/etops";
 import { addTracks } from "./mapboxgl/tracks";
 import {pinColors, addLine, addPoints} from "./mapboxgl/layers";
+import {clamp, isInside} from './utils';
+
 import proj4 from 'proj4';
 
 export const token = 'MAPBOX_TOKEN';
@@ -15,12 +17,12 @@ export const token = 'MAPBOX_TOKEN';
 export const key = {};
 
 export function createMap(id, mapOptions, ofp, kmlOptions) {
-    const map = new mapboxgl.Map({
-        'container': id, // container id
-        'style': 'mapbox://styles/mapbox/streets-v11', // stylesheet location
-        'center': [0, 49], // starting position
-        'zoom': 2 // starting zoom
-    });
+    let mapboxOptions = {
+        'container':id,
+        'center': [0, 49],
+        'zoom': 2
+    }
+    const map = new mapboxgl.Map({...mapOptions.mapboxOptions, ...mapboxOptions});
 
     map.loadImage('sdf/maki-marker-sdf.png', function(error, image) {
         if (error) {
@@ -54,17 +56,32 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
     proj4.defs("EPSG:3857","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
     //window.proj4 = proj4;
     let affine = (v) => v;
+    let affineAndClamp = (v) => v;
+    let affineOrDrop = (v) => v;
     if (mapOptions.affineTransform) {
         proj4.defs('CUSTOM', mapOptions.proj4);
         const [a, b, c, d] = mapOptions.affineTransform;
+        const [minX, minY, maxX, maxY] = mapOptions.extent;
         affine = ([lng, lat]) => {
             const [x, y] = proj4('CUSTOM', [lng, lat]);
             return proj4('EPSG:3857', 'WGS84', [(a * x) + b, (c * y) + d]);
-        } 
+        }
+        affineAndClamp = ([lng, lat]) => {
+            let [x, y] = proj4('CUSTOM', [lng, lat]);
+            x = clamp(x, minX, maxX);
+            y = clamp(y, minY, maxY);
+            return proj4('EPSG:3857', 'WGS84', [(a * x) + b, (c * y) + d]);
+        }
+        affineOrDrop = ([lng, lat]) => {
+            let [x, y] = proj4('CUSTOM', [lng, lat]);
+            if (isInside(x, minX, maxX) && isInside(y, minY, maxY)) {
+                return proj4('EPSG:3857', 'WGS84', [(a * x) + b, (c * y) + d]);
+            }
+        }
     }
     let bbox = undefined;
     const getBounds = (points, result=[Infinity, Infinity, -Infinity, -Infinity]) => {
-        for (const [lng, lat] of points.map(g => affine([g.longitude, g.latitude]))) {
+        for (const [lng, lat] of points.map(g => affineAndClamp([g.longitude, g.latitude]))) {
             if (result[0] > lng) { result[0] = lng; }
             if (result[1] > lat) { result[1] = lat; }
             if (result[2] < lng) { result[2] = lng; }
@@ -125,7 +142,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
                 }
             });
         }
-        loadMap(ofp, kmlOptions, map, affine);
+        loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDrop);
         //const testpoints = [[10, -60], [30,-120], [30, 120], [0, 60]].map(v => new editolido.GeoPoint(v));
         //addPoints(map,'test', testpoints,affine,5, true, kmlOptions.routeColor);
         addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet');
@@ -205,7 +222,7 @@ export function updateMapLayers(map, name, value) {
     }
   }
 
-export function loadMap(ofp, kmlOptions, map, affine) {
+export function loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDrop) {
     const options = {...kmlDefaultOptions, ...kmlOptions};
     const description = ofp.description;
     const routeName = `${ofp.infos.departure}-${ofp.infos.destination}`;
@@ -213,18 +230,18 @@ export function loadMap(ofp, kmlOptions, map, affine) {
     const alternateRoute = new editolido.Route(ofp.wptCoordinatesAlternate(), {"name": "Route Dégagement"});
     const greatCircle = new editolido.Route([route.points[0], route.points[route.points.length - 1]]).split(300, {"name": `Ortho ${routeName}`});
 
-    addLine(map, 'greatcircle', greatCircle.points, affine, options.greatCircleColor, options.greatCircleDisplay);
-    addLine(map, 'ogimet', ofp.ogimetData.route.points, affine, options.ogimetColor, options.ogimetDisplay);
-    addLine(map, 'ralt', alternateRoute.points, affine, options.alternateColor, options.alternateDisplay);
-    addLine(map, 'rmain', route.points, affine, options.routeColor, true);
-    addPoints(map, 'ralt', alternateRoute.points, affine, options.alternatePin, options.alternateDisplay, options.alternateColor);
-    addPoints(map, 'rmain', route.points, affine, options.routePin, true, options.routeColor);
-    addFirReg(map, affine);
-    addAirports(map, affine, ofp.infos.aircraft);
+    addLine(map, 'greatcircle', greatCircle.points, affineOrDrop, options.greatCircleColor, options.greatCircleDisplay);
+    addLine(map, 'ogimet', ofp.ogimetData.route.points, affineOrDrop, options.ogimetColor, options.ogimetDisplay);
+    addLine(map, 'ralt', alternateRoute.points, affineOrDrop, options.alternateColor, options.alternateDisplay);
+    addLine(map, 'rmain', route.points, affineOrDrop, options.routeColor, true);
+    addPoints(map, 'ralt', alternateRoute.points, affineOrDrop, options.alternatePin, options.alternateDisplay, options.alternateColor);
+    addPoints(map, 'rmain', route.points, affineOrDrop, options.routePin, true, options.routeColor);
+    addFirReg(map, affineAndClamp);
+    addAirports(map, affineOrDrop, ofp.infos.aircraft);
 
-    addTracks(map, ofp, affine, options.natColor, options.natPin, options.natDisplay);
+    addTracks(map, ofp, affineOrDrop, options.natColor, options.natPin, options.natDisplay);
     //console.log(ofp.infos, ofp.text);
     if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0){
-        addEtops(map, 'etops', [ofp.infos['EEP'], ofp.infos['EXP']].concat(ofp.infos['raltPoints']), affine, true, ofp.infos['ETOPS'], options.routeColor);
+        addEtops(map, 'etops', [ofp.infos['EEP'], ofp.infos['EXP']].concat(ofp.infos['raltPoints']), affineOrDrop, affineAndClamp, true, ofp.infos['ETOPS'], options.routeColor);
     }
 }

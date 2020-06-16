@@ -5,12 +5,12 @@ export const addAirports = (map, affine, aircraftType) => {
         const projFeatures = [];
         for (let feature of data.features) {
             feature.geometry.coordinates = affine(feature.geometry.coordinates);
-            projFeatures.push(feature);
+            if(feature.geometry.coordinates !== undefined) projFeatures.push(feature);
         }
         data.features = projFeatures;
         map.addSource('airports-source', {
             type: 'geojson',
-            attribution: `Airports/FIR ${aircraftType} ${"CONF_AIRAC".substring(0,2)}.${"CONF_AIRAC".substring(2,4)} © Olivier Ravet - Yammer/Maps.me`,
+            attribution: `Yammer/Maps.me - Airports/FIR © Olivier Ravet - ${aircraftType} ${"CONF_AIRAC".substring(0,2)}.${"CONF_AIRAC".substring(2,4)}`,
             data: data
         });
 

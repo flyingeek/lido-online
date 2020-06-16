@@ -14,13 +14,21 @@ export function addTracks(map, ofp, affine, kmlcolor, selectedPin, visibility) {
     };
     for (let track of ofp.tracks) {
         const folder = (track.isComplete) ? 'rnat' : 'rnat-incomplete';
-        const points = track.points.map(g => affine([g.longitude, g.latitude]));
+        const points = track.points.reduce(function(result, g) {
+            const newPair = affine([g.longitude, g.latitude]);
+            if (newPair !== undefined) {
+                result.push(newPair);
+            }
+            return result;
+        }, []);
         lines[folder].push(jsonLine(points, affine, track.name));
         const firstPoint = track.points[0];
-        markers[folder].push(jsonPoint(affine([firstPoint.longitude, firstPoint.latitude]), `${track.name}\n${firstPoint.name}`, track.description));
+        let jsonP = jsonPoint(affine([firstPoint.longitude, firstPoint.latitude]), `${track.name}\n${firstPoint.name}`, track.description);
+        if (jsonP !== undefined) markers[folder].push(jsonP);
         if (track.isMine) {
             const lastPoint = track.points[track.points.length - 1];
-            markers[folder].push(jsonPoint(affine([lastPoint.longitude, lastPoint.latitude]), `${track.name}\n${lastPoint.name}`, track.description));
+            jsonP = jsonPoint(affine([lastPoint.longitude, lastPoint.latitude]), `${track.name}\n${lastPoint.name}`, track.description);
+            if (jsonP !== undefined) markers[folder].push(jsonP);
         }
     }
     map.addSource(`rnat-marker-source`, featureCollection(markers['rnat']));

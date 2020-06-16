@@ -47,3 +47,11 @@ export async function addToSWCache(urls, cacheName) {
         }
     }
 }
+
+export function clamp(num, min, max) {
+    return num <= min ? min : num >= max ? max : num;
+}
+
+export function isInside(num, min, max) {
+    return num < min ? false : num > max ? false : true;
+}
