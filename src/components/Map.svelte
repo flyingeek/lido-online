@@ -1,5 +1,5 @@
 <script>
-    import {createMap, token} from './mapboxgl.js';
+    import {createMap, token, blankStyle} from './mapboxgl.js';
     export let kmlOptions;
     export let ofp;
     export let route;
@@ -22,7 +22,7 @@
             //'affineTransform': [2.63206100208865, -323662.179369435, 2.63502996130431, -10626687.7639946],
             'proj4': '+proj=lcc +lat_1=30 +lat_2=65 +lat_0=47.5 +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
             'mapboxOptions': {
-                'style': 'mapbox://styles/flyingeek/ckbhlmwdm0mn51imw8t4dddqs',
+                'style': blankStyle,
                 'renderWorldCopies': false,
                 'maxZoom': 4
             },
