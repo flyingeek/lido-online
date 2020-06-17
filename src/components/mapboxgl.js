@@ -71,7 +71,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
             d = v0 - (c * y0);
         }
         
-        const [minX, minY, maxX, maxY] = mapOptions.extent;
+        const [minX, minY, maxX, maxY] = (mapOptions.viewport) ? mapOptions.viewport : mapOptions.extent;
         affine = ([lng, lat]) => {
             const [x, y] = proj4('CUSTOM', [lng, lat]);
             return proj4('EPSG:3857', 'WGS84', [(a * x) + b, (c * y) + d]);

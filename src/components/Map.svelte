@@ -22,8 +22,6 @@
         {
             'label': 'Lambert North (beta)',
             'id': 'jb_north',
-            //'extent': [-7485660.17086825, -3575776.54689797, 7731598.37603340, 11641482.00000368],
-            //'extent': [-8175821.87799839, -6454871.76800263, 8119308.43076422, 9841890.82868032],
             'extent': [-7441961.61694286, -5719116.57599206, 7385706.81468334, 9107027.78651793],
             //'affineTransform': [2.63206100208865, -323662.179369435, 2.63502996130431, -10626687.7639946],
             'proj4': '+proj=lcc +lat_1=30 +lat_2=65 +lat_0=47.5 +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
@@ -40,11 +38,12 @@
             'label': 'Lambert South (beta)',
             'id': 'jb_south',
             'extent': [-12613903.56963206, -12799864.28766359, 13437054.51836624, 13256450.22227117],
+            'viewport': [-12613903.56963206, -5420000.1608799, 13437054.51836624, 5862747.38325809],
             'proj4': '+proj=lcc +lat_1=-15 +lat_2=30 +lat_0=7.5 +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
             'mapboxOptions': {
                 'style': blankStyle,
                 'renderWorldCopies': false,
-                'maxZoom': 4
+                'maxZoom': 5
             },
             //'tiles': 'https://editolido.alwaysdata.net/i/tiles/{z}/{x}/{y}.png'
             'tiles': ['https://editolido.alwaysdata.net/i/southv2/{z}/{x}/{y}.jpg'],
