@@ -150,7 +150,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
                 }
             });
         }
-        loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDrop);
+        loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDrop, mapOptions);
         //const testpoints = [[10, -60], [30,-120], [30, 120], [0, 60]].map(v => new editolido.GeoPoint(v));
         //addPoints(map,'test', testpoints,affine,5, true, kmlOptions.routeColor);
         fetch(ofp.ogimetData.proxyImg); // add to cache
@@ -162,10 +162,6 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
     return map;
 }
 
-function folderHasMarker(folder) {
-    return (!(folder === 'ogimet' || folder === 'greatcircle'));
-}
-
 export function changeLayerState(map, folder, value) {
     if (folder === 'etops') {
         return changeETOPSDisplay(map, value);
@@ -175,7 +171,7 @@ export function changeLayerState(map, folder, value) {
     const markerLayer = folder + '-marker-layer';
     const lineLayer = folder + '-line-layer';
     if (map.getLayer(lineLayer)) map.setLayoutProperty(lineLayer, 'visibility', (value) ? 'visible' : 'none');
-    if (folderHasMarker(folder)) {
+    if (map.getLayer(markerLayer)) {
         map.setLayoutProperty(markerLayer, 'visibility', (value) ? 'visible' : 'none');
     }
 }
@@ -191,7 +187,7 @@ export function changeLineLayer(map, folder, kmlColor) {
         map.setPaintProperty(lineLayer, 'line-color', hexcolor);
         map.setPaintProperty(lineLayer, 'line-opacity', opacity);
     }
-    if (folderHasMarker(folder)) {
+    if (map.getLayer(markerLayer)) {
         map.setPaintProperty(markerLayer, 'text-color', hexcolor);
     }
     if (folder === 'rmain') {
@@ -230,7 +226,7 @@ export function updateMapLayers(map, name, value, ofp, kmlOptions) {
     }
   }
 
-export function loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDrop) {
+export function loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDrop, mapOptions) {
     const options = {...kmlDefaultOptions, ...kmlOptions};
     const description = ofp.description;
     const routeName = `${ofp.infos.departure}-${ofp.infos.destination}`;
@@ -244,7 +240,7 @@ export function loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDr
     addLine(map, 'rmain', route.points, affineOrDrop, options.routeColor, true);
     addPoints(map, 'ralt', alternateRoute.points, affineOrDrop, options.alternatePin, options.alternateDisplay, options.alternateColor);
     addPoints(map, 'rmain', route.points, affineOrDrop, options.routePin, true, options.routeColor);
-    addFirReg(map, affineAndClamp);
+    if (mapOptions.id !== 'jb_pacific') addFirReg(map, affineAndClamp);
     let epPoints = [];
     if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
         epPoints = [ofp.infos['EEP'], ofp.infos['EXP']];
