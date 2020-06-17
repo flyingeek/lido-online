@@ -3,6 +3,7 @@
     import {createMap, token, blankStyle, updateMapLayers} from './mapboxgl.js';
     import {updateKml} from './kml.js';
     import { createEventDispatcher } from 'svelte';
+    import proj4 from 'proj4';
     const dispatch = createEventDispatcher();
     export let kmlOptions;
     export let ofp;
@@ -38,7 +39,7 @@
             'label': 'Lambert South (beta)',
             'id': 'jb_south',
             'extent': [-12613000.20107552, -12796118.19556621, 13437104.14597977, 13253986.15148908],
-            //'viewport': [-12613903.56963206, -5420000.1608799, 13437054.51836624, 5862747.38325809],
+            'validity': [-12613903.56963206, -9420000.1608799, 13437054.51836624, 5862747.38325809],
             'proj4': '+proj=lcc +lat_1=-15 +lat_2=30 +lat_0=7.5 +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
             'mapboxOptions': {
                 'style': blankStyle,
@@ -102,6 +103,20 @@
             }
         }
     }
+    function mapContainsOfp(option) {
+        if (!option.proj4) return true;
+        const dep = ofp.route.points[0];
+        const dest = ofp.route.points[ofp.route.points.length - 1];
+        const bounds = (option.validity) ? option.validity : option.extent;
+        for (let p of [dep, dest]) {
+            const [x, y] = proj4(option.proj4, [p.longitude, p.latitude]);
+            if (x < bounds[0] ||  x > bounds[2] || y < bounds[1] || y > bounds[3]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     const update = (e) => {
         updateMapLayers(map, e.detail.name, e.detail.value, ofp, kmlOptions);
         updateKml(e.detail.name, e.detail.value);
@@ -114,7 +129,9 @@
 <div class="mapmenu">
     <select name="{name}" bind:value={selected} class="form-control form-control-sm" on:change={styleChange}>
         {#each options as option, index}
+        {#if (index === selected || mapContainsOfp(option))}
         <option value="{index}" selected={index === selected}>{option.label}</option>
+        {/if}
         {/each}
     </select>
 </div>
