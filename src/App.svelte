@@ -1,7 +1,6 @@
 <script>
 
   import LidoRoute from "./components/LidoRoute.svelte";
-  import FormSettings from "./components/FormSettings.svelte";
   import { kmlRegex } from "./components/KmlColor.svelte";
   import Export from "./components/Export.svelte";
   import Gramet from "./components/Gramet.svelte";
@@ -12,12 +11,9 @@
   import Page from "./components/Page.svelte";
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
-  import { updateKml } from "./components/kml.js";
-  import {updateMapLayers} from './components/mapboxgl.js';
   import {storage, stores, validate, saved, storeSettingsFromURL} from "./components/storage.js";
-  import {swDismiss} from "./store.js";
+  import {swDismiss, sidebar} from "./store.js";
 
-  let sidebar = false;
   let route = "/";
   let permalink = window.location.href;
   let promise = undefined;
@@ -30,7 +26,7 @@
       route = '/';
     }
     if (route === '/map') {
-      if (sidebar) sidebar = false;
+      if ($sidebar) $sidebar = false;
     }
   };
   hashchange();
@@ -48,17 +44,11 @@
     history.replaceState(stateObj, "Mon Convertisseur d'OFP", permalink);
   };
   setHistory();
-  const update = (e) => {
-    if (window.lidoMap && window.ofp) updateMapLayers(window.lidoMap, e.detail.name, e.detail.value, window.ofp.infos.aircraftType || '773');
-    if (!e.detail.name.startsWith('etops-') && !e.detail.name.startsWith('airport-')) {
-      updateKml(e.detail.name, e.detail.value);
-    }
-    setHistory();
-  };
+
   const ofpChange = () => {
-    if (sidebar) sidebar = false;
+    if ($sidebar) $sidebar = false;
     if ($swDismiss) $swDismiss = false;
-    if (window.serviceWorker) window.serviceWorker.update().catch((err) => console.log('failed to update sw'));
+    if (window.serviceWorker && window.serviceWorker.update) window.serviceWorker.update().catch((err) => console.log('failed to update sw'));
   }
 </script>
 
@@ -77,7 +67,7 @@
         <Page hidden={route !== '/map'}><div style="margin: auto;">traitement en cours...</div></Page>
       {:then ofp}
         <Page hidden={route !== '/map'}>
-          <Map id="map" {kmlOptions} {ofp} {route}/>
+          <Map id="map" bind:kmlOptions {ofp} {route} on:save={setHistory}/>
         </Page>
       {:catch error}
         <p class:d-none={route !== '/map'}>😱: {error.message}</p>
@@ -93,7 +83,7 @@
         {:else if route === '/export'}
             <Page>
             <Export {ofp} on:save={setHistory} />
-            <LidoRoute {ofp} on:save={setHistory}/>
+            <LidoRoute {ofp}/>
             </Page>
         {/if}
       {:catch error}
@@ -107,9 +97,6 @@
       <Page><Help /></Page>
     {/if}
   </div>
-  {#if route === '/map'}
-  <FormSettings bind:kmlOptions bind:sidebar on:change={update} on:save={setHistory} />
-  {/if}
 </main>
 <svelte:window on:hashchange={hashchange}/>
 

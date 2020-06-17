@@ -23,7 +23,6 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
         'zoom': 2
     }
     const map = new mapboxgl.Map({...mapOptions.mapboxOptions, ...mapboxOptions});
-    window.lidoMap = map;
     map.loadImage('sdf/maki-marker-sdf.png', function(error, image) {
         if (error) {
             console.log(error);
@@ -200,9 +199,9 @@ export function changeLineLayer(map, folder, kmlColor) {
     }
 }
 
-export function changeMarkerLayer(map, folder, selectedPin, aircraftType) {
+export function changeMarkerLayer(map, folder, selectedPin, aircraftType, raltNames, etopsKmlColor) {
     if (folder === 'airport') {
-        return changeAirportStyle(map, selectedPin, aircraftType);
+        return changeAirportStyle(map, selectedPin, aircraftType, raltNames, etopsKmlColor);
     }
     const hexcolor = pinColors[selectedPin];
     const markerLayer = folder + '-marker-layer';
@@ -215,7 +214,7 @@ export function changeMarkerLayer(map, folder, selectedPin, aircraftType) {
     map.setLayoutProperty(markerLayer, 'icon-anchor', (selectedPin !== 0) ? 'bottom' : 'center');
 }
 
-export function updateMapLayers(map, name, value, aircraftType) {
+export function updateMapLayers(map, name, value, ofp, kmlOptions) {
     const folder = folderName(name);
     if (name.endsWith('-display')) {
         if (folder === 'rnat') {
@@ -223,7 +222,7 @@ export function updateMapLayers(map, name, value, aircraftType) {
         }
         changeLayerState(map, folder, value);
     }else if (name.endsWith('-pin')) {
-        changeMarkerLayer(map, folder, value, aircraftType);
+        changeMarkerLayer(map, folder, value, ofp.infos.aircraftType || '773', ofp.infos.ralts, kmlOptions.etopsColor);
     }else if (name.endsWith('-color')) {
         changeLineLayer(map, folder, value);
     }else{

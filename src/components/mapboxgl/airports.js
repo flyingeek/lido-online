@@ -1,6 +1,8 @@
 import {kml2mapColor} from "../KmlColor.svelte";
 
-const basicAirportIconColor = ["case",["==", 0, ["get", "level"]], '#095','#B71'];
+const basicAirportIconColor = (raltNames, hexColor) => ["case",
+    ["in", ["get", "name"], ["literal", raltNames]], hexColor,
+    ["==", 0, ["get", "level"]], '#095','#C71'];
 const statusAirportIconColor = (aircraftType) => ["case",
     ["==", 8, ["get", `${aircraftType}`]], '#ea80d8',
     ["==", 7, ["get", `${aircraftType}`]], '#ea80d8',
@@ -12,13 +14,17 @@ const statusAirportIconColor = (aircraftType) => ["case",
     ["==", 1, ["get", `${aircraftType}`]], '#00b0f1',
     '#000'];
 
-const getIconColor = (style, aircraftType) => {
+const getIconColor = (style, aircraftType, raltNames, hexColor) => {
     if (style === 0) {
         return statusAirportIconColor(aircraftType);
     }
-    return basicAirportIconColor;
+    return basicAirportIconColor(raltNames, hexColor);
 }
 const getIconHaloWidth = style => (style === 0) ? 3 : 0;
+const getTextColor = (raltNames, hexColor) => ["case",
+    ["in", ["get", "name"], ["literal", raltNames]], hexColor,
+    ["==", 0, ["get", "level"]], '#000',
+    '#C60'];
 
 export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, etopsKmlColor, style) => {
     const [hexcolorEtops,] = kml2mapColor(etopsKmlColor);
@@ -108,11 +114,8 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
             'paint': {
                 'icon-halo-color':["case", ["==", 0, ["get", "level"]], '#095','#D70'], // normal airports
                 'icon-halo-width': getIconHaloWidth(style),
-                'icon-color': getIconColor(style, aircraftType),
-                'text-color': ["case",
-                    ["in", ["get", "name"], ["literal", raltNames]], hexcolorEtops,
-                    ["==", 0, ["get", "level"]], '#000',
-                    '#C60'],
+                'icon-color': getIconColor(style, aircraftType, raltNames, hexcolorEtops),
+                'text-color': getTextColor(raltNames, hexcolorEtops),
                 'text-halo-color': "#000",
                 'text-halo-width': ["case", ["==", 0, ["get", "level"]], 0, 0],
                 'text-opacity': 0.8
@@ -133,10 +136,12 @@ export function changeAirportDisplay(map, visible) {
     }
 }
 
-export function changeAirportStyle(map, style, aircraftType) {
+export function changeAirportStyle(map, style, aircraftType, raltNames, etopsKmlColor) {
+    const [hexcolorEtops,] = kml2mapColor(etopsKmlColor);
     const layer = 'airport-layer';
     if (map.getLayer(layer)) {
-        map.setPaintProperty(layer, 'icon-color', getIconColor(style, aircraftType));
+        map.setPaintProperty(layer, 'icon-color', getIconColor(style, aircraftType, raltNames, hexcolorEtops));
+        map.setPaintProperty(layer, 'text-color',getTextColor(raltNames, hexcolorEtops));
         map.setPaintProperty(layer, 'icon-halo-width', getIconHaloWidth(style));
     }
 }

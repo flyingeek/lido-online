@@ -1,5 +1,9 @@
 <script>
-    import {createMap, token, blankStyle} from './mapboxgl.js';
+    import FormSettings from "./FormSettings.svelte";
+    import {createMap, token, blankStyle, updateMapLayers} from './mapboxgl.js';
+    import {updateKml} from './kml.js';
+    import { createEventDispatcher } from 'svelte';
+    const dispatch = createEventDispatcher();
     export let kmlOptions;
     export let ofp;
     export let route;
@@ -48,7 +52,6 @@
 
     function destroyMap() {
         if (map) map.remove();
-        window.lidoMap = undefined;
     }
 
     function styleChange(e) {
@@ -72,16 +75,23 @@
             }
         }
     }
+    const update = (e) => {
+        updateMapLayers(map, e.detail.name, e.detail.value, ofp, kmlOptions);
+        updateKml(e.detail.name, e.detail.value);
+        dispatch('save'); // set History
+  };
 
 </script>
 
 <div id={id} use:mapbox={{route}}></div>
 <div class="mapmenu">
-<select name="{name}" bind:value={selected} class="form-control form-control-sm" on:change={styleChange}>
-    {#each options as option, index}
-    <option value="{index}" selected={index === selected}>{option.label}</option>
-    {/each}
-</select></div>
+    <select name="{name}" bind:value={selected} class="form-control form-control-sm" on:change={styleChange}>
+        {#each options as option, index}
+        <option value="{index}" selected={index === selected}>{option.label}</option>
+        {/each}
+    </select>
+</div>
+<FormSettings bind:kmlOptions on:change={update} on:save />
 <style>
     #map {
         flex: 1 1 auto;

@@ -74,7 +74,6 @@
                                     const kmlGen = KmlGenerator();
                                     generateKML(ofp, kmlOptions);
                                     //console.timeEnd('start')
-                                    window.ofp = ofp;
                                     resolve(ofp);
                                 } catch (err) {
                                     console.log(text);

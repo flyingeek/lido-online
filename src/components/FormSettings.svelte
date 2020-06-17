@@ -15,12 +15,12 @@
     import PinSelector from './PinSelector.svelte';
     import AirportSelector from './AirportSelector.svelte';
     import {storage, stores} from './storage.js';
+    import {sidebar} from "../store.js";
     const dispatch = createEventDispatcher();
     const store = stores.optionsKML;
     export let kmlOptions;
     export let mode = "col-12 col-sm-6 col-md-12 col-lg-12 col-xl-12";
     let storedOptions = {...kmlDefaultOptions, ...(storage.getItem(store) ||{})};
-    export let sidebar;
     let hamburgerBlink = compare(kmlDefaultOptions, kmlOptions); // check only on entry
     $: isDefault = compare(kmlDefaultOptions, kmlOptions);
     $: isChanged = !compare(storedOptions, kmlOptions);
@@ -73,12 +73,12 @@
         storedOptions = {...kmlOptions};
     }
 </script>
-<div class:sidebar class="settings">
+<div class:sidebar={$sidebar} class="settings">
     <a
     class="hamburger"
     role="button"
     href="."
-    on:click|preventDefault={() =>  {sidebar = !sidebar; hamburgerBlink = false;}}>
+    on:click|preventDefault={() =>  {$sidebar = !$sidebar; hamburgerBlink = false;}}>
     <svg class:blink={hamburgerBlink}>
         <use xlink:href="#bars" />
     </svg>
@@ -87,7 +87,7 @@
     class="closeB"
     role="button"
     href="."
-    on:click|preventDefault={() =>  {sidebar = !sidebar; hamburgerBlink = false;}}>
+    on:click|preventDefault={() =>  {$sidebar = !$sidebar; hamburgerBlink = false;}}>
     <svg class:blink={hamburgerBlink}>
         <use xlink:href="#close" />
     </svg>
@@ -234,6 +234,7 @@
         padding: 5px;
         z-index: 2;
         height: 100%;
+        top: 0;
     }
     .sidebar .hamburger {
         display: none !important;
