@@ -35,6 +35,20 @@
             //'tiles': 'https://editolido.alwaysdata.net/i/tiles/{z}/{x}/{y}.png'
             'tiles': ['https://editolido.alwaysdata.net/i/northv2/{z}/{x}/{y}.jpg'],
             'tileSize': 512
+        },
+        {
+            'label': 'Lambert South (beta)',
+            'id': 'jb_south',
+            'extent': [-12613903.56963206, -12799864.28766359, 13437054.51836624, 13256450.22227117],
+            'proj4': '+proj=lcc +lat_1=-15 +lat_2=30 +lat_0=7.5 +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
+            'mapboxOptions': {
+                'style': blankStyle,
+                'renderWorldCopies': false,
+                'maxZoom': 4
+            },
+            //'tiles': 'https://editolido.alwaysdata.net/i/tiles/{z}/{x}/{y}.png'
+            'tiles': ['https://editolido.alwaysdata.net/i/southv2/{z}/{x}/{y}.jpg'],
+            'tileSize': 512
         }
         // ,
         // {
