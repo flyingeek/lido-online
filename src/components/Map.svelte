@@ -51,7 +51,8 @@
         window.lidoMap = undefined;
     }
 
-    function styleChange() {
+    function styleChange(e) {
+        e.target.blur(); // to avoid zoom problem in standalone mode
         destroyMap();
         map = createMap(id, mapOptions, ofp, kmlOptions);
     }
@@ -74,14 +75,13 @@
 
 </script>
 
-<div id={id} use:mapbox={{route}}>
+<div id={id} use:mapbox={{route}}></div>
+<div class="mapmenu">
 <select name="{name}" bind:value={selected} class="form-control form-control-sm" on:change={styleChange}>
     {#each options as option, index}
     <option value="{index}" selected={index === selected}>{option.label}</option>
     {/each}
-</select>
-</div>
-
+</select></div>
 <style>
     #map {
         flex: 1 1 auto;
@@ -89,22 +89,16 @@
         margin: -3px -10px -10px -10px;
     }
     select {
-        z-index: 2;
-        position: absolute;
         width: auto;
         font-size: small;
         left: 5px;
         top:5px;
     }
-    /* select[name=map-style] {
-        top:5px;
+    .mapmenu {
+        position: absolute;
+        top: 60px;
     }
-    select[name=airport-map-style] {
-        bottom: 5px;
-    } */
-    :global(:-webkit-fullscreen button.mapboxgl-ctrl-shrink) {
-        display: none;
-    }
+
     @media (max-width: 767px), (max-height: 700px) {
         #map {
             width: 100%;
