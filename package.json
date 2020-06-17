@@ -1,6 +1,6 @@
 {
   "name": "lido-svelte",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "AIRAC": "2007g",
   "scripts": {
     "build": "npm run clean && rollup -c",
@@ -35,6 +35,7 @@
     "rollup-plugin-watch-assets": "^1.0.1",
     "rollup-plugin-workbox-inject": "^2.0.0",
     "svelte": "^3.0.0",
+    "svelte-preprocess-markdown": "^2.7.2",
     "unzipper": "^0.10.11",
     "workbox-build": "^5.1.3"
   },

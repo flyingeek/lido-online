@@ -1,5 +1,7 @@
 <script>
 import {swDismiss} from "../store.js";
+import Helpmarkup from './Help.md';
+
 $: lidojsVersion = (window.editolido) ? ' / lidojs: v' + window.editolido.version : '';
 let sw = window.serviceWorker;
 let swRunning = true;
@@ -85,13 +87,23 @@ const checkUpdate = () => {
 {/if}
 </div>
 
+<div class="markdown">
+<Helpmarkup/>
+</div>
 
 <style>
     div {
         background-color: white;
         margin-top: 2em;
+        padding: 0.5em 1em;
+        flex: 0;
     }
     span[data-status]{
         padding-right: 4px;
+    }
+    .markdown {
+        overflow-y: scroll;
+        flex: 1 1 auto;
+        height: 0;
     }
 </style>

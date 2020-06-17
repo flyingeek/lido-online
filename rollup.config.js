@@ -10,6 +10,7 @@ import watchAssets from 'rollup-plugin-watch-assets'; // also requires globby
 import {version, AIRAC} from './package.json';
 import lidojsPkg from './node_modules/@flyingeek/lidojs/package.json';
 const workbox = require('rollup-plugin-workbox-inject');
+const {markdown} = require('svelte-preprocess-markdown');
 const path = require('path');
 const Mustache = require('mustache');
 require('dotenv').config();
@@ -48,6 +49,8 @@ export default [{
       dev: !production,
       // we'll extract any component CSS out into
       // a separate file - better for performance
+      extensions: ['.svelte','.md'],
+      preprocess: markdown(),
       css: css => {
         css.write(relPath(U.CONF_BUNDLE_CSS))
       }
