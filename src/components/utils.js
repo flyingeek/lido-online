@@ -37,17 +37,6 @@ export function folderName(str) {
     }
 }
 
-export async function addToSWCache(urls, cacheName) {
-    if (window.caches) {
-        try {
-            const myCache = await window.caches.open(cacheName);
-            await myCache.addAll(urls);
-        } catch (err) {
-            console.log('could not cache gramet', err);
-        }
-    }
-}
-
 export function clamp(num, min, max) {
     return num <= min ? min : num >= max ? max : num;
 }

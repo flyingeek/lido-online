@@ -1,7 +1,7 @@
 /* global editolido mapboxgl */
 
 import {kml2mapColor} from "./KmlColor.svelte";
-import {folderName, addToSWCache} from './utils';
+import {folderName} from './utils';
 import { kmlDefaultOptions } from "./kml";
 import { addAirports, changeAirportDisplay, changeAirportStyle } from "./mapboxgl/airports";
 import { addFirReg } from "./mapboxgl/fir-reg";
@@ -119,7 +119,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
         fitBoundsOptions: {maxZoom: 3},
         trackUserLocation: false
     });
-    map.addControl(geolocate);
+    if (!mapOptions.proj4) map.addControl(geolocate);
     //console.log(geolocate);
     // geolocate.on('geolocate', function(e) {
     //     console.log('geolocated');
@@ -153,7 +153,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
         loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDrop);
         //const testpoints = [[10, -60], [30,-120], [30, 120], [0, 60]].map(v => new editolido.GeoPoint(v));
         //addPoints(map,'test', testpoints,affine,5, true, kmlOptions.routeColor);
-        addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet');
+        fetch(ofp.ogimetData.proxyImg); // add to cache
     });
     // map.on('click', function(e) {
     //     e.lngLat.wrap();

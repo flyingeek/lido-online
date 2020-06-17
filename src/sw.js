@@ -63,13 +63,13 @@ registerRoute(
 )
 
 registerRoute(
-  ({url}) => url.origin === 'https://editolido.alwaysdata.net' && url.pathname.startsWith('/proxy_gramet/'),
+  ({url}) => url.origin === 'https://editolido.alwaysdata.net' && url.pathname.startsWith('/proxy_gramet'),
   new CacheFirst({
-    cacheName: 'lido-gramet',
+    cacheName: 'lido-gramet2',
     plugins: [
       new ExpirationPlugin({
-        maxEntries: 10,
-        maxAgeSeconds: 48 * 60, // 48h
+        maxEntries: 5,
+        maxAgeSeconds: 48 * 3600
       })
     ]
   })
@@ -120,6 +120,8 @@ const isOldCache = (cacheName) => {
   } else if (cacheName === 'lido-3rd-static') {
     return true;
   } else if (cacheName === 'lido-ressources') {
+    return true;
+  } else if (cacheName === 'lido-gramet') {
     return true;
   }
   return false;

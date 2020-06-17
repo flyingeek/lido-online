@@ -80,7 +80,7 @@
             update(parameters) {
                 if (parameters.route === '/map' && map) {
                     map.resize();
-                    console.log("map resized");
+                    //console.log("map resized");
                 }
             },
             destroy() {
