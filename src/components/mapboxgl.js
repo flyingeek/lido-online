@@ -134,13 +134,11 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
     //     geolocate.options['fitBoundsOptions'] = {maxZoom: zoom};
     // });
     map.on('load', function() {
-        if (mapOptions.id === 'jb_north') {
+        if (mapOptions.tiles) {
             map.addSource('jb-raster',{
                 'type': 'raster',
-                'tiles': [
-                    mapOptions.tiles
-                ],
-                'tileSize': 256,
+                'tiles': mapOptions.tiles,
+                'tileSize': mapOptions.tileSize,
             });
             map.addLayer({
                 'id': 'jb-layer',
