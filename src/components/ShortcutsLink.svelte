@@ -22,8 +22,8 @@
                     "styleTemplate": editolido.avenzaStyleTemplate,
                     "iconTemplate": editolido.avenzaIconTemplate,
                     "icons": editolido.AVENZAICONS
-                })//,
-                //"grametProxyURL": document.querySelector("#gramet img").src //TODO
+                }),
+                "grametProxyURL": ofp.ogimetData.proxyImg
             };
             url = "shortcuts://run-shortcut?name=" + encodeURIComponent(name) + "&input=text&text=" + encodeURIComponent(JSON.stringify(obj));
         } else {

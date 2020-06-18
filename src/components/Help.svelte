@@ -60,8 +60,8 @@ const checkUpdate = () => {
 }
 </script>
 
-<div>
-<p>Application version: APP_VERSION{lidojsVersion}</p>
+<div class="info">
+<p>Application version: APP_VERSION</p>
 {#if navigator.serviceWorker}
     {#if !controlled}
     <p>La page n'est pas controllée par le service worker. <a href="./index.html" on:click={reload}>Recharger la page</a></p>
@@ -80,7 +80,7 @@ const checkUpdate = () => {
     {/if}
 {/if}
 {#if navigator.standalone === true}
-<p>En cas de problème:</p>
+<p><b>En cas de problème:</b></p>
 <p><a class="btn btn-primary btn-sm" href="./index.html" on:click={reload}>Recharger l'App</a> c'est l'équivalent d'un rechargement de page.</p>
 <p><a class="btn btn-danger btn-sm" href="./index.html" on:click={reinit}>Réinitialiser l'App</a> va en plus réinitialiser le service Worker (il faut être connecté).</p>
 <p>Dans les 2 cas vos réglages sont conservés mais l'OFP est remis à zéro.</p>
@@ -97,6 +97,16 @@ const checkUpdate = () => {
         margin-top: 2em;
         padding: 0.5em 1em;
         flex: 0;
+        border-radius: 0.3em;
+    }
+    .info {
+        background-color: rgba(255,255,255,0.89);
+    }
+    .info p {
+        margin-bottom: 2px;
+    }
+    .info .btn-primary {
+        margin-bottom: 0.5em;
     }
     span[data-status]{
         padding-right: 4px;
