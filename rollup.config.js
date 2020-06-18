@@ -28,7 +28,7 @@ const U = {
   'CONF_BUNDLE_JS': './js/bundle.js',
   'CONF_BUNDLE_CSS': './css/bundle.css',
   'CONF_AIRAC': AIRAC,
-  'CONF_NORTH': 'northv2',
+  'CONF_NORTH': 'northv3',
   'CONF_SOUTH': 'southv3',
   'CONF_PACIFIC': 'pacificv1'
 };
