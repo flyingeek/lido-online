@@ -5,7 +5,7 @@
     import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
     const store = stores.shortcut;
-    const defaultValue = "Lido Online";
+    const defaultValue = "OFP2MAP";
     let shortcutName = storage.getItem(store) || defaultValue;
     export let ofp;
     let url;
