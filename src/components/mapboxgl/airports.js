@@ -26,7 +26,7 @@ const getTextColor = (raltNames, hexColor) => ["case",
     ["==", 0, ["get", "level"]], '#000',
     '#C60'];
 
-export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, etopsKmlColor, style) => {
+export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, etopsKmlColor, style, isAvenza) => {
     const [hexcolorEtops,] = kml2mapColor(etopsKmlColor);
     const epNames = epPoints.map(g => g.name);
     const raltNames = raltPoints.map(g => g.name);
@@ -42,7 +42,7 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
         data.features = projFeatures;
         map.addSource('airports-source', {
             type: 'geojson',
-            attribution: `Yammer/Maps.me - Airports/FIR © Olivier Ravet - ${aircraftType} ${"CONF_AIRAC".substring(0,2)}.${"CONF_AIRAC".substring(2,4)}`,
+            attribution: `Yammer/${(isAvenza) ? 'QGIS & Avenza maps': 'Maps.me'} - Airports/FIR © Olivier Ravet - ${aircraftType} ${"CONF_AIRAC".substring(0,2)}.${"CONF_AIRAC".substring(2,4)}`,
             data: data
         });
 
