@@ -3,6 +3,24 @@ import {registerRoute} from 'workbox-routing';
 import {StaleWhileRevalidate, CacheFirst} from 'workbox-strategies';
 import {ExpirationPlugin} from 'workbox-expiration';
 
+const maps = {
+  'north': 'CONF_NORTH',
+  'south': 'CONF_SOUTH',
+  'pacific': 'CONF_PACIFIC'
+};
+
+const validCaches ={
+  'warmup': 'lido-warmup',
+  'mapbox': 'lido-mapbox',
+  'airports': 'lido-data',
+  'fir-reg': 'lido-fir',
+  'gramet': 'lido-gramet2',
+  'north': maps['north'],
+  'south': maps['south'],
+  'pacific': maps['pacific'],
+  'zoom4': `zoom4_${maps['north'].substr(-1)}_${maps['south'].substr(-1)}_${maps['pacific'].substr(-1)}`
+}
+
 precacheAndRoute(
     self.__WB_MANIFEST, {
     "directoryIndex": null,
@@ -25,7 +43,7 @@ const allUrls = thirdPartyUrls.concat(lidoUrls);
 registerRoute(
     /.+\/(bootstrap\.min\.css|pdf\.min\.js|pdf\.worker\.min\.js|mapbox-gl\.js|mapbox-gl\.css|lidojs.+\.js|wmo.+\.var\.js)$/,
     new CacheFirst({
-      cacheName: 'lido-warmup',
+      cacheName: validCaches['warmup'],
     })
 );
 
@@ -35,14 +53,14 @@ registerRoute(
      url.pathname === '/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2.json'
   ),
   new StaleWhileRevalidate({
-    cacheName: 'lido-mapbox'
+    cacheName: validCaches['mapbox']
   })
 );
 
 registerRoute(
   ({url}) => url.pathname.endsWith('/data/airports.CONF_AIRAC.geojson'),
   new CacheFirst({
-    cacheName: 'lido-data',
+    cacheName: validCaches['airports'],
     plugins: [
       new ExpirationPlugin({
         maxEntries: 2
@@ -53,7 +71,7 @@ registerRoute(
 registerRoute(
   ({url}) => url.pathname.endsWith('/data/fir-reg.CONF_AIRAC.geojson'),
   new CacheFirst({
-    cacheName: 'lido-fir',
+    cacheName: validCaches['fir-reg'],
     plugins: [
       new ExpirationPlugin({
         maxEntries: 2
@@ -65,7 +83,7 @@ registerRoute(
 registerRoute(
   ({url}) => url.origin === 'https://editolido.alwaysdata.net' && url.pathname.startsWith('/proxy_gramet'),
   new CacheFirst({
-    cacheName: 'lido-gramet2',
+    cacheName: validCaches['gramet'],
     plugins: [
       new ExpirationPlugin({
         maxEntries: 5,
@@ -73,6 +91,46 @@ registerRoute(
       })
     ]
   })
+);
+
+registerRoute(
+  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/' + maps['north'] + '/[0-3]/.*')),
+  new CacheFirst({
+    cacheName: validCaches['north'],
+  })
+);
+registerRoute(
+  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/' + maps['south'] + '/[0-3]/.*')),
+  new CacheFirst({
+    cacheName: validCaches['south'],
+  })
+);
+registerRoute(
+  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/' + maps['pacific'] + '/[0-3]/.*')),
+  new CacheFirst({
+    cacheName: validCaches['pacific'],
+    plugins: [
+      new ExpirationPlugin({
+        maxAgeSeconds: 15 * 60 * 3600
+      })
+    ]
+  })
+);
+registerRoute(
+  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/[^/]+/4/.*')),
+  new CacheFirst({
+    cacheName: validCaches['zoom4'],
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 128
+      })
+    ]
+  })
+);
+
+registerRoute(
+  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/[^/]+/[5-9]/.*')),
+  async () => new Response('', { "status" : 404 , "statusText" : "sw says nope!"})
 );
 
 // from https://github.com/TalAter/cache.adderall
@@ -115,16 +173,7 @@ self.addEventListener('install', (event) => {
  * @returns {Boolean}
  */
 const isOldCache = (cacheName) => {
-  if (cacheName.startsWith('lidojs-')) {
-    return true;
-  } else if (cacheName === 'lido-3rd-static') {
-    return true;
-  } else if (cacheName === 'lido-ressources') {
-    return true;
-  } else if (cacheName === 'lido-gramet') {
-    return true;
-  }
-  return false;
+  return Object.values(validCaches).indexOf(cacheName) === -1;
 };
 /**
  * check entries of a cache to find 

@@ -27,7 +27,10 @@ const U = {
   'CONF_WMO_JS': `./js/wmo.${lidojsPkg.version}.var.js`,
   'CONF_BUNDLE_JS': './js/bundle.js',
   'CONF_BUNDLE_CSS': './css/bundle.css',
-  'CONF_AIRAC': AIRAC
+  'CONF_AIRAC': AIRAC,
+  'CONF_NORTH': 'northv2',
+  'CONF_SOUTH': 'southv3',
+  'CONF_PACIFIC': 'pacificv1'
 };
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
 
