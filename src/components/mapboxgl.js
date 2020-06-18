@@ -245,7 +245,7 @@ export function loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDr
     if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
         epPoints = [ofp.infos['EEP'], ofp.infos['EXP']];
     }
-    addAirports(map, affineOrDrop, ofp.infos.aircraft, epPoints, ofp.infos['raltPoints'], options.etopsColor, options.airportPin);
+    addAirports(map, affineOrDrop, ofp.infos.aircraft, epPoints, ofp.infos['raltPoints'], options.etopsColor, options.airportPin, mapOptions.id.startsWith('jb_'));
 
     addTracks(map, ofp, affineOrDrop, options.natColor, options.natPin, options.natDisplay);
     //console.log(ofp.infos, ofp.text);

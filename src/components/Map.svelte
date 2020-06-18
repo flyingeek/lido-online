@@ -10,7 +10,14 @@
     export let route;
     let map = undefined;
     let selected = 0;
-
+    // Pour réaliser les tiles dans Map Tiler
+    // - Choisir Andvanced Tiles -> Continue
+    // - Choisir le TIF geo-référencé -> Continue
+    // - choisir Custom dans presets
+    // - choisir "from output" et 512px x 512px
+    // - choisir Zoom: 0 à 4
+    // - choisir "Advanced Options" -> séléctionner JPEG, laisser sur Sparse Output et OpenGIS -> Close
+    // - choisir "Folder" -> Render
     const options = [
         {
             'label': 'Mercator',
@@ -21,7 +28,7 @@
             }
         },
         {
-            'label': 'Lambert North (beta)',
+            'label': 'Lambert North',
             'id': 'jb_north',
             'extent': [-7441961.61694286, -5719116.57599206, 7385706.81468334, 9107027.78651793],
             //'affineTransform': [2.63206100208865, -323662.179369435, 2.63502996130431, -10626687.7639946],
@@ -31,12 +38,11 @@
                 'renderWorldCopies': false,
                 'maxZoom': 5
             },
-            //'tiles': 'https://editolido.alwaysdata.net/i/tiles/{z}/{x}/{y}.png'
-            'tiles': ['https://editolido.alwaysdata.net/i/northv2/{z}/{x}/{y}.jpg'],
+            'tiles': ['https://editolido.alwaysdata.net/i/CONF_NORTH/{z}/{x}/{y}.jpg'],
             'tileSize': 512
         },
         {
-            'label': 'Lambert South (beta)',
+            'label': 'Lambert South',
             'id': 'jb_south',
             'extent': [-12613000.20107552, -12796118.19556621, 13437104.14597977, 13253986.15148908],
             'validity': [-12613903.56963206, -9420000.1608799, 13437054.51836624, 5862747.38325809],
@@ -46,12 +52,11 @@
                 'renderWorldCopies': false,
                 'maxZoom': 5
             },
-            //'tiles': 'https://editolido.alwaysdata.net/i/tiles/{z}/{x}/{y}.png'
-            'tiles': ['https://editolido.alwaysdata.net/i/southv3/{z}/{x}/{y}.jpg'],
+            'tiles': ['https://editolido.alwaysdata.net/i/CONF_SOUTH/{z}/{x}/{y}.jpg'],
             'tileSize': 512
         },
         {
-            'label': 'Lambert Pacific (beta)',
+            'label': 'Lambert Pacific',
             'id': 'jb_pacific',
             'extent': [-8306365.14297095, -7788164.66141786, 6519185.45830619, 7037385.93985927],
             'proj4': '+proj=lcc +lat_1=-15 +lat_2=30 +lat_0=7.5 +lon_0=-140 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
@@ -60,8 +65,7 @@
                 'renderWorldCopies': false,
                 'maxZoom': 5
             },
-            //'tiles': 'https://editolido.alwaysdata.net/i/tiles/{z}/{x}/{y}.png'
-            'tiles': ['https://editolido.alwaysdata.net/i/pacificv1/{z}/{x}/{y}.jpg'],
+            'tiles': ['https://editolido.alwaysdata.net/i/CONF_PACIFIC/{z}/{x}/{y}.jpg'],
             'tileSize': 512
         }
         // ,
@@ -107,6 +111,11 @@
         if (!option.proj4) return true;
         const dep = ofp.route.points[0];
         const dest = ofp.route.points[ofp.route.points.length - 1];
+        if (option.id === 'jb_north') {
+            return (dest.latitude > 30 && dep.latitude > 30)
+        } else if (option.id === 'jb_south') {
+            if (dest.latitude > 30 && dep.latitude > 30) return false;
+        }
         const bounds = (option.validity) ? option.validity : option.extent;
         for (let p of [dep, dest]) {
             const [x, y] = proj4(option.proj4, [p.longitude, p.latitude]);
@@ -129,9 +138,7 @@
 <div class="mapmenu">
     <select name="{name}" bind:value={selected} class="form-control form-control-sm" on:change={styleChange}>
         {#each options as option, index}
-        {#if (index === selected || mapContainsOfp(option))}
-        <option value="{index}" selected={index === selected}>{option.label}</option>
-        {/if}
+        <option value="{index}" selected={index === selected}>{(option.proj4 && mapContainsOfp(option)) ? `${option.label.toUpperCase()}`: option.label}</option>
         {/each}
     </select>
 </div>
