@@ -15,10 +15,10 @@ const validCaches ={
   'airports': 'lido-data',
   'fir-reg': 'lido-fir',
   'gramet': 'lido-gramet2',
-  'north': maps['north'],
-  'south': maps['south'],
-  'pacific': maps['pacific'],
-  'zoom4': `zoom4_${maps['north'].substr(-1)}_${maps['south'].substr(-1)}_${maps['pacific'].substr(-1)}`
+  'north': 'lido-' + maps['north'],
+  'south': 'lido-' + maps['south'],
+  'pacific': 'lido-' + maps['pacific'],
+  'zoom4': `lido-zoom4_${maps['north'].substr(-1)}_${maps['south'].substr(-1)}_${maps['pacific'].substr(-1)}`
 }
 
 precacheAndRoute(
@@ -173,6 +173,8 @@ self.addEventListener('install', (event) => {
  * @returns {Boolean}
  */
 const isOldCache = (cacheName) => {
+  if (['northv3', 'northv2', 'northv1', 'southv3', 'southv2', 'southv1', 'pacificv1'].indexOf(cacheName) !== -1) return true;
+  if (!cacheName.startsWith('lido-')) return false;
   return Object.values(validCaches).indexOf(cacheName) === -1;
 };
 /**
