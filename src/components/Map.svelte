@@ -9,7 +9,7 @@
     export let ofp;
     export let route;
     let map = undefined;
-    let selected = 0;
+    let selected = -1;
     // Pour réaliser les tiles dans Map Tiler
     // - Choisir Andvanced Tiles -> Continue
     // - Choisir le TIF geo-référencé -> Continue
@@ -78,7 +78,6 @@
         // }
     ];
     
-    $: mapOptions = options[selected];
     const name = 'map-style';
     export let id = 'map';
 
@@ -89,12 +88,25 @@
     function styleChange(e) {
         e.target.blur(); // to avoid zoom problem in standalone mode
         destroyMap();
-        map = createMap(id, mapOptions, ofp, kmlOptions);
+        map = createMap(id, options[selected], ofp, kmlOptions);
     }
 
     function mapbox(node, parameters) {
+        if (selected === -1 && ofp) {
+            const dep = ofp.route.points[0];
+            const dest = ofp.route.points[ofp.route.points.length - 1];
+            if (dest.latitude > 30 && dep.latitude > 30){
+                selected = 1; // north
+            }else if (dest.longitude < -80 && dep.longitude < -80) {
+                selected = 3; // pacific
+            }else{
+                selected = 2; // south
+            }
+        } else if (selected === -1) {
+            selected = 0; // should never be there
+        }
         mapboxgl.accessToken = token;
-        map = createMap(node.id, mapOptions, ofp, kmlOptions);
+        map = createMap(node.id, options[selected], ofp, kmlOptions);
         return {
             update(parameters) {
                 if (parameters.route === '/map' && map) {
@@ -112,7 +124,7 @@
         const dep = ofp.route.points[0];
         const dest = ofp.route.points[ofp.route.points.length - 1];
         if (option.id === 'jb_north') {
-            return (dest.latitude > 30 && dep.latitude > 30)
+            return (dest.latitude > 30 && dep.latitude > 30);
         } else if (option.id === 'jb_south') {
             if (dest.latitude > 30 && dep.latitude > 30) return false;
         }

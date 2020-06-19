@@ -11,7 +11,10 @@ L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au pl
 
 3. Pour Exporter vers une app, direction le menu EXPORT, vous pouvez exporter une route pour mPilot, télécharger le KML (routes et tracks uniquement), ou envoyer vers l'app **Raccourcis** d'Apple.
 
-4. La carte par défaut est une Web Mercator, il est possible sur la carte, en haut à gauche, de basculer sur une projection LAMBERT. La projection recommandée est en MAJUSCULE.
+4. La carte par défaut est une LAMBERT, il est possible sur la carte, en haut à gauche, de basculer sur une projection Web Mercator.
+    - LAMBERT NORTH (parallèles secants N30 et N65) est recommandée au dessus du N40
+    - LAMBERT SOUTH & PACIFIC (parallèles sécants N30 et S15 ) sont recommandées sous N30
+
 
 5. Navigation dans la carte: on peut avec un doigt déplacer la carte, zoomer ou orienter la carte avec deux doigts. Il est aussi possible de modifier l'angle de vue en balayant de haut en bas avec deux doigts.
 

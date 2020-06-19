@@ -17,7 +17,6 @@
   let route = "/";
   let permalink = window.location.href;
   let promise = undefined;
-
   storeSettingsFromURL(window.location.search);
   let kmlOptions = validate(storage.getItem(stores.optionsKML) || {});
   const hashchange = (e) => {
@@ -41,7 +40,7 @@
       window.location.pathname +
       (query ? "?" + query : "") +
       '#' + route;
-    history.replaceState(stateObj, "Mon Convertisseur d'OFP", permalink);
+    history.replaceState(stateObj, "Mon OFP2MAP", permalink);
   };
   setHistory();
 
