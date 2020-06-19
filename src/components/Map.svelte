@@ -120,7 +120,7 @@
         }
     }
     function mapContainsOfp(option) {
-        if (!option.proj4) return true;
+        if (!option.proj4||!ofp) return true;
         const dep = ofp.route.points[0];
         const dest = ofp.route.points[ofp.route.points.length - 1];
         if (option.id === 'jb_north') {

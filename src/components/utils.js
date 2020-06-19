@@ -44,3 +44,14 @@ export function clamp(num, min, max) {
 export function isInside(num, min, max) {
     return num < min ? false : num > max ? false : true;
 }
+
+export async function addToSWCache(urls, cacheName) {
+    if (window.caches) {
+        try {
+            const myCache = await window.caches.open(cacheName);
+            await myCache.addAll(urls);
+        } catch (err) {
+            //console.log('could not cache', err);
+        }
+    }
+}

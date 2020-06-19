@@ -8,7 +8,7 @@ import { addFirReg } from "./mapboxgl/fir-reg";
 import { addEtops, changeEPCircleColor, changeETOPSCircleColor, changeETOPSDisplay } from "./mapboxgl/etops";
 import { addTracks } from "./mapboxgl/tracks";
 import {pinColors, addLine, addPoints} from "./mapboxgl/layers";
-import {clamp, isInside} from './utils';
+import {clamp, isInside, addToSWCache} from './utils';
 
 import proj4 from 'proj4';
 
@@ -153,7 +153,8 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
         loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDrop, mapOptions);
         //const testpoints = [[10, -60], [30,-120], [30, 120], [0, 60]].map(v => new editolido.GeoPoint(v));
         //addPoints(map,'test', testpoints,affine,5, true, kmlOptions.routeColor);
-        fetch(ofp.ogimetData.proxyImg); // add to cache
+        addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');
+        //fetch(ofp.ogimetData.proxyImg); // add to cache
     });
     // map.on('click', function(e) {
     //     e.lngLat.wrap();

@@ -14,7 +14,7 @@ const validCaches ={
   'mapbox': 'lido-mapbox',
   'airports': 'lido-data',
   'fir-reg': 'lido-fir',
-  'gramet': 'lido-gramet2',
+  'gramet': 'lido-gramet2', // if you change here, you must also change in Map.svelte/map.load 
   'north': 'lido-' + maps['north'],
   'south': 'lido-' + maps['south'],
   'pacific': 'lido-' + maps['pacific'],
