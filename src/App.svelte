@@ -18,10 +18,10 @@
   let permalink = window.location.href;
   let promise = undefined;
   storeSettingsFromURL(window.location.search);
-  let kmlOptions = validate(storage.getItem(stores.optionsKML) || {});
+  let kmlOptions = validate(storage.getItem(stores.optionsKML) || {}); //include default
   const hashchange = (e) => {
-    const meta = document.querySelector( "meta[name=viewport]" )
-    const metaContent = (meta) ? meta.getAttribute( "content" ) : ''
+    const meta = document.querySelector( "meta[name=viewport]" );
+    const metaContent = (meta) ? meta.getAttribute( "content" ) : '';
     route = window.location.hash.substr(1) || "/";
     if (!promise && (route === '/map' || route === '/gramet' || route === '/export')) {
       route = '/';
