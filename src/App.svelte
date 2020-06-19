@@ -20,12 +20,17 @@
   storeSettingsFromURL(window.location.search);
   let kmlOptions = validate(storage.getItem(stores.optionsKML) || {});
   const hashchange = (e) => {
+    const meta = document.querySelector( "meta[name=viewport]" )
+    const metaContent = (meta) ? meta.getAttribute( "content" ) : ''
     route = window.location.hash.substr(1) || "/";
     if (!promise && (route === '/map' || route === '/gramet' || route === '/export')) {
       route = '/';
     }
     if (route === '/map') {
       if ($sidebar) $sidebar = false;
+      if (metaContent) meta.setAttribute('content', metaContent + ',maximum-scale=1'); 
+    } else {
+      if (metaContent) meta.setAttribute('content', metaContent.replace(',maximum-scale=1', ''));
     }
   };
   hashchange();
