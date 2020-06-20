@@ -117,9 +117,14 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
             enableHighAccuracy: false
         },
         fitBoundsOptions: {maxZoom: 3},
-        trackUserLocation: false
+        trackUserLocation: true
     });
-    if (!mapOptions.proj4) map.addControl(geolocate);
+    const originalOnSuccess = geolocate._onSuccess;
+    geolocate._onSuccess = function(position) {
+        const [lng, lat] = affine([position.coords.longitude, position.coords.latitude]);
+        return originalOnSuccess.apply(this, [{'coords': {'longitude': lng, 'latitude': lat, 'accuracy': position.coords.accuracy}}]);
+    }
+    map.addControl(geolocate);
     //console.log(geolocate);
     // geolocate.on('geolocate', function(e) {
     //     console.log('geolocated');
