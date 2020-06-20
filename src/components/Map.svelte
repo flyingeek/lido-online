@@ -212,6 +212,10 @@
         border: none;
         font-size: 12px;
         display: none;
+        margin-right: 10px;
+        margin-left: 5px;
+        z-index: 2;
+        -webkit-appearance: none;
     }
     :global(.mapboxgl-ctrl-attrib-inner select[name=aircraftType]){
         display: inline-block !important;
