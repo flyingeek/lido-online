@@ -208,13 +208,14 @@
         top: 60px;
     }
     select[name=aircraftType] {
-        background-color: transparent;
+        background-color: rgba(255,255,255,0.3);
         border: none;
         font-size: 12px;
         display: none;
-        margin-right: 10px;
-        margin-left: 5px;
+        margin-right: 5px;
+        margin-left: 10px;
         z-index: 2;
+        padding: 0px 15px;
         -webkit-appearance: none;
     }
     :global(.mapboxgl-ctrl-attrib-inner select[name=aircraftType]){
