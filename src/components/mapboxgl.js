@@ -3,24 +3,27 @@
 import {kml2mapColor} from "./KmlColor.svelte";
 import {folderName} from './utils';
 import { kmlDefaultOptions } from "./kml";
-import { addAirports, changeAirportDisplay, changeAirportStyle } from "./mapboxgl/airports";
+import { addAirports, changeAirportDisplay, changeAirportStyle, changeAircraftType } from "./mapboxgl/airports";
 import { addFirReg } from "./mapboxgl/fir-reg";
 import { addEtops, changeEPCircleColor, changeETOPSCircleColor, changeETOPSDisplay } from "./mapboxgl/etops";
 import { addTracks } from "./mapboxgl/tracks";
 import {pinColors, addLine, addPoints} from "./mapboxgl/layers";
 import {clamp, isInside, addToSWCache} from './utils';
 
-import proj4 from 'proj4';
+//import proj4 from 'proj4';
 
 export const token = 'MAPBOX_TOKEN';
 
 export const key = {};
 
-export function createMap(id, mapOptions, ofp, kmlOptions) {
+export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
+    const isAvenza = mapOptions.id.startsWith('jb_');
     let mapboxOptions = {
         'container':id,
         'center': [0, 49],
-        'zoom': 2
+        'zoom': 2,
+        'attributionControl': true,
+        'customAttribution': `Yammer/${(isAvenza) ? 'QGIS & Avenza maps': 'Maps.me'} - Airports/FIR © Olivier Ravet - ${"CONF_AIRAC".substring(0,2)}.${"CONF_AIRAC".substring(2,4)}`
     }
     const map = new mapboxgl.Map({...mapOptions.mapboxOptions, ...mapboxOptions});
     map.loadImage('sdf/maki-marker-sdf.png', function(error, image) {
@@ -51,14 +54,13 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
             map.addImage('sdf-star', image, { pixelRatio: 2, sdf: true});
         }
     });
-    proj4.defs('WGS84', "+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees");
-    proj4.defs("EPSG:3857","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
-    //window.proj4 = proj4;
+    window.proj4.defs('WGS84', "+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees");
+    window.proj4.defs("EPSG:3857","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
     let affine = (v) => v;
     let affineAndClamp = (v) => v;
     let affineOrDrop = (v) => v;
     if (mapOptions.extent) {
-        proj4.defs('CUSTOM', mapOptions.proj4);
+        window.proj4.defs('CUSTOM', mapOptions.proj4);
         let a, b, c, d;
         if (mapOptions.affineTransform) {
             [a, b, c, d] = mapOptions.affineTransform;
@@ -73,19 +75,19 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
         
         const [minX, minY, maxX, maxY] = (mapOptions.viewport) ? mapOptions.viewport : mapOptions.extent;
         affine = ([lng, lat]) => {
-            const [x, y] = proj4('CUSTOM', [lng, lat]);
-            return proj4('EPSG:3857', 'WGS84', [(a * x) + b, (c * y) + d]);
+            const [x, y] = window.proj4('CUSTOM', [lng, lat]);
+            return window.proj4('EPSG:3857', 'WGS84', [(a * x) + b, (c * y) + d]);
         }
         affineAndClamp = ([lng, lat]) => {
-            let [x, y] = proj4('CUSTOM', [lng, lat]);
+            let [x, y] = window.proj4('CUSTOM', [lng, lat]);
             x = clamp(x, minX, maxX);
             y = clamp(y, minY, maxY);
-            return proj4('EPSG:3857', 'WGS84', [(a * x) + b, (c * y) + d]);
+            return window.proj4('EPSG:3857', 'WGS84', [(a * x) + b, (c * y) + d]);
         }
         affineOrDrop = ([lng, lat]) => {
-            let [x, y] = proj4('CUSTOM', [lng, lat]);
+            let [x, y] = window.proj4('CUSTOM', [lng, lat]);
             if (isInside(x, minX, maxX) && isInside(y, minY, maxY)) {
-                return proj4('EPSG:3857', 'WGS84', [(a * x) + b, (c * y) + d]);
+                return window.proj4('EPSG:3857', 'WGS84', [(a * x) + b, (c * y) + d]);
             }
         }
     }
@@ -104,13 +106,15 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
         return result;
     }
     let points = [];
-    for (const track of ofp.tracks) {
-        points = points.concat(track.points);
-    }
-    points = points.concat(ofp.route.points, ofp.wptCoordinatesAlternate());
-    bbox = getBounds(points);
+    if (!ofp.isFake) {
+        for (const track of ofp.tracks) {
+            points = points.concat(track.points);
+        }
+        points = points.concat(ofp.route.points, ofp.wptCoordinatesAlternate());
+        bbox = getBounds(points);
 
-    map.fitBounds(bbox, {padding: {top: 30, bottom:80, left: 30, right: 30}});
+        map.fitBounds(bbox, {padding: {top: 30, bottom:80, left: 30, right: 30}});
+    }
     //map.addControl(new mapboxgl.FullscreenControl());
     const geolocate = new mapboxgl.GeolocateControl({
         positionOptions: {
@@ -125,18 +129,6 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
         return originalOnSuccess.apply(this, [{'coords': {'longitude': lng, 'latitude': lat, 'accuracy': position.coords.accuracy}}]);
     }
     map.addControl(geolocate);
-    //console.log(geolocate);
-    // geolocate.on('geolocate', function(e) {
-    //     console.log('geolocated');
-    //     const zoom = map.getZoom();
-    //     geolocate.options['fitBoundsOptions'] = {maxZoom: zoom};
-    //     //map.setZoom(8);
-    // });
-    // geolocate.on('trackuserlocationstart', function() {
-    //     console.log('A trackuserlocationstart event has occurred.');
-    //     const zoom = map.getZoom();
-    //     geolocate.options['fitBoundsOptions'] = {maxZoom: zoom};
-    // });
     map.on('load', function() {
         if (mapOptions.tiles) {
             map.addSource('jb-raster',{
@@ -156,9 +148,10 @@ export function createMap(id, mapOptions, ofp, kmlOptions) {
             });
         }
         loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDrop, mapOptions);
-        //const testpoints = [[10, -60], [30,-120], [30, 120], [0, 60]].map(v => new editolido.GeoPoint(v));
-        //addPoints(map,'test', testpoints,affine,5, true, kmlOptions.routeColor);
-        addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');
+        const attribution = document.querySelector(`#${id} .mapboxgl-ctrl-attrib-inner`);
+        if (attribution) attribution.appendChild(aircraftSelect);
+
+        if (!ofp.isFake) addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');
         //fetch(ofp.ogimetData.proxyImg); // add to cache
     });
     // map.on('click', function(e) {
@@ -208,23 +201,31 @@ export function changeMarkerLayer(map, folder, selectedPin, aircraftType, raltNa
     const hexcolor = pinColors[selectedPin];
     const markerLayer = folder + '-marker-layer';
     const lineLayer = folder + '-line-layer';
-    const lineColor = map.getPaintProperty(lineLayer, 'line-color');
-    map.setPaintProperty(markerLayer, 'icon-color', (selectedPin !== 0) ? hexcolor : lineColor);
-    map.setPaintProperty(markerLayer, 'text-color', lineColor);
-    map.setLayoutProperty(markerLayer, 'icon-size', (selectedPin !== 0) ? 1 : 0.2);
-    map.setLayoutProperty(markerLayer, 'icon-image', (selectedPin !== 0) ? 'sdf-marker-15' : 'sdf-triangle');
-    map.setLayoutProperty(markerLayer, 'icon-anchor', (selectedPin !== 0) ? 'bottom' : 'center');
+    if (map.getLayer(markerLayer)) {
+        const lineColor = map.getPaintProperty(lineLayer, 'line-color');
+        map.setPaintProperty(markerLayer, 'icon-color', (selectedPin !== 0) ? hexcolor : lineColor);
+        map.setPaintProperty(markerLayer, 'text-color', lineColor);
+        map.setLayoutProperty(markerLayer, 'icon-size', (selectedPin !== 0) ? 1 : 0.2);
+        map.setLayoutProperty(markerLayer, 'icon-image', (selectedPin !== 0) ? 'sdf-marker-15' : 'sdf-triangle');
+        map.setLayoutProperty(markerLayer, 'icon-anchor', (selectedPin !== 0) ? 'bottom' : 'center');
+    }
 }
 
-export function updateMapLayers(map, name, value, ofp, kmlOptions) {
+export function updateMapLayers(map, name, value, ofp, kmlOptions, aircraftType) {
     const folder = folderName(name);
-    if (name.endsWith('-display')) {
+    if (name === 'aircraftType') {
+        let epNames = [];
+        if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
+            epNames = [ofp.infos['EEP'].name, ofp.infos['EXP'].name];
+        }
+        changeAircraftType(map, kmlOptions.airportPin, aircraftType, ofp.infos.ralts, epNames.concat(ofp.infos.ralts), kmlOptions.etopsColor);
+    }else if (name.endsWith('-display')) {
         if (folder === 'rnat') {
             changeLayerState(map, 'rnat-incomplete', value); // we must turn both rnat & rnat-incomplete
         }
         changeLayerState(map, folder, value);
     }else if (name.endsWith('-pin')) {
-        changeMarkerLayer(map, folder, value, ofp.infos.aircraftType || '773', ofp.infos.ralts, kmlOptions.etopsColor);
+        changeMarkerLayer(map, folder, value, aircraftType, ofp.infos.ralts, kmlOptions.etopsColor);
     }else if (name.endsWith('-color')) {
         changeLineLayer(map, folder, value);
     }else{
@@ -235,28 +236,30 @@ export function updateMapLayers(map, name, value, ofp, kmlOptions) {
 export function loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDrop, mapOptions) {
     const options = {...kmlDefaultOptions, ...kmlOptions};
     const description = ofp.description;
-    const routeName = `${ofp.infos.departure}-${ofp.infos.destination}`;
-    const route = new editolido.Route(ofp.wptCoordinates(), {"name": routeName, "description": description});
-    const alternateRoute = new editolido.Route(ofp.wptCoordinatesAlternate(), {"name": "Route Dégagement"});
-    const greatCircle = new editolido.Route([route.points[0], route.points[route.points.length - 1]]).split(300, {"name": `Ortho ${routeName}`});
-
-    addLine(map, 'greatcircle', greatCircle.points, affineOrDrop, options.greatCircleColor, options.greatCircleDisplay);
-    addLine(map, 'ogimet', ofp.ogimetData.route.points, affineOrDrop, options.ogimetColor, options.ogimetDisplay);
-    addLine(map, 'ralt', alternateRoute.points, affineOrDrop, options.alternateColor, options.alternateDisplay);
-    addLine(map, 'rmain', route.points, affineOrDrop, options.routeColor, true);
-    addPoints(map, 'ralt', alternateRoute.points, affineOrDrop, options.alternatePin, options.alternateDisplay, options.alternateColor);
-    addPoints(map, 'rmain', route.points, affineOrDrop, options.routePin, true, options.routeColor);
+    if (! ofp.isFake) {
+        const routeName = `${ofp.infos.departure}-${ofp.infos.destination}`;
+        const route = new editolido.Route(ofp.wptCoordinates(), {"name": routeName, "description": description});
+        const alternateRoute = new editolido.Route(ofp.wptCoordinatesAlternate(), {"name": "Route Dégagement"});
+        const greatCircle = new editolido.Route([route.points[0], route.points[route.points.length - 1]]).split(300, {"name": `Ortho ${routeName}`});
+        addLine(map, 'greatcircle', greatCircle.points, affineOrDrop, options.greatCircleColor, options.greatCircleDisplay);
+        addLine(map, 'ogimet', ofp.ogimetData.route.points, affineOrDrop, options.ogimetColor, options.ogimetDisplay);
+        addLine(map, 'ralt', alternateRoute.points, affineOrDrop, options.alternateColor, options.alternateDisplay);
+        addLine(map, 'rmain', route.points, affineOrDrop, options.routeColor, true);
+        addPoints(map, 'ralt', alternateRoute.points, affineOrDrop, options.alternatePin, options.alternateDisplay, options.alternateColor);
+        addPoints(map, 'rmain', route.points, affineOrDrop, options.routePin, true, options.routeColor);
+    }
     if (mapOptions.id !== 'jb_pacific') addFirReg(map, affineAndClamp);
     let epPoints = [];
     if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
         epPoints = [ofp.infos['EEP'], ofp.infos['EXP']];
     }
-    addAirports(map, affineOrDrop, ofp.infos.aircraft, epPoints, ofp.infos['raltPoints'], options.etopsColor, options.airportPin, mapOptions.id.startsWith('jb_'));
-
-    addTracks(map, ofp, affineOrDrop, options.natColor, options.natPin, options.natDisplay);
-    //console.log(ofp.infos, ofp.text);
-    if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0){
-        addEtops(map, 'etops', [ofp.infos['EEP'], ofp.infos['EXP']].concat(ofp.infos['raltPoints']), affineOrDrop, affineAndClamp, true, ofp.infos['ETOPS'], options.routeColor, options.etopsColor);
+    addAirports(map, affineOrDrop, (ofp.isFake) ? ofp.isFake : ofp.infos.aircraft, epPoints, ofp.infos['raltPoints'], options.etopsColor, options.airportPin);
+    if(!ofp.isFake) {
+        addTracks(map, ofp, affineOrDrop, options.natColor, options.natPin, options.natDisplay);
+        //console.log(ofp.infos, ofp.text);
+        if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0){
+            addEtops(map, 'etops', [ofp.infos['EEP'], ofp.infos['EXP']].concat(ofp.infos['raltPoints']), affineOrDrop, affineAndClamp, true, ofp.infos['ETOPS'], options.routeColor, options.etopsColor);
+        }
     }
 }
 export const blankStyle = {

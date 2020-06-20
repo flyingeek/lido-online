@@ -32,7 +32,8 @@ const thirdPartyUrls = [
     'CONF_PDFJS_WORKER_JS',
     'CONF_MAPBOXGL_JS',
     'CONF_MAPBOXGL_CSS',
-    'CONF_BOOTSTRAP_CSS'
+    'CONF_BOOTSTRAP_CSS',
+    'CONF_PROJ4_JS'
 ];
 const lidoUrls = [
     'CONF_LIDOJS_JS',
@@ -41,7 +42,7 @@ const lidoUrls = [
 const allUrls = thirdPartyUrls.concat(lidoUrls);
 
 registerRoute(
-    /.+\/(bootstrap\.min\.css|pdf\.min\.js|pdf\.worker\.min\.js|mapbox-gl\.js|mapbox-gl\.css|lidojs.+\.js|wmo.+\.var\.js)$/,
+    /.+\/(bootstrap\.min\.css|pdf\.min\.js|pdf\.worker\.min\.js|proj4\.min\.js|mapbox-gl\.js|mapbox-gl\.css|lidojs.+\.js|wmo.+\.var\.js)$/,
     new CacheFirst({
       cacheName: validCaches['warmup'],
     })

@@ -62,4 +62,7 @@ img {
 .ogimet .card-header {
   background-color: var(--yellow);
 }
+.row {
+  margin-bottom: 15px; /* for no ofp prompt */
+}
 </style>

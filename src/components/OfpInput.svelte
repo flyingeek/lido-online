@@ -6,13 +6,14 @@
     const preloadFiles = [
         { type: 'script', url: 'CONF_PDFJS_JS' },
         { type: 'script', url: 'CONF_LIDOJS_JS' },
+        { type: 'script', url: 'CONF_PROJ4_JS' },
         { type: 'script', url: 'CONF_WMO_JS' },
         { type: 'script', url: 'CONF_MAPBOXGL_JS' },
         { type: 'link', url: 'CONF_MAPBOXGL_CSS'},
         { type: 'link', url: pdfjsWorkerSrc, options: {prefetch: true}}
     ];
     //const editolidoSrc = 'https://github.com/flyingeek/lidojs/releases/download/v1.1.2/lidojs.min.js';
-
+    let aircraftTypes = ["318", "319", "320", "321", "330", "340", "350", "380", "787", "772", "773", "77F"];
     const getPageText = async (pdf, pageNo) => {
         const page = await pdf.getPage(pageNo);
         const tokenizedText = await page.getTextContent();
@@ -114,12 +115,45 @@
         });
         disabled = false;
     };
+    async function processAircraftType(e) {
+        disabled = true;
+        preload(); // in case click event not supported or missed
+        await ready.promise.then(() => {
+            promise = new Promise((resolve, reject) => {
+                let ofp = new editolido.Ofp('_PDFJS_AF 681 KATL/LFPG 11Mar2020/2235zReleased: 11Mar/1724z3Main OFP (Long copy #1)OFP 6/0/1 ATC FLIGHT PLAN (FPL-AFR681-IS -B77W/ -KATL2235 -LFPG0724 LFPO ) FLIGHT SUMMARY 0012 TAXI IN Generated');
+                ofp.isFake = e.target.value;
+                try {
+                    const kmlGen = KmlGenerator();
+                    generateKML(ofp, kmlOptions);
+                    resolve(ofp);
+                } catch (err) {
+                    console.log(text);
+                    console.log(ofp.infos);
+                    reject(err);
+                }
+            });
+            promise.isFakeOfp = true;
+            window.location.hash = '#/map';
+        });
+        disabled = false;
+    }
+
 </script>
 
 <div class="custom-file" class:blink={!promise}>
     <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} on:click|once={preload} class="custom-file-input">
     <label class:ready={readyClass} class="custom-file-label text-truncate" for="{name}">{label}</label>
 </div>
+{#if !promise}
+    <div class="footer">
+    <select class="form-control-sm" on:click|once={preload} disabled={disabled} on:change={processAircraftType}>
+        <option value="none">pas d'ofp ?</option>
+        {#each aircraftTypes as aircraft}
+        <option value={aircraft}>{aircraft}</option>
+        {/each}
+    </select>
+    </div>
+{/if}
 <!-- <svelte:window on:load={preload}/> -->
 
 <style>
@@ -146,5 +180,27 @@ label {
     80% { transform: scale(1.03); }
     95% { transform: scale(1.03); }
     100% { transform: scale(1.0); }
-} 
+}
+.footer {
+  position: fixed;
+  right: 5px;
+  bottom: 0;
+  width: 100%;
+  text-align: right;
+  display: none;
+}
+:global(.home .footer){
+    display: block !important;
+}
+select {
+  background-color: var(--blueaf);
+  border-color: var(--blueaf);
+  color: #888;
+  margin: 5px;
+}
+@media (max-width: 767px), (max-height: 700px) {
+    .footer {
+      position: absolute;
+    }
+}
 </style>

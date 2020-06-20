@@ -2,14 +2,31 @@
     import FormSettings from "./FormSettings.svelte";
     import {createMap, token, blankStyle, updateMapLayers} from './mapboxgl.js';
     import {updateKml} from './kml.js';
-    import { createEventDispatcher } from 'svelte';
-    import proj4 from 'proj4';
+    import { createEventDispatcher, onMount } from 'svelte';
+    //import proj4 from 'proj4';
     const dispatch = createEventDispatcher();
     export let kmlOptions;
     export let ofp;
     export let route;
     let map = undefined;
     let selected = -1;
+    let selectedAircraft = -1;
+    let aircraftSelect;
+    const aircraftTypes = [
+        "???",
+        "318",
+        "319",
+        "320",
+        "321",
+        "330",
+        "340",
+        "350",
+        "380",
+        "787",
+        "772",
+        "773",
+        "77F"
+    ];
     // Pour réaliser les tiles dans Map Tiler
     // - Choisir Andvanced Tiles -> Continue
     // - Choisir le TIF geo-référencé -> Continue
@@ -88,11 +105,16 @@
     function styleChange(e) {
         e.target.blur(); // to avoid zoom problem in standalone mode
         destroyMap();
-        map = createMap(id, options[selected], ofp, kmlOptions);
+        map = createMap(id, options[selected], ofp, kmlOptions, aircraftSelect);
+    }
+
+    function aircraftChange(e) {
+        e.target.blur(); // to avoid zoom problem in standalone mode
+        updateMapLayers(map, "aircraftType", aircraftTypes[e.target.value], ofp, kmlOptions, aircraftTypes[e.target.value]);
     }
 
     function mapbox(node, parameters) {
-        if (selected === -1 && ofp) {
+        if (selected === -1 && ofp && !ofp.isFake) {
             const dep = ofp.route.points[0];
             const dest = ofp.route.points[ofp.route.points.length - 1];
             if (dest.latitude > 30 && dep.latitude > 30){
@@ -102,11 +124,15 @@
             }else{
                 selected = 2; // south
             }
-        } else if (selected === -1) {
-            selected = 0; // should never be there
         }
-        mapboxgl.accessToken = token;
-        map = createMap(node.id, options[selected], ofp, kmlOptions);
+        if (selected === -1) selected = 0;
+        if (selectedAircraft === -1 && ofp) {
+            selectedAircraft = (ofp.isFake) ? aircraftTypes.indexOf(ofp.isFake) :aircraftTypes.indexOf(ofp.infos.aircraft); 
+        }
+        if (selectedAircraft === -1) selectedAircraft = 0;
+
+
+
         return {
             update(parameters) {
                 if (parameters.route === '/map' && map) {
@@ -120,7 +146,7 @@
         }
     }
     function mapContainsOfp(option) {
-        if (!option.proj4||!ofp) return true;
+        if (!option.proj4||!ofp||ofp.isFake) return true;
         const dep = ofp.route.points[0];
         const dest = ofp.route.points[ofp.route.points.length - 1];
         if (option.id === 'jb_north') {
@@ -130,7 +156,7 @@
         }
         const bounds = (option.validity) ? option.validity : option.extent;
         for (let p of [dep, dest]) {
-            const [x, y] = proj4(option.proj4, [p.longitude, p.latitude]);
+            const [x, y] = window.proj4(option.proj4, [p.longitude, p.latitude]);
             if (x < bounds[0] ||  x > bounds[2] || y < bounds[1] || y > bounds[3]) {
                 return false;
             }
@@ -139,13 +165,16 @@
     }
 
     const update = (e) => {
-        updateMapLayers(map, e.detail.name, e.detail.value, ofp, kmlOptions);
+        updateMapLayers(map, e.detail.name, e.detail.value, ofp, kmlOptions, aircraftTypes[selectedAircraft]);
         updateKml(e.detail.name, e.detail.value);
         dispatch('save'); // set History
   };
+  onMount(() => {
+        mapboxgl.accessToken = token;
+        map = createMap(id, options[selected], ofp, kmlOptions, aircraftSelect);
+  });
 
 </script>
-
 <div id={id} use:mapbox={{route}}></div>
 <div class="mapmenu">
     <select name="{name}" bind:value={selected} class="form-control form-control-sm" on:change={styleChange}>
@@ -154,6 +183,13 @@
         {/each}
     </select>
 </div>
+<select bind:this={aircraftSelect} name="aircraftType" bind:value={selectedAircraft} on:change={aircraftChange}>
+    {#each aircraftTypes as aircraftType, index}
+    {#if aircraftType !== '???' || (selectedAircraft === '???' && aircraftType==='???')}
+    <option value="{index}" selected={index === selectedAircraft}>{aircraftType}</option>
+    {/if}
+    {/each}
+</select>
 <FormSettings bind:kmlOptions on:change={update} on:save />
 <style>
     #map {
@@ -161,7 +197,7 @@
         height: auto;
         margin: -3px -10px -10px -10px;
     }
-    select {
+    select.form-control {
         width: auto;
         font-size: small;
         left: 5px;
@@ -171,7 +207,15 @@
         position: absolute;
         top: 60px;
     }
-
+    select[name=aircraftType] {
+        background-color: transparent;
+        border: none;
+        font-size: 12px;
+        display: none;
+    }
+    :global(.mapboxgl-ctrl-attrib-inner select[name=aircraftType]){
+        display: inline-block !important;
+    }
     @media (max-width: 767px), (max-height: 700px) {
         #map {
             width: 100%;

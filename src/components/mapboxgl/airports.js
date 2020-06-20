@@ -20,13 +20,28 @@ const getIconColor = (style, aircraftType, raltNames, hexColor) => {
     }
     return basicAirportIconColor(raltNames, hexColor);
 }
+
+const filterByAircraftType = (aircraftType, is=true) => {
+    if (is) {
+        return ["in", `${aircraftType}`, ["get", "type"]];
+    }else{
+        return ["!", ["in", `${aircraftType}`, ["get", "type"]]];
+    }
+}
+
+const symbolSortKey = (aircraftType, etopsNames) => {
+    return ["case",
+    ["in", ["get", "name"], ["literal", etopsNames]], 0,
+    ["get", `${aircraftType}`]]
+}
+
 const getIconHaloWidth = style => (style === 0) ? 3 : 0;
 const getTextColor = (raltNames, hexColor) => ["case",
     ["in", ["get", "name"], ["literal", raltNames]], hexColor,
     ["==", 0, ["get", "level"]], '#000',
     '#C60'];
 
-export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, etopsKmlColor, style, isAvenza) => {
+export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, etopsKmlColor, style) => {
     const [hexcolorEtops,] = kml2mapColor(etopsKmlColor);
     const epNames = epPoints.map(g => g.name);
     const raltNames = raltPoints.map(g => g.name);
@@ -42,10 +57,9 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
         data.features = projFeatures;
         map.addSource('airports-source', {
             type: 'geojson',
-            attribution: `Yammer/${(isAvenza) ? 'QGIS & Avenza maps': 'Maps.me'} - Airports/FIR © Olivier Ravet - ${aircraftType} ${"CONF_AIRAC".substring(0,2)}.${"CONF_AIRAC".substring(2,4)}`,
             data: data
         });
-
+        //<select style="background-color: transparent;border: none;"><option>773</option></select>
         map.addLayer({
             'id': `airport-emer-layer`,
             'type': 'symbol',
@@ -79,7 +93,7 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
                 'text-color': "#000",
                 'text-opacity': 0.8
             },
-            'filter': ["!", ["in", `${aircraftType}`, ["get", "type"]]]
+            'filter': filterByAircraftType(aircraftType, false)
         });
         map.addLayer({
             'id': `airport-layer`,
@@ -107,9 +121,7 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
                 'text-anchor': 'top',
                 'text-allow-overlap': false,
                 'text-ignore-placement': false,
-                'symbol-sort-key':["case",
-                    ["in", ["get", "name"], ["literal", etopsNames]], 0,
-                    ["get", `${aircraftType}`]]
+                'symbol-sort-key':symbolSortKey(aircraftType, etopsNames)
             },
             'paint': {
                 'icon-halo-color':["case", ["==", 0, ["get", "level"]], '#095','#D70'], // normal airports
@@ -120,7 +132,7 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
                 'text-halo-width': ["case", ["==", 0, ["get", "level"]], 0, 0],
                 'text-opacity': 0.8
             },
-            'filter': ["in", `${aircraftType}`, ["get", "type"]]
+            'filter': filterByAircraftType(aircraftType)
         });
     })
 };
@@ -144,4 +156,13 @@ export function changeAirportStyle(map, style, aircraftType, raltNames, etopsKml
         map.setPaintProperty(layer, 'text-color',getTextColor(raltNames, hexcolorEtops));
         map.setPaintProperty(layer, 'icon-halo-width', getIconHaloWidth(style));
     }
+}
+
+export function changeAircraftType(map, style, aircraftType, raltNames, etopsNames, etopsKmlColor) {
+    const [hexcolorEtops,] = kml2mapColor(etopsKmlColor);
+    const layer = 'airport-layer';
+    map.setFilter(layer, filterByAircraftType(aircraftType));
+    map.setPaintProperty(layer, 'icon-color', getIconColor(style, aircraftType, raltNames, hexcolorEtops));
+    map.setLayoutProperty(layer, 'symbol-sort-key', symbolSortKey(aircraftType, etopsNames));
+    map.setFilter('airport-emer-layer', filterByAircraftType(aircraftType, false));
 }

@@ -7,17 +7,17 @@
     <li class="nav-item" class:active={route === '/'}>
       <a class="nav-link" href="#/"><svg><use xlink:href="#home"/></svg></a>
     </li>
-    {#if promise || route === '/map'}
+    {#if (promise) || route === '/map'}
     <li class="nav-item" class:active={route === '/map'}>
       <a class:disabled={!promise} class="nav-link" href="#/map">CARTE</a>
     </li>
     {/if}
-    {#if promise || route === '/gramet'}
+    {#if  (promise && !promise.isFakeOfp) || route === '/gramet'}
     <li class="nav-item" class:active={route === '/gramet'}>
       <a class:disabled={!promise} class="nav-link" href="#/gramet" >GRAMET</a>
     </li>
     {/if}
-    {#if promise || route === '/export'}
+    {#if  (promise && !promise.isFakeOfp) || route === '/export'}
     <li class="nav-item" class:active={route === '/export'}>
       <a class:disabled={!promise} class="nav-link" href="#/export" >EXPORT</a>
     </li>
@@ -45,6 +45,7 @@
     nav {
       flex: 0 1 auto;
       margin: 0 -10px;
+      position: static; /* for no ofp prompt */
     }
     @media (max-width: 767px){
       .nav-item.active {

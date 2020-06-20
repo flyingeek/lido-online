@@ -23,6 +23,7 @@ const U = {
   'CONF_MAPBOXGL_JS': 'https://unpkg.com/mapbox-gl@1.10.1/dist/mapbox-gl.js',
   'CONF_PDFJS_WORKER_JS': 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.min.js',
   'CONF_PDFJS_JS': 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js',
+  'CONF_PROJ4_JS': 'https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.6.2/proj4.min.js',
   'CONF_LIDOJS_JS': `./js/lidojs.${lidojsPkg.version}.min.js`,
   'CONF_WMO_JS': `./js/wmo.${lidojsPkg.version}.var.js`,
   'CONF_BUNDLE_JS': './js/bundle.js',
