@@ -31,7 +31,7 @@
 </div>
 <style>
 h1 {
-  margin: 1.5em auto;
+  margin: 1.2em auto 1em auto;
 }
 h1, .card-header {
   font-variant-caps: all-small-caps;
