@@ -16,8 +16,19 @@ export const addFirReg = (map, affine) => {
             'source': 'fir-reg-source',
             'layout': {},
             'paint': {
-                'fill-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgba(255,0,0,0.25)", "rgba(255,127,0,0.25)"],
-                'fill-outline-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgb(255,0,0)", "rgb(255,127,0)"]
+                'fill-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgba(255,0,0,0.2)", "rgba(255,127,0,0.25)"]
+                //'fill-outline-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgb(255,0,0)", "rgb(255,127,0)"]
+            }
+        });
+        map.addLayer({
+            'id': 'fir-reg-line-layer',
+            'type': 'line',
+            'source': 'fir-reg-source',
+            'layout': {},
+            'paint': {
+                'line-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgb(255,0,0)", "rgb(255,127,0)"],
+                'line-width': 1,
+                'line-opacity': ['case', ['==', 'FIR-RED', ['get', 'type']], 0.4, 0.6]
             }
         });
     })
