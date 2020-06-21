@@ -39,22 +39,20 @@ const transformer = (json) => {
                 if (!name) console.log(obj);
                 try {
                     coordinates = obj.Placemark.LineString.coordinates;
-                    features.push(feature(name, type, coordinates));
                 } catch (err) {
-                    //coordinates = obj.Placemark.Polygon.outerBoundaryIs.LinearRing.coordinates;
+                    coordinates = obj.Placemark.Polygon.outerBoundaryIs.LinearRing.coordinates;
                 }
-                
+                features.push(feature(name, type, coordinates));
             }
         } else {
             for (let obj of folder.Placemark) {
                 name = obj.name;
                 try {
                     coordinates = obj.LineString.coordinates;
-                    features.push(feature(name, type, coordinates));
                 } catch (err) {
-                    //coordinates = obj.Polygon.outerBoundaryIs.LinearRing.coordinates
+                    coordinates = obj.Polygon.outerBoundaryIs.LinearRing.coordinates
                 }
-                
+                features.push(feature(name, type, coordinates));
             }
         }
     }

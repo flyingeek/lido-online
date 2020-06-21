@@ -197,7 +197,9 @@ select {
   border-color: var(--blueaf);
   color: #888;
   margin: 5px;
+  appearance: none;
   -webkit-appearance: none;
+  -moz-appearance: none;
 }
 @media (max-width: 767px), (max-height: 700px) {
     .footer {

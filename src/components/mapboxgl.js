@@ -23,7 +23,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
         'center': [0, 49],
         'zoom': 2,
         'attributionControl': true,
-        'customAttribution': `Yammer/${(isAvenza) ? 'QGIS & Avenza maps': 'Maps.me'} - Airports/FIR © Olivier Ravet - ${"CONF_AIRAC".substring(0,2)}.${"CONF_AIRAC".substring(2,4)}`
+        'customAttribution': `Yammer/${(isAvenza) ? 'QGIS & Avenza maps': 'Maps.me'} - Airports/FIR © Olivier Ravet`
     }
     const map = new mapboxgl.Map({...mapOptions.mapboxOptions, ...mapboxOptions});
     map.loadImage('sdf/maki-marker-sdf.png', function(error, image) {
@@ -149,8 +149,11 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
         }
         loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDrop, mapOptions);
         const attribution = document.querySelector(`#${id} .mapboxgl-ctrl-attrib-inner`);
-        if (attribution) attribution.appendChild(aircraftSelect);
-
+        if (attribution) {
+            attribution.appendChild(document.createTextNode(' | '));
+            attribution.appendChild(aircraftSelect);
+            attribution.appendChild(document.createTextNode(`${"CONF_AIRAC".substring(0,2)}.${"CONF_AIRAC".substring(2,4)}`));
+        }
         if (!ofp.isFake) addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');
         //fetch(ofp.ogimetData.proxyImg); // add to cache
     });

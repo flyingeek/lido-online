@@ -92,7 +92,9 @@
         height: 0;
     }
     input[type="range"] {
+        appearance: none;
         -webkit-appearance: none;
+        -moz-appearance: none;
         position: absolute;
         right: 0;
         bottom: -0.3em; /* max = color-group bottom margin */

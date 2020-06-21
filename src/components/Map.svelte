@@ -213,10 +213,11 @@
         font-size: 12px;
         display: none;
         margin-right: 5px;
-        margin-left: 10px;
         z-index: 2;
-        padding: 0px 15px;
+        padding: 0px 10px;
+        appearance: none;
         -webkit-appearance: none;
+        -moz-appearance: none;
     }
     :global(.mapboxgl-ctrl-attrib-inner select[name=aircraftType]){
         display: inline-block !important;

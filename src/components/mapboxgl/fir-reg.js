@@ -16,8 +16,8 @@ export const addFirReg = (map, affine) => {
             'source': 'fir-reg-source',
             'layout': {},
             'paint': {
-                'fill-color': ['case', ['==', 'FIR-RED', ['get', 'type']], '#F00', '#FF7F00'],
-                'fill-opacity': ['case', ['==', 'FIR-RED', ['get', 'type']], 0.25, 0.2]
+                'fill-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgba(255,0,0,0.25)", "rgba(255,127,0,0.25)"],
+                'fill-outline-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgb(255,0,0)", "rgb(255,127,0)"]
             }
         });
     })

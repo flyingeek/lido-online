@@ -1,7 +1,7 @@
 {
   "name": "lido-svelte",
-  "version": "1.2.2",
-  "AIRAC": "2007g",
+  "version": "1.2.3",
+  "AIRAC": "2007h",
   "scripts": {
     "build": "npm run clean && rollup -c",
     "dev": "rollup -c -w",
