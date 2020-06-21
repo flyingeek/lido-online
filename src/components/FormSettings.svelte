@@ -19,7 +19,7 @@
     const dispatch = createEventDispatcher();
     const store = stores.optionsKML;
     export let kmlOptions;
-    export let mode = "col-12 col-sm-6 col-md-12 col-lg-12 col-xl-12";
+    export let mode = "col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12";
     let storedOptions = {...kmlDefaultOptions, ...(storage.getItem(store) ||{})};
     let hamburgerBlink = compare(kmlDefaultOptions, kmlOptions); // check only on entry
     $: isDefault = compare(kmlDefaultOptions, kmlOptions);
