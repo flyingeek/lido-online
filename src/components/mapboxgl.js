@@ -261,7 +261,7 @@ export function loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDr
         addTracks(map, ofp, affineOrDrop, options.natColor, options.natPin, options.natDisplay);
         //console.log(ofp.infos, ofp.text);
         if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0){
-            addEtops(map, 'etops', [ofp.infos['EEP'], ofp.infos['EXP']].concat(ofp.infos['raltPoints']), affineOrDrop, affineAndClamp, true, ofp.infos['ETOPS'], options.routeColor, options.etopsColor);
+            addEtops(map, 'etops', [ofp.infos['EEP'], ofp.infos['EXP']].concat(ofp.infos['raltPoints']), affineAndClamp, true, ofp.infos['ETOPS'], options.routeColor, options.etopsColor);
         }
     }
 }
