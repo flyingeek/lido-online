@@ -223,7 +223,7 @@
     :global(.mapboxgl-ctrl-attrib-inner select[name=aircraftType]){
         display: inline-block !important;
     }
-    @media (max-width: 767px), (max-height: 700px) {
+    @media (max-width: 500px), (max-height: 720px) {
         #map {
             width: 100%;
             height: 90vh;

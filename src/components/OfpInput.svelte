@@ -161,7 +161,6 @@
 input:lang(fr) ~ label::after {
     content: "Sélectionner";
 }
-
 .blink label::after {
     background-color: var(--blue);
     color: var(--white);
@@ -170,6 +169,10 @@ input:lang(fr) ~ label::after {
 label {
     padding-right: 120px;
     display: inline-block;
+    width: auto;
+}
+.custom-file {
+    width: auto
 }
 .custom-file.blink {
     animation: blink 3s ease infinite;
@@ -199,5 +202,16 @@ select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
+}
+@media (max-width: 767px){
+    input ~ label::after, input:lang(fr) ~ label::after {
+        content: "OFP…" !important;
+    }
+    label {
+        width: 0;
+    }
+    .custom-file {
+        width: 140px;
+    }
 }
 </style>

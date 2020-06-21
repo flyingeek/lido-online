@@ -53,17 +53,6 @@
     nav ul li {
       margin-right: 10px;
     }
-    @media (max-width: 767px){
-      /* .nav-item.active {
-        border-left: 2px solid var(--pink);
-        border-bottom: none !important;
-      }
-      .nav-item {
-        border-left: 2px solid transparent;
-        padding-left: 1em;
-        margin-left: -1em;
-      } */
-    }
     .nav-item.active {
       border-bottom: 2px solid var(--pink);
     }
