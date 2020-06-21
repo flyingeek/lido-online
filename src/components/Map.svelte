@@ -192,6 +192,7 @@
 </select>
 <FormSettings bind:kmlOptions on:change={update} on:save />
 <style>
+
     #map {
         flex: 1 1 auto;
         height: auto;
@@ -225,8 +226,14 @@
     @media (max-width: 767px), (max-height: 700px) {
         #map {
             width: 100%;
-            height: 400px;
-            margin: 1rem 0;
+            height: 90vh;
+            margin: 0;
+        }
+        :global(main.map page) {
+            position: relative;
+        }
+        .mapmenu {
+            top :5px;
         }
     }
 </style>

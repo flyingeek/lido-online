@@ -182,10 +182,9 @@ label {
     100% { transform: scale(1.0); }
 }
 .footer {
-  position: fixed;
+  position: absolute;
   right: 5px;
   bottom: 0;
-  width: 100%;
   text-align: right;
   display: none;
 }
@@ -200,10 +199,5 @@ select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-}
-@media (max-width: 767px), (max-height: 700px) {
-    .footer {
-      position: absolute;
-    }
 }
 </style>
