@@ -110,7 +110,7 @@
     min-height: 100%;
     width: 100%;
     position: fixed;
-    --blueaf: #002157
+    --blueaf: #002157;
   }
   .content{
     background-color:var(--blueaf);
@@ -145,10 +145,15 @@
       margin-right: 30px; /* for hamburger */
   }
   @media (max-width: 330px), (max-height: 720px) {
+    main.map {
+      display:block;
+    }
+  }
+  @media (max-width: 575px) { /* allow scrolling long pages */
     :global(html, body) {
       position: relative;
     }
-    main.map {
+    main.home, main.gramet, main.export {
       display:block;
     }
   }
