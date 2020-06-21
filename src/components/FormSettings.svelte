@@ -251,7 +251,7 @@
     .row.last {
         margin-top: 10px;
     }
-    @media (max-width: 500px), (max-height: 720px){
+    @media (max-width: 330px), (max-height: 720px){
         .hamburger, .closeB {
             display: none;
         }

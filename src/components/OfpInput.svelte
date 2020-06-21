@@ -214,4 +214,12 @@ select {
         width: 140px;
     }
 }
+@media (max-width: 380px){
+    label {
+        padding-right: 70px;
+    }
+    .custom-file {
+        width: 90px;
+    }
+}
 </style>
