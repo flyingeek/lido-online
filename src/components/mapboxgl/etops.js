@@ -1,9 +1,9 @@
 import {addLines} from './layers';
 import {kml2mapColor} from "../KmlColor.svelte";
 
-export function addEtops(map, id, data, affine, visibility, etopsTime, routeKmlColor, etopsKmlColor) {
-    addLines(map, `${id}-ep-circle`, [data[0].circle(420, 48), data[1].circle(420, 48)] , affine, routeKmlColor, visibility);
-    addLines(map, `${id}-etops-circle`, data.slice(2).map(d => d.circle(7 * etopsTime)), affine, etopsKmlColor, visibility);
+export function addEtops(map, id, data, affineLine, visibility, etopsTime, routeKmlColor, etopsKmlColor) {
+    addLines(map, `${id}-ep-circle`, [data[0].circle(420, 48), data[1].circle(420, 48)] , affineLine, routeKmlColor, visibility);
+    addLines(map, `${id}-etops-circle`, data.slice(2).map(d => d.circle(7 * etopsTime)), affineLine, etopsKmlColor, visibility);
 }
 
 export function changeEPCircleColor(map, kmlColor) {

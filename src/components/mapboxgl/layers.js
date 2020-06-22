@@ -7,46 +7,59 @@ export const pinColors = [
     '#FF0000', '#22DD44', '#BB11EE', '#F56'
 ];
 
+export const geoPoints2LngLats = (data, affine, cb) => {
+    let lngLats = [];
+    const len = data.length;
+    for (let i = 0; i < len; i++) {
+        const newPair = (affine) ? affine([data[i].longitude, data[i].latitude]) : [data[i].longitude, data[i].latitude];
+        if (newPair) lngLats.push((cb) ? cb(newPair, data[i]) : newPair);
+    }
+    return lngLats;
+}
+
+// const geoPoints2LngLats2 = (data, affine, cb) => {
+//     const lngLats = data.reduce(function(result, g) {
+//         const newPair = (affine) ? affine([g.longitude, g.latitude]) : [g.longitude, g.latitude];
+//         if (newPair) result.push((cb) ? cb(newPair, g) : newPair);
+//         return result;
+//     }, []);
+//     return lngLats;
+// }
+
 export function addPoints(map, id, data, affine, selectedPin, visibility, kmlcolor) {
-    const points = data.flatMap(g => {
-        const newPair = affine([g.longitude, g.latitude]);
-        if (newPair != undefined) {
-            return [jsonPoint(newPair, g.name.replace(/00\.0/g,''))];
-        }
-        return [];
-    });
-    map.addSource(`${id}-marker-source`, featureCollection(points));
+    map.addSource(`${id}-marker-source`, featureCollection(
+        geoPoints2LngLats(data, affine, (lngLat, geoPoint) => jsonPoint(lngLat, geoPoint.name.replace(/00\.0/g,'')))
+    ));
     map.addLayer(markerLayer(id, selectedPin, kmlcolor, visibility));
 }
 
-
-export function addLine(map, id, data, affine, kmlcolor, visibility) {
-    const reduced = data.reduce(function(result, g) {
-        const newPair = affine([g.longitude, g.latitude]);
-        if (newPair !== undefined) {
-            result.push(newPair);
-        }
-        return result;
-    }, []);
-    map.addSource(`${id}-line-source`, {
-        'type': 'geojson',
-        'data': jsonLine(reduced)
-    });
+export function addLine(map, id, data, affineLine, kmlcolor, visibility) {
+    if (affineLine) {
+        map.addSource(`${id}-line-source`, featureCollection(affineLine(data).map(l =>jsonLine(l))));
+    } else {
+        map.addSource(`${id}-line-source`, {
+            'type': 'geojson',
+            'data': jsonLine(data.map(g => [g.longitude, g.latitude]))
+        });
+    }
     map.addLayer(lineLayer(id, kmlcolor, visibility));
 }
 
-export function addLines(map, id, data, affine, kmlcolor, visibility) {
-
-    map.addSource(`${id}-line-source`, featureCollection(data.map((ar) => {
-            return jsonLine(ar.reduce(function(result, g) {
-                const newPair = affine([g.longitude, g.latitude]);
-                if (newPair !== undefined) {
-                    result.push(newPair);
-                }
-                return result;
-            }, []));
-        }))
-    );
+export function addLines(map, id, data, affineLine, kmlcolor, visibility) {
+    if (affineLine) {
+        const len = data.length;
+        const results = [];
+        for (let line=0; line<len; line++) {
+            const sublines = affineLine(data[line]);
+            const sublen = sublines.length;
+            for (let subline = 0; subline < sublen; subline++) {
+                results.push(jsonLine(sublines[subline]))
+            }
+        }
+        map.addSource(`${id}-line-source`, featureCollection(results));
+    }else{
+        map.addSource(`${id}-line-source`, featureCollection(data.map(ar => jsonLine(ar.map(g => [g.longitude, g.latitude])))));
+    }
     map.addLayer(lineLayer(id, kmlcolor, visibility));
 }
 

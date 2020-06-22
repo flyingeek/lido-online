@@ -49,12 +49,14 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
     fetch('data/airports.CONF_AIRAC.geojson')
     .then(response => response.json())
     .then(data => {
-        const projFeatures = [];
-        for (let feature of data.features) {
-            feature.geometry.coordinates = affine(feature.geometry.coordinates);
-            if(feature.geometry.coordinates !== undefined) projFeatures.push(feature);
+        if (affine) {
+            const projFeatures = [];
+            for (let feature of data.features) {
+                feature.geometry.coordinates = affine(feature.geometry.coordinates);
+                if(feature.geometry.coordinates !== undefined) projFeatures.push(feature);
+            }
+            data.features = projFeatures;
         }
-        data.features = projFeatures;
         map.addSource('airports-source', {
             type: 'geojson',
             data: data

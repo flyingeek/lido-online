@@ -3,7 +3,8 @@ import { kmlDefaultOptions } from "../kml";
 import {jsonPoint, jsonLine, featureCollection} from './json.js';
 import {lineLayer, markerLayer} from './layers';
 
-export function addTracks(map, ofp, affine, kmlcolor, selectedPin, visibility) {
+
+export function addTracks(map, ofp, affine, affineLine, kmlcolor, selectedPin, visibility) {
     const lines = {
         'rnat': [],
         'rnat-incomplete': []
@@ -14,21 +15,22 @@ export function addTracks(map, ofp, affine, kmlcolor, selectedPin, visibility) {
     };
     for (let track of ofp.tracks) {
         const folder = (track.isComplete) ? 'rnat' : 'rnat-incomplete';
-        const points = track.points.reduce(function(result, g) {
-            const newPair = affine([g.longitude, g.latitude]);
-            if (newPair !== undefined) {
-                result.push(newPair);
+        if (affineLine) {
+            const sublines = affineLine(track.points);
+            const sublen = sublines.length;
+            for (let i=0; i<sublen;i++){
+                lines[folder].push(jsonLine(sublines[i], track.name));
             }
-            return result;
-        }, []);
-        lines[folder].push(jsonLine(points, affine, track.name));
+        }else{
+            lines[folder].push(jsonLine(track.points.map(g => [g.longitude, g.latitude]), track.name))
+        }
         const firstPoint = track.points[0];
-        let jsonP = jsonPoint(affine([firstPoint.longitude, firstPoint.latitude]), `${track.name}\n${firstPoint.name}`, track.description);
-        if (jsonP !== undefined) markers[folder].push(jsonP);
+        let lngLat = (affine) ? affine([firstPoint.longitude, firstPoint.latitude]) : [firstPoint.longitude, firstPoint.latitude];
+        if (lngLat) markers[folder].push(jsonPoint(lngLat, `${track.name}\n${firstPoint.name}`, track.description));
         if (track.isMine) {
             const lastPoint = track.points[track.points.length - 1];
-            jsonP = jsonPoint(affine([lastPoint.longitude, lastPoint.latitude]), `${track.name}\n${lastPoint.name}`, track.description);
-            if (jsonP !== undefined) markers[folder].push(jsonP);
+            lngLat = (affine) ? affine([lastPoint.longitude, lastPoint.latitude]) : [lastPoint.longitude, lastPoint.latitude];
+            if (lngLat) markers[folder].push(jsonPoint(lngLat, `${track.name}\n${lastPoint.name}`, track.description));
         }
     }
     map.addSource(`rnat-marker-source`, featureCollection(markers['rnat']));
