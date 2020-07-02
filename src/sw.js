@@ -49,7 +49,7 @@ registerRoute(
 );
 
 registerRoute(
-  ({url}) => url.origin === 'https://api.mapbox.com' && ( 
+  ({url}) => url.origin === 'https://api.mapbox.com' && !url.pathname.includes('/flyingeek/') && ( 
      (url.pathname.startsWith('/styles/') || url.pathname.startsWith('/fonts/')) ||
      url.pathname === '/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2.json'
   ),

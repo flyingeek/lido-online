@@ -84,6 +84,15 @@
             },
             'tiles': ['https://editolido.alwaysdata.net/i/CONF_PACIFIC/{z}/{x}/{y}.jpg'],
             'tileSize': 512
+        },
+        {
+            'label': 'Atlas beta',
+            'id': 'atlas',
+            'mapboxOptions': {
+                'style': 'mapbox://styles/flyingeek/ckc4yge17166a1ip66rkf0zhr',
+                'renderWorldCopies': false,
+                'maxzoom': 12
+            }
         }
         // ,
         // {
