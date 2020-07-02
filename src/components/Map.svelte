@@ -91,7 +91,7 @@
             'mapboxOptions': {
                 'style': 'mapbox://styles/flyingeek/ckc4yge17166a1ip66rkf0zhr',
                 'renderWorldCopies': false,
-                'maxzoom': 12
+                'maxZoom': 12
             }
         }
         // ,
