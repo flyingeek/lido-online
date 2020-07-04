@@ -93,15 +93,6 @@
                 'renderWorldCopies': false,
                 'maxZoom': 12
             }
-        },
-        {
-            'label': 'Atlas2 beta',
-            'id': 'atlas2',
-            'mapboxOptions': {
-                'style': 'mapbox://styles/flyingeek/ckc6040xe0tmn1io18bogr5mw',
-                'renderWorldCopies': false,
-                'maxZoom': 12
-            }
         }
         // ,
         // {
