@@ -2,7 +2,7 @@ node_modules/
 public/
 .DS_Store
 .env
-data/Global2007.csv
+data/Global*.csv
 data/*.kml
 data/*.kmz
 data/airports.json

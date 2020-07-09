@@ -29,6 +29,10 @@ Papa.parse(file, {
         }
         for (let i = 18; i <=29; i++) {
             const [aircraft, cat] = data[i].trim().split('-');
+            if (!aircraft) {
+                console.log(`${data[0]}: empty aircraft column ${i}`)
+                continue;
+            }
             if (cat !== '0') aircrafts.push(aircraft);
             if (cat === '3') {
                 order[aircraft] = 2 - isDest; // 1-2 for status 3
@@ -41,7 +45,7 @@ Papa.parse(file, {
             } else if (cat === '0') {
                 order[aircraft] = 10 - isDest; // 9-10 for emergency
             } else {
-                console.log(`unknow aircraft status: ${cat}`);
+                console.log(`${data[0]}: unknow aircraft status: ${cat} for ${aircraft}`);
                 order[aircraft] = 0; // should not be there but are displayed first
             }
         }
@@ -56,7 +60,7 @@ Papa.parse(file, {
                 level = 2;
                 break;
             default:
-                console.log(`unkwnown airport level ${data[47]}`);
+                console.log(`unkwnown airport level ${data[47]}`, data);
         }
         results[data[0].trim()] = [parseFloat(data[3]),parseFloat(data[4])];
         const feature = {
@@ -75,7 +79,7 @@ Papa.parse(file, {
         for (const k in order){
             feature.properties[k] = order[k];
         }
-        geojsonResults.push(feature);
+        if (aircrafts.length > 0) geojsonResults.push(feature);
         counter += 1;
         return;
     },
