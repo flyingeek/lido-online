@@ -133,10 +133,12 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
         fitBoundsOptions: {maxZoom: 3},
         trackUserLocation: true
     });
-    const originalOnSuccess = geolocate._onSuccess;
-    geolocate._onSuccess = function(position) {
-        const [lng, lat] = affine([position.coords.longitude, position.coords.latitude]);
-        return originalOnSuccess.apply(this, [{'coords': {'longitude': lng, 'latitude': lat, 'accuracy': position.coords.accuracy}}]);
+    if (affine) {
+        const originalOnSuccess = geolocate._onSuccess;
+        geolocate._onSuccess = function(position) {
+            const [lng, lat] = affine([position.coords.longitude, position.coords.latitude]);
+            return originalOnSuccess.apply(this, [{'coords': {'longitude': lng, 'latitude': lat, 'accuracy': position.coords.accuracy}}]);
+        }
     }
     map.addControl(geolocate);
     map.on('load', function() {
@@ -167,6 +169,9 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
         if (!ofp.isFake) addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');
         //fetch(ofp.ogimetData.proxyImg); // add to cache
     });
+    // map.on('zoom', function() {
+    //     console.log(map.getZoom());
+    // });
     // map.on('click', function(e) {
     //     e.lngLat.wrap();
     //     console.log(e.lngLat.wrap());
