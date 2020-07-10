@@ -5,7 +5,7 @@ L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au pl
 
 ## Utilisation
 
-1. Dans Pilot Mission, onglet «Dossier de vol», affichez le PDF nommé "Dossier de vol OFP". Sur la gauche, cliquez sur le carré avec une flèche vers le haut. Choisissez «Enregister dans Fichiers». Dans l'app, c'est cet OFP qu'il faut ensuite sélectionner. Le "drag and drop" est également possible dans le champ d'input de l'OFP.
+1. Dans Pilot Mission, onglet «Dossier de vol», affichez le PDF nommé "Dossier de vol OFP". Sur la gauche, cliquez sur le carré avec une flèche vers le haut. Choisissez «Enregistrer dans Fichiers». Dans l'app, c'est cet OFP qu'il faut ensuite sélectionner. Le "drag and drop" est également possible dans le champ d'input de l'OFP.
 
 2. Après avoir ouvert ce site dans Safari sur iPad, il est possible d'afficher le menu de personnalisation en cliquant sur  l'icône en haut à droite (le "hamburger"). Dans les résolutions plus faibles, sur iPhone ou en mode "split view", ces réglages sont affichés sous la carte. Le type avion pour l'adéquation des terrains est détecté dans l'OFP.
 
