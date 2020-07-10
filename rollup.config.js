@@ -163,6 +163,7 @@ export default [{
       "globDirectory": "public/",
       "globPatterns": [
         "index.html",
+        "apple-touch-icon.png",
         "css/bundle.css",
         "js/bundle.js",
         "svg/*.svg",
