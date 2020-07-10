@@ -1,6 +1,18 @@
 <script>
     export let route;
     export let promise;
+    const share = async () => {
+      const shareData = {
+        'title': 'OFP2MAP',
+        'url': window.location.pathname
+      };
+      try {
+        await navigator.share(shareData)
+      } catch(err) {
+        console.log(err);
+      }
+      return false;
+    }
 </script>
 <nav class="navbar navbar-expand-md navbar-light bg-light">
   <ul class="navbar-nav mr-auto">
@@ -33,6 +45,11 @@
       <svg class="f"><use xlink:href="#info"/></svg>
       <span>AIDE</span></a>
     </li>
+    {#if (promise && navigator.share)}
+    <li class="nav-item optional">
+      <a class="nav-link" href="." on:click|preventDefault={share}>PARTAGER</a>
+    </li>
+    {/if}
   </ul>
   <slot></slot>
 </nav>
@@ -69,6 +86,11 @@
     }
     .nav-item.active {
       border-bottom: 2px solid var(--pink);
+    }
+    @media (max-width: 767px) {
+      li.optional {
+        display: none;
+      }
     }
     @media (max-width: 500px){
       svg.f {
