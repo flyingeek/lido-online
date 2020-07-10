@@ -177,13 +177,20 @@
         updateMapLayers(map, e.detail.name, e.detail.value, ofp, kmlOptions, aircraftTypes[selectedAircraft]);
         updateKml(e.detail.name, e.detail.value);
         dispatch('save'); // set History
-  };
-  onMount(() => {
+    };
+    const orientationChange = (e) => {
+        if (route === '/map' && map) {
+            map.resize();
+            //console.log('orientation changed');
+        }
+    };
+    onMount(() => {
         mapboxgl.accessToken = token;
         map = createMap(id, options[selected], ofp, kmlOptions, aircraftSelect);
-  });
+    });
 
 </script>
+<svelte:window on:orientationchange={orientationChange}/>
 <div id={id} use:mapbox={{route}}></div>
 <div class="mapmenu">
     <select name="{name}" bind:value={selected} class="form-control form-control-sm" on:change={styleChange}>
