@@ -34,16 +34,22 @@ const transformer = (json) => {
         let name;
         if (folder.name.startsWith('FIRS-ROUGES')) {
             type = 'FIR-RED';
-            for (let obj of folder.Document) {
-                name = obj.Placemark.description || obj.Placemark.name;
-                if (!name) console.log(obj);
-                try {
-                    coordinates = obj.Placemark.LineString.coordinates;
-                } catch (err) {
-                    coordinates = obj.Placemark.Polygon.outerBoundaryIs.LinearRing.coordinates;
+            const getData = (src) => {
+                for (let obj of src) {
+                    name = obj.Placemark.description || obj.Placemark.name;
+                    if (!name) console.log(obj);
+                    try {
+                        coordinates = obj.Placemark.LineString.coordinates;
+                    } catch (err) {
+                        coordinates = obj.Placemark.Polygon.outerBoundaryIs.LinearRing.coordinates;
+                    }
+                    features.push(feature(name, type, coordinates));
                 }
-                features.push(feature(name, type, coordinates));
+            };
+            if (folder.Folder !== undefined) {
+                getData(folder.Folder.Document);
             }
+            getData(folder.Document);
         } else {
             for (let obj of folder.Placemark) {
                 name = obj.name;
