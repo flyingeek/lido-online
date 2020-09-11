@@ -15,7 +15,10 @@ Papa.parse(file, {
         // 0:icao 1:name 3:lat 4:lon 318:18 319:19 320:20 321:21 330:22 340:23 350:24 380:25 787:26 772:27 773:28 77F:29 sur:47
         //console.log(result);
         const data = result.data;
-        if (data.length < 48) return;
+        if (data.length < 48) {
+            //console.log("skipping (length < 48)", data);
+            return;
+        }
         if (data[0].trim() === "OACI") return;
         //console.log(data[0], data[1], data[3], data[4], data[18], data[29], data[47]);
         const aircrafts = [];
@@ -33,7 +36,7 @@ Papa.parse(file, {
                 console.log(`${data[0]}: empty aircraft column ${i}`)
                 continue;
             }
-            if (cat !== '0') aircrafts.push(aircraft);
+            aircrafts.push(aircraft);
             if (cat === '3') {
                 order[aircraft] = 2 - isDest; // 1-2 for status 3
             } else if (cat === '2'){
@@ -79,7 +82,11 @@ Papa.parse(file, {
         for (const k in order){
             feature.properties[k] = order[k];
         }
-        if (aircrafts.length > 0) geojsonResults.push(feature);
+        if (aircrafts.length > 0) {
+            geojsonResults.push(feature);
+        } else {
+            console.log("skipping (no aircraft)", data);
+        }
         counter += 1;
         return;
     },
