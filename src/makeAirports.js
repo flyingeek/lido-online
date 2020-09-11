@@ -36,7 +36,7 @@ Papa.parse(file, {
                 console.log(`${data[0]}: empty aircraft column ${i}`)
                 continue;
             }
-            aircrafts.push(aircraft);
+            if (cat !== '0') aircrafts.push(aircraft);
             if (cat === '3') {
                 order[aircraft] = 2 - isDest; // 1-2 for status 3
             } else if (cat === '2'){
@@ -82,11 +82,7 @@ Papa.parse(file, {
         for (const k in order){
             feature.properties[k] = order[k];
         }
-        if (aircrafts.length > 0) {
-            geojsonResults.push(feature);
-        } else {
-            console.log("skipping (no aircraft)", data);
-        }
+        geojsonResults.push(feature);
         counter += 1;
         return;
     },
