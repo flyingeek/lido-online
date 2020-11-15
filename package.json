@@ -1,7 +1,9 @@
 {
   "name": "lido-svelte",
   "version": "1.2.16",
-  "AIRAC": "2012",
+  "config": {
+    "AIRAC": "2012"
+  },
   "scripts": {
     "build": "npm run clean && rollup -c",
     "dev": "rollup -c -w",
@@ -9,7 +11,7 @@
     "lint": "eslint . --fix --ext js,svelte",
     "clean": "rimraf public/**",
     "makeAirports": "node src/makeAirports.js",
-    "makeFir": "node src/makeFir.js && node_modules/mapshaper/bin/mapshaper data/fir-reg-orig.geojson -simplify keep-shapes weighted 15% -o format=geojson data/fir-reg.geojson"
+    "makeFir": "node src/makeFir.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "11.0.2",

@@ -7,7 +7,7 @@ import replace from 'rollup-plugin-replace';
 import json from '@rollup/plugin-json';
 import copy from 'rollup-plugin-copy'
 import watchAssets from 'rollup-plugin-watch-assets'; // also requires globby
-import {version, AIRAC} from './package.json';
+import {version, config} from './package.json';
 import lidojsPkg from './node_modules/@flyingeek/lidojs/package.json';
 const workbox = require('rollup-plugin-workbox-inject');
 const {markdown} = require('svelte-preprocess-markdown');
@@ -28,7 +28,7 @@ const U = {
   'CONF_WMO_JS': `./js/wmo.${lidojsPkg.version}.var.js`,
   'CONF_BUNDLE_JS': './js/bundle.js',
   'CONF_BUNDLE_CSS': './css/bundle.css',
-  'CONF_AIRAC': AIRAC,
+  'CONF_AIRAC': config.AIRAC,
   'CONF_NORTH': 'northv3',
   'CONF_SOUTH': 'southv3',
   'CONF_PACIFIC': 'pacificv1'

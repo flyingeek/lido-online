@@ -2,11 +2,15 @@ const fs = require('fs');
 const etl = require('etl');
 const unzipper = require('unzipper');
 const parser = require('fast-xml-parser');
-const config = require('../package.json');
+const mapshaper = require('mapshaper');
 
-const outputFirReg = "data/fir-reg-orig.geojson"
-const zipPath = `data/FIR-REGLEMENTEES-${config.AIRAC.substr(0,4)}.kmz`;
-
+const outputFirReg = "data/fir-reg-orig.geojson";
+const outputFirRegOptimized = "data/fir-reg.geojson";
+const scriptArgs = process.argv.slice(2);
+const airac = (scriptArgs.length === 1) ? scriptArgs[0] : process.env.npm_package_config_AIRAC;
+if (typeof airac !== 'string' || airac.length !== 4) throw new Error(`invalid AIRAC: ${airac}, did you use npm run makeFir [-- CYCLE] ?`);
+console.log("AIRAC:", airac);
+const zipPath = `data/FIR-REGLEMENTEES-${airac}.kmz`;
 const round = f => Math.round(parseFloat(f) * 10000) / 10000;
 const transformer = (json) => {
     const features = [];
@@ -74,11 +78,12 @@ fs.createReadStream(zipPath)
         if (entry.path == "doc.kml") {
             const content = await entry.buffer();
             const json = parser.parse(content.toString(), []);
-            fs.writeFile(outputFirReg, JSON.stringify(transformer(json)), (err) => {
+            await fs.promises.writeFile(outputFirReg, JSON.stringify(transformer(json)), (err) => {
                 if (err) {
                   throw err;
                 }
             });
+            mapshaper.runCommands('-i ' + outputFirReg + ' -simplify keep-shapes weighted 15% -o ' + outputFirRegOptimized + ' format=geojson');
             entry.autodrain();
         } else {
             console.log(entry.path);

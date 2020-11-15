@@ -1,8 +1,10 @@
 const Papa = require('papaparse');
 const fs = require('fs');
-const config = require('../package.json');
-
-const dataPath = `data/Global${config.AIRAC.substr(0,4)}.csv`;
+const scriptArgs = process.argv.slice(2);
+const airac = (scriptArgs.length === 1) ? scriptArgs[0] : process.env.npm_package_config_AIRAC;
+if (typeof airac !== 'string' || airac.length !== 4) throw new Error(`invalid AIRAC: ${airac}, did you use npm run makeAirports ?`);
+console.log("AIRAC:", airac);
+const dataPath = `data/Global${airac}.csv`;
 const output = "data/airports.json";
 const geojson = "data/airports.geojson";
 
