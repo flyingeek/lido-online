@@ -12,7 +12,7 @@
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
   import {storage, stores, validate, saved, storeSettingsFromURL} from "./components/storage.js";
-  import {swDismiss, sidebar} from "./store.js";
+  import {swDismiss, sidebar, online} from "./store.js";
 
   let route = "/";
   let permalink = window.location.href;
@@ -54,6 +54,12 @@
     if ($swDismiss) $swDismiss = false;
     if (window.serviceWorker && window.serviceWorker.update) window.serviceWorker.update().catch((err) => console.log('failed to update sw'));
   }
+  const wentOnLine = () => {
+    $online = true;
+  }
+  const wentOffLine = () => {
+    $online = false;
+  } 
 </script>
 
 <main class="container {route.substr(1) || 'home'}">
@@ -102,7 +108,7 @@
     {/if}
   </div>
 </main>
-<svelte:window on:hashchange={hashchange}/>
+<svelte:window on:hashchange={hashchange} on:online={wentOnLine} on:offline={wentOffLine} />
 
 <style>
   :global(html, body) {

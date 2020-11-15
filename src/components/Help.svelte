@@ -1,5 +1,5 @@
 <script>
-import {swDismiss} from "../store.js";
+import {swDismiss, online} from "../store.js";
 import Helpmarkup from './Help.md';
 
 $: lidojsVersion = (window.editolido) ? ' / lidojs: v' + window.editolido.version : '';
@@ -71,7 +71,11 @@ const checkUpdate = () => {
     <p>Service Worker status: <span data-status={status.code}>{status.msg}</span>
         {#if status.code !== 0}
             {#if updateLabel === defaultLabel}
-                <a href="." on:click|preventDefault={checkUpdate}>{updateLabel}</a>
+                {#if $online}
+                    <a href="." on:click|preventDefault={checkUpdate}>{updateLabel}</a>
+                {:else}
+                    non connecté
+                {/if}
             {:else}
                 {updateLabel}
             {/if}
@@ -82,8 +86,13 @@ const checkUpdate = () => {
 {#if navigator.standalone === true}
 <p><b>En cas de problème:</b></p>
 <p><a class="btn btn-primary btn-sm" href="./index.html" on:click={reload}>Recharger l'App</a> c'est l'équivalent d'un rechargement de page.</p>
+{#if $online}
 <p><a class="btn btn-danger btn-sm" href="./index.html" on:click={reinit}>Réinitialiser l'App</a> va en plus réinitialiser le service Worker (il faut être connecté).</p>
 <p>Dans les 2 cas vos réglages sont conservés mais l'OFP est remis à zéro.</p>
+{:else}
+<p>Vos réglages seront conservés mais l'OFP sera remis à zéro.</p>
+{/if}
+
 {/if}
 </div>
 
