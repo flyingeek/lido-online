@@ -67,6 +67,7 @@
 </script>
 
 <div class="input-group">
+  <!-- svelte-ignore a11y-no-onchange -->
   <select bind:value={selected} class="custom-select"aria-label="Example select with button addon" on:change={save}>
     <option selected={selected === 0} value="{0}">{options[0]}</option>
     <option selected={selected === 1} value="{1}">{options[1]}</option>

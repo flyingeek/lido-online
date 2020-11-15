@@ -27,6 +27,7 @@
             </svg>
         </span>
     </div>
+    <!-- svelte-ignore a11y-no-onchange -->
     <select name="{name}" bind:value={selected} class="custom-select" on:change={dispatch("change", {name, 'value': selected})}>
         {#each options as option, index}
         <option value="{index}" selected={index === selected}>{option.label}</option>

@@ -193,12 +193,14 @@
 <svelte:window on:orientationchange={orientationChange}/>
 <div id={id} use:mapbox={{route}}></div>
 <div class="mapmenu">
+    <!-- svelte-ignore a11y-no-onchange -->
     <select name="{name}" bind:value={selected} class="form-control form-control-sm" on:change={styleChange}>
         {#each options as option, index}
         <option value="{index}" selected={index === selected}>{(option.proj4 && mapContainsOfp(option)) ? `${option.label.toUpperCase()}`: option.label}</option>
         {/each}
     </select>
 </div>
+<!-- svelte-ignore a11y-no-onchange -->
 <select bind:this={aircraftSelect} name="aircraftType" bind:value={selectedAircraft} on:change={aircraftChange}>
     {#each aircraftTypes as aircraftType, index}
     {#if aircraftType !== '???' || (selectedAircraft === '???' && aircraftType==='???')}
