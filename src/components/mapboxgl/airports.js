@@ -1,3 +1,4 @@
+/* global mapboxgl */
 import {kml2mapColor} from "../KmlColor.svelte";
 
 const basicAirportIconColor = (raltNames, hexColor) => ["case",
@@ -136,6 +137,30 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
             },
             'filter': filterByAircraftType(aircraftType)
         });
+        const popup = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false
+        });
+        const addAirportPopup = function (e) {
+            map.getCanvas().style.cursor = 'pointer';
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            const title = e.features[0].properties.title;
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+            popup.setLngLat(coordinates).setHTML(title).addTo(map);
+        };
+        const removeAirportPopup = function () {
+            map.getCanvas().style.cursor = '';
+            popup.remove();
+        };
+        map.on('mouseenter', 'airport-layer', addAirportPopup);
+        map.on('mouseenter', 'airport-emer-layer', addAirportPopup);
+        map.on('mouseleave', 'airport-layer', removeAirportPopup);
+        map.on('mouseleave', 'airport-emer-layer', removeAirportPopup);
     })
 };
 
