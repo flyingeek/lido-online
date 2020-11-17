@@ -7,6 +7,8 @@ export class Deferred {
     }
 }
 export const runningOnIpad = (navigator.platform === "iPad")||(navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+export const supportsHover = matchMedia('(hover: hover)').matches;
+
 export function debounce(func, wait, immediate) {
     let timeout;
     return function() {

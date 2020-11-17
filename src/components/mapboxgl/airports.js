@@ -1,5 +1,6 @@
 /* global mapboxgl */
 import {kml2mapColor} from "../KmlColor.svelte";
+import {supportsHover} from "../utils";
 
 const basicAirportIconColor = (raltNames, hexColor) => ["case",
     ["in", ["get", "name"], ["literal", raltNames]], hexColor,
@@ -142,8 +143,6 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
             closeOnClick: false
         });
         const addAirportPopup = function (e) {
-            popup.remove();
-            map.getCanvas().style.cursor = 'pointer';
             const coordinates = e.features[0].geometry.coordinates.slice();
             const title = e.features[0].properties.title;
             // Ensure that if the map is zoomed out such that multiple
@@ -154,14 +153,32 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
             }
             popup.setLngLat(coordinates).setHTML(title).addTo(map);
         };
+        const setCursorPointer = () => map.getCanvas().style.cursor = 'pointer';
+        const resetCursor = () => map.getCanvas().style.cursor = '';
         const removeAirportPopup = function () {
-            map.getCanvas().style.cursor = '';
+            resetCursor();
             popup.remove();
         };
-        map.on('mouseenter', 'airport-layer', addAirportPopup);
-        map.on('mouseenter', 'airport-emer-layer', addAirportPopup);
-        map.on('mouseleave', 'airport-layer', removeAirportPopup);
-        map.on('mouseleave', 'airport-emer-layer', removeAirportPopup);
+        if (supportsHover) {
+            map.on('mouseenter', 'airport-layer', (e) => {
+                setCursorPointer();
+                addAirportPopup(e);
+            });
+            map.on('mouseenter', 'airport-emer-layer', (e) => {
+                setCursorPointer();
+                addAirportPopup(e);
+            });
+            map.on('mouseleave', 'airport-layer', removeAirportPopup);
+            map.on('mouseleave', 'airport-emer-layer', removeAirportPopup);
+        }else{
+            map.on('mouseenter', 'airport-layer', setCursorPointer);
+            map.on('mouseenter', 'airport-emer-layer', setCursorPointer);
+            map.on('click', 'airport-layer', addAirportPopup);
+            map.on('click', 'airport-emer-layer', addAirportPopup);
+            map.on('mouseleave', 'airport-layer', resetCursor);
+            map.on('mouseleave', 'airport-emer-layer', resetCursor);
+        }
+
     })
 };
 
