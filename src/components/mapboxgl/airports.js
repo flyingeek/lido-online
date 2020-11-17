@@ -140,7 +140,8 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
         });
         const popup = new mapboxgl.Popup({
             closeButton: false,
-            closeOnClick: false
+            closeOnClick: !supportsHover,
+            closeOnMove: !supportsHover
         });
         const addAirportPopup = function (e) {
             const coordinates = e.features[0].geometry.coordinates.slice();
