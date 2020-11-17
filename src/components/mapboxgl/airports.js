@@ -142,6 +142,7 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
             closeOnClick: false
         });
         const addAirportPopup = function (e) {
+            popup.remove();
             map.getCanvas().style.cursor = 'pointer';
             const coordinates = e.features[0].geometry.coordinates.slice();
             const title = e.features[0].properties.title;
