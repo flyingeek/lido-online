@@ -140,7 +140,12 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
         });
         const popup = new mapboxgl.Popup({
             closeButton: false,
-            closeOnClick: !supportsHover,
+            // on touchscreen, this allows to show popup on each airport click
+            // whitout having to click on the map first to cancel the popup
+            // this setting has no effect on hover mode
+            closeOnClick: false,
+            // we need a way to close airport's popup: just move the map
+            // this is not needed for popup on hover mode
             closeOnMove: !supportsHover
         });
         const addAirportPopup = function (e) {
