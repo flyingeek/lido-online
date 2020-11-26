@@ -45,6 +45,7 @@ img {
 }
 .card {
   margin: 15px;
+  height: 100%;
 }
 .card-header {
   font-weight: bold;
@@ -65,4 +66,9 @@ img {
 .row {
   margin-bottom: 15px; /* for no ofp prompt */
 }
+@media (min-width: 576px) and (max-width: 1199.8px) {
+  .col-sm-6, .col-md-6 {
+      margin-bottom: 15px;
+  }
+} 
 </style>
