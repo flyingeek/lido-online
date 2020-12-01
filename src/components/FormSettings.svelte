@@ -228,14 +228,22 @@
     }
     .settings {
         position: absolute;
-        right: -260px;
+        right: -261px;
         transition: right 0.15s ease-out;
         background-color: #eee;
+        border-left: 1px solid rgba(255,255,255,0.2);
         padding: 5px;
         z-index: 2;
         height: 100%;
         top: 0;
     }
+    @supports ( backdrop-filter: blur(5px) ) or ( -webkit-backdrop-filter: blur(5px) ) {
+        .settings {
+            background-color: rgba(254,254,254,0.4);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+     }
     .sidebar .hamburger {
         display: none !important;
     }
