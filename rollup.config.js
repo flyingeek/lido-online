@@ -41,7 +41,8 @@ export default [{
     sourcemap: true,
     format: 'iife',
     name: 'app',
-    file: relPath(U.CONF_BUNDLE_JS)
+    dir: 'public',
+    entryFileNames: U.CONF_BUNDLE_JS.replace('./', '')
   },
   plugins: [
     replace({...U, ...{
@@ -56,7 +57,7 @@ export default [{
       extensions: ['.svelte','.md'],
       preprocess: markdown(),
       css: css => {
-        css.write(relPath(U.CONF_BUNDLE_CSS))
+        css.write(U.CONF_BUNDLE_CSS.replace('./', ''))
       }
     }),
     json(),
