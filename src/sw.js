@@ -95,21 +95,21 @@ registerRoute(
 );
 
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://ofp2map-' + maps['north'] + '.netlify.app/' + maps['north'] + '/[0-3]/.*')),
+  ({url}) => url.href.match(new RegExp('https://ofp2map-' + maps['north'] + '\\.netlify\\.app/' + maps['north'] + '/[0-3]/.*')),
   new CacheFirst({
     cacheName: validCaches['north'],
   })
 );
 
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://ofp2map-' + maps['south'] + '.netlify.app/' + maps['south'] + '/[0-3]/.*')),
+  ({url}) => url.href.match(new RegExp('https://ofp2map-' + maps['south'] + '\\.netlify\\.app/' + maps['south'] + '/[0-3]/.*')),
   new CacheFirst({
     cacheName: validCaches['south'],
   })
 );
 
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://ofp2map-' + maps['pacific'] + '.netlify.app/'+ maps['pacific'] + '/[0-3]/.*')),
+  ({url}) => url.href.match(new RegExp('https://ofp2map-' + maps['pacific'] + '\\.netlify\\.app/'+ maps['pacific'] + '/[0-3]/.*')),
   new CacheFirst({
     cacheName: validCaches['pacific'],
     plugins: [
@@ -121,7 +121,7 @@ registerRoute(
 );
 
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://ofp2map-[^.]+\\.netlify.app/[^/]+/4/.*')),
+  ({url}) => url.href.match(new RegExp('https://ofp2map-[^.]+\\.netlify\\.app/[^/]+/4/.*')),
   new CacheFirst({
     cacheName: validCaches['zoom4'],
     plugins: [
@@ -133,7 +133,7 @@ registerRoute(
 );
 
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://ofp2map-[^.]+\\.netlify.app/[^/]+/[5-9]/.*')),
+  ({url}) => url.href.match(new RegExp('https://ofp2map-[^.]+\\.netlify\\.app/[^/]+/[5-9]/.*')),
   async () => new Response('', { "status" : 404 , "statusText" : "sw says nope!"})
 );
 // from https://github.com/TalAter/cache.adderall
