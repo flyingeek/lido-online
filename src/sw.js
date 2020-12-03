@@ -15,10 +15,10 @@ const validCaches ={
   'airports': 'lido-data',
   'fir-reg': 'lido-fir',
   'gramet': 'lido-gramet2', // if you change here, you must also change in Map.svelte/map.load 
-  'north': 'lido-' + maps['north'],
-  'south': 'lido-' + maps['south'],
-  'pacific': 'lido-' + maps['pacific'],
-  'zoom4': `lido-zoom4_${maps['north'].substr(-1)}_${maps['south'].substr(-1)}_${maps['pacific'].substr(-1)}`
+  'north': 'lido-nl-' + maps['north'],
+  'south': 'lido-nl-' + maps['south'],
+  'pacific': 'lido-nl-' + maps['pacific'],
+  'zoom4': `lido-nl-zoom4_${maps['north'].substr(-1)}_${maps['south'].substr(-1)}_${maps['pacific'].substr(-1)}`
 }
 
 precacheAndRoute(
@@ -95,19 +95,21 @@ registerRoute(
 );
 
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/' + maps['north'] + '/[0-3]/.*')),
+  ({url}) => url.href.match(new RegExp('https://ofp2map-' + maps['north'] + '.netlify.app/' + maps['north'] + '/[0-3]/.*')),
   new CacheFirst({
     cacheName: validCaches['north'],
   })
 );
+
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/' + maps['south'] + '/[0-3]/.*')),
+  ({url}) => url.href.match(new RegExp('https://ofp2map-' + maps['south'] + '.netlify.app/' + maps['south'] + '/[0-3]/.*')),
   new CacheFirst({
     cacheName: validCaches['south'],
   })
 );
+
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/' + maps['pacific'] + '/[0-3]/.*')),
+  ({url}) => url.href.match(new RegExp('https://ofp2map-' + maps['pacific'] + '.netlify.app/'+ maps['pacific'] + '/[0-3]/.*')),
   new CacheFirst({
     cacheName: validCaches['pacific'],
     plugins: [
@@ -117,8 +119,9 @@ registerRoute(
     ]
   })
 );
+
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/[^/]+/4/.*')),
+  ({url}) => url.href.match(new RegExp('https://ofp2map-[^.]+\\.netlify.app/[^/]+/4/.*')),
   new CacheFirst({
     cacheName: validCaches['zoom4'],
     plugins: [
@@ -130,10 +133,9 @@ registerRoute(
 );
 
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/[^/]+/[5-9]/.*')),
+  ({url}) => url.href.match(new RegExp('https://ofp2map-[^.]+\\.netlify.app/[^/]+/[5-9]/.*')),
   async () => new Response('', { "status" : 404 , "statusText" : "sw says nope!"})
 );
-
 // from https://github.com/TalAter/cache.adderall
 const addAll = function(cache, immutableRequests = [], mutableRequests = []) {
   // Verify arguments

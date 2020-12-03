@@ -55,7 +55,7 @@
                 'renderWorldCopies': false,
                 'maxZoom': 5
             },
-            'tiles': ['https://editolido.alwaysdata.net/i/CONF_NORTH/{z}/{x}/{y}.jpg'],
+            'tiles': ['https://ofp2map-CONF_NORTH.netlify.app/CONF_NORTH/{z}/{x}/{y}.jpg'],
             'tileSize': 512
         },
         {
@@ -69,7 +69,7 @@
                 'renderWorldCopies': false,
                 'maxZoom': 5
             },
-            'tiles': ['https://editolido.alwaysdata.net/i/CONF_SOUTH/{z}/{x}/{y}.jpg'],
+            'tiles': ['https://ofp2map-CONF_SOUTH.netlify.app/CONF_SOUTH/{z}/{x}/{y}.jpg'],
             'tileSize': 512
         },
         {
@@ -82,7 +82,7 @@
                 'renderWorldCopies': false,
                 'maxZoom': 5
             },
-            'tiles': ['https://editolido.alwaysdata.net/i/CONF_PACIFIC/{z}/{x}/{y}.jpg'],
+            'tiles': ['https://ofp2map-CONF_PACIFIC.netlify.app/CONF_PACIFIC/{z}/{x}/{y}.jpg'],
             'tileSize': 512
         },
         {
