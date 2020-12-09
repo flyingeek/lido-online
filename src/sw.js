@@ -82,7 +82,7 @@ registerRoute(
 )
 
 registerRoute(
-  ({url}) => url.origin === 'https://editolido.alwaysdata.net' && url.pathname.startsWith('/proxy_gramet'),
+  ({url}) => url.origin === 'https://ofp2map-gramet.vercel.app' && url.pathname.startsWith('/api'),
   new CacheFirst({
     cacheName: validCaches['gramet'],
     plugins: [

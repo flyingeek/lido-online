@@ -111,7 +111,7 @@ export function generateKML(ofp, options) {
     wmoGrid.data = window['WMO'];
     const data = editolido.ogimetData(ofp, wmoGrid);
     const ogimetRoute = data.route;
-    data.proxyImg = "https://editolido.alwaysdata.net/proxy_gramet2/" + data.proxy + "/" + data.route.name.replace(/[^a-z0-9\-_]/giu, '_') + ".png";
+    data.proxyImg = "https://ofp2map-gramet.vercel.app/api/" + data.proxy + "__" + data.route.name.replace(/[^a-z0-9\-_]/giu, '_') + ".png";
     ofp.ogimetData = data;
     ogimetRoute.description = data.wmo.join(' ');
     kmlGen.addLine('ogimet', ogimetRoute);
