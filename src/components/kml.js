@@ -107,14 +107,7 @@ export function generateKML(ofp, options) {
     kmlGen.addLine('rmain', route);
     kmlGen.addPoints('rmain', route, {'excluded': natmarks});
     kmlGen.addLine('ralt', alternateRoute);
-    const wmoGrid = new editolido.GeoGridIndex();
-    wmoGrid.data = window['WMO'];
-    const data = editolido.ogimetData(ofp, wmoGrid);
-    const ogimetRoute = data.route;
-    data.proxyImg = "https://editolido.alwaysdata.net/proxy_gramet2/" + data.proxy + "/" + data.route.name.replace(/[^a-z0-9\-_]/giu, '_') + ".png";
-    ofp.ogimetData = data;
-    ogimetRoute.description = data.wmo.join(' ');
-    kmlGen.addLine('ogimet', ogimetRoute);
+    kmlGen.addLine('ogimet', ofp.ogimetData.route);
     kmlGen.addPoints('ralt', alternateRoute);
     // const ogimetRoute2 = editolido.ogimetRoute(wmoGrid, ofp.route, {'algorithm': 'crs'});
     // kmlGen.addFolder("ogimet2", {"enabled": true, "color": "4000F900", "pinId": 0});

@@ -31,7 +31,8 @@ const U = {
   'CONF_AIRAC': config.AIRAC,
   'CONF_NORTH': 'northv3',
   'CONF_SOUTH': 'southv3',
-  'CONF_PACIFIC': 'pacificv1'
+  'CONF_PACIFIC': 'pacificv1',
+  'CONF_GRAMET_PROXY': "https://editolido.alwaysdata.net/proxy_gramet2/${data.proxy}/${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png"
 };
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
 

@@ -70,6 +70,12 @@
                             try {
                                 //console.timeLog('start');
                                 const ofp = new editolido.Ofp("_PDFJS_" + text);
+                                const wmoGrid = new editolido.GeoGridIndex();
+                                wmoGrid.data = window['WMO'];
+                                const data = editolido.ogimetData(ofp, wmoGrid);
+                                data.proxyImg = `CONF_GRAMET_PROXY`;
+                                data.route.description = data.wmo.join(' ');
+                                ofp.ogimetData = data;
                                 //console.timeLog('start');
                                 try {
                                     const kmlGen = KmlGenerator();
