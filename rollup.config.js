@@ -15,7 +15,9 @@ const path = require('path');
 const Mustache = require('mustache');
 require('dotenv').config();
 const production = !process.env.ROLLUP_WATCH 
-
+const northId = 'northv3'
+const southId = 'southv3'
+const pacificId = 'pacificv1' 
 // All URL, local or remote
 const U = {
   'CONF_BOOTSTRAP_CSS': 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css',
@@ -29,10 +31,17 @@ const U = {
   'CONF_BUNDLE_JS': './js/bundle.js',
   'CONF_BUNDLE_CSS': './css/bundle.css',
   'CONF_AIRAC': config.AIRAC,
-  'CONF_NORTH': 'northv3',
-  'CONF_SOUTH': 'southv3',
-  'CONF_PACIFIC': 'pacificv1',
-  'CONF_GRAMET_PROXY': "https://editolido.alwaysdata.net/proxy_gramet2/${data.proxy}/${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png"
+  'CONF_NORTH': northId,
+  'CONF_SOUTH': southId,
+  'CONF_PACIFIC': pacificId,
+  'CONF_GRAMET_PROXY': "https://editolido.alwaysdata.net/proxy_gramet2/${data.proxy}/${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png",
+  //'CONF_GRAMET_PROXY': "https://ofp2map-gramet.vercel.app/api/${data.proxy}__${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png",
+  'CONF_NORTH_TILES_BASE_URL': `https://editolido.alwaysdata.net/i/${northId}`,
+  //'CONF_NORTH_TILES_BASE_URL': `https://ofp2map-${northId}.netlify.app/${northId}`,
+  'CONF_SOUTH_TILES_BASE_URL': `https://editolido.alwaysdata.net/i/${southId}`,
+  //'CONF_SOUTH_TILES_BASE_URL': `https://ofp2map-${southId}.netlify.app/${southId}`,
+  'CONF_PACIFIC_TILES_BASE_URL': `https://editolido.alwaysdata.net/i/${pacificId}`
+  //'CONF_PACIFIC_TILES_BASE_URL': `https://ofp2map-${pacificId}.netlify.app/${pacificId}`
 };
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
 

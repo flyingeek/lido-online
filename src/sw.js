@@ -8,6 +8,12 @@ const maps = {
   'south': 'CONF_SOUTH',
   'pacific': 'CONF_PACIFIC'
 };
+// compute a host hash based on url origin
+// simply use first letters of url's origin
+const hostId = (url, postfix='-') => {
+  const hash = (new URL(url)).hostname.split('.').map(name => name.charAt(0)).join('');
+  return (hash === 'ean' ? '' : hash + postfix);
+};
 
 const validCaches ={
   'warmup': 'lido-warmup',
@@ -15,11 +21,11 @@ const validCaches ={
   'airports': 'lido-data',
   'fir-reg': 'lido-fir',
   'gramet': 'lido-gramet2', // if you change here, you must also change in Map.svelte/map.load 
-  'north': 'lido-' + maps['north'],
-  'south': 'lido-' + maps['south'],
-  'pacific': 'lido-' + maps['pacific'],
-  'zoom4': `lido-zoom4_${maps['north'].substr(-1)}_${maps['south'].substr(-1)}_${maps['pacific'].substr(-1)}`
-}
+  'north': 'lido-' + hostId('CONF_NORTH_TILES_BASE_URL') + maps['north'],
+  'south': 'lido-' + hostId('CONF_SOUTH_TILES_BASE_URL') + maps['south'],
+  'pacific': 'lido-' + hostId('CONF_PACIFIC_TILES_BASE_URL') + maps['pacific'],
+  'zoom4': `lido-zoom4_${hostId('CONF_NORTH_TILES_BASE_URL', '') + maps['north'].substr(-1)}_${hostId('CONF_SOUTH_TILES_BASE_URL', '') + maps['south'].substr(-1)}_${hostId('CONF_PACIFIC_TILES_BASE_URL', '') + maps['pacific'].substr(-1)}`
+};
 
 precacheAndRoute(
     self.__WB_MANIFEST, {
@@ -68,7 +74,7 @@ registerRoute(
       })
     ]
   })
-)
+);
 registerRoute(
   ({url}) => url.pathname.endsWith('/data/fir-reg.CONF_AIRAC.geojson'),
   new CacheFirst({
@@ -79,10 +85,10 @@ registerRoute(
       })
     ]
   })
-)
+);
 
 registerRoute(
-  ({url}) => url.origin === 'https://editolido.alwaysdata.net' && url.pathname.startsWith('/proxy_gramet'),
+  ({url}) => url.href.match(new RegExp("CONF_GRAMET_PROXY".replace(/\$\{[^}]+\}/g, ".+"))),
   new CacheFirst({
     cacheName: validCaches['gramet'],
     plugins: [
@@ -95,19 +101,19 @@ registerRoute(
 );
 
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/' + maps['north'] + '/[0-3]/.*')),
+  ({url}) => url.href.match(new RegExp('CONF_NORTH_TILES_BASE_URL' + '/[0-3]/.*')),
   new CacheFirst({
     cacheName: validCaches['north'],
   })
 );
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/' + maps['south'] + '/[0-3]/.*')),
+  ({url}) => url.href.match(new RegExp('CONF_SOUTH_TILES_BASE_URL' + '/[0-3]/.*')),
   new CacheFirst({
     cacheName: validCaches['south'],
   })
 );
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/' + maps['pacific'] + '/[0-3]/.*')),
+  ({url}) => url.href.match(new RegExp('CONF_PACIFIC_TILES_BASE_URL' + '/[0-3]/.*')),
   new CacheFirst({
     cacheName: validCaches['pacific'],
     plugins: [
@@ -118,7 +124,7 @@ registerRoute(
   })
 );
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/[^/]+/4/.*')),
+  ({url}) => url.href.match(new RegExp('(CONF_NORTH_TILES_BASE_URL|CONF_SOUTH_TILES_BASE_URL|CONF_PACIFIC_TILES_BASE_URL)/4/.*')),
   new CacheFirst({
     cacheName: validCaches['zoom4'],
     plugins: [
@@ -130,7 +136,7 @@ registerRoute(
 );
 
 registerRoute(
-  ({url}) => url.href.match(new RegExp('https://editolido.alwaysdata.net/i/[^/]+/[5-9]/.*')),
+  ({url}) => url.href.match(new RegExp('(CONF_NORTH_TILES_BASE_URL|CONF_SOUTH_TILES_BASE_URL|CONF_PACIFIC_TILES_BASE_URL)/[5-9]/.*')),
   async () => new Response('', { "status" : 404 , "statusText" : "sw says nope!"})
 );
 

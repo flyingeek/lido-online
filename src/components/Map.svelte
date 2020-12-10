@@ -55,7 +55,7 @@
                 'renderWorldCopies': false,
                 'maxZoom': 5
             },
-            'tiles': ['https://editolido.alwaysdata.net/i/CONF_NORTH/{z}/{x}/{y}.jpg'],
+            'tiles': ['CONF_NORTH_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
             'tileSize': 512
         },
         {
@@ -69,7 +69,7 @@
                 'renderWorldCopies': false,
                 'maxZoom': 5
             },
-            'tiles': ['https://editolido.alwaysdata.net/i/CONF_SOUTH/{z}/{x}/{y}.jpg'],
+            'tiles': ['CONF_SOUTH_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
             'tileSize': 512
         },
         {
@@ -82,7 +82,7 @@
                 'renderWorldCopies': false,
                 'maxZoom': 5
             },
-            'tiles': ['https://editolido.alwaysdata.net/i/CONF_PACIFIC/{z}/{x}/{y}.jpg'],
+            'tiles': ['CONF_PACIFIC_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
             'tileSize': 512
         },
         {
