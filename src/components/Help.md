@@ -1,7 +1,7 @@
 ## Préambule
 
 Cette app a été conçue pour le PilotPad. Elle nécessite des navigateurs récents pour fonctionner. Safari 13 iOS/Mac est compatible, Chrome 83 fonctionne aussi. Firefox dernière version devrait fonctionner (non testé).
-L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au plus 21 stations météo) est transmise à l'hébergeur AlwaysData.com puis à Ogimet.com pour récupérer le Gramet. GitHub (détenu par Microsoft), hébergeur du site, utilise des cookies. L'app en elle même ne collecte aucune données.
+L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au plus 21 stations météo) est transmise à l'hébergeur du proxy (voir plus bas) puis à Ogimet.com pour récupérer le Gramet. GitHub (détenu par Microsoft), hébergeur du site, utilise des cookies. L'app en elle même ne collecte aucune données.
 
 ## Utilisation
 
@@ -45,6 +45,9 @@ apparaitre vous demandant d'autoriser cette mise à jour. La version AIRAC et le
 - Les cartes (autres que Mapbox streets) sont de Jean-Baptiste Denizot forum Yammer/QGIS & Avenza Maps
 - Le GRAMET provient du site ogimet.com
 - Le site est développé en javascript à l'aide du framework SVELTE
-- La partie serveur (un proxy pour pouvoir récupérer l'image du GRAMET) est en python/Django
-- L'hébergement serveur est fourni par alwaysdata.com (pack gratuit).
-- Eric Delord CDB 777 est l'auteur. Le code source est disponible sur GitHub
+- La partie serveur (un proxy pour pouvoir récupérer l'image du GRAMET) est en python.
+- Eric Delord CDB 777 est l'auteur. Le code source est disponible sur GitHub pour [l'app](https://github.com/flyingeek/lido-online) et [le proxy](https://github.com/flyingeek/ofp2map-gramet)
+
+L'hébergement des images est normalement fourni par alwaysdata.com (pack gratuit) mais en raison d'un blacklistage sur le réseau internet d'AF, les fonds de cartes sont à présent hébergés sur netlify. Le proxy gramet est lui dorénavant hébergé sur vercel.
+
+
