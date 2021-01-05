@@ -9,8 +9,7 @@
         { type: 'script', url: 'CONF_PROJ4_JS' },
         { type: 'script', url: 'CONF_WMO_JS' },
         { type: 'script', url: 'CONF_MAPBOXGL_JS' },
-        { type: 'link', url: 'CONF_MAPBOXGL_CSS'},
-        { type: 'link', url: pdfjsWorkerSrc, options: {prefetch: true}}
+        { type: 'link', url: 'CONF_MAPBOXGL_CSS'}
     ];
     //const editolidoSrc = 'https://github.com/flyingeek/lidojs/releases/download/v1.1.2/lidojs.min.js';
     let aircraftTypes = ["318", "319", "320", "321", "330", "340", "350", "380", "787", "772", "773", "77F"];
@@ -48,11 +47,16 @@
     let name = "file";
     let label = "Choisir un OFP";
     let readyClass = false;
+    let pdfWorker;
     const dispatch = createEventDispatcher();
 
     function preload() {
         loader(preloadFiles, () => !!window['pdfjs-dist/build/pdf'], () => {
-            window['pdfjs-dist/build/pdf'].GlobalWorkerOptions.workerSrc = pdfjsWorkerSrc;
+            const pdfjsLib = window["pdfjs-dist/build/pdf"];
+            pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorkerSrc;
+            if (!pdfWorker || pdfWorker.destroyed) {
+                    pdfWorker = new pdfjsLib.PDFWorker();
+            }
             ready.resolve(true);
             readyClass = true;
         });
@@ -61,8 +65,11 @@
         const reader = new FileReader();
         return new Promise((resolve, reject) => {
             reader.onload = (ev) => {
-                //console.time('start');
-                getOFPText({ data: ev.target.result })
+                if (!pdfWorker || pdfWorker.destroyed) {
+                    const pdfjsLib = window["pdfjs-dist/build/pdf"];
+                    pdfWorker = new pdfjsLib.PDFWorker();
+                }
+                getOFPText({ data: ev.target.result, verbosity: 0, worker: pdfWorker })
                 .then(
                     (text) => {
                         if (text) {
