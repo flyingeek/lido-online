@@ -26,6 +26,7 @@ const validCaches ={
   'pacific': 'lido-' + hostId('CONF_PACIFIC_TILES_BASE_URL') + maps['pacific'],
   'zoom4': `lido-zoom4_${hostId('CONF_NORTH_TILES_BASE_URL', '') + maps['north'].substr(-1)}_${hostId('CONF_SOUTH_TILES_BASE_URL', '') + maps['south'].substr(-1)}_${hostId('CONF_PACIFIC_TILES_BASE_URL', '') + maps['pacific'].substr(-1)}`
 };
+const deprecatedCaches = [];
 
 precacheAndRoute(
     self.__WB_MANIFEST, {
@@ -181,8 +182,7 @@ self.addEventListener('install', (event) => {
  */
 const isOldCache = (cacheName) => {
   if (['northv3', 'northv2', 'northv1', 'southv3', 'southv2', 'southv1', 'pacificv1'].indexOf(cacheName) !== -1) return true;
-  if (!cacheName.startsWith('lido-')) return false;
-  return Object.values(validCaches).indexOf(cacheName) === -1;
+  return deprecatedCaches.includes(cacheName);
 };
 /**
  * check entries of a cache to find 
