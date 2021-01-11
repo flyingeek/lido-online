@@ -174,7 +174,8 @@ export default [{
       "globDirectory": "public/",
       "globPatterns": [
         "index.html",
-        "apple-touch-icon.png",
+        "images/ofp2map-icons/icon-180x180.png",
+        "favicon.png",
         "css/bundle.css",
         "js/bundle.js",
         "svg/*.svg",
