@@ -175,7 +175,7 @@ export default [{
       "globPatterns": [
         "index.html",
         "images/ofp2map-icons/icon-180x180.png",
-        "favicon.png",
+        "images/ofp2map-icons/icon-128x128.png",
         "css/bundle.css",
         "js/bundle.js",
         "svg/*.svg",
