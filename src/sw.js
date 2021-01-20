@@ -181,7 +181,7 @@ self.addEventListener('install', (event) => {
  * @returns {Boolean}
  */
 const isOldCache = (cacheName) => {
-  if (['northv3', 'northv2', 'northv1', 'southv3', 'southv2', 'southv1', 'pacificv1'].indexOf(cacheName) !== -1) return true;
+  if (['northv3', 'northv2', 'northv1', 'southv3', 'southv2', 'southv1', 'pacificv1'].includes(cacheName)) return true;
   return deprecatedCaches.includes(cacheName);
 };
 /**
