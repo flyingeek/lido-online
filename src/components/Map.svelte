@@ -38,10 +38,11 @@
     const options = [
         {
             'label': 'Mercator',
-            'id': 'mapbox_streets_v11',
+            'id': 'atlas',
             'mapboxOptions': {
-                'style': 'mapbox://styles/mapbox/streets-v11',
-                'renderWorldCopies': false
+                'style': 'mapbox://styles/flyingeek/ckc4yge17166a1ip66rkf0zhr',
+                'renderWorldCopies': false,
+                'maxZoom': 12
             }
         },
         {
@@ -86,13 +87,17 @@
             'tileSize': 512
         },
         {
-            'label': 'Atlas beta',
-            'id': 'atlas',
+            'label': 'The World',
+            'id': 'jb_theworld',
+            "extent": [-14923314.11241390, -14113585.79413393, 14921557.93320679, 15731286.25148677],
+            "proj4": "+proj=times +ellps=sphere +no_defs +wktext +lon_0=0 +x_0=0 +y_0=0",
             'mapboxOptions': {
-                'style': 'mapbox://styles/flyingeek/ckc4yge17166a1ip66rkf0zhr',
+                'style': blankStyle,
                 'renderWorldCopies': false,
-                'maxZoom': 12
-            }
+                'maxZoom': 5
+            },
+            'tiles': ['CONF_THEWORLD_TILES_BASE_URL/{z}/{x}/{y}.webp'],
+            'tileSize': 512
         }
         // ,
         // {
@@ -162,6 +167,8 @@
             return (dest.latitude > 30 && dep.latitude > 30);
         } else if (option.id === 'jb_south') {
             if (dest.latitude > 30 && dep.latitude > 30) return false;
+        }else if (option.id === 'jb_theworld') {
+            return false;
         }
         const bounds = (option.validity) ? option.validity : option.extent;
         for (let p of [dep, dest]) {

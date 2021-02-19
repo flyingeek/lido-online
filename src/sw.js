@@ -6,7 +6,8 @@ import {ExpirationPlugin} from 'workbox-expiration';
 const maps = {
   'north': 'CONF_NORTH',
   'south': 'CONF_SOUTH',
-  'pacific': 'CONF_PACIFIC'
+  'pacific': 'CONF_PACIFIC',
+  'theworld': 'CONF_THEWORLD'
 };
 // compute a host hash based on url origin
 // simply use first letters of url's origin
@@ -24,7 +25,9 @@ const validCaches ={
   'north': 'lido-' + hostId('CONF_NORTH_TILES_BASE_URL') + maps['north'],
   'south': 'lido-' + hostId('CONF_SOUTH_TILES_BASE_URL') + maps['south'],
   'pacific': 'lido-' + hostId('CONF_PACIFIC_TILES_BASE_URL') + maps['pacific'],
-  'zoom4': `lido-zoom4_${hostId('CONF_NORTH_TILES_BASE_URL', '') + maps['north'].substr(-1)}_${hostId('CONF_SOUTH_TILES_BASE_URL', '') + maps['south'].substr(-1)}_${hostId('CONF_PACIFIC_TILES_BASE_URL', '') + maps['pacific'].substr(-1)}`
+  'theworld': 'lido-' + hostId('CONF_THEWORLD_TILES_BASE_URL') + maps['theworld'],
+  'zoom4': `lido-zoom4_${hostId('CONF_NORTH_TILES_BASE_URL', '') + maps['north'].substr(-1)}_${hostId('CONF_SOUTH_TILES_BASE_URL', '') + maps['south'].substr(-1)}_${hostId('CONF_PACIFIC_TILES_BASE_URL', '') + maps['pacific'].substr(-1)}`,
+  'zoom5': `lido-zoom5_${hostId('CONF_THEWORLD_TILES_BASE_URL', '') + maps['theworld'].substr(-1)}`
 };
 const deprecatedCaches = [];
 
@@ -114,6 +117,12 @@ registerRoute(
   })
 );
 registerRoute(
+  ({url}) => url.href.match(new RegExp('CONF_THEWORLD_TILES_BASE_URL' + '/[0-4]/.*')),
+  new CacheFirst({
+    cacheName: validCaches['theworld'],
+  })
+);
+registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_PACIFIC_TILES_BASE_URL' + '/[0-3]/.*')),
   new CacheFirst({
     cacheName: validCaches['pacific'],
@@ -135,12 +144,25 @@ registerRoute(
     ]
   })
 );
-
+registerRoute(
+  ({url}) => url.href.match(new RegExp('(CONF_THEWORLD_TILES_BASE_URL)/5/.*')),
+  new CacheFirst({
+    cacheName: validCaches['zoom5'],
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 128
+      })
+    ]
+  })
+);
 registerRoute(
   ({url}) => url.href.match(new RegExp('(CONF_NORTH_TILES_BASE_URL|CONF_SOUTH_TILES_BASE_URL|CONF_PACIFIC_TILES_BASE_URL)/[5-9]/.*')),
   async () => new Response('', { "status" : 404 , "statusText" : "sw says nope!"})
 );
-
+registerRoute(
+  ({url}) => url.href.match(new RegExp('(CONF_THEWORLD_TILES_BASE_URL)/[6-9]/.*')),
+  async () => new Response('', { "status" : 404 , "statusText" : "sw says nope!"})
+);
 // from https://github.com/TalAter/cache.adderall
 const addAll = function(cache, immutableRequests = [], mutableRequests = []) {
   // Verify arguments

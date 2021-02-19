@@ -9,6 +9,7 @@ import { addEtops, changeEPCircleColor, changeETOPSCircleColor, changeETOPSDispl
 import { addTracks } from "./mapboxgl/tracks";
 import {pinColors, addLine, addPoints} from "./mapboxgl/layers";
 import {clamp, isInside, addToSWCache, lineclip} from './utils';
+import times from './mapboxgl/pj_times';
 
 //import proj4 from 'proj4';
 
@@ -17,6 +18,7 @@ export const token = 'MAPBOX_TOKEN';
 export const key = {};
 
 export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
+    if (!window.proj4.Proj.projections.get('times')) window.proj4.Proj.projections.add(times);
     const isAvenza = mapOptions.id.startsWith('jb_');
     let mapboxOptions = {
         'container':id,
@@ -72,7 +74,6 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
             c = (v1 - v0) / (y1 - y0);
             d = v0 - (c * y0);
         }
-        
         const [minX, minY, maxX, maxY] = (mapOptions.viewport) ? mapOptions.viewport : mapOptions.extent;
         const customXY = (lngLat) => window.proj4('CUSTOM', lngLat);
         const customXY2xy = (XY) => [(a * XY[0]) + b, (c * XY[1]) + d];
