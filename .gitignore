@@ -7,3 +7,5 @@ data/*.kml
 data/*.kmz
 data/airports.json
 data/fir-reg-orig.geojson
+localhost-cert.pem
+localhost-key.pem

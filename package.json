@@ -1,13 +1,15 @@
 {
   "name": "lido-svelte",
-  "version": "1.2.29",
+  "version": "1.2.30",
   "config": {
     "AIRAC": "2102"
   },
   "scripts": {
     "build": "npm run clean && rollup -c",
     "dev": "rollup -c -w",
+    "dev2": "rollup -c -w --environment SERVE:start2",
     "start": "sirv public",
+    "start2": "sirv public --http2 --key localhost-key.pem --cert localhost-cert.pem --host 0.0.0.0 --port 5000",
     "lint": "eslint . --fix --ext js,svelte",
     "clean": "rimraf public/**",
     "makeAirports": "node src/makeAirports.js",

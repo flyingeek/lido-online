@@ -18,7 +18,7 @@ const production = !process.env.ROLLUP_WATCH;
 const northId = 'northv3';
 const southId = 'southv3';
 const pacificId = 'pacificv1';
-const theworldId = 'theworldv1';
+const theworldId = 'theworldv2';
 
 // All URL, local or remote
 const U = {
@@ -197,8 +197,8 @@ function serve() {
     writeBundle() {
       if (!started) {
         started = true
-
-        require('child_process').spawn('npm', ['run', 'start', '--', '--dev'], {
+        const command = (process.env.SERVE === 'start2') ? 'start2' : 'start';
+        require('child_process').spawn('npm', ['run', command, '--', '--dev'], {
           stdio: ['ignore', 'inherit', 'inherit'],
           shell: true
         })

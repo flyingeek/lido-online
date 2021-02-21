@@ -29,7 +29,7 @@ const validCaches ={
   'zoom4': `lido-zoom4_${hostId('CONF_NORTH_TILES_BASE_URL', '') + maps['north'].substr(-1)}_${hostId('CONF_SOUTH_TILES_BASE_URL', '') + maps['south'].substr(-1)}_${hostId('CONF_PACIFIC_TILES_BASE_URL', '') + maps['pacific'].substr(-1)}`,
   'zoom5': `lido-zoom5_${hostId('CONF_THEWORLD_TILES_BASE_URL', '') + maps['theworld'].substr(-1)}`
 };
-const deprecatedCaches = [];
+const deprecatedCaches = ['lido-ona-theworldv1', 'lido-zoom5_ona1'];
 
 precacheAndRoute(
     self.__WB_MANIFEST, {

@@ -79,6 +79,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
             b = u0 - (a * x0);
             c = (v1 - v0) / (y1 - y0);
             d = v0 - (c * y0);
+            //console.log(a,b,c,d)
         } else {
             const [x0, y0, x1, y1] = mapOptions.extent;
             const [u0, v0, u1, v1] = [-20026376.39, -20048966.10, 20026376.39, 20048966.10];
