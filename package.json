@@ -1,6 +1,6 @@
 {
   "name": "lido-svelte",
-  "version": "1.2.31",
+  "version": "1.3.0",
   "config": {
     "AIRAC": "2102"
   },
@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@flyingeek/lidojs": "^1.3.6",
+    "idb": "^6.0.0",
     "sirv-cli": "^0.4.6"
   }
 }

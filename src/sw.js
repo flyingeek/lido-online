@@ -2,6 +2,7 @@ import {precacheAndRoute} from 'workbox-precaching';
 import {registerRoute} from 'workbox-routing';
 import {StaleWhileRevalidate, CacheFirst} from 'workbox-strategies';
 import {ExpirationPlugin} from 'workbox-expiration';
+//import { openDB, deleteDB, wrap, unwrap } from 'idb';
 
 const maps = {
   'north': 'CONF_NORTH',
@@ -22,14 +23,15 @@ const validCaches ={
   'airports': 'lido-data',
   'fir-reg': 'lido-fir',
   'gramet': 'lido-gramet2', // if you change here, you must also change in Map.svelte/map.load 
-  'north': 'lido-' + hostId('CONF_NORTH_TILES_BASE_URL') + maps['north'],
-  'south': 'lido-' + hostId('CONF_SOUTH_TILES_BASE_URL') + maps['south'],
-  'pacific': 'lido-' + hostId('CONF_PACIFIC_TILES_BASE_URL') + maps['pacific'],
-  'theworld': 'lido-' + hostId('CONF_THEWORLD_TILES_BASE_URL') + maps['theworld'],
-  'zoom4': `lido-zoom4_${hostId('CONF_NORTH_TILES_BASE_URL', '') + maps['north'].substr(-1)}_${hostId('CONF_SOUTH_TILES_BASE_URL', '') + maps['south'].substr(-1)}_${hostId('CONF_PACIFIC_TILES_BASE_URL', '') + maps['pacific'].substr(-1)}`,
-  'zoom5': `lido-zoom5_${hostId('CONF_THEWORLD_TILES_BASE_URL', '') + maps['theworld'].substr(-1)}`
+  //'north': 'lido-' + hostId('CONF_NORTH_TILES_BASE_URL') + maps['north'],
+  //'south': 'lido-' + hostId('CONF_SOUTH_TILES_BASE_URL') + maps['south'],
+  //'pacific': 'lido-' + hostId('CONF_PACIFIC_TILES_BASE_URL') + maps['pacific'],
+  //'theworld': 'lido-' + hostId('CONF_THEWORLD_TILES_BASE_URL') + maps['theworld'],
+  //'zoom4': `lido-zoom4_${hostId('CONF_NORTH_TILES_BASE_URL', '') + maps['north'].substr(-1)}_${hostId('CONF_SOUTH_TILES_BASE_URL', '') + maps['south'].substr(-1)}_${hostId('CONF_PACIFIC_TILES_BASE_URL', '') + maps['pacific'].substr(-1)}`,
+  //'zoom5': `lido-zoom5_${hostId('CONF_THEWORLD_TILES_BASE_URL', '') + maps['theworld'].substr(-1)}`
 };
-const deprecatedCaches = ['lido-ona-theworldv1', 'lido-zoom5_ona1'];
+const deprecatedCaches = ['lido-ona-theworldv1', 'lido-zoom5_ona1', 'lido-ona-theworldv2', 'lido-zoom5_ona2', 'lido-ona-southv3', 'lido-ona-northv3', 'lido-ona-pacificv1', 'lido-zoom4_ona3_ona3_ona1'];
+const deprecatedDB = ['swtest'];
 
 precacheAndRoute(
     self.__WB_MANIFEST, {
@@ -104,57 +106,144 @@ registerRoute(
   })
 );
 
+
+const initIndexedDB = () => {
+  const open = indexedDB.open('lido-tiles', 2);
+  open.onsuccess = evt => {
+    console.log('DB opened successfully');
+  };
+  open.onerror = evt => {
+    console.log('Error while opening DB');
+  };
+  open.onupgradeneeded = evt => {
+    if (evt.oldVersion < 1) {
+      open.result.createObjectStore(maps['theworld']);
+    }
+    if (evt.oldVersion < 2) {
+      open.result.createObjectStore(maps['north']);
+      open.result.createObjectStore(maps['south']);
+      open.result.createObjectStore(maps['pacific']);
+    }
+  }
+  return open;
+}
+const dbPromise = initIndexedDB();
+const getImageIdFromURL = (url) => {
+  const u = new URL(url);
+  return u.pathname.replace(/[/.]/g,'_');
+};
+const getStoreNameFromURL = (url) => {
+  const u = new URL(url);
+  return u.pathname.replace(/[/.]/g,'_').split('_')[1];
+}
+const fetchImageFromDB = (imageId, storeName) => {
+  return new Promise((resolve, reject) => {
+    const tx =  dbPromise.result.transaction(storeName, 'readonly');
+    const store = tx.objectStore(storeName);
+    const imageInStoreReq = store.get(imageId);
+    imageInStoreReq.onsuccess = (evt) => {
+        resolve(imageInStoreReq.result);
+    };
+    imageInStoreReq.onerror = (evt) => {
+        reject('Something went wrong while fetching image from DB ');
+    };
+  });
+};
+const putImageInDB = (imageId, storeName, blob) => {
+  return new Promise((resolve, reject) => {
+      const tx = dbPromise.result.transaction(storeName, 'readwrite');
+      const store = tx.objectStore(storeName);
+      const imagePutReq = store.put(blob, imageId);
+      imagePutReq.onsuccess = (evt) => {
+          const imageInStoreReq = store.get(imageId);
+          imageInStoreReq.onsuccess = (evt) => {
+              resolve(imageInStoreReq.result);
+          };
+      };
+      imagePutReq.onerror = (evt) => {
+          reject('Something went wrong while putting image in DB ');
+      };
+  });
+}
+const idbCacheHandler = async ({ request, url, event }) => { 
+  const imageID = getImageIdFromURL(url);
+  const storeName = getStoreNameFromURL(url);
+  return fetchImageFromDB(imageID, storeName).then((blob) => {
+      if (blob) {
+          // If image is directly available in DB then return the blob as the response.
+          return new Response(blob);
+      } else {
+          // If the image is unavailable, fetch the image by resuming the intercepted request to the server.
+          return fetch(event.request).then(response => {
+              const respClone = response.clone();
+              return respClone.blob()
+          }).then(imageBlob => {
+              if (imageBlob.type.startsWith('image/')) {
+                return putImageInDB(imageID, storeName, imageBlob).then((blob) => {
+                    return new Response(blob);
+                });
+              } else {
+                return new Response('', { "status" : 404 , "statusText" : "invalid image found (sw)"})
+              }
+          });
+      }
+  });
+};
 registerRoute(
-  ({url}) => url.href.match(new RegExp('CONF_NORTH_TILES_BASE_URL' + '/[0-3]/.*')),
-  new CacheFirst({
-    cacheName: validCaches['north'],
-  })
+  ({url}) => url.href.match(new RegExp('CONF_NORTH_TILES_BASE_URL' + '/[0-4]/.*')),
+  idbCacheHandler
+  // new CacheFirst({
+  //   cacheName: validCaches['north'],
+  // })
 );
 registerRoute(
-  ({url}) => url.href.match(new RegExp('CONF_SOUTH_TILES_BASE_URL' + '/[0-3]/.*')),
-  new CacheFirst({
-    cacheName: validCaches['south'],
-  })
+  ({url}) => url.href.match(new RegExp('CONF_SOUTH_TILES_BASE_URL' + '/[0-4]/.*')),
+  idbCacheHandler
+  // new CacheFirst({
+  //   cacheName: validCaches['south'],
+  // })
 );
 registerRoute(
-  ({url}) => url.href.match(new RegExp('CONF_THEWORLD_TILES_BASE_URL' + '/[0-4]/.*')),
-  new CacheFirst({
-    cacheName: validCaches['theworld'],
-  })
+  ({url}) => url.href.match(new RegExp('CONF_THEWORLD_TILES_BASE_URL' + '/[0-5]/.*')),
+  idbCacheHandler
+  // new CacheFirst({
+  //   cacheName: validCaches['theworld'],
+  // })
 );
 registerRoute(
-  ({url}) => url.href.match(new RegExp('CONF_PACIFIC_TILES_BASE_URL' + '/[0-3]/.*')),
-  new CacheFirst({
-    cacheName: validCaches['pacific'],
-    plugins: [
-      new ExpirationPlugin({
-        maxAgeSeconds: 15 * 60 * 3600
-      })
-    ]
-  })
+  ({url}) => url.href.match(new RegExp('CONF_PACIFIC_TILES_BASE_URL' + '/[0-4]/.*')),
+  idbCacheHandler
+  // new CacheFirst({
+  //   cacheName: validCaches['pacific'],
+  //   plugins: [
+  //     new ExpirationPlugin({
+  //       maxAgeSeconds: 15 * 60 * 3600
+  //     })
+  //   ]
+  // })
 );
-registerRoute(
-  ({url}) => url.href.match(new RegExp('(CONF_NORTH_TILES_BASE_URL|CONF_SOUTH_TILES_BASE_URL|CONF_PACIFIC_TILES_BASE_URL)/4/.*')),
-  new CacheFirst({
-    cacheName: validCaches['zoom4'],
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 128
-      })
-    ]
-  })
-);
-registerRoute(
-  ({url}) => url.href.match(new RegExp('(CONF_THEWORLD_TILES_BASE_URL)/5/.*')),
-  new CacheFirst({
-    cacheName: validCaches['zoom5'],
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 128
-      })
-    ]
-  })
-);
+// registerRoute(
+//   ({url}) => url.href.match(new RegExp('(CONF_NORTH_TILES_BASE_URL|CONF_SOUTH_TILES_BASE_URL|CONF_PACIFIC_TILES_BASE_URL)/4/.*')),
+//   new CacheFirst({
+//     cacheName: validCaches['zoom4'],
+//     plugins: [
+//       new ExpirationPlugin({
+//         maxEntries: 128
+//       })
+//     ]
+//   })
+// );
+// registerRoute(
+//   ({url}) => url.href.match(new RegExp('(CONF_THEWORLD_TILES_BASE_URL)/5/.*')),
+//   new CacheFirst({
+//     cacheName: validCaches['zoom5'],
+//     plugins: [
+//       new ExpirationPlugin({
+//         maxEntries: 128
+//       })
+//     ]
+//   })
+// );
 registerRoute(
   ({url}) => url.href.match(new RegExp('(CONF_NORTH_TILES_BASE_URL|CONF_SOUTH_TILES_BASE_URL|CONF_PACIFIC_TILES_BASE_URL)/[5-9]/.*')),
   async () => new Response('', { "status" : 404 , "statusText" : "sw says nope!"})
@@ -236,7 +325,17 @@ self.addEventListener('activate', function(event) {
         return cache.keys().then(function(keys) {
           return Promise.all(keys.filter(isOldRequest).map(request => cache.delete(request)));
         });
-    }).then(() => self.clients.claim())
+    }).then(() => {
+      try{
+        //dbPromise.result.close();
+        deprecatedDB.forEach((name) => {
+          indexedDB.deleteDatabase(name);
+        });
+      } catch (e) {
+        //noop
+      }
+      self.clients.claim();
+    })
   );
 });
 
