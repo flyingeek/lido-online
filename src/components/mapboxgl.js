@@ -66,6 +66,19 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
         let a, b, c, d;
         if (mapOptions.affineTransform) {
             [a, b, c, d] = mapOptions.affineTransform;
+        } else if (mapOptions.ratio) { /* this is not exact, still in progress */
+            const mercatorBounds = [-20026376.39, -20048966.10, 20026376.39, 20048966.10];
+            const mercatorWidth = mercatorBounds[2] - mercatorBounds[0];
+            const mercatorHeight = mercatorBounds[3] - mercatorBounds[1];
+            const [x0, y0, x1, y1] = mapOptions.extent;
+            const [w, h] = mapOptions.ratio;
+            const dx = mercatorWidth / w;
+            const dy = dx * h * (mercatorHeight/mercatorWidth);
+            const [u0, v0, u1, v1] = [mercatorBounds[0], mercatorBounds[3] - dy, mercatorBounds[2],  mercatorBounds[3]];
+            a = (u1 - u0) / (x1 -x0);
+            b = u0 - (a * x0);
+            c = (v1 - v0) / (y1 - y0);
+            d = v0 - (c * y0);
         } else {
             const [x0, y0, x1, y1] = mapOptions.extent;
             const [u0, v0, u1, v1] = [-20026376.39, -20048966.10, 20026376.39, 20048966.10];
@@ -73,6 +86,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
             b = u0 - (a * x0);
             c = (v1 - v0) / (y1 - y0);
             d = v0 - (c * y0);
+            //console.log(a,b,c,d)
         }
         const [minX, minY, maxX, maxY] = (mapOptions.viewport) ? mapOptions.viewport : mapOptions.extent;
         const customXY = (lngLat) => window.proj4('CUSTOM', lngLat);
