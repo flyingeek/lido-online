@@ -35,6 +35,8 @@
     // - choisir Zoom: 0 à 4
     // - choisir "Advanced Options" -> séléctionner JPEG, laisser sur Sparse Output et OpenGIS -> Close
     // - choisir "Folder" -> Render
+    const query = "(-webkit-min-device-pixel-ratio: 2), (min-device-pixel-ratio: 2), (min-resolution: 192dpi)";
+    const tilesResolution = (matchMedia(query).matches) ? 256 : 512;
     const options = [
         {
             'label': 'Mercator',
@@ -57,7 +59,7 @@
                 'maxZoom': 5
             },
             'tiles': ['CONF_NORTH_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
-            'tileSize': 512
+            'tileSize': tilesResolution
         },
         {
             'label': 'Lambert South',
@@ -71,7 +73,7 @@
                 'maxZoom': 5
             },
             'tiles': ['CONF_SOUTH_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
-            'tileSize': 512
+            'tileSize': tilesResolution
         },
         {
             'label': 'Lambert Pacific',
@@ -84,7 +86,7 @@
                 'maxZoom': 5
             },
             'tiles': ['CONF_PACIFIC_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
-            'tileSize': 512
+            'tileSize': tilesResolution
         },
         {
             'label': 'The World',
@@ -108,7 +110,7 @@
                 'maxZoom': 5
             },
             'tiles': ['CONF_THEWORLD_TILES_BASE_URL/{z}/{x}/{y}.webp'],
-            'tileSize': 512
+            'tileSize': tilesResolution
         }
         // ,
         // {
