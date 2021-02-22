@@ -1,6 +1,6 @@
 ## Préambule
 
-Cette app a été conçue pour le PilotPad. Elle nécessite des navigateurs récents pour fonctionner. Safari 13 iOS/Mac est compatible, Chrome 83 fonctionne aussi. Firefox dernière version devrait fonctionner (non testé).
+Cette app a été conçue pour le PilotPad. Elle nécessite des navigateurs récents pour fonctionner. Safari 14 iOS/Mac est compatible, Chrome 83 fonctionne aussi. Firefox dernière version devrait fonctionner (non testé).
 L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au plus 21 stations météo) est transmise à l'hébergeur du proxy (voir plus bas) puis à Ogimet.com pour récupérer le Gramet. GitHub (détenu par Microsoft), hébergeur du site, utilise des cookies. L'app en elle même ne collecte aucune données.
 
 ## Utilisation
@@ -11,16 +11,18 @@ L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au pl
 
 3. Pour Exporter vers une app, direction le menu EXPORT, vous pouvez exporter une route pour mPilot, télécharger le KML (routes et tracks uniquement), ou envoyer vers l'app **Raccourcis** d'Apple.
 
-4. La carte par défaut est une LAMBERT, il est possible sur la carte, en haut à gauche, de basculer sur une projection Web Mercator.
+4. La carte par défaut est une LAMBERT, il est possible sur la carte, en haut à gauche, de basculer sur une projection Web Mercator ou sur l'Atlas "The World".
     - LAMBERT NORTH (parallèles sécants N30 et N65) est recommandée au-dessus du N40
     - LAMBERT SOUTH & PACIFIC (parallèles sécants N30 et S15 ) sont recommandées sous N30
+    - The World permet de disposer d'un Atlas off-line
+    - Mercator est plutôt destinée à un usage online, le thème est inspiré des cartes VFR et on peut zoomer de manière importante.
 
 
 5. Navigation dans la carte: on peut avec un doigt déplacer la carte, zoomer ou orienter la carte avec deux doigts. Il est aussi possible de modifier l'angle de vue en balayant de haut en bas avec deux doigts.
 
 ## Mode off-line
 
-Une fois un premier OFP chargé, il est possible même en mode déconnecté de charger un autre OFP pour l'exporter. Il est aussi probable que le cache de l'App (50Mo) vous permettra de naviguer sur les cartes déjà visualisées.
+Une fois un premier OFP chargé, il est possible même en mode déconnecté de charger un autre OFP pour l'exporter. Il est aussi probable que le cache de l'App vous permettra de naviguer sur les cartes déjà visualisées. Vous disposez d'un cache de 50Mo pendant 7 jours, voir _Installation sur l'écran d'accueil_ pour augmenter ces valeurs.
 
 ## Sauvegarde des paramètres
 
@@ -32,7 +34,14 @@ testez sur différents OFP, puis une fois satisfait, sauvegardez dans vos favori
 
 ## Installation sur l'écran d'accueil
 
-L'app peut être installée sur l'écran d'accueil ce qui permet d'avoir la carte sur un écran plus grand. Il y a toutefois quelques inconvénients: durée de sauvegarde des paramétres ?, des bugs d'affichage apparaissent lorsque l'on retourne sur l'app (l'app est zoomée, il faut dézoomer en utilisant un pinch de deux doigts sur la barre de menu). Enfin l'app sur l'écran d'accueil ne permet pas de recharger la page si on rencontre un problème, il faudra pour cela aller dans le menu d'aide (cet écran) ou un bouton spécifique sera affiché en haut.
+Il est recommandé d'installer l'app sur l'écran d'accueil en utilisant le menu «&#8239;partage&#8239;» <svg style="width: 1em; display: inline-block; height: 1em; vertical-align: bottom;"><use xlink:href="#share"/></svg> de Safari. Ceci permet:
+
+- un stockage longue durée des préférences, des cartes Lambert et de l'Atlas
+- de disposer d'un cache plus important&#8239;: les cartes Lambert et L'Atlas peuvent être stockés en totalité. La Web Mercator dispose quant à elle d'environ 40Mo.
+- d'avoir un écran plus grand
+
+Par contre, on ne peut recharger la page comme dans un navigateur&#8239;: il faudra pour cela aller dans le menu d'aide (cet écran) ou un bouton spécifique sera affiché en haut.
+À noter que parfois, des bugs d'affichage peuvent apparaître&#8239;:  lorsque l'on retourne sur l'app, l'app est zoomée, il faut alors juste dézoomer en utilisant un pinch de deux doigts sur la barre de menu. Il est aussi possible de tuer l'app,  même en mode déconnecté, pour la relancer.
 
 ## Mise à jour
 
