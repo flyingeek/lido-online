@@ -32,6 +32,7 @@ const validCaches ={
 };
 const deprecatedCaches = ['lido-ona-theworldv1', 'lido-zoom5_ona1', 'lido-ona-theworldv2', 'lido-zoom5_ona2', 'lido-ona-southv3', 'lido-ona-northv3', 'lido-ona-pacificv1', 'lido-zoom4_ona3_ona3_ona1'];
 const deprecatedDB = ['swtest'];
+const SW_VERSION = 'APP_VERSION';
 
 precacheAndRoute(
     self.__WB_MANIFEST, {
@@ -339,8 +340,13 @@ self.addEventListener('activate', function(event) {
   );
 });
 
+
 self.addEventListener('message', (event) => {
-  if (event.data === 'SKIP_WAITING') {
-    self.skipWaiting();
+  if (event.data && (event.data === 'SKIP_WAITING' || event.data.type === 'SKIP_WAITING')) {
+      self.skipWaiting();
+  } else if (event.data && event.data.type === 'GET_VERSION') {
+      event.ports[0].postMessage(SW_VERSION);
+  } else if (event.data && event.data.type === 'CLIENTS_CLAIM') {
+      self.clients.claim();
   }
 });
