@@ -3,12 +3,14 @@ import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import livereload from 'rollup-plugin-livereload'
 import { terser } from 'rollup-plugin-terser'
-import replace from 'rollup-plugin-replace';
+import replace from '@rollup/plugin-replace';
 import json from '@rollup/plugin-json';
-import copy from 'rollup-plugin-copy'
+import copy from 'rollup-plugin-copy';
+import css from 'rollup-plugin-css-only';
 import watchAssets from 'rollup-plugin-watch-assets'; // also requires globby
 import {version, config} from './package.json';
 import lidojsPkg from './node_modules/@flyingeek/lidojs/package.json';
+import fs from 'fs';
 const workbox = require('rollup-plugin-workbox-inject');
 const {markdown} = require('svelte-preprocess-markdown');
 const path = require('path');
@@ -49,6 +51,28 @@ const U = {
 };
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
 
+function serve() {
+  let server;
+
+  function toExit() {
+      if (server) server.kill(0);
+  }
+
+  return {
+      writeBundle() {
+          if (server) return;
+          const command = (process.env.SERVE === 'start2') ? 'start2' : 'start';
+          server = require('child_process').spawn('npm', ['run', command, '--', '--dev'], {
+              stdio: ['ignore', 'inherit', 'inherit'],
+              shell: true
+          });
+
+          process.on('SIGTERM', toExit);
+          process.on('exit', toExit);
+      }
+  };
+}
+
 export default [{
   input: 'src/main.js',
   output: {
@@ -60,20 +84,25 @@ export default [{
   },
   plugins: [
     replace({...U, ...{
-      'MAPBOX_TOKEN': (!production) ? process.env.MAPBOX_TOKEN : 'pk.eyJ1IjoiZmx5aW5nZWVrIiwiYSI6ImNrYXpmZzhuYjBpczUycW1pZzZ1b2Z4NjAifQ.5S-VzSXpJkui8NDMlTU51Q',
-      'APP_VERSION': version
+        'MAPBOX_TOKEN': (!production) ? process.env.MAPBOX_TOKEN : 'pk.eyJ1IjoiZmx5aW5nZWVrIiwiYSI6ImNrYXpmZzhuYjBpczUycW1pZzZ1b2Z4NjAifQ.5S-VzSXpJkui8NDMlTU51Q',
+        'APP_VERSION': version,
+        'preventAssignment': true
     }}),
     svelte({
-      // enable run-time checks when not in production
-      dev: !production,
+      compilerOptions: {
+        // enable run-time checks when not in production
+        dev: !production
+      },
       // we'll extract any component CSS out into
       // a separate file - better for performance
       extensions: ['.svelte','.md'],
-      preprocess: markdown(),
-      css: css => {
-        css.write(U.CONF_BUNDLE_CSS.replace('./', ''))
-      }
+      preprocess: markdown()
     }),
+    // we'll extract any component CSS out into
+    // a separate file - better for performance
+
+    //scss({ output: relPath(U.CONF_BUNDLE_CSS) }), // scss needs public/ prefix
+    css({ output: U.CONF_BUNDLE_CSS.replace('./', '') }),
     json(),
     // If you have external dependencies installed from
     // npm, you'll most likely need these plugins. In
@@ -142,14 +171,17 @@ export default [{
 
     // Watch the `public` directory and refresh the
     // browser on changes when not in production
-    !production && livereload('public'),
+    !production && livereload({watch: 'public', port:35729, https: (process.env.SERVE === 'start2') ? {
+      key: fs.readFileSync('localhost-key.pem'),
+      cert: fs.readFileSync('localhost-cert.pem')
+  } : null}),
 
     // If we're building for production (npm run build
     // instead of npm run dev), minify
     production && terser({
-       'compress': {
-           'drop_console': true
-       },
+      'compress': {
+          'drop_console': true
+      },
     })
   ],
   watch: {
@@ -167,7 +199,9 @@ export default [{
   plugins: [
     replace({...U, ...{
       'process.env.NODE_ENV': JSON.stringify('production'),
-      'CONF_LIDOJS_VERSION': lidojsPkg.version
+      'CONF_LIDOJS_VERSION': lidojsPkg.version,
+      'APP_VERSION': version,
+      'preventAssignment': true
     }}),
     commonjs(),
     resolve({
@@ -189,20 +223,3 @@ export default [{
     production && terser()
   ]
 }]
-
-function serve() {
-  let started = false
-
-  return {
-    writeBundle() {
-      if (!started) {
-        started = true
-        const command = (process.env.SERVE === 'start2') ? 'start2' : 'start';
-        require('child_process').spawn('npm', ['run', command, '--', '--dev'], {
-          stdio: ['ignore', 'inherit', 'inherit'],
-          shell: true
-        })
-      }
-    }
-  }
-}
