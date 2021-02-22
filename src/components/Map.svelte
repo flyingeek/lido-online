@@ -42,7 +42,8 @@
             'label': 'Mercator',
             'id': 'atlas',
             'mapboxOptions': {
-                'style': 'mapbox://styles/flyingeek/ckc4yge17166a1ip66rkf0zhr',
+                //'style': 'mapbox://styles/flyingeek/ckc4yge17166a1ip66rkf0zhr',
+                'style': 'mapbox://styles/flyingeek/cklgh38ep0xsr17qsvlrhth1e',
                 'renderWorldCopies': false,
                 'maxZoom': 12
             }
