@@ -4,7 +4,7 @@ import {kml2mapColor} from "./KmlColor.svelte";
 import {folderName} from './utils';
 import { kmlDefaultOptions } from "./kml";
 import { addAirports, changeAirportDisplay, changeAirportStyle, changeAircraftType } from "./mapboxgl/airports";
-import { addFirReg } from "./mapboxgl/fir-reg";
+import { addFirReg, changeFirDisplay } from "./mapboxgl/fir-reg";
 import { addEtops, changeEPCircleColor, changeETOPSCircleColor, changeETOPSDisplay } from "./mapboxgl/etops";
 import { addTracks } from "./mapboxgl/tracks";
 import {pinColors, addLine, addPoints} from "./mapboxgl/layers";
@@ -198,6 +198,8 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
 export function changeLayerState(map, folder, value) {
     if (folder === 'etops') {
         return changeETOPSDisplay(map, value);
+    }else if (folder === 'fir') {
+        return changeFirDisplay(map, value);
     } else if (folder === 'airport') {
         return changeAirportDisplay(map, value);
     }
@@ -282,17 +284,17 @@ export function loadMap(ofp, kmlOptions, map, affine, affineAndClamp, affineOrDr
         addPoints(map, 'ralt', alternateRoute.points, affineOrDrop, options.alternatePin, options.alternateDisplay, options.alternateColor);
         addPoints(map, 'rmain', route.points, affineOrDrop, options.routePin, true, options.routeColor);
     }
-    if (mapOptions.id !== 'jb_pacific') addFirReg(map, affine);
+    if (mapOptions.id !== 'jb_pacific') addFirReg(map, affine, options.firDisplay);
     let epPoints = [];
     if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
         epPoints = [ofp.infos['EEP'], ofp.infos['EXP']];
     }
-    addAirports(map, affineOrDrop, (ofp.isFake) ? ofp.isFake : ofp.infos.aircraft, epPoints, ofp.infos['raltPoints'], options.etopsColor, options.airportPin);
+    addAirports(map, affineOrDrop, (ofp.isFake) ? ofp.isFake : ofp.infos.aircraft, epPoints, ofp.infos['raltPoints'], options.etopsColor, options.airportPin, options.airportDisplay);
     if(!ofp.isFake) {
         addTracks(map, ofp, affineOrDrop, affineAndClip, options.natColor, options.natPin, options.natDisplay);
         //console.log(ofp.infos, ofp.text);
         if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0){
-            addEtops(map, 'etops', [ofp.infos['EEP'], ofp.infos['EXP']].concat(ofp.infos['raltPoints']), affineAndClip, true, ofp.infos['ETOPS'], options.routeColor, options.etopsColor);
+            addEtops(map, 'etops', [ofp.infos['EEP'], ofp.infos['EXP']].concat(ofp.infos['raltPoints']), affineAndClip, options.etopsDisplay, ofp.infos['ETOPS'], options.routeColor, options.etopsColor);
         }
     }
 }

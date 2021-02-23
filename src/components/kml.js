@@ -18,6 +18,7 @@ export const kmlDefaultOptions = {
     "ogimetColor": "40FF0000",
     "airportDisplay": true,
     "airportPin": 0,
+    "firDisplay": true,
     "etopsDisplay": true,
     "etopsColor": "FF0324FC"
     // "sigmetDisplay": false,
@@ -59,7 +60,7 @@ export const KmlGenerator = () => {
 
 
 export function updateKml(name, value) {
-  if (name.startsWith('etops-') || name.startsWith('airport-')) return;
+  if (name.startsWith('etops-') || name.startsWith('airport-') || name.startsWith('fir-')) return;
   const kmlGen = KmlGenerator();
   const folder = folderName(name);
   if (name.endsWith('-display')) {

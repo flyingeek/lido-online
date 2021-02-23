@@ -43,7 +43,7 @@ const getTextColor = (raltNames, hexColor) => ["case",
     ["==", 0, ["get", "level"]], '#000',
     '#C60'];
 
-export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, etopsKmlColor, style) => {
+export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, etopsKmlColor, style, visibility) => {
     const [hexcolorEtops,] = kml2mapColor(etopsKmlColor);
     const epNames = epPoints.map(g => g.name);
     const raltNames = raltPoints.map(g => g.name);
@@ -80,7 +80,7 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
                 //'icon-rotate': ['get', 'orientation'],
                 'icon-allow-overlap': true,
                 'icon-ignore-placement': true,
-                'visibility': 'visible',
+                'visibility': (visibility) ? 'visible' : 'none',
                 'text-field': ['get', 'name'],
                 //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
                 'text-size': 8,
@@ -115,7 +115,7 @@ export const addAirports = (map, affine, aircraftType, epPoints, raltPoints, eto
                 //'icon-rotate': ['get', 'orientation'],
                 'icon-allow-overlap': true,
                 'icon-ignore-placement': true,
-                'visibility': 'visible',
+                'visibility': (visibility) ? 'visible' : 'none',
                 'text-field': ['get', 'name'],
                 //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
                 'text-size': ["case",

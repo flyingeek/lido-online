@@ -1,4 +1,4 @@
-export const addFirReg = (map, affine) => {
+export const addFirReg = (map, affine, visibility) => {
     fetch('data/fir-reg.CONF_AIRAC.geojson')
     .then(response => response.json())
     .then(data => {
@@ -16,7 +16,7 @@ export const addFirReg = (map, affine) => {
             'id': 'fir-reg-layer',
             'type': 'fill',
             'source': 'fir-reg-source',
-            'layout': {},
+            'layout': {'visibility': (visibility) ? 'visible' : 'none'},
             'paint': {
                 'fill-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgba(255,0,0,0.2)", "rgba(255,127,0,0.25)"]
                 //'fill-outline-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgb(255,0,0)", "rgb(255,127,0)"]
@@ -26,7 +26,7 @@ export const addFirReg = (map, affine) => {
             'id': 'fir-reg-line-layer',
             'type': 'line',
             'source': 'fir-reg-source',
-            'layout': {},
+            'layout': {'visibility': (visibility) ? 'visible' : 'none'},
             'paint': {
                 'line-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgb(255,0,0)", "rgb(255,127,0)"],
                 'line-width': 1,
@@ -35,3 +35,14 @@ export const addFirReg = (map, affine) => {
         });
     })
 };
+
+export function changeFirDisplay(map, visible) {
+    let layer = 'fir-reg-layer';
+    if (map.getLayer(layer)) {
+        map.setLayoutProperty(layer, 'visibility', (visible) ? 'visible': 'none');
+    }
+    layer = 'fir-reg-line-layer';
+    if (map.getLayer(layer)) {
+        map.setLayoutProperty(layer, 'visibility', (visible) ? 'visible': 'none');
+    }
+}

@@ -1,5 +1,4 @@
 <script context="module">
-    import {kmlDefaultOptions} from "./kml.js";
     function dashToCamelCase(str) {
         return str.replace(/-([a-z])/g, function (g) {
             return g[1].toUpperCase();
@@ -10,6 +9,7 @@
     }
 </script>
 <script>
+    import {kmlDefaultOptions} from "./kml.js";
     import { createEventDispatcher } from 'svelte';
     import KmlColor from "./KmlColor.svelte";
     import PinSelector from './PinSelector.svelte';
@@ -169,6 +169,13 @@
                             <AirportSelector name="airport-pin" selected={kmlOptions['airportPin']} on:change={update} />
                         </div>
                     </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="row">
+            <div class={mode}>
+                <fieldset class="form-group">
+                    <legend><input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR SÛRETÉ</legend>
                 </fieldset>
             </div>
         </div>
