@@ -59,7 +59,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
     window.proj4.defs('WGS84', "+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees");
     window.proj4.defs("EPSG:3857","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
     let affine, affineAndClamp, affineOrDrop, affineAndClip;
-    let affine2xy = (lngLat) => window.proj4('EPSG:3857', lngLat);
+    let affine2xy = (lngLat) => window.proj4('WGS84', 'EPSG:3857', lngLat);
     let xy2wgs84 = (xy) => window.proj4('EPSG:3857', 'WGS84', xy);
     if (mapOptions.extent) {
         window.proj4.defs('CUSTOM', mapOptions.proj4);
@@ -90,7 +90,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
             //console.log(a,b,c,d)
         }
         const [minX, minY, maxX, maxY] = (mapOptions.viewport) ? mapOptions.viewport : mapOptions.extent;
-        const customXY = (lngLat) => window.proj4('CUSTOM', lngLat);
+        const customXY = (lngLat) => window.proj4('WGS84', 'CUSTOM', lngLat);
         const customXY2xy = (XY) => [(a * XY[0]) + b, (c * XY[1]) + d];
         const customXY2wgs84 = (XY) => {/*console.log('XY2xy', customXY2xy(XY)); */return xy2wgs84(customXY2xy(XY));}
         affine2xy = (lngLat) => {
