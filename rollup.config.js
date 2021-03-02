@@ -21,6 +21,7 @@ const northId = 'northv3';
 const southId = 'southv3';
 const pacificId = 'pacificv1';
 const theworldId = 'theworldv2';
+const mercatorId = 'denizotjbv1'
 
 // All URL, local or remote
 const U = {
@@ -39,6 +40,7 @@ const U = {
   'CONF_SOUTH': southId,
   'CONF_PACIFIC': pacificId,
   'CONF_THEWORLD': theworldId,
+  'CONF_MERCATOR': mercatorId,
   //'CONF_GRAMET_PROXY': "https://editolido.alwaysdata.net/proxy_gramet2/${data.proxy}/${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png",
   'CONF_GRAMET_PROXY': "https://ofp2map-gramet.vercel.app/api/${data.proxy}__${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png",
   //'CONF_NORTH_TILES_BASE_URL': `https://editolido.alwaysdata.net/i/${northId}`,

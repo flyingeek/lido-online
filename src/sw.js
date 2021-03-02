@@ -2,13 +2,16 @@ import {precacheAndRoute} from 'workbox-precaching';
 import {registerRoute} from 'workbox-routing';
 import {StaleWhileRevalidate, CacheFirst} from 'workbox-strategies';
 import {ExpirationPlugin} from 'workbox-expiration';
+import {IDBCacheFirst} from './sw-idb-cache-first';
+
 //import { openDB, deleteDB, wrap, unwrap } from 'idb';
 
 const maps = {
   'north': 'CONF_NORTH',
   'south': 'CONF_SOUTH',
   'pacific': 'CONF_PACIFIC',
-  'theworld': 'CONF_THEWORLD'
+  'theworld': 'CONF_THEWORLD',
+  'mercator': 'CONF_MERCATOR'
 };
 // compute a host hash based on url origin
 // simply use first letters of url's origin
@@ -64,7 +67,9 @@ registerRoute(
 registerRoute(
   ({url}) => url.origin === 'https://api.mapbox.com' && ( 
      (url.pathname.startsWith('/styles/') || url.pathname.startsWith('/fonts/')) ||
-     url.pathname === '/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2.json'
+     url.pathname === '/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2.json' ||
+     url.pathname === '/v4/denizotjb.63g5ah66.json' ||
+     url.pathname === '/v4/denizotjb.9001lcsf,denizotjb.494jxmoa,mapbox.mapbox-streets-v8,denizotjb.bifqeinj,denizotjb.cz0kdfpx,mapbox.mapbox-terrain-v2.json'
   ),
   new StaleWhileRevalidate({
     cacheName: validCaches['mapbox']
@@ -107,113 +112,53 @@ registerRoute(
   })
 );
 
-
-const initIndexedDB = () => {
-  const open = indexedDB.open('lido-tiles', 2);
-  open.onsuccess = evt => {
-    console.log('DB opened successfully');
-  };
-  open.onerror = evt => {
-    console.log('Error while opening DB');
-  };
-  open.onupgradeneeded = evt => {
+const idbCacheFirst = new IDBCacheFirst('lido-tiles', 3, (open, evt) => {
     if (evt.oldVersion < 1) {
-      open.result.createObjectStore(maps['theworld']);
+        open.result.createObjectStore(maps['theworld']);
     }
     if (evt.oldVersion < 2) {
-      open.result.createObjectStore(maps['north']);
-      open.result.createObjectStore(maps['south']);
-      open.result.createObjectStore(maps['pacific']);
+        open.result.createObjectStore(maps['north']);
+        open.result.createObjectStore(maps['south']);
+        open.result.createObjectStore(maps['pacific']);
     }
-  }
-  return open;
-}
-const dbPromise = initIndexedDB();
-const getImageIdFromURL = (url) => {
-  const u = new URL(url);
-  return u.pathname.replace(/[/.]/g,'_');
-};
-const getStoreNameFromURL = (url) => {
-  const u = new URL(url);
-  return u.pathname.replace(/[/.]/g,'_').split('_')[1];
-}
-const fetchImageFromDB = (imageId, storeName) => {
-  return new Promise((resolve, reject) => {
-    const tx =  dbPromise.result.transaction(storeName, 'readonly');
-    const store = tx.objectStore(storeName);
-    const imageInStoreReq = store.get(imageId);
-    imageInStoreReq.onsuccess = (evt) => {
-        resolve(imageInStoreReq.result);
-    };
-    imageInStoreReq.onerror = (evt) => {
-        reject('Something went wrong while fetching image from DB ');
-    };
-  });
-};
-const putImageInDB = (imageId, storeName, blob) => {
-  return new Promise((resolve, reject) => {
-      const tx = dbPromise.result.transaction(storeName, 'readwrite');
-      const store = tx.objectStore(storeName);
-      const imagePutReq = store.put(blob, imageId);
-      imagePutReq.onsuccess = (evt) => {
-          const imageInStoreReq = store.get(imageId);
-          imageInStoreReq.onsuccess = (evt) => {
-              resolve(imageInStoreReq.result);
-          };
-      };
-      imagePutReq.onerror = (evt) => {
-          reject('Something went wrong while putting image in DB ');
-      };
-  });
-}
-const idbCacheHandler = async ({ request, url, event }) => { 
-  const imageID = getImageIdFromURL(url);
-  const storeName = getStoreNameFromURL(url);
-  return fetchImageFromDB(imageID, storeName).then((blob) => {
-      if (blob) {
-          // If image is directly available in DB then return the blob as the response.
-          return new Response(blob);
-      } else {
-          // If the image is unavailable, fetch the image by resuming the intercepted request to the server.
-          return fetch(event.request).then(response => {
-              const respClone = response.clone();
-              return respClone.blob()
-          }).then(imageBlob => {
-              if (imageBlob.type.startsWith('image/')) {
-                return putImageInDB(imageID, storeName, imageBlob).then((blob) => {
-                    return new Response(blob);
-                });
-              } else {
-                return new Response('', { "status" : 404 , "statusText" : "invalid image found (sw)"})
-              }
-          });
-      }
-  });
-};
+    if (evt.oldVersion < 3) {
+      open.result.createObjectStore(maps['mercator']);
+    }
+}, maps['mercator']);
+const idbCacheFirstHandler = idbCacheFirst.cacheHandler.bind(idbCacheFirst);
+
 registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_NORTH_TILES_BASE_URL' + '/[0-4]/.*')),
-  idbCacheHandler
+  idbCacheFirstHandler
   // new CacheFirst({
   //   cacheName: validCaches['north'],
   // })
 );
 registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_SOUTH_TILES_BASE_URL' + '/[0-4]/.*')),
-  idbCacheHandler
+  idbCacheFirstHandler
   // new CacheFirst({
   //   cacheName: validCaches['south'],
   // })
 );
 registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_THEWORLD_TILES_BASE_URL' + '/[0-5]/.*')),
-  idbCacheHandler
+  idbCacheFirstHandler
+  // new CacheFirst({
+  //   cacheName: validCaches['theworld'],
+  // })
+);
+const baseMercator = `https://api.mapbox.com/v4/${maps['mercator'].slice(0,-2)}`;
+registerRoute(
+  ({url}) => url.href.match(new RegExp(baseMercator + '[^/]+/[0-6]/.*')),
+  idbCacheFirstHandler
   // new CacheFirst({
   //   cacheName: validCaches['theworld'],
   // })
 );
 registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_PACIFIC_TILES_BASE_URL' + '/[0-4]/.*')),
-  idbCacheHandler
+  idbCacheFirstHandler
   // new CacheFirst({
   //   cacheName: validCaches['pacific'],
   //   plugins: [
