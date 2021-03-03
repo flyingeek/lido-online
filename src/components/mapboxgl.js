@@ -1,7 +1,7 @@
 /* global editolido mapboxgl */
 
 import {kml2mapColor} from "./KmlColor.svelte";
-import {folderName} from './utils';
+import {folderName, getBounds} from './utils';
 import { kmlDefaultOptions } from "./kml";
 import { addAirports, changeAirportDisplay, changeAirportStyle, changeAircraftType } from "./mapboxgl/airports";
 import { addFirReg, changeFirDisplay } from "./mapboxgl/fir-reg";
@@ -118,26 +118,13 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
         }
     }
     let bbox = undefined;
-    const getBounds = (points, result=[Infinity, Infinity, -Infinity, -Infinity]) => {
-        for (const [lng, lat] of points.map(g => (affineAndClamp) ? affineAndClamp([g.longitude, g.latitude]) : [g.longitude, g.latitude])) {
-            if (result[0] > lng) { result[0] = lng; }
-            if (result[1] > lat) { result[1] = lat; }
-            if (result[2] < lng) { result[2] = lng; }
-            if (result[3] < lat) { result[3] = lat; }
-        }
-        result[0] -= 1;
-        result[1] -= 1;
-        result[2] += 1;
-        result[3] += 1;
-        return result;
-    }
     let points = [];
     if (!ofp.isFake) {
         for (const track of ofp.tracks) {
             points = points.concat(track.points);
         }
         points = points.concat(ofp.route.points, ofp.wptCoordinatesAlternate());
-        bbox = getBounds(points);
+        bbox = getBounds(points, affineAndClamp);
 
         map.fitBounds(bbox, {padding: {top: 30, bottom:80, left: 30, right: 30}});
     }
@@ -157,6 +144,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
         }
     }
     map.addControl(geolocate);
+    map.affineAndClamp = affineAndClamp;
     map.on('load', function() {
         if (mapOptions.tiles) {
             map.addSource('jb-raster',{

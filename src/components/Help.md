@@ -36,9 +36,10 @@ testez sur différents OFP, puis une fois satisfait, sauvegardez dans vos favori
 
 Il est recommandé d'installer l'app sur l'écran d'accueil en utilisant le menu «&#8239;partage&#8239;» <svg style="width: 1em; display: inline-block; height: 1em; vertical-align: bottom;"><use xlink:href="#share"/></svg> de Safari. Ceci permet:
 
-- un stockage longue durée des préférences, des cartes Lambert et de l'Atlas
-- de disposer d'un cache plus important&#8239;: les cartes Lambert et L'Atlas peuvent être stockés en totalité. La Web Mercator dispose quant à elle d'environ 40Mo.
-- d'avoir un écran plus grand
+- un stockage longue durée des préférences, des cartes Lambert et de l'Atlas.
+- de disposer d'un cache plus important&#8239;: les cartes Lambert et L'Atlas peuvent être stockés en totalité. La Web Mercator dispose d'un cache de niveau 6 (il y a 12 niveaux de zoom sur la Mercator).
+- de mettre en cache facilement la partie de la carte correspondant à la route. Pour celà, cliquez sur le symbole ↓ situé à droite du sélecteur de carte. Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 40Mo de données.
+- d'avoir un écran plus grand.
 
 Par contre, on ne peut recharger la page comme dans un navigateur&#8239;: il faudra pour cela aller dans le menu d'aide (cet écran) ou un bouton spécifique sera affiché en haut.
 À noter que parfois, des bugs d'affichage peuvent apparaître&#8239;:  lorsque l'on retourne sur l'app, l'app est zoomée, il faut alors juste dézoomer en utilisant un pinch de deux doigts sur la barre de menu. Il est aussi possible de tuer l'app,  même en mode déconnecté, pour la relancer.

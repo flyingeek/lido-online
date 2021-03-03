@@ -138,3 +138,34 @@ export function lineclip(points, bbox, result) {
 
     return result;
 }
+
+export function promiseTimeout(ms, promise){
+    // Create a promise that rejects in <ms> milliseconds
+    let timeout = new Promise((resolve, reject) => {
+        let id = setTimeout(() => {
+            clearTimeout(id);
+            reject('Timed out in '+ ms + 'ms.')
+        }, ms)
+    });
+    // Returns a race between our timeout and the passed in promise
+    return Promise.race([
+        promise,
+        timeout
+    ]);
+}
+
+export function lon2tile(lon,zoom) { return (Math.floor((lon+180)/360*Math.pow(2,zoom))); }
+export function lat2tile(lat,zoom)  { return (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom))); }
+export const getBounds = (points, affineAndClamp, result=[Infinity, Infinity, -Infinity, -Infinity]) => {
+    for (const [lng, lat] of points.map(g => (affineAndClamp) ? affineAndClamp([g.longitude, g.latitude]) : [g.longitude, g.latitude])) {
+        if (result[0] > lng) { result[0] = lng; }
+        if (result[1] > lat) { result[1] = lat; }
+        if (result[2] < lng) { result[2] = lng; }
+        if (result[3] < lat) { result[3] = lat; }
+    }
+    result[0] -= 1;
+    result[1] -= 1;
+    result[2] += 1;
+    result[3] += 1;
+    return result;
+}

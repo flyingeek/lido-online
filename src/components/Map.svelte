@@ -1,7 +1,9 @@
 <script>
     import FormSettings from "./FormSettings.svelte";
     import {createMap, token, blankStyle, updateMapLayers} from './mapboxgl.js';
+    import {online} from "../store.js";
     import {updateKml} from './kml.js';
+    import {promiseTimeout, lat2tile, lon2tile, getBounds} from './utils';
     import { createEventDispatcher, onMount } from 'svelte';
     //import proj4 from 'proj4';
     const dispatch = createEventDispatcher();
@@ -12,6 +14,11 @@
     let selected = -1;
     let selectedAircraft = -1;
     let aircraftSelect;
+    let cacheMaxValue = 100;
+    let cacheValue = 0;
+    let cacheButton;
+    let cacheError = false;
+    const caches = {};
     const aircraftTypes = [
         "???",
         "318",
@@ -46,7 +53,8 @@
                 'style': 'mapbox://styles/flyingeek/cklgh38ep0xsr17qsvlrhth1e',
                 'renderWorldCopies': false,
                 'maxZoom': 12
-            }
+            },
+            'cacheZoom': 6
         },
         {
             'label': 'Lambert North',
@@ -60,6 +68,7 @@
                 'maxZoom': 5
             },
             'tiles': ['CONF_NORTH_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
+            'cacheZoom': 4,
             'tileSize': tilesResolution
         },
         {
@@ -74,6 +83,7 @@
                 'maxZoom': 5
             },
             'tiles': ['CONF_SOUTH_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
+            'cacheZoom': 4,
             'tileSize': tilesResolution
         },
         {
@@ -87,6 +97,7 @@
                 'maxZoom': 5
             },
             'tiles': ['CONF_PACIFIC_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
+            'cacheZoom': 4,
             'tileSize': tilesResolution
         },
         {
@@ -112,6 +123,8 @@
                 'maxZoom': 5
             },
             'tiles': ['CONF_THEWORLD_TILES_BASE_URL/{z}/{x}/{y}.webp'],
+            'matrix': [[1, 1], [2, 2], [4, 3], [8, 5], [16, 10], [32, 20]],
+            'cacheZoom': 5,
             'tileSize': tilesResolution
         }
         // ,
@@ -134,6 +147,8 @@
     function styleChange(e) {
         e.target.blur(); // to avoid zoom problem in standalone mode
         destroyMap();
+        cacheValue = 0;
+        cacheError = false;
         map = createMap(id, options[selected], ofp, kmlOptions, aircraftSelect);
     }
 
@@ -206,6 +221,97 @@
             //console.log('orientation changed');
         }
     };
+    $: progressPath = () => {
+    if (cacheValue <= 0) {
+      return "";
+    } else if (cacheValue >= cacheMaxValue) {
+      return "M50,5A45 45 0 1 1 49.9999 5";
+    } else {
+      const angle = Math.PI * 2 * (cacheValue / cacheMaxValue);
+      const x = 50 + Math.cos(angle - Math.PI / 2) * 45;
+      const y = 50 + Math.sin(angle - Math.PI / 2) * 45;
+      let path = "M50,5";
+      if (angle > Math.PI) {
+        path += "A45 45 0 0 1 50 95";
+      }
+      path += `A45 45 0 0 1 ${x} ${y}`;
+      return path;
+    }
+  };
+    const cacheMap = async (e) => {
+        let disabled;
+        cacheButton.blur();
+        if (disabled) return false;
+        disabled = true;
+        try {
+            await promiseTimeout(4000, fetch(`./manifest.json?dummy=${Date.now()}`, {cache: "no-store"}));
+        } catch (err) {
+            console.error(err);
+            disabled = false;
+            cacheButton.blur();
+            cacheError = true;
+            return false;
+        }
+        let bbox = undefined;
+
+        const affineAndClamp = map.affineAndClamp;
+        const mapOptions = options[selected];
+
+        let points = [];
+        if (!ofp.isFake) {
+            for (const track of ofp.tracks) {
+                points = points.concat(track.points);
+            }
+            points = points.concat(ofp.route.points, ofp.wptCoordinatesAlternate());
+            bbox = getBounds(points, affineAndClamp);
+            const [sw, ne] = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
+            const tiles = [];
+            for (let zoom=1; zoom <= mapOptions.cacheZoom; zoom++) {
+                const swXY={x: lon2tile(sw[0], zoom), y: lat2tile(sw[1], zoom)};
+                const neXY={x: lon2tile(ne[0], zoom), y: lat2tile(ne[1], zoom)};
+                const max = Math.pow(2,zoom);
+                let maxX, maxY;
+                if (mapOptions.matrix) {
+                    [maxX, maxY] = mapOptions.matrix[zoom];
+                }else{
+                    [maxX, maxY] = [max, max];
+                }
+                for (let x=swXY.x; x<=neXY.x; x++) {
+                    for (let y=neXY.y; y<=swXY.y; y++) {
+                        if(x>=0 && y>=0 && x<maxX && y<maxY)tiles.push([zoom, x, y]);
+                    }
+                }
+            }
+            if(mapOptions.tiles) {
+                cacheMaxValue = tiles.length;
+                for (const [z, x, y] of tiles){
+                    try{
+                        await fetch(mapOptions.tiles[0].replace('{z}', z).replace('{x}', x).replace('{y}', y));
+                        cacheValue += 1;
+                    }catch (err){}
+                }
+            }else{
+                cacheMaxValue = tiles.length * 2;
+                for (const [z, x, y] of tiles){
+                    let url = `https://api.mapbox.com/v4/denizotjb.63g5ah66/${z}/${x}/${y}@2x.webp?sku=${map._requestManager._skuToken}&access_token=${token}`;
+                    try{
+                        await fetch(url);
+                        cacheValue += 1;
+                    }catch (err){}
+                    url = `https://api.mapbox.com/v4/denizotjb.9001lcsf,denizotjb.494jxmoa,mapbox.mapbox-streets-v8,denizotjb.bifqeinj,denizotjb.cz0kdfpx,mapbox.mapbox-terrain-v2/${z}/${x}/${y}.vector.pbf?sku=${map._requestManager._skuToken}&access_token=${token}`;
+                    try{
+                        await fetch(url);
+                        cacheValue += 1;
+                    }catch (err){}
+                }
+            }
+            if (cacheValue>=cacheMaxValue){
+                caches[mapOptions.id] = true;
+                caches=caches;
+            }
+        }
+        disabled = false;
+    }
     onMount(() => {
         mapboxgl.accessToken = token;
         map = createMap(id, options[selected], ofp, kmlOptions, aircraftSelect);
@@ -221,6 +327,13 @@
         <option value="{index}" selected={index === selected}>{(option.proj4 && mapContainsOfp(option)) ? `${option.label.toUpperCase()}`: option.label}</option>
         {/each}
     </select>
+    {#if (selected >= 0 && !ofp.isFake && (navigator && navigator.standalone === true) && $online && caches[options[selected].id]!==true)}
+    <button bind:this={cacheButton} type="button" class="btn btn-outline-info" class:error={cacheError} on:click={cacheMap}>
+        <div><svg viewBox="0 0 100 100">
+        <path d="M50,5A45 45 0 1 1 49.9999 5" />
+        <path d="{progressPath()}" />
+      </svg></div><div><span>↓</span></div></button>
+    {/if}
 </div>
 <!-- svelte-ignore a11y-no-onchange -->
 <select bind:this={aircraftSelect} name="aircraftType" bind:value={selectedAircraft} on:change={aircraftChange}>
@@ -243,6 +356,7 @@
         font-size: small;
         left: 5px;
         top:5px;
+        display: inline;
     }
     .mapmenu {
         position: absolute;
@@ -276,4 +390,48 @@
             top :5px;
         }
     }
+    .mapmenu svg {
+    fill: var(--progress-fill, transparent);
+    height: 24px;
+    stroke-linecap: var(--progress-linecap, round);
+    width: 24px;
+  }
+  .mapmenu path:first-child {
+    stroke: var(--progress-trackcolor, grey);
+    stroke-width: var(--progress-trackwidth, 9px);
+  }
+  .mapmenu path:last-child {
+    stroke: var(--yellow);
+    stroke-width: var(--progress-width, 12px);
+  }
+  .mapmenu button {
+        border: none;
+        padding: 0;
+        margin-left: 10px;
+  }
+  .mapmenu .btn-outline-info:hover {
+    color: var(--yellow);
+    background-color: transparent;
+    border-color: transparent;
+}
+:global(.mapmenu .btn-outline-info.error) {
+    color: var(--red) !important;
+}
+:global(.mapmenu .btn-outline-info.error:hover) {
+    color: var(--red) !important;
+}
+  .mapmenu button div {
+    height: 100%;
+    position: relative;
+    width: 100%;
+  }
+  .mapmenu button div ~ div{
+      top: -12px;
+  }
+  .mapmenu button span {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 </style>
