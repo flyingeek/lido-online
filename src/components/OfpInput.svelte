@@ -12,7 +12,7 @@
         { type: 'link', url: 'CONF_MAPBOXGL_CSS'}
     ];
     //const editolidoSrc = 'https://github.com/flyingeek/lidojs/releases/download/v1.1.2/lidojs.min.js';
-    let aircraftTypes = ["318", "319", "320", "321", "330", "340", "350", "380", "787", "772", "773", "77F"];
+    export const aircraftTypes = ["318", "319", "320", "321", "330", "340", "350", "380", "787", "772", "773", "77F"];
     const getPageText = async (pdf, pageNo) => {
         const page = await pdf.getPage(pageNo);
         const tokenizedText = await page.getTextContent();

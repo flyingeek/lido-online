@@ -17,7 +17,7 @@ export const token = 'MAPBOX_TOKEN';
 
 export const key = {};
 
-export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
+export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect, onLoad) {
     if (!window.proj4.Proj.projections.get('times')) window.proj4.Proj.projections.add(times);
     const isAvenza = mapOptions.id.startsWith('jb_');
     let mapboxOptions = {
@@ -28,6 +28,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
         'customAttribution': `Yammer/${(isAvenza) ? 'QGIS & Avenza maps': 'Maps.me'} - Airports/FIR © Olivier Ravet`
     }
     const map = new mapboxgl.Map({...mapOptions.mapboxOptions, ...mapboxOptions});
+    map._setCacheLimits(320, 32);
     map.loadImage('sdf/maki-marker-sdf.png', function(error, image) {
         if (error) {
             console.log(error);
@@ -144,7 +145,6 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
         }
     }
     map.addControl(geolocate);
-    map.affineAndClamp = affineAndClamp;
     map.on('load', function() {
         if (mapOptions.tiles) {
             map.addSource('jb-raster',{
@@ -172,6 +172,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
         }
         if (!ofp.isFake) addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');
         //fetch(ofp.ogimetData.proxyImg); // add to cache
+        if (onLoad) onLoad(map, mapOptions);
     });
     // map.on('zoom', function() {
     //     console.log(map.getZoom());
@@ -180,7 +181,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftSelect) {
     //     e.lngLat.wrap();
     //     console.log(e.lngLat.wrap());
     // });
-    return map;
+    return [map, affineAndClamp];
 }
 
 export function changeLayerState(map, folder, value) {

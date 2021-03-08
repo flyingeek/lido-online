@@ -169,3 +169,38 @@ export const getBounds = (points, affineAndClamp, result=[Infinity, Infinity, -I
     result[3] += 1;
     return result;
 }
+
+export async function fetchSimultaneously(urls, fetchCallback) {
+    const queue = urls;
+    const maxSimultaneouslyRequests = 5;
+    let currentRequests = 0;
+    let i = 0;
+
+    return await new Promise(resolve => {
+
+        const fetcher = setInterval(async () => {
+            if (queue.filter(url => url).length === 0) {
+                clearInterval(fetcher);
+                resolve();
+            }
+
+            if (currentRequests >= maxSimultaneouslyRequests || i > queue.length - 1) {
+                return;
+            }
+
+            // Get current index and increase i
+            const index = i++;
+            const url = queue[index];
+
+            currentRequests++;
+            try {
+                await fetch(url);
+                if (fetchCallback) fetchCallback();
+            } catch {}
+            currentRequests--;
+
+            // Set value of index to empty (undefined)
+            delete queue[index];
+        }, 100);
+    });
+}

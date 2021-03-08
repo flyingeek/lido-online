@@ -25,6 +25,7 @@ const mercatorId = 'denizotjbv1'
 
 // All URL, local or remote
 const U = {
+  'process.env.NODE_ENV': (production) ? JSON.stringify('production') : JSON.stringify('development'),
   'CONF_BOOTSTRAP_CSS': 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css',
   'CONF_MAPBOXGL_CSS': 'https://unpkg.com/mapbox-gl@1.10.1/dist/mapbox-gl.css',
   'CONF_MAPBOXGL_JS': 'https://unpkg.com/mapbox-gl@1.10.1/dist/mapbox-gl.js',
@@ -41,6 +42,7 @@ const U = {
   'CONF_PACIFIC': pacificId,
   'CONF_THEWORLD': theworldId,
   'CONF_MERCATOR': mercatorId,
+  'CONF_TILES_DB': 'lido-tiles',
   //'CONF_GRAMET_PROXY': "https://editolido.alwaysdata.net/proxy_gramet2/${data.proxy}/${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png",
   'CONF_GRAMET_PROXY': "https://ofp2map-gramet.vercel.app/api/${data.proxy}__${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png",
   //'CONF_NORTH_TILES_BASE_URL': `https://editolido.alwaysdata.net/i/${northId}`,

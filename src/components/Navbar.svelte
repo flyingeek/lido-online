@@ -17,7 +17,7 @@
 <nav class="navbar navbar-expand-md navbar-light bg-light">
   <ul class="navbar-nav mr-auto">
     <li class="nav-item" class:active={route === '/'}>
-      <a class="nav-link" href="#/"><svg><use xlink:href="#home"/></svg></a>
+      <a class="nav-link" href="#/"><svg><use xlink:href="#home"/></svg>{#if 'process.env.NODE_ENV' === '"development"'}<sup>dev</sup>{/if}</a>
     </li>
     {#if (promise) || route === '/map'}
     <li class="nav-item" class:active={route === '/map'}>
@@ -57,6 +57,15 @@
 <style>
     a.disabled {
       text-decoration: line-through;
+    }
+    sup {
+        background-color: var(--red);
+        color: var(--white);
+        padding: 1px 3px;
+        border-radius: 3px;
+        font-weight: normal;
+        margin-left: 4px;
+        font-size: xx-small;
     }
     svg {
       width: 20px;

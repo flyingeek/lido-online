@@ -2,7 +2,7 @@ import {precacheAndRoute} from 'workbox-precaching';
 import {registerRoute} from 'workbox-routing';
 import {StaleWhileRevalidate, CacheFirst} from 'workbox-strategies';
 import {ExpirationPlugin} from 'workbox-expiration';
-import {IDBCacheFirst} from './sw-idb-cache-first';
+import {TilesCache} from './tiles-cache';
 
 //import { openDB, deleteDB, wrap, unwrap } from 'idb';
 
@@ -66,10 +66,10 @@ registerRoute(
 
 registerRoute(
   ({url}) => url.origin === 'https://api.mapbox.com' && ( 
-     (url.pathname.startsWith('/styles/') || url.pathname.startsWith('/fonts/')) ||
-     url.pathname === '/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2.json' ||
-     url.pathname === '/v4/denizotjb.63g5ah66.json' ||
-     url.pathname === '/v4/denizotjb.9001lcsf,denizotjb.494jxmoa,mapbox.mapbox-streets-v8,denizotjb.bifqeinj,denizotjb.cz0kdfpx,mapbox.mapbox-terrain-v2.json'
+    (url.pathname.startsWith('/styles/') || url.pathname.startsWith('/fonts/')) ||
+    url.pathname === '/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2.json' ||
+    url.pathname === '/v4/denizotjb.63g5ah66.json' ||
+    url.pathname === '/v4/denizotjb.9001lcsf,denizotjb.494jxmoa,mapbox.mapbox-streets-v8,denizotjb.bifqeinj,denizotjb.cz0kdfpx,mapbox.mapbox-terrain-v2.json'
   ),
   new StaleWhileRevalidate({
     cacheName: validCaches['mapbox']
@@ -112,7 +112,7 @@ registerRoute(
   })
 );
 
-const idbCacheFirst = new IDBCacheFirst('lido-tiles', 3, (open, evt) => {
+const tilesCache = new TilesCache('CONF_TILES_DB', 3, (open, evt) => {
     if (evt.oldVersion < 1) {
         open.result.createObjectStore(maps['theworld']);
     }
@@ -124,72 +124,30 @@ const idbCacheFirst = new IDBCacheFirst('lido-tiles', 3, (open, evt) => {
     if (evt.oldVersion < 3) {
       open.result.createObjectStore(maps['mercator']);
     }
-}, maps['mercator']);
-const idbCacheFirstHandler = idbCacheFirst.cacheHandler.bind(idbCacheFirst);
+});
 
 registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_NORTH_TILES_BASE_URL' + '/[0-4]/.*')),
-  idbCacheFirstHandler
-  // new CacheFirst({
-  //   cacheName: validCaches['north'],
-  // })
+  tilesCache.getCacheHandler(maps['north'])
 );
 registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_SOUTH_TILES_BASE_URL' + '/[0-4]/.*')),
-  idbCacheFirstHandler
-  // new CacheFirst({
-  //   cacheName: validCaches['south'],
-  // })
+  tilesCache.getCacheHandler(maps['south'])
 );
 registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_THEWORLD_TILES_BASE_URL' + '/[0-5]/.*')),
-  idbCacheFirstHandler
-  // new CacheFirst({
-  //   cacheName: validCaches['theworld'],
-  // })
+  tilesCache.getCacheHandler(maps['theworld'])
 );
 const baseMercator = `https://api.mapbox.com/v4/${maps['mercator'].slice(0,-2)}`;
 registerRoute(
   ({url}) => url.href.match(new RegExp(baseMercator + '[^/]+/[0-6]/.*')),
-  idbCacheFirstHandler
-  // new CacheFirst({
-  //   cacheName: validCaches['theworld'],
-  // })
+  tilesCache.getCacheHandler(maps['mercator'])
 );
 registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_PACIFIC_TILES_BASE_URL' + '/[0-4]/.*')),
-  idbCacheFirstHandler
-  // new CacheFirst({
-  //   cacheName: validCaches['pacific'],
-  //   plugins: [
-  //     new ExpirationPlugin({
-  //       maxAgeSeconds: 15 * 60 * 3600
-  //     })
-  //   ]
-  // })
+  tilesCache.getCacheHandler(maps['pacific'])
 );
-// registerRoute(
-//   ({url}) => url.href.match(new RegExp('(CONF_NORTH_TILES_BASE_URL|CONF_SOUTH_TILES_BASE_URL|CONF_PACIFIC_TILES_BASE_URL)/4/.*')),
-//   new CacheFirst({
-//     cacheName: validCaches['zoom4'],
-//     plugins: [
-//       new ExpirationPlugin({
-//         maxEntries: 128
-//       })
-//     ]
-//   })
-// );
-// registerRoute(
-//   ({url}) => url.href.match(new RegExp('(CONF_THEWORLD_TILES_BASE_URL)/5/.*')),
-//   new CacheFirst({
-//     cacheName: validCaches['zoom5'],
-//     plugins: [
-//       new ExpirationPlugin({
-//         maxEntries: 128
-//       })
-//     ]
-//   })
-// );
+
 registerRoute(
   ({url}) => url.href.match(new RegExp('(CONF_NORTH_TILES_BASE_URL|CONF_SOUTH_TILES_BASE_URL|CONF_PACIFIC_TILES_BASE_URL)/[5-9]/.*')),
   async () => new Response('', { "status" : 404 , "statusText" : "sw says nope!"})
