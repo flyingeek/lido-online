@@ -45,7 +45,7 @@
       <svg class="f"><use xlink:href="#info"/></svg>
       <span>AIDE</span></a>
     </li>
-    {#if (promise && navigator.share)}
+    {#if (navigator.share)}
     <li class="nav-item optional">
       <a class="nav-link" href="." on:click|preventDefault={share}>PARTAGER</a>
     </li>
