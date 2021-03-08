@@ -13,6 +13,8 @@
   import SWUpdate from "./components/SWUpdate.svelte";
   import {storage, stores, validate, saved, storeSettingsFromURL} from "./components/storage.js";
   import {swDismiss, sidebar, online} from "./store.js";
+  import HomePwaInstall from './components/HomePwaInstall.svelte';
+  import {runningOnIpad} from './components/utils';
 
   let route = "/";
   let permalink = window.location.href;
@@ -64,47 +66,51 @@
 
 <main class="container {route.substr(1) || 'home'}">
   <div class="content">
-    <Navbar {promise} {route}>
-        <form class:invisible={route === '/help'} class="form-inline" on:submit|preventDefault>
-          <OfpInput bind:promise {kmlOptions} on:change={ofpChange} />
-        </form>
-    </Navbar>
-    <SWUpdate loaded={!!promise}/>
-    <!-- START We do not want the map element to disappear from the dom -->
-    {#if promise}
-      {#await promise}
-        <!-- this cause the map to reinitialize-->
-        <Page hidden={route !== '/map'}><div style="margin: auto;">traitement en cours...</div></Page>
-      {:then ofp}
-        <Page hidden={route !== '/map'}>
-          <Map id="map" bind:kmlOptions {ofp} {route} on:save={setHistory}/>
+    {#if navigator && navigator.standalone === false && runningOnIpad}
+      <HomePwaInstall></HomePwaInstall>
+    {:else}
+      <Navbar {promise} {route}>
+          <form class:invisible={route === '/help'} class="form-inline" on:submit|preventDefault>
+            <OfpInput bind:promise {kmlOptions} on:change={ofpChange} />
+          </form>
+      </Navbar>
+      <SWUpdate loaded={!!promise}/>
+      <!-- START We do not want the map element to disappear from the dom -->
+      {#if promise}
+        {#await promise}
+          <!-- this cause the map to reinitialize-->
+          <Page hidden={route !== '/map'}><div style="margin: auto;">traitement en cours...</div></Page>
+        {:then ofp}
+          <Page hidden={route !== '/map'}>
+            <Map id="map" bind:kmlOptions {ofp} {route} on:save={setHistory}/>
+          </Page>
+        {:catch error}
+          <p class:d-none={route !== '/map'}>😱: {error.message}</p>
+        {/await}
+      {/if}
+      <!-- END of We do not want the map element to disappear from the dom (to keep cache)-->
+      {#if (route === '/gramet' || route === '/export')}
+        {#await promise}
+          <Page><div style="margin: auto;">traitement en cours...</div></Page>
+        {:then ofp}
+          {#if route === '/gramet'}
+              <Page><Gramet {ofp}/></Page>
+          {:else if route === '/export'}
+              <Page>
+              <Export {ofp} on:save={setHistory} />
+              <LidoRoute {ofp}/>
+              </Page>
+          {/if}
+        {:catch error}
+          <p>😱: {error.message}</p>
+        {/await}
+      {:else if route === '/'}
+        <Page>
+          <Home />
         </Page>
-      {:catch error}
-        <p class:d-none={route !== '/map'}>😱: {error.message}</p>
-      {/await}
-    {/if}
-    <!-- END of We do not want the map element to disappear from the dom (to keep cache)-->
-    {#if (route === '/gramet' || route === '/export')}
-      {#await promise}
-        <Page><div style="margin: auto;">traitement en cours...</div></Page>
-      {:then ofp}
-        {#if route === '/gramet'}
-            <Page><Gramet {ofp}/></Page>
-        {:else if route === '/export'}
-            <Page>
-            <Export {ofp} on:save={setHistory} />
-            <LidoRoute {ofp}/>
-            </Page>
-        {/if}
-      {:catch error}
-        <p>😱: {error.message}</p>
-      {/await}
-    {:else if route === '/'}
-      <Page>
-        <Home />
-      </Page>
-    {:else if route === '/help'}
-      <Page><Help /></Page>
+      {:else if route === '/help'}
+        <Page><Help /></Page>
+      {/if}
     {/if}
   </div>
 </main>

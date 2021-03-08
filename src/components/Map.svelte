@@ -245,7 +245,7 @@
         <option value="{index}" selected={index === selected}>{(option.proj4 && mapContainsOfp(option)) ? `${option.label.toUpperCase()}`: option.label}</option>
         {/each}
     </select>
-    {#if (selected >= 0 && !ofp.isFake && ((navigator && navigator.standalone === true)||'process.env.NODE_ENV' === '"development"') && $online && caches[options[selected].id]!==true && !mapIsCached)}
+    {#if (selected >= 0 && !ofp.isFake && window.indexedDB && $online && caches[options[selected].id]!==true && !mapIsCached)}
         <div class="cacheButton" class:cacheError={cacheError} class:cacheProgress={cacheValue > 0||cacheMaxValue > 0} on:click={cacheMap}>
             <svg viewBox="0 0 100 100">
                 <path d="M50,5A45 45 0 1 1 49.9999 5" />

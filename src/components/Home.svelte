@@ -1,6 +1,7 @@
 <script>
+      import Logo from './Logo.svelte';
 </script>
-<h1 class="text-center">Convertir l'OFP <img src="svg/Air_France_Logo.svg" alt="logo Air France"/> en KML/GeoJSON</h1>
+<Logo></Logo>
 <div class="row">
   <div class="card-deck">
     <div class=" col-12 col-sm-6 col-md-6 col-xl-3"><div class="card avenza">
@@ -30,24 +31,15 @@
   </div>
 </div>
 <style>
-h1 {
-  margin: 1.2em auto 1em auto;
-}
-h1, .card-header {
-  font-variant-caps: all-small-caps;
-}
-h1, .card {
+
+.card {
   color: white;
   background-color: rgba(0, 0, 0, 0.2);
-}
-img {
-  width: 100%;
-}
-.card {
   margin: 15px;
   height: 100%;
 }
 .card-header {
+  font-variant-caps: all-small-caps;
   font-weight: bold;
   color: white;
 }
