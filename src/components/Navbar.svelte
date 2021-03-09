@@ -1,6 +1,6 @@
 <script>
+    import {ofpPromise, isFakeOfp} from '../stores';
     export let route;
-    export let promise;
     const share = async () => {
       const shareData = {
         'title': 'OFP2MAP',
@@ -19,23 +19,23 @@
     <li class="nav-item" class:active={route === '/'}>
       <a class="nav-link" href="#/"><svg><use xlink:href="#home"/></svg>{#if 'process.env.NODE_ENV' === '"development"'}<sup>dev</sup>{/if}</a>
     </li>
-    {#if (promise) || route === '/map'}
+    {#if ($ofpPromise) || route === '/map'}
     <li class="nav-item" class:active={route === '/map'}>
-      <a class:disabled={!promise} class="nav-link" href="#/map">
+      <a class:disabled={!$ofpPromise} class="nav-link" href="#/map">
       <svg class="f"><use xlink:href="#marker"/></svg>
       <span>CARTE</span></a>
     </li>
     {/if}
-    {#if  (promise && !promise.isFakeOfp) || route === '/gramet'}
+    {#if  ($ofpPromise && !$isFakeOfp) || route === '/gramet'}
     <li class="nav-item" class:active={route === '/gramet'}>
-      <a class:disabled={!promise} class="nav-link" href="#/gramet">
+      <a class:disabled={!$ofpPromise} class="nav-link" href="#/gramet">
       <svg class="f"><use xlink:href="#cloud"/></svg>
       <span>GRAMET</span></a>
     </li>
     {/if}
-    {#if  (promise && !promise.isFakeOfp) || route === '/export'}
+    {#if  ($ofpPromise && !$isFakeOfp) || route === '/export'}
     <li class="nav-item" class:active={route === '/export'}>
-      <a class:disabled={!promise} class="nav-link" href="#/export">
+      <a class:disabled={!$ofpPromise} class="nav-link" href="#/export">
       <svg class="f"><use xlink:href="#export"/></svg>
       <span>EXPORT</span></a>
     </li>

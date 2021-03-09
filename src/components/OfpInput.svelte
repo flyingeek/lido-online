@@ -40,7 +40,7 @@
 </script>
 <script>
     import { createEventDispatcher } from 'svelte';
-    export let promise = undefined;
+    import {ofpPromise, isFakeOfp} from '../stores';
     export let kmlOptions;
     let disabled = false;
     let ready = new Deferred();
@@ -63,6 +63,7 @@
     };
     const getOFP = (file) => {
         const reader = new FileReader();
+        $isFakeOfp = false;
         return new Promise((resolve, reject) => {
             reader.onload = (ev) => {
                 if (!pdfWorker || pdfWorker.destroyed) {
@@ -120,7 +121,7 @@
             if (file) {
                 label = e.target.value.split(/([\\/])/g).pop();
                 dispatch('change', label);
-                promise = getOFP(file);
+                $ofpPromise = getOFP(file);
                 if (window.location.hash !== '#/gramet') {
                     window.location.hash = '#/map';
                 }
@@ -132,7 +133,8 @@
         disabled = true;
         preload(); // in case click event not supported or missed
         await ready.promise.then(() => {
-            promise = new Promise((resolve, reject) => {
+            $isFakeOfp = true;
+            $ofpPromise = new Promise((resolve, reject) => {
                 let ofp = new editolido.Ofp('_PDFJS_AF 681 KATL/LFPG 11Mar2020/2235zReleased: 11Mar/1724z3Main OFP (Long copy #1)OFP 6/0/1 ATC FLIGHT PLAN (FPL-AFR681-IS -B77W/ -KATL2235 -LFPG0724 LFPO ) FLIGHT SUMMARY 0012 TAXI IN Generated');
                 ofp.isFake = e.target.value;
                 try {
@@ -145,7 +147,6 @@
                     reject(err);
                 }
             });
-            promise.isFakeOfp = true;
             window.location.hash = '#/map';
         });
         disabled = false;
@@ -153,11 +154,11 @@
 
 </script>
 
-<div class="custom-file" class:blink={!promise}>
+<div class="custom-file" class:blink={!$ofpPromise}>
     <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} on:click|once={preload} class="custom-file-input">
     <label class:ready={readyClass} class="custom-file-label text-truncate" for="{name}">{label}</label>
 </div>
-{#if !promise}
+{#if !$ofpPromise}
     <div class="footer">
     <!-- svelte-ignore a11y-no-onchange -->
     <select class="form-control-sm" on:click|once={preload} disabled={disabled} on:change={processAircraftType}>

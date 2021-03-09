@@ -3,6 +3,8 @@ import { writable, readable } from 'svelte/store';
 export const wb = writable();
 export const swDismiss = writable(false);
 export const sidebar = writable(false);
+export const ofpPromise = writable();
+export const isFakeOfp = writable(false);
 
 let swLastUpdateDate = new Date();
 export const checkSWUpdate = () => {

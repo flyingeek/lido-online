@@ -1,7 +1,6 @@
 <script>
 
   import LidoRoute from "./components/LidoRoute.svelte";
-  import { kmlRegex } from "./components/KmlColor.svelte";
   import Export from "./components/Export.svelte";
   import Gramet from "./components/Gramet.svelte";
   import Home from "./components/Home.svelte";
@@ -12,20 +11,20 @@
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
   import {storage, stores, validate, saved, storeSettingsFromURL} from "./components/storage.js";
-  import {swDismiss, sidebar, checkSWUpdate} from "./stores.js";
+  import {swDismiss, sidebar, checkSWUpdate, ofpPromise} from "./stores.js";
   import HomePwaInstall from './components/HomePwaInstall.svelte';
   import {runningOnIpad} from './components/utils';
 
   let route = "/";
   let permalink = window.location.href;
-  let promise = undefined;
+ 
   storeSettingsFromURL(window.location.search);
   let kmlOptions = validate(storage.getItem(stores.optionsKML) || {}); //include default
   const hashchange = (e) => {
     const meta = document.querySelector( "meta[name=viewport]" );
     const metaContent = (meta) ? meta.getAttribute( "content" ) : '';
     route = window.location.hash.substr(1) || "/";
-    if (!promise && (route === '/map' || route === '/gramet' || route === '/export')) {
+    if (!$ofpPromise && (route === '/map' || route === '/gramet' || route === '/export')) {
       route = '/';
     }
     if (route === '/map') {
@@ -64,15 +63,15 @@
     {#if navigator && navigator.standalone === false && runningOnIpad}
       <HomePwaInstall></HomePwaInstall>
     {:else}
-      <Navbar {promise} {route}>
+      <Navbar {route}>
           <form class:invisible={route === '/help'} class="form-inline" on:submit|preventDefault>
-            <OfpInput bind:promise {kmlOptions} on:change={ofpChange} />
+            <OfpInput {kmlOptions} on:change={ofpChange} />
           </form>
       </Navbar>
-      <SWUpdate loaded={!!promise}/>
+      <SWUpdate loaded={!!$ofpPromise}/>
       <!-- START We do not want the map element to disappear from the dom -->
-      {#if promise}
-        {#await promise}
+      {#if $ofpPromise}
+        {#await $ofpPromise}
           <!-- this cause the map to reinitialize-->
           <Page hidden={route !== '/map'}><div style="margin: auto;">traitement en cours...</div></Page>
         {:then ofp}
@@ -85,7 +84,7 @@
       {/if}
       <!-- END of We do not want the map element to disappear from the dom (to keep cache)-->
       {#if (route === '/gramet' || route === '/export')}
-        {#await promise}
+        {#await $ofpPromise}
           <Page><div style="margin: auto;">traitement en cours...</div></Page>
         {:then ofp}
           {#if route === '/gramet'}
