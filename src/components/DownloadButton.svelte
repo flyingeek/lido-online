@@ -3,11 +3,10 @@
     const dataURL = function (str, type = "application/vnd.google-earth.kml+xml") {
         return "data:" + type + ";base64," + btoa(unescape(encodeURIComponent(str)));
     };
-    const options = ['KML Mapsme', 'KML Avenza', 'GeoJson'];
+    const options = ['KML Mapsme', 'KML Avenza'];
 </script>
 <script>
     import {KmlGenerator} from './kml.js';
-    import {xml2json} from './geojson.js';
     import {storage, stores} from './storage.js';
     import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
@@ -17,6 +16,7 @@
     const defaultValue = 1;
     let selected = storage.getItem(store) || defaultValue;
     if (typeof selected === 'string') selected = parseInt(selected, 10);
+    if (selected < 0 || selected >= options.length) selected = 0;
     let url = "";
     let filename = "";
 
@@ -41,8 +41,6 @@
                 "iconTemplate": editolido.avenzaIconTemplate,
                 "icons": editolido.AVENZAICONS
             }));
-        } else if (selected === 2) {
-            url = dataURL(JSON.stringify(xml2json(kmlGen.render())), "application/vnd.geo+json");
         } else {
             e.preventDefault();
             return false;
@@ -71,7 +69,6 @@
   <select bind:value={selected} class="custom-select"aria-label="Example select with button addon" on:change={save}>
     <option selected={selected === 0} value="{0}">{options[0]}</option>
     <option selected={selected === 1} value="{1}">{options[1]}</option>
-    <option selected={selected === 2} value="{2}">{options[2]}</option>
   </select>
   <div class="input-group-append">
     <a class="btn btn-success" download={filename} href={url} on:click={download} target={target}>{label}</a>
