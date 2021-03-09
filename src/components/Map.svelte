@@ -64,17 +64,28 @@
             selectedAircraft = (ofp.isFake) ? aircraftTypes.indexOf(ofp.isFake) :aircraftTypes.indexOf(ofp.infos.aircraft); 
         }
         if (selectedAircraft === -1) selectedAircraft = 0;
-
-
+        const resizeMap = () => map && map.resize() && console.log('map resized');
+        const observer = new IntersectionObserver((entries, observer) => { 
+            entries.forEach(entry => {
+            if(entry.intersectionRatio===1){
+                resizeMap();
+            }
+        });
+        }, {threshold: 1});
+        const mapElement = document.getElementById(id);
+        observer.observe(mapElement);
+        const orientationChange = (e) => {
+            if ($route === '/map') {
+                resizeMap();
+            }
+        };
+        window.addEventListener("orientationchange", orientationChange);
 
         return {
-            update(parameters) {
-                if ($route === '/map' && map) {
-                    map.resize();
-                    //console.log("map resized");
-                }
-            },
             destroy() {
+                observer.unobserve(mapElement);
+                observer.disconnect();
+                window.removeEventListener("orientationchange", orientationChange);
                 destroyMap();
             }
         }
@@ -105,12 +116,7 @@
         updateKml(e.detail.name, e.detail.value);
         dispatch('save'); // set History
     };
-    const orientationChange = (e) => {
-        if ($route === '/map' && map) {
-            map.resize();
-            //console.log('orientation changed');
-        }
-    };
+
     $: progressPath = () => {
         if (cacheValue <= 0) {
             return "";
@@ -235,7 +241,7 @@
     });
 
 </script>
-<svelte:window on:orientationchange={orientationChange}/>
+
 <div id={id} use:mapbox></div>
 <div class="mapmenu">
     <!-- svelte-ignore a11y-no-onchange -->
