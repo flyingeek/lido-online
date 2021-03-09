@@ -66,7 +66,7 @@
         </Page>
       {:else if $route === '/help'}
         <Page><Help /></Page>
-      {:else}
+      {:else if !$ofpPromise}
         <!-- redirect -->
         { window.location.hash = '#/'}
       {/if}

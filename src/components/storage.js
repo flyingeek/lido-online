@@ -54,7 +54,6 @@ export const validate = (options) => {
 
 
 export const setHistory = (kmlOptions, route, name="Mon OFP2MAP") => {
-    console.log(route)
     const options = {};
     for (const [key, store] of Object.entries(stores)) {
         let value = storage.getItem(store);
