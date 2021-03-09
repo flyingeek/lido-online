@@ -15,7 +15,7 @@
     import PinSelector from './PinSelector.svelte';
     import AirportSelector from './AirportSelector.svelte';
     import {storage, stores} from './storage.js';
-    import {sidebar} from "../store.js";
+    import {sidebar} from "../stores.js";
     const dispatch = createEventDispatcher();
     const store = stores.optionsKML;
     export let kmlOptions;

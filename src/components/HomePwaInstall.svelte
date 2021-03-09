@@ -1,16 +1,10 @@
 <script>
     import Logo from './Logo.svelte';
+    import SWUpdate from './SWUpdate.svelte';
     import {usingChromeOnIOS, usingSafari} from './utils';
-    import {onMount} from 'svelte';
     const requiredNavigator =  usingSafari && !usingChromeOnIOS;
-
-    onMount(() => {
-        window.isSWUpdateAvailable.promise.then(registration => {
-            console.log(registration);
-            registration.waiting.postMessage('SKIP_WAITING')
-        });
-    });
 </script>
+
 <Logo></Logo>
 <div class="prompt-container">
     <div class="prompt">
@@ -33,7 +27,7 @@
         </div>
     </div>
 </div>
-
+<SWUpdate></SWUpdate>
 <style>
     .prompt-container {
         align-items: center;
@@ -44,7 +38,6 @@
         padding: 30px;
         position: fixed;
         width: 100%;
-        z-index: 100000;
         margin-top: 3em;
     }
     .prompt{

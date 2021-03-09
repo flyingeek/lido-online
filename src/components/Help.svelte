@@ -1,5 +1,5 @@
 <script>
-import {swDismiss, online} from "../store.js";
+import {swDismiss, online} from "../stores.js";
 import Helpmarkup from './Help.md';
 
 $: lidojsVersion = (window.editolido) ? ' / lidojs: v' + window.editolido.version : '';

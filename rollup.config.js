@@ -168,6 +168,28 @@ export default [{
       }],
       verbose: true
     }),
+    // injectManifest({
+    //   swSrc: 'src/sw.js',
+    //   swDest: 'src/sw-injectManifest.js',
+    //   globDirectory: "public/",
+    //   globPatterns: [
+    //     "index.html",
+    //     "images/ofp2map-icons/icon-180x180.png",
+    //     "images/ofp2map-icons/icon-128x128.png",
+    //     "css/bundle.css",
+    //     "js/bundle.js",
+    //     "svg/*.svg",
+    //     "sdf/*.png",
+    //   ]
+    // }),
+    // watchAssets({ assets: [
+    //   'src/sw.js',
+    //   'src/index.html',
+    //   'assets/images/ofp2map-icons/icon-180x180.png',
+    //   "assets/images/ofp2map-icons/icon-128x128.png",
+    //   'assets/svg/*.svg',
+    //   'assets/sdf/*.png'
+    // ] }),
 
     // In dev mode, call `npm run start` once
     // the bundle has been generated
@@ -226,4 +248,5 @@ export default [{
     }),
     production && terser()
   ]
-}]
+}
+]

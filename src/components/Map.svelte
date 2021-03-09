@@ -1,7 +1,7 @@
 <script>
     import FormSettings from "./FormSettings.svelte";
     import {createMap, token, updateMapLayers} from './mapboxgl.js';
-    import {online} from "../store.js";
+    import {online} from "../stores.js";
     import {updateKml} from './kml.js';
     import {promiseTimeout, lat2tile, lon2tile, getBounds, fetchSimultaneously} from './utils';
     import { createEventDispatcher, onMount } from 'svelte';

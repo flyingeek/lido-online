@@ -206,3 +206,9 @@ export async function fetchSimultaneously(urls, fetchCallback) {
         }, 100);
     });
 }
+
+export const isPatchUpdate = (current, next) => {
+    const cParts = current.split('.');
+    const nParts = next.split('.');
+    return cParts.slice(0, -1).join('.') === nParts.slice(0, -1).join('.');
+}

@@ -12,7 +12,7 @@
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
   import {storage, stores, validate, saved, storeSettingsFromURL} from "./components/storage.js";
-  import {swDismiss, sidebar, online} from "./store.js";
+  import {swDismiss, sidebar, checkSWUpdate} from "./stores.js";
   import HomePwaInstall from './components/HomePwaInstall.svelte';
   import {runningOnIpad} from './components/utils';
 
@@ -34,6 +34,7 @@
     } else {
       if (metaContent) meta.setAttribute('content', metaContent.replace(',maximum-scale=1', ''));
     }
+    checkSWUpdate();
   };
   hashchange();
 
@@ -56,12 +57,6 @@
     if ($swDismiss) $swDismiss = false;
     if (window.serviceWorker && window.serviceWorker.update) window.serviceWorker.update().catch((err) => console.log('failed to update sw'));
   }
-  const wentOnLine = () => {
-    $online = true;
-  }
-  const wentOffLine = () => {
-    $online = false;
-  } 
 </script>
 
 <main class="container {route.substr(1) || 'home'}">
@@ -114,7 +109,7 @@
     {/if}
   </div>
 </main>
-<svelte:window on:hashchange={hashchange} on:online={wentOnLine} on:offline={wentOffLine} />
+<svelte:window on:hashchange={hashchange}/>
 
 <style>
   :global(html, body) {
