@@ -20,7 +20,7 @@
     import { fade } from 'svelte/transition';
     let installLabel = 'Installer';
     $swDismiss = false;
-    export let loaded = false;
+    export let prompt = false;
     const install = (delay=0) => {
         if (delay) console.debug('automatic install ')
         // $swRegistration.waiting check is needed to the 'reload the page' fallback
@@ -51,7 +51,7 @@
         }
     }
 </script>
-{#if (($swUpdated && !$swDismiss && !loaded))}
+{#if (($swUpdated && !$swDismiss && !prompt))}
 <div class="modal">
     <div class="toast">   
         <div class="toast-header">
@@ -71,12 +71,8 @@
             </button>
         </div>
         <div class="toast-body">
-            {#if !loaded}
-            <p>Celà va recharger l'App</p>
-            {:else}
             <p>Il faudra recharger l'OFP</p>
-            {/if}
-            <button class="manual" class:loaded={loaded} type="button" on:click|once={() => install()}><span class:blinking={installLabel.endsWith('...')}>{installLabel}</span></button>
+            <button class="manual" type="button" on:click|once={() => install()}><span class:blinking={installLabel.endsWith('...')}>{installLabel}</span></button>
         </div>
     </div>
 {/if}
@@ -144,9 +140,6 @@
     button.manual{
         color: var(--white);
         background-color: var(--blue);
-    }
-    button.manual.loaded{
-        background-color: var(--red);
     }
     button.close {
         float: right;

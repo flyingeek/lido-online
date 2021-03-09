@@ -5,7 +5,7 @@
     const requiredNavigator =  usingSafari && !usingChromeOnIOS;
 </script>
 
-<Logo></Logo>
+<Logo/>
 <div class="prompt-container">
     <div class="prompt">
         <div class="icon-container">
@@ -27,7 +27,7 @@
         </div>
     </div>
 </div>
-<SWUpdate></SWUpdate>
+<SWUpdate/>
 <style>
     .prompt-container {
         align-items: center;
