@@ -2,14 +2,16 @@
     import {runningOnIpad} from "./utils.js";
     import { tick } from 'svelte';
     let copyPermission = false;
-    try {
-        navigator.permissions.query({name: "clipboard-write"}).then((result) => {
-            if (result.state == "granted" || result.state == "prompt") {
-                copyPermission = true;
-            }
-        });
-    }catch(err) {
-        console.log(err);
+    if (navigator.permissions) {
+        try {
+            navigator.permissions.query({name: "clipboard-write"}).then((result) => {
+                if (result.state == "granted" || result.state == "prompt") {
+                    copyPermission = true;
+                }
+            });
+        }catch(err) {
+            console.log(err);
+        }
     }
 </script>
 <script>
