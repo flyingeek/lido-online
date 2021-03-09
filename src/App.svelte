@@ -11,31 +11,13 @@
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
   import {storage, stores, validate, saved, storeSettingsFromURL} from "./components/storage.js";
-  import {swDismiss, sidebar, checkSWUpdate, ofpPromise} from "./stores.js";
+  import {swDismiss, sidebar, route, ofpPromise} from "./stores.js";
   import HomePwaInstall from './components/HomePwaInstall.svelte';
   import {runningOnIpad} from './components/utils';
 
-  let route = "/";
   let permalink = window.location.href;
- 
   storeSettingsFromURL(window.location.search);
   let kmlOptions = validate(storage.getItem(stores.optionsKML) || {}); //include default
-  const hashchange = (e) => {
-    const meta = document.querySelector( "meta[name=viewport]" );
-    const metaContent = (meta) ? meta.getAttribute( "content" ) : '';
-    route = window.location.hash.substr(1) || "/";
-    if (!$ofpPromise && (route === '/map' || route === '/gramet' || route === '/export')) {
-      route = '/';
-    }
-    if (route === '/map') {
-      if ($sidebar) $sidebar = false;
-      if (metaContent) meta.setAttribute('content', metaContent + ',maximum-scale=1'); 
-    } else {
-      if (metaContent) meta.setAttribute('content', metaContent.replace(',maximum-scale=1', ''));
-    }
-    checkSWUpdate();
-  };
-  hashchange();
 
   const setHistory = (e) => {
     const stateObj = saved(kmlOptions);
@@ -46,7 +28,7 @@
       window.location.origin +
       window.location.pathname +
       (query ? "?" + query : "") +
-      '#' + route;
+      '#' + $route;
     history.replaceState(stateObj, "Mon OFP2MAP", permalink);
   };
   setHistory();
@@ -58,13 +40,13 @@
   }
 </script>
 
-<main class="container {route.substr(1) || 'home'}">
+<main class="container {$route.substr(1) || 'home'}">
   <div class="content">
     {#if navigator && navigator.standalone === false && runningOnIpad}
       <HomePwaInstall></HomePwaInstall>
     {:else}
-      <Navbar {route}>
-          <form class:invisible={route === '/help'} class="form-inline" on:submit|preventDefault>
+      <Navbar>
+          <form class:invisible={$route === '/help'} class="form-inline" on:submit|preventDefault>
             <OfpInput {kmlOptions} on:change={ofpChange} />
           </form>
       </Navbar>
@@ -73,23 +55,23 @@
       {#if $ofpPromise}
         {#await $ofpPromise}
           <!-- this cause the map to reinitialize-->
-          <Page hidden={route !== '/map'}><div style="margin: auto;">traitement en cours...</div></Page>
+          <Page hidden={$route !== '/map'}><div style="margin: auto;">traitement en cours...</div></Page>
         {:then ofp}
-          <Page hidden={route !== '/map'}>
-            <Map id="map" bind:kmlOptions {ofp} {route} on:save={setHistory}/>
+          <Page hidden={$route !== '/map'}>
+            <Map id="map" bind:kmlOptions {ofp} on:save={setHistory}/>
           </Page>
         {:catch error}
-          <p class:d-none={route !== '/map'}>😱: {error.message}</p>
+          <p class:d-none={$route !== '/map'}>😱: {error.message}</p>
         {/await}
       {/if}
       <!-- END of We do not want the map element to disappear from the dom (to keep cache)-->
-      {#if (route === '/gramet' || route === '/export')}
+      {#if ($route === '/gramet' || $route === '/export')}
         {#await $ofpPromise}
           <Page><div style="margin: auto;">traitement en cours...</div></Page>
         {:then ofp}
-          {#if route === '/gramet'}
+          {#if $route === '/gramet'}
               <Page><Gramet {ofp}/></Page>
-          {:else if route === '/export'}
+          {:else if $route === '/export'}
               <Page>
               <Export {ofp} on:save={setHistory} />
               <LidoRoute {ofp}/>
@@ -98,17 +80,16 @@
         {:catch error}
           <p>😱: {error.message}</p>
         {/await}
-      {:else if route === '/'}
+      {:else if $route === '/'}
         <Page>
           <Home />
         </Page>
-      {:else if route === '/help'}
+      {:else if $route === '/help'}
         <Page><Help /></Page>
       {/if}
     {/if}
   </div>
 </main>
-<svelte:window on:hashchange={hashchange}/>
 
 <style>
   :global(html, body) {

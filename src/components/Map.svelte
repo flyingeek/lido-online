@@ -1,7 +1,7 @@
 <script>
     import FormSettings from "./FormSettings.svelte";
     import {createMap, token, updateMapLayers} from './mapboxgl.js';
-    import {online} from "../stores.js";
+    import {online, route} from "../stores.js";
     import {updateKml} from './kml.js';
     import {promiseTimeout, lat2tile, lon2tile, getBounds, fetchSimultaneously} from './utils';
     import { createEventDispatcher, onMount } from 'svelte';
@@ -12,7 +12,6 @@
     const dispatch = createEventDispatcher();
     export let kmlOptions;
     export let ofp;
-    export let route;
     let map;
     let affineAndClamp;
     let selected = -1;
@@ -70,7 +69,7 @@
 
         return {
             update(parameters) {
-                if (parameters.route === '/map' && map) {
+                if ($route === '/map' && map) {
                     map.resize();
                     //console.log("map resized");
                 }
@@ -107,7 +106,7 @@
         dispatch('save'); // set History
     };
     const orientationChange = (e) => {
-        if (route === '/map' && map) {
+        if ($route === '/map' && map) {
             map.resize();
             //console.log('orientation changed');
         }
@@ -237,7 +236,7 @@
 
 </script>
 <svelte:window on:orientationchange={orientationChange}/>
-<div id={id} use:mapbox={{route}}></div>
+<div id={id} use:mapbox></div>
 <div class="mapmenu">
     <!-- svelte-ignore a11y-no-onchange -->
     <select name="{name}" bind:value={selected} class="form-control form-control-sm" on:change={styleChange}>

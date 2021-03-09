@@ -1,4 +1,4 @@
-import { writable, readable } from 'svelte/store';
+import { writable, readable, get } from 'svelte/store';
 
 export const wb = writable();
 export const swDismiss = writable(false);
@@ -52,5 +52,31 @@ export const online = readable({}, set => {
             window.removeEventListener('offline', update_network_status);
             window.removeEventListener('online', update_network_status);
         }
+    };
+});
+
+export const route = readable(null, set => {
+    const hashchange = () => {
+        const meta = document.querySelector( "meta[name=viewport]" );
+        const metaContent = (meta) ? meta.getAttribute( "content" ) : '';
+        let route = window.location.hash.substr(1) || "/";
+        const ofpLoaded = get(ofpPromise) !== undefined;
+        if (!ofpLoaded && (route === '/map' || route === '/gramet' || route === '/export')) {
+            route = '/';
+        }
+        if (route === '/map') {
+            sidebar.set(false);
+            if (metaContent) meta.setAttribute('content', metaContent + ',maximum-scale=1'); 
+        } else {
+            if (metaContent) meta.setAttribute('content', metaContent.replace(',maximum-scale=1', ''));
+        }
+        set(route);
+        checkSWUpdate();
+    };
+    hashchange();
+    window.addEventListener('hashchange', hashchange);
+
+    return () => {
+        window.removeEventListener('hashchange', hashchange);
     };
 });
