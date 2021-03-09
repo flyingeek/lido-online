@@ -15,16 +15,15 @@
   import HomePwaInstall from './components/HomePwaInstall.svelte';
   import {runningOnIpad} from './components/utils';
 
-  let permalink = window.location.href;
   storeSettingsFromURL(window.location.search);
   let kmlOptions = validate(storage.getItem(stores.optionsKML) || {}); //include default
 
   const setHistory = (e) => {
     const stateObj = saved(kmlOptions);
-    let query = Object.entries(stateObj)
+    const query = Object.entries(stateObj)
       .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
       .join("&");
-    permalink =
+    const permalink =
       window.location.origin +
       window.location.pathname +
       (query ? "?" + query : "") +
