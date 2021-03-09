@@ -45,7 +45,7 @@
         {/await}
       {/if}
       <!-- END of We do not want the map element to disappear from the dom (to keep cache)-->
-      {#if ($route === '/gramet' || $route === '/export')}
+      {#if $ofpPromise && ($route === '/gramet' || $route === '/export')}
         {#await $ofpPromise}
           <Page><div style="margin: auto;">traitement en cours...</div></Page>
         {:then ofp}
