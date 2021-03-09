@@ -13,6 +13,18 @@
     //         element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
     //     }
     // }
+    // const share = async (url) => {
+    //     const shareData = {
+    //         'title': 'GRAMET',
+    //         'url': url
+    //     };
+    //     try {
+    //         await navigator.share(shareData)
+    //     } catch(err) {
+    //         console.log(err);
+    //     }
+    //     return false;
+    // }
 
 </script>
 
@@ -27,9 +39,9 @@
         </div>
         {/if}
         {#if status !== 'error'}
-            <!-- {#if status === 'success'}
-                <svg on:click={fullScreen}>
-                    <use xlink:href="#fullscreen" />
+<!--             {#if status === 'success'}
+                <svg on:click={() => share(ofp.ogimetData.proxyImg)}>
+                    <use xlink:href="#share" />
                 </svg>
             {/if} -->
         <img crossorigin="anonymous" src={ofp.ogimetData.proxyImg} on:error={() => status = "error"} on:load={() => status = "success"} alt="gramet demo" class="img-fluid"/>
