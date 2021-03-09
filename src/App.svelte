@@ -31,25 +31,19 @@
     history.replaceState(stateObj, "Mon OFP2MAP", permalink);
   };
   setHistory();
-
-  const ofpChange = () => {
-    if ($sidebar) $sidebar = false;
-    if ($swDismiss) $swDismiss = false;
-    if (window.serviceWorker && window.serviceWorker.update) window.serviceWorker.update().catch((err) => console.log('failed to update sw'));
-  }
 </script>
 
 <main class="container {$route.substr(1) || 'home'}">
   <div class="content">
     {#if navigator && navigator.standalone === false && runningOnIpad}
-      <HomePwaInstall></HomePwaInstall>
+      <HomePwaInstall/>
     {:else}
       <Navbar>
           <form class:invisible={$route === '/help'} class="form-inline" on:submit|preventDefault>
-            <OfpInput {kmlOptions} on:change={ofpChange} />
+            <OfpInput {kmlOptions} on:change={() => $sidebar = $swDismiss = false} />
           </form>
       </Navbar>
-      <SWUpdate loaded={!!$ofpPromise}/>
+      <SWUpdate prompt={!!$ofpPromise}/>
       <!-- START We do not want the map element to disappear from the dom -->
       {#if $ofpPromise}
         {#await $ofpPromise}
