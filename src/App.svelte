@@ -79,6 +79,9 @@
         </Page>
       {:else if $route === '/help'}
         <Page><Help /></Page>
+      {:else}
+        <!-- redirect -->
+        { window.location.hash = '#/'}
       {/if}
     {/if}
   </div>

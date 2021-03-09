@@ -55,15 +55,11 @@ export const online = readable({}, set => {
     };
 });
 
-export const route = readable(null, set => {
+export const route = readable('/', set => {
     const hashchange = () => {
         const meta = document.querySelector( "meta[name=viewport]" );
         const metaContent = (meta) ? meta.getAttribute( "content" ) : '';
         let route = window.location.hash.substr(1) || "/";
-        const ofpLoaded = get(ofpPromise) !== undefined;
-        if (!ofpLoaded && (route === '/map' || route === '/gramet' || route === '/export')) {
-            route = '/';
-        }
         if (route === '/map') {
             sidebar.set(false);
             if (metaContent) meta.setAttribute('content', metaContent + ',maximum-scale=1'); 
