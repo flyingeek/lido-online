@@ -10,27 +10,14 @@
   import Page from "./components/Page.svelte";
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
-  import {storage, stores, validate, saved, storeSettingsFromURL} from "./components/storage.js";
+  import {storage, stores, validate, setHistory, storeSettingsFromURL} from "./components/storage.js";
   import {swDismiss, sidebar, route, ofpPromise} from "./stores.js";
   import HomePwaInstall from './components/HomePwaInstall.svelte';
   import {runningOnIpad} from './components/utils';
 
   storeSettingsFromURL(window.location.search);
   let kmlOptions = validate(storage.getItem(stores.optionsKML) || {}); //include default
-
-  const setHistory = (e) => {
-    const stateObj = saved(kmlOptions);
-    const query = Object.entries(stateObj)
-      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
-      .join("&");
-    const permalink =
-      window.location.origin +
-      window.location.pathname +
-      (query ? "?" + query : "") +
-      '#' + $route;
-    history.replaceState(stateObj, "Mon OFP2MAP", permalink);
-  };
-  setHistory();
+  setHistory(kmlOptions, $route);
 </script>
 
 <main class="container {$route.substr(1) || 'home'}">
@@ -51,7 +38,7 @@
           <Page hidden={$route !== '/map'}><div style="margin: auto;">traitement en cours...</div></Page>
         {:then ofp}
           <Page hidden={$route !== '/map'}>
-            <Map id="map" bind:kmlOptions {ofp} on:save={setHistory}/>
+            <Map id="map" bind:kmlOptions {ofp} on:save={() => setHistory(kmlOptions, $route)}/>
           </Page>
         {:catch error}
           <p class:d-none={$route !== '/map'}>😱: {error.message}</p>

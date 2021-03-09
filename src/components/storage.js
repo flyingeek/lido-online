@@ -53,7 +53,8 @@ export const validate = (options) => {
 };
 
 
-export const saved = (kmlOptions) => {
+export const setHistory = (kmlOptions, route, name="Mon OFP2MAP") => {
+    console.log(route)
     const options = {};
     for (const [key, store] of Object.entries(stores)) {
         let value = storage.getItem(store);
@@ -74,7 +75,15 @@ export const saved = (kmlOptions) => {
             }
         }
     }
-    return options;
+    const query = Object.entries(options)
+        .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+        .join("&");
+    const permalink =
+        window.location.origin +
+        window.location.pathname +
+        (query ? "?" + query : "") +
+        '#' + route;
+    window.history.replaceState(options, name, permalink);
 };
 
 export const storeSettingsFromURL = (url) => {
