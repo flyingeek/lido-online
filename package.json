@@ -12,8 +12,8 @@
     "start2": "sirv public --http2 --key localhost-key.pem --cert localhost-cert.pem --host 0.0.0.0 --port 5000",
     "lint": "eslint . --fix --ext js,svelte",
     "clean": "rimraf public/**",
-    "makeAirports": "node src/makeAirports.js",
-    "makeFir": "node src/makeFir.js"
+    "makeAirports": "node scripts/makeAirports.js",
+    "makeFir": "node scripts/makeFir.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
