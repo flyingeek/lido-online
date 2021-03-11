@@ -11,11 +11,13 @@
 <script>
     import {kmlDefaultOptions} from "../kml.js";
     import { createEventDispatcher } from 'svelte';
+    import { fly } from 'svelte/transition';
     import KmlColor from "./KmlColor.svelte";
     import PinSelector from './PinSelector.svelte';
     import AirportSelector from './AirportSelector.svelte';
     import {storage, stores} from './storage.js';
     import {sidebar} from "../../stores.js";
+    import clickOutside from '../../actions/clickOutsideAction';
     const dispatch = createEventDispatcher();
     const store = stores.optionsKML;
     export let kmlOptions;
@@ -73,16 +75,18 @@
         storedOptions = {...kmlOptions};
     }
 </script>
-<div class:sidebar={$sidebar} class="settings">
-    <a
-    class="hamburger"
-    role="button"
-    href="."
-    on:click|preventDefault={() =>  {$sidebar = !$sidebar; hamburgerBlink = false;}}>
-    <svg class:blink={hamburgerBlink}>
-        <use xlink:href="#bars" />
-    </svg>
-    </a>
+<a
+class="hamburger"
+role="button"
+href="."
+on:click|preventDefault={() =>  {$sidebar = !$sidebar; hamburgerBlink = false;}}>
+<svg class:blink={isDefault}>
+    <use xlink:href="#bars" />
+</svg>
+</a>
+{#if $sidebar}
+<div class:sidebar={$sidebar} class="settings"  use:clickOutside on:click_outside={() => $sidebar=false} transition:fly="{{duration: 300, x: 200, y: 0}}">
+
     <a
     class="closeB"
     role="button"
@@ -93,6 +97,9 @@
     </svg>
     </a>
     <form on:submit|preventDefault>
+        <div class="reset">
+            {#if !isDefault }<button class="btn btn-link btn-sm reset" type="button" on:click={reset}>Revenir aux valeurs par défaut</button>{/if}
+        </div>
         <fieldset class="form-group">
             <legend>Route</legend>
             <div class="row">
@@ -195,18 +202,18 @@
             <button disabled={!isChanged} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
             <button disabled={!isChanged} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
             </div>
-            <div class={mode}>
-            {#if !isDefault }<button class="btn btn-link btn-sm float-right" type="button" on:click={reset}>Revenir aux valeurs par défaut</button>{/if}
-            </div>
         </div>
     </form>
 </div>
-
+{/if}
 <style>
     input[type="checkbox"] {
         margin-bottom: 0.2rem;
         margin-right: 0.5ch;
         vertical-align: middle;
+    }
+    .btn.disabled, .btn:disabled {
+        opacity: .3;
     }
     small {
         margin-top: -0.3rem;
@@ -220,22 +227,21 @@
     }
     form {
         width: 250px;
+        margin-top: 3px;
     }
     .hamburger {
-        display: block !important;
         position: absolute;
-        left: -30px;
+        right: 10px;
         top: 0.7rem;
     }
     .closeB {
-        display: none;
         position: absolute;
         left: 230px;
-        top: 0;
+        top: 10px;
     }
     .settings {
         position: absolute;
-        right: -261px;
+        right: 0;
         transition: right 0.15s ease-out;
         background-color: #eee;
         border-left: 1px solid rgba(255,255,255,0.2);
@@ -244,29 +250,28 @@
         height: 100%;
         top: 0;
     }
-    @supports ( backdrop-filter: blur(5px) ) or ( -webkit-backdrop-filter: blur(5px) ) {
+    .reset button{
+        padding: 0;
+        color: var(--gray);
+    }
+    .reset {
+        min-height: 30px;
+    }
+    @supports ( backdrop-filter: blur(4px) ) or ( -webkit-backdrop-filter: blur(4px) ) {
         .settings {
-            background-color: rgba(254,254,254,0.4);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            background-color: rgba(254,254,254,0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
-     }
-    .sidebar .hamburger {
-        display: none !important;
-    }
-    .sidebar .closeB {
-        display: block !important;
-    }
-    .settings.sidebar {
-        right: 0;
     }
     .form-group {
-        margin-bottom: -3px;
+        margin-bottom: 0;
+        margin-top: 2px;    
     }
     .row.last {
-        margin-top: 10px;
+        margin-top: 24px;
     }
-    @media (max-width: 330px), (max-height: 720px){
+    /* @media (max-width: 330px), (max-height: 720px){
         .hamburger, .closeB {
             display: none;
         }
@@ -279,7 +284,7 @@
         form {
             width: auto;
         }
-    }
+    } */
     svg {
       fill:#555;
       width: 20px;
@@ -292,7 +297,7 @@
 
 
     @keyframes blink {
-        0% { transform: scale(1.0); }
+        0% { transform: scale(1.0);}
         75% { transform: scale(1.0); }
         80% { transform: scale(1.2); }
         95% { transform: scale(1.2); }
