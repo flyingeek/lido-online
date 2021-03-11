@@ -11,9 +11,9 @@
       </div>
     </div></div>
     <div class="col-12 col-sm-6 col-md-6 col-xl-3"><div class="card mapsme">
-      <div class="card-header">Compatible MapsMe/Avenza</div>
+      <div class="card-header">Plusieurs Projections</div>
       <div class="card-body">
-        <p class="card-text">Le thème par défaut s'accorde parfaitement avec les fichiers avions, également compatible avec Google Earth</p>
+        <p class="card-text">LAMBERT pour des cartes conformes, un ATLAS, et une MERCATOR avec 12 niveaux de zoom. Il est aussi possible d'exporter le KML vers d'autres applications comme Mapsme ou Avenza.</p>
       </div>
     </div></div>
     <div class="col-12 col-sm-6 col-md-6 col-xl-3"><div class="card ogimet">

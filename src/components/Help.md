@@ -13,11 +13,11 @@ OFP2MAP est une application PWA (ou Web Application), elle peut être lancée so
 
 3. Pour Exporter vers une app, direction le menu EXPORT, vous pouvez exporter une route pour mPilot, télécharger le KML (routes et tracks uniquement), ou envoyer vers l'app **Raccourcis** d'Apple.
 
-4. La carte par défaut est une LAMBERT, il est possible sur la carte, en haut à gauche, de basculer sur une projection Web Mercator ou sur l'Atlas "The World".
+4. La carte par défaut est une LAMBERT, il est possible sur la carte, en haut à gauche, de basculer sur d'autres projections.
     - LAMBERT NORTH (parallèles sécants N30 et N65) est recommandée au-dessus du N40
     - LAMBERT SOUTH & PACIFIC (parallèles sécants N30 et S15 ) sont recommandées sous N30
-    - The World permet de disposer d'un Atlas off-line
-    - Mercator correspond aux cartes Web habituelles, le thème est inspiré des cartes VFR et on peut zoomer de manière importante (12 niveaux). Le cache offline est limité à un zoom de niveau 6.
+    - THE WORLD permet de disposer d'un Atlas off-line, c'est une projection Times.
+    - MERCATOR est une Web Mercator avec un thème est inspiré des cartes VFR. Il y a 12 niveaux de zoom, le cache offline est limité à un zoom de niveau 6.
 
 
 5. Navigation dans la carte: on peut avec un doigt déplacer la carte, zoomer ou orienter la carte avec deux doigts. Il est aussi possible de modifier l'angle de vue en balayant de haut en bas avec deux doigts.
@@ -34,7 +34,11 @@ L'export des fichiers KML affiche une page nommée "data:", utilisez le bouton <
 
 ## Mode off-line
 
-Une fois un premier OFP chargé, il est possible même en mode déconnecté de charger un autre OFP pour l'exporter. Le cache de l'App vous permettra de naviguer sur les cartes déjà visualisées. Pour mettre en cache les cartes, cliquez sur le symbole ↓ situé à droite du sélecteur de carte. Les cartes Lambert sont mises en cache en totalité, il en est de même pour l'atlas The World, par contre pour la Mercator, seule la partie de carte incluant la route sera mise en cache. Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 40Mo de données. Les caches des autres projections utilisent&#8239;: 7Mo pour la _North_, 4Mo pour la _Pacific_, 7Mo pour la _South_ et 32Mo pour _The World_.
+Une fois un premier OFP chargé, il est possible même en mode déconnecté de charger un autre OFP pour l'exporter. Le cache de l'App vous permettra de naviguer sur les cartes déjà visualisées. Pour mettre en cache les cartes, il suffit de les consulter.
+
+Il existe aussi un bouton de mise en cache&#8239;: le pictogramme ↓ situé à droite du sélecteur de carte. Sur les cartes LAMBERT ou THE WORLD, il mettra en cache la totalité de la carte. Sur la MERCATOR, seule la partie de carte incluant la route sera mise en cache.
+
+Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 40Mo de données. Les caches des autres projections utilisent&#8239;: 7Mo pour la NORTH, 4Mo pour la PACIFIC, 7Mo pour la SOUTH et 32Mo pour THE WORLD.
 
 ## Mise à jour
 
