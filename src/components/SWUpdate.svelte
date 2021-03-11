@@ -51,14 +51,15 @@
         }
     }
 </script>
+
 {#if (($swUpdated && !$swDismiss && !prompt))}
 <div class="modal">
     <div class="toast">   
         <div class="toast-header">
             <strong><span>👨🏻‍✈️</span>Mise à jour détectée</strong>
         </div>
-        <div class="toast-body">
-            <button on:click|preventDefault><span>Mise à jour...</span></button>
+        <div class="toast-body text-center">
+            <button class="btn" type="button" on:click|preventDefault><span>Mise à jour...</span></button>
         </div>
     </div>
 </div>{install(700) || ''}
@@ -70,9 +71,9 @@
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <div class="toast-body">
+        <div class="toast-body text-center">
             <p>Il faudra recharger l'OFP</p>
-            <button class="manual" type="button" on:click|once={() => install()}><span class:blinking={installLabel.endsWith('...')}>{installLabel}</span></button>
+            <button class="btn btn-primary" type="button" on:click|once={() => install()}><span class:blinking={installLabel.endsWith('...')}>{installLabel}</span></button>
         </div>
     </div>
 {/if}
@@ -80,14 +81,6 @@
 <style>
     /* The Modal (background) */
     .modal {
-        position: fixed; /* Stay in place */
-        z-index: 19; /* Sit on top below alert*/
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
         display:block;
     }
@@ -105,50 +98,11 @@
     .toast {
         opacity: 1;
         z-index: 20;
-        max-width: 350px;
-        overflow: hidden;
-        font-size: .875rem;
-        background-color: rgba(255,255,255,.85);
-        background-clip: padding-box;
-        border: 1px solid rgba(0,0,0,.1);
-        box-shadow: 0 .25rem .75rem rgba(0,0,0,.1);
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
-        border-radius: .25rem;
-    }
-    .toast-header {
-        display: -ms-flexbox;
-        display: flex;
-        -ms-flex-align: center;
-        align-items: center;
-        padding: .25rem .75rem;
-        color: #6c757d;
-        background-color: rgba(255,255,255,.85);
-        background-clip: padding-box;
-        border-bottom: 1px solid rgba(0,0,0,.05);
     }
     .toast-header strong {
         margin-right: auto;
     }
-    .toast-body {
-        padding: .75rem;
-        text-align: center;
-    }
-    .toast-body button{
-        border-radius: 3px;
-    }
-    button.manual{
-        color: var(--white);
-        background-color: var(--blue);
-    }
     button.close {
-        float: right;
-        font-size: 1.5rem;
-        font-weight: 700;
-        line-height: 1;
-        color: #000;
-        text-shadow: 0 1px 0 #fff;
-        opacity: .5;
         padding: 0;
         background-color: transparent;
         border: 0;
