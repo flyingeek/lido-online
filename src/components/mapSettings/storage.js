@@ -1,5 +1,5 @@
 import {kmlRegex} from './KmlColor.svelte';
-import {kmlDefaultOptions} from './kml';
+import {kmlDefaultOptions} from '../kml';
 
 class Storage {
     constructor() {}
@@ -29,8 +29,8 @@ export const stores = Object.freeze({
     "optionsKML": "optionsKML",
     "shortcut": "shortcut",
     "downloadType": "downloadType"
-  });
-  
+});
+
 export const storage = new Storage();
 
 export const validate = (options) => {

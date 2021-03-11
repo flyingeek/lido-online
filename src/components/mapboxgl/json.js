@@ -26,14 +26,14 @@ export function featureCollection(features) {
 
 export function jsonLine(coordinates, title) {
     const json = {
-         'type': 'Feature',
-         'geometry': {
-             'type': 'LineString',
-             'coordinates': coordinates
-         },
-         'properties': {
-         }
-     };
-     if (title) json['properties']['title'] = title;
-     return json;
- }
+        'type': 'Feature',
+        'geometry': {
+            'type': 'LineString',
+            'coordinates': coordinates
+        },
+        'properties': {
+        }
+    };
+    if (title) json['properties']['title'] = title;
+    return json;
+}

@@ -1,4 +1,13 @@
-export const addFirReg = (map, affine, visibility) => {
+const folder = 'fir-reg';
+const lineLayer = `${folder}-line-layer`;
+const fillLayer = `${folder}-layer`;
+const source = `${folder}-source`;
+
+export const addFirReg = (data) => {
+    const {map, mapData, kmlOptions, mapOptions} = data;
+    if (mapOptions.id === 'jb_pacific') return; // displays badly on this map
+    const {affine} = mapData;
+    const visibility = kmlOptions.firDisplay;
     fetch('data/fir-reg.CONF_AIRAC.geojson')
     .then(response => response.json())
     .then(data => {
@@ -8,14 +17,14 @@ export const addFirReg = (map, affine, visibility) => {
                 data.features[i].geometry.coordinates = [points.map(v => affine(v))];
             }
         }
-        map.addSource('fir-reg-source', {
+        map.addSource(source, {
             type: 'geojson',
             data: data
         });
         map.addLayer({
-            'id': 'fir-reg-layer',
+            'id': fillLayer,
             'type': 'fill',
-            'source': 'fir-reg-source',
+            'source': source,
             'layout': {'visibility': (visibility) ? 'visible' : 'none'},
             'paint': {
                 'fill-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgba(255,0,0,0.2)", "rgba(255,127,0,0.25)"]
@@ -23,9 +32,9 @@ export const addFirReg = (map, affine, visibility) => {
             }
         });
         map.addLayer({
-            'id': 'fir-reg-line-layer',
+            'id': lineLayer,
             'type': 'line',
-            'source': 'fir-reg-source',
+            'source': source,
             'layout': {'visibility': (visibility) ? 'visible' : 'none'},
             'paint': {
                 'line-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgb(255,0,0)", "rgb(255,127,0)"],
@@ -36,13 +45,22 @@ export const addFirReg = (map, affine, visibility) => {
     })
 };
 
-export function changeFirDisplay(map, visible) {
-    let layer = 'fir-reg-layer';
-    if (map.getLayer(layer)) {
-        map.setLayoutProperty(layer, 'visibility', (visible) ? 'visible': 'none');
+export function changeFirDisplay(data, visible) {
+    const {map} = data;
+    if (map.getLayer(fillLayer)) {
+        map.setLayoutProperty(fillLayer, 'visibility', (visible) ? 'visible': 'none');
     }
-    layer = 'fir-reg-line-layer';
-    if (map.getLayer(layer)) {
-        map.setLayoutProperty(layer, 'visibility', (visible) ? 'visible': 'none');
+    if (map.getLayer(lineLayer)) {
+        map.setLayoutProperty(lineLayer, 'visibility', (visible) ? 'visible': 'none');
     }
+}
+
+export default {
+    show: (data) => changeFirDisplay(data, true),
+    hide: (data) => changeFirDisplay(data, false),
+    remove: () => {},
+    add: addFirReg,
+    changeLine: () => {},
+    changeMarker: () => {},
+    change: () => {},
 }

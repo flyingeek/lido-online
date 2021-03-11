@@ -9,13 +9,13 @@
     }
 </script>
 <script>
-    import {kmlDefaultOptions} from "./kml.js";
+    import {kmlDefaultOptions} from "../kml.js";
     import { createEventDispatcher } from 'svelte';
     import KmlColor from "./KmlColor.svelte";
     import PinSelector from './PinSelector.svelte';
     import AirportSelector from './AirportSelector.svelte';
     import {storage, stores} from './storage.js';
-    import {sidebar} from "../stores.js";
+    import {sidebar} from "../../stores.js";
     const dispatch = createEventDispatcher();
     const store = stores.optionsKML;
     export let kmlOptions;

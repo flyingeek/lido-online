@@ -1,5 +1,4 @@
-import {blankStyle} from './mapboxgl.js';
-    
+import blankStyle from './blankStyle';
 // Pour réaliser les tiles dans Map Tiler
 // - Choisir Andvanced Tiles -> Continue
 // - Choisir le TIF geo-référencé -> Continue

@@ -10,7 +10,7 @@
   import Page from "./components/Page.svelte";
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
-  import {storage, stores, validate, setHistory, storeSettingsFromURL} from "./components/storage.js";
+  import {storage, stores, validate, setHistory, storeSettingsFromURL} from "./components/mapSettings/storage.js";
   import {swDismiss, sidebar, route, ofpPromise} from "./stores.js";
   import HomePwaInstall from './components/HomePwaInstall.svelte';
   import {runningOnIpad} from './components/utils';
@@ -53,7 +53,7 @@
               <Page><Gramet {ofp}/></Page>
           {:else if $route === '/export'}
               <Page>
-              <Export {ofp} on:save={setHistory} />
+              <Export {ofp} on:save={() => setHistory(kmlOptions, $route)} />
               <LidoRoute {ofp}/>
               </Page>
           {/if}

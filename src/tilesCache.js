@@ -104,3 +104,69 @@ export class TilesCache {
         });
     }
 }
+function lon2tile(lon,zoom) { return (Math.floor((lon+180)/360*Math.pow(2,zoom))); }
+function lat2tile(lat,zoom)  { return (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom))); }
+export const findMissingCacheTiles = async (ofp, mapData) => {
+    const {map, mapOptions, bbox} = mapData;
+    if (ofp.isFake || map === undefined) {
+        return [];
+    }
+    const tilesCaches = new TilesCache('CONF_TILES_DB');
+
+    if (mapOptions.cacheAll) {
+        const tilesCount = await tilesCaches.countTiles(mapOptions.cacheName);
+        
+        let tilesMax;
+        if (mapOptions.matrix) {
+            tilesMax = mapOptions.matrix.map(([w, h]) => w * h);
+        } else {
+            tilesMax = [...Array(mapOptions.cacheZoom + 1).keys()].map(v => Math.pow(2, v) * Math.pow(2, v));
+        } 
+        if (tilesCount >= tilesMax.reduce((a, b) => a + b, 0)) {
+            tilesCaches.close();
+            console.log('map is fully cached', tilesMax);
+            caches[mapOptions.id] = true;
+            return [];
+        }
+    }
+
+    const [sw, ne] = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
+    const promises = [];
+    for (let zoom=0; zoom <= mapOptions.cacheZoom; zoom++) {
+        let swXY, neXY;
+        const max = Math.pow(2,zoom);
+        if (mapOptions.cacheAll) {
+            swXY={x: 0, y: max - 1};
+            neXY={x: max - 1, y: 0};
+        } else {
+            swXY={x: lon2tile(sw[0], zoom), y: lat2tile(sw[1], zoom)};
+            neXY={x: lon2tile(ne[0], zoom), y: lat2tile(ne[1], zoom)};
+        }
+        let maxX, maxY;
+        if (mapOptions.matrix) {
+            [maxX, maxY] = mapOptions.matrix[zoom];
+        }else{
+            [maxX, maxY] = [max, max];
+        }
+
+        for (let x=swXY.x; x<=neXY.x; x++) {
+            for (let y=neXY.y; y<=swXY.y; y++) {
+                if(x>=0 && y>=0 && x<maxX && y<maxY){
+                    let url;
+                    if(mapOptions.tiles) {
+                        url = new URL(mapOptions.tiles[0].replace('{z}', zoom).replace('{x}', x).replace('{y}', y));
+                        promises.push(tilesCaches.isNotCached(mapOptions.cacheName, url));
+                    } else {
+                        url = new URL(`https://api.mapbox.com/v4/denizotjb.63g5ah66/${zoom}/${x}/${y}@2x.webp?sku=${map._requestManager._skuToken}&access_token=${mapboxgl.accessToken}`);
+                        promises.push(tilesCaches.isNotCached(mapOptions.cacheName, url));
+                        url = new URL(`https://api.mapbox.com/v4/denizotjb.9001lcsf,denizotjb.494jxmoa,mapbox.mapbox-streets-v8,denizotjb.bifqeinj,denizotjb.cz0kdfpx,mapbox.mapbox-terrain-v2/${zoom}/${x}/${y}.vector.pbf?sku=${map._requestManager._skuToken}&access_token=${mapboxgl.accessToken}`);
+                        promises.push(tilesCaches.isNotCached(mapOptions.cacheName, url));
+                    }
+                }
+            }
+        }
+    }
+    const results = await Promise.all(promises);
+    tilesCaches.close();
+    return results.filter(url => url !== null);
+};

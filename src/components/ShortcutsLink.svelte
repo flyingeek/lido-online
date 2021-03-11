@@ -1,7 +1,7 @@
 <script>
     import {KmlGenerator} from "./kml.js";
     import {runningOnIpad} from "./utils.js";
-    import {storage, stores} from './storage.js';
+    import {storage, stores} from './mapSettings/storage.js';
     import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
     const store = stores.shortcut;

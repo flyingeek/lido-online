@@ -1,5 +1,5 @@
 import {jsonLine, jsonPoint, featureCollection} from './json';
-import {kml2mapColor} from "../KmlColor.svelte";
+import {kml2mapColor} from "../mapSettings/KmlColor.svelte";
 
 export const pinColors = [
     '#FFFFFF', '#6699FF', '#FFFF00',
@@ -117,5 +117,45 @@ export function lineLayer(folder, kmlcolor, visibility) {
             'line-width': lineWidth,
             'line-dasharray': lineDashArray
         }
+    }
+}
+
+export function changeMarkerGeneric(folder, data){
+    const {map, value} = data;
+    const lineLayer = `${folder}-line-layer`;
+    const markerLayer = `${folder}-marker-layer`;
+    if (map.getLayer(markerLayer) && map.getLayer(lineLayer)) {
+        const selectedPin = value;
+        const hexcolor = pinColors[selectedPin];
+        const lineColor = map.getPaintProperty(lineLayer, 'line-color');
+        map.setPaintProperty(markerLayer, 'icon-color', (selectedPin !== 0) ? hexcolor : lineColor);
+        map.setPaintProperty(markerLayer, 'text-color', lineColor);
+        map.setLayoutProperty(markerLayer, 'icon-size', (selectedPin !== 0) ? 1 : 0.2);
+        map.setLayoutProperty(markerLayer, 'icon-image', (selectedPin !== 0) ? 'sdf-marker-15' : 'sdf-triangle');
+        map.setLayoutProperty(markerLayer, 'icon-anchor', (selectedPin !== 0) ? 'bottom' : 'center');
+    }
+}
+export function changeLineGeneric(folder, data){
+    const {map, value} = data;
+    const lineLayer = `${folder}-line-layer`;
+    const markerLayer = `${folder}-marker-layer`;
+    const [hexcolor, opacity] = kml2mapColor(value);
+    if (map.getLayer(lineLayer)) {
+        map.setPaintProperty(lineLayer, 'line-color', hexcolor);
+        map.setPaintProperty(lineLayer, 'line-opacity', opacity);
+    }
+    if (map.getLayer(markerLayer)) {
+        map.setPaintProperty(markerLayer, 'text-color', hexcolor);
+    }
+}
+export function changeDisplayGeneric(folder, visibility, data){
+    const {map} = data;
+    const lineLayer = `${folder}-line-layer`;
+    const markerLayer = `${folder}-marker-layer`;
+    if (map.getLayer(lineLayer)) {
+        map.setLayoutProperty(lineLayer, 'visibility', (visibility) ? 'visible' : 'none');
+    }
+    if (map.getLayer(markerLayer)) {
+        map.setLayoutProperty(markerLayer, 'visibility', (visibility) ? 'visible' : 'none');
     }
 }
