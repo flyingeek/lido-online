@@ -9,10 +9,13 @@ export default function mapResizeAction(node, map) {
     });
     }, {threshold: 1});
     observer.observe(node);
-    const orientationChange = (e) => {
-        resizeMap();
+    const handleVisibilityChange = () =>{
+        if (document && document.visibilityState && document.visibilityState === 'visible') {
+            resizeMap();
+        }
     };
-    window.addEventListener("orientationchange", orientationChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange, false);
+    window.addEventListener("orientationchange", resizeMap);
 
     return {
         update(map) {
@@ -21,7 +24,8 @@ export default function mapResizeAction(node, map) {
         destroy() {
             observer.unobserve(node);
             observer.disconnect();
-            window.removeEventListener("orientationchange", orientationChange);
+            window.removeEventListener("orientationchange", resizeMap);
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
             if (currentMap) currentMap.remove();
             //console.log('map removed');
         }
