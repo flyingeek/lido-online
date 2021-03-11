@@ -1,5 +1,6 @@
 <script context="module">
-    const target = (!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)) ? '_blank' : null;
+    console.log(navigator.platform);
+    const target = (navigator.standalone || (!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))) ? '_blank' : null;
     const dataURL = function (str, type = "application/vnd.google-earth.kml+xml") {
         return "data:" + type + ";base64," + btoa(unescape(encodeURIComponent(str)));
     };
@@ -71,7 +72,8 @@
     <option selected={selected === 1} value="{1}">{options[1]}</option>
   </select>
   <div class="input-group-append">
-    <a class="btn btn-success" download={filename} href={url} on:click={download} target={target}>{label}</a>
+      <!-- Using the download attribute in standalone mode makes the app to lost the ofp on return (last check on iPadOS 14.4)-->
+    <a class="btn btn-success" download={(navigator.standalone) ? null : filename} href={url} on:click={download} target={target}>{label}</a>
   </div>
 </div>
 <style>
