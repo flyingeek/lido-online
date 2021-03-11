@@ -22,7 +22,7 @@ export const checkSWUpdate = () => {
     }
 }
 
-export const handleVisibilityChange = () =>{
+export const checkSwOnVisibilityChange = () =>{
     if (document && document.visibilityState && document.visibilityState === 'visible') {
         checkSWUpdate();
     }

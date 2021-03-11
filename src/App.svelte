@@ -1,5 +1,5 @@
 <script>
-
+  import {onMount} from 'svelte';
   import LidoRoute from "./components/LidoRoute.svelte";
   import Export from "./components/Export.svelte";
   import Gramet from "./components/Gramet.svelte";
@@ -11,13 +11,22 @@
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
   import {storage, stores, validate, setHistory, storeSettingsFromURL} from "./components/mapSettings/storage.js";
-  import {swDismiss, sidebar, route, ofpPromise} from "./stores.js";
+  import {swDismiss, sidebar, route, ofpPromise, checkSwOnVisibilityChange} from "./stores.js";
   import HomePwaInstall from './components/HomePwaInstall.svelte';
   import {runningOnIpad} from './components/utils';
+
+  const redirect = (requestedRoute) => {
+    console.log(`unkwnown route ${requestedRoute}, redirecting to #/`, !!$ofpPromise); 
+    window.location.hash = '#/';
+  }
 
   storeSettingsFromURL(window.location.search);
   let kmlOptions = validate(storage.getItem(stores.optionsKML) || {}); //include default
   setHistory(kmlOptions, $route);
+  onMount(() => {
+        document.addEventListener("visibilitychange", checkSwOnVisibilityChange, false);
+        return () => document.removeEventListener("visibilitychange", checkSwOnVisibilityChange);
+  });
 </script>
 
 <main class="container {$route.substr(1) || 'home'}">
@@ -68,7 +77,7 @@
         <Page><Help /></Page>
       {:else if !$ofpPromise}
         <!-- redirect -->
-        { window.location.hash = '#/'}
+        { redirect($route) }
       {/if}
     {/if}
   </div>
