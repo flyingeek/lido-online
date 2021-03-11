@@ -20,9 +20,17 @@
             {#if !requiredNavigator}
             <p class="guide error">Merci d'ouvrir cette page dans Safari</p>
             {:else}
-            <p class="guide">Cliquez en haut sur
-                <svg><use xlink:href="#share" /></svg>
-                puis faites défiler pour choisir “<b>Sur l'écran d'accueil</b>”</p>
+                    <ol class="guide">
+                        <li>Dans la barre de menu, cliquez sur <svg><use xlink:href="#share" /></svg></li>
+                        <li>Faites défiler, choisir&#8239;: <em>Sur l'écran d'accueil</em>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="12" y1="8" x2="12" y2="16"/>
+                            <line x1="8" y1="12" x2="16" y2="12"/>
+                            </svg>
+                        </li>
+                        <li>Lancez l'application depuis l'écran d'accueil</li>
+                    </ol>
             {/if}
         </div>
     </div>
@@ -67,21 +75,21 @@
     }
     h3 {
         font-size: 24px;
-        margin: 0 0 20px;
     }
     .text{
         font-size: 14px;
         line-height: 20px;
-        margin: 0 0 46px;
+        margin: 0 0 1em;
         text-align: justify;
     }
     .guide{
-        align-items: center;
         display: flex;
         font-size: 16px;
         justify-content: center;
         margin: 0;
         line-height: 35px;
+        text-align: left;
+        flex-direction: column;
     }
     .guide.error{
         font-weight: 600;
@@ -92,6 +100,28 @@
         width: 30px;
         height: 30px;
         fill: #007AFF;
+    }
+    svg[fill=none]{
+        fill: transparent;
+        width: 22px;
+        height: 22px;
+        margin-left: 12px;
+    }
+    ol {
+        list-style: none;
+        counter-reset: guide-counter;
+        margin-left: 80px !important;
+    }
+    ol li {
+        counter-increment: guide-counter;
+        text-align: left;
+    }
+    ol li::before {
+        content: counter(guide-counter);
+        color: var(--blueaf);
+        font-weight: bold;
+        font-size: large;
+        margin-right: 10px;
     }
 
 </style>
