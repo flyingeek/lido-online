@@ -90,6 +90,7 @@
     width: 100%;
     position: fixed;
     --blueaf: #002157;
+    --redaf:#FA3C35;
   }
   .content{
     background-color:var(--blueaf);

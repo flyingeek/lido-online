@@ -50,4 +50,11 @@ $: updateVersion($wb);
         width: 24px;
         display: inline-block;
     }
+    :global(span.flytax){
+        color: var(--blueaf);
+        text-transform: uppercase;
+    }
+    :global(span.flytax > span){
+        color: var(--redaf);
+    }
 </style>
