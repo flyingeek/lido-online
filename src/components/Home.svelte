@@ -11,7 +11,7 @@
       </div>
     </div></div>
     <div class="col-12 col-sm-6 col-md-6 col-xl-3"><div class="card mapsme">
-      <div class="card-header">Plusieurs Projections</div>
+      <div class="card-header">Multiples Projections</div>
       <div class="card-body">
         <p class="card-text">Des cartes LAMBERT conformes, un ATLAS, et une MERCATOR avec 12 niveaux de zoom. Export en format KML vers Mapsme ou Avenza</p>
       </div>

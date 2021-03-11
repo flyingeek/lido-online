@@ -93,7 +93,7 @@
     --blueaf_rgb: 9,34,84; /* rgba(var(--blueaf_rgb), 0.5) is valid */
     --redaf:#FA3C35; /* --tart-orange */
     --blood-red: #6B0504; /* for visited links */
-    --green: #2CA58D; /* #28a745 */;
+    /*--green: #2CA58D; /* #28a745 */;
     --snow: #FFFBFF;
     --minion-yellow: #ECD444;
     --light-grey: #eee; /* used to print tables */

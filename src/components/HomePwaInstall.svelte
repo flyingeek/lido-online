@@ -13,24 +13,23 @@
         </div>
         <div class="prompt-content">
             <h3 class="title">Installez OFP2MAP</h3>
-            <p class="text">En raison du cache utilisé pour le mode déconnecté, cette application doit,
-                sur l'iPad, être installée sur l'écran d'accueil, puis être lancée depuis l'écran d'accueil.{#if !requiredNavigator}<span>&nbsp;L'installation ne peut se faire que depuis
-                le navigateur Safari.</span>{/if}
+            <p class="text">Si OFP2MAP est déjà sur l'écran d'accueil, ne l'installez pas une deuxième fois. Attention: l'installation ne peut se faire que depuis
+                le navigateur Safari, ce n'est pas possible depuis une WebView (à l'intérieur d'une app).
             </p>
             {#if !requiredNavigator}
-            <p class="guide error">Merci d'ouvrir cette page dans Safari</p>
+                <p class="guide error">Merci d'ouvrir cette page dans Safari</p>
             {:else}
-                    <ol class="guide">
-                        <li>Dans la barre de menu, cliquez sur <svg><use xlink:href="#share" /></svg></li>
-                        <li>Faites défiler, choisir&#8239;: <em>Sur l'écran d'accueil</em>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                            <line x1="12" y1="8" x2="12" y2="16"/>
-                            <line x1="8" y1="12" x2="16" y2="12"/>
-                            </svg>
-                        </li>
-                        <li>Lancez l'application depuis l'écran d'accueil</li>
-                    </ol>
+                <ol class="guide">
+                    <li>Dans la barre de menu, cliquez sur <svg><use xlink:href="#share" /></svg></li>
+                    <li>Faites défiler, choisir&#8239;: <em>Sur l'écran d'accueil</em>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="12" y1="8" x2="12" y2="16"/>
+                        <line x1="8" y1="12" x2="16" y2="12"/>
+                        </svg>
+                    </li>
+                    <li>Lancez l'application depuis l'écran d'accueil</li>
+                </ol>
             {/if}
         </div>
     </div>
@@ -110,7 +109,7 @@
     ol {
         list-style: none;
         counter-reset: guide-counter;
-        margin-left: 80px !important;
+        margin-left: 60px !important;
     }
     ol li {
         counter-increment: guide-counter;
