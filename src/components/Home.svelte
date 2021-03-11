@@ -13,19 +13,19 @@
     <div class="col-12 col-sm-6 col-md-6 col-xl-3"><div class="card mapsme">
       <div class="card-header">Plusieurs Projections</div>
       <div class="card-body">
-        <p class="card-text">LAMBERT pour des cartes conformes, un ATLAS, et une MERCATOR avec 12 niveaux de zoom. Il est aussi possible d'exporter le KML vers d'autres applications comme Mapsme ou Avenza.</p>
+        <p class="card-text">Des cartes LAMBERT conformes, un ATLAS, et une MERCATOR avec 12 niveaux de zoom. Export en format KML vers Mapsme ou Avenza</p>
       </div>
     </div></div>
     <div class="col-12 col-sm-6 col-md-6 col-xl-3"><div class="card ogimet">
       <div class="card-header">Compatible avec Ogimet</div>
       <div class="card-body">
-        <p class="card-text">Calcule une route pour ogimet et affiche le GRAMET</p>
+        <p class="card-text">Calcule une route pour ogimet et affiche le GRAMET qui est un météogramme combinant l'espace et le temps</p>
       </div>
     </div></div>
     <div class="col-12 col-sm-6 col-md-6 col-xl-3"><div class="card shortcuts">
       <div class="card-header">Compatible Raccourcis</div>
       <div class="card-body">
-        <p class="card-text">Récupérez le KML, le Gramet, et une route Lido optimisée dans l'app Raccourcis</p>
+        <p class="card-text">Avec l'app Raccourcis, automatisez en récupérant le KML, le Gramet, ou une route Lido optimisée</p>
       </div>
     </div></div>
   </div>

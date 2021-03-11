@@ -35,7 +35,9 @@ $: updateVersion($wb);
         font-size:x-small;
     }
     button {
-        float: right;
+        position: absolute;
+        right: 10px;
+        top: 10px;
     }
     div {
         background-color: white;

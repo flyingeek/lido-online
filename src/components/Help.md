@@ -4,10 +4,11 @@
 
 ## Préambule
 
-Cette app a été conçue pour le PilotPad. Elle nécessite des navigateurs récents pour fonctionner. Safari 14 iOS/Mac est compatible, Chrome 83 fonctionne aussi. Firefox dernière version devrait fonctionner (non testé).
-L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au plus 21 stations météo) est transmise à l'hébergeur du proxy (voir plus bas) puis à Ogimet.com pour récupérer le Gramet. L'app ne collecte aucune données.
-
 OFP2MAP est une application PWA (ou Web Application), elle peut être lancée soit depuis un navigateur, soit depuis l'écran d'accueil de l'iPad. Initialement, simple convertisseur de l'OFP en KML, OFP2MAP est devenu une vraie application de cartographie.
+
+OFP2MAP nécessite des navigateurs récents pour fonctionner. Safari 14 iOS/Mac est compatible, Chrome 83 fonctionne aussi.
+
+L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au plus 21 stations météo) est transmise à l'hébergeur du proxy (voir plus bas) puis à Ogimet.com pour récupérer le Gramet. L'app ne collecte aucune données.
 
 ## Utilisation
 
@@ -20,8 +21,8 @@ OFP2MAP est une application PWA (ou Web Application), elle peut être lancée so
 4. La carte par défaut est une LAMBERT, il est possible sur la carte, en haut à gauche, de basculer sur d'autres projections.
     - LAMBERT NORTH (parallèles sécants N30 et N65) est recommandée au-dessus du N40
     - LAMBERT SOUTH & PACIFIC (parallèles sécants N30 et S15 ) sont recommandées sous N30
-    - THE WORLD permet de disposer d'un Atlas off-line, c'est une projection Times.
-    - MERCATOR est une Web Mercator avec un thème est inspiré des cartes VFR. Il y a 12 niveaux de zoom, le cache offline est limité à un zoom de niveau 6.
+    - THE WORLD permet de disposer d'un Atlas off-line, c'est une projection Times
+    - MERCATOR est une Web Mercator avec un thème est inspiré des cartes VFR. Il y a 12 niveaux de zoom, dont 6 disponibles off-line
 
 
 5. Navigation dans la carte: on peut avec un doigt déplacer la carte, zoomer ou orienter la carte avec deux doigts. Il est aussi possible de modifier l'angle de vue en balayant de haut en bas avec deux doigts.
@@ -57,6 +58,8 @@ apparaitre vous demandant d'autoriser cette mise à jour. La version AIRAC et le
 - Le site est développé en javascript à l'aide du framework SVELTE
 - La partie serveur (un proxy pour pouvoir récupérer l'image du GRAMET) est en python.
 - Eric Delord CDB 777 est l'auteur. Le code source est disponible sur GitHub pour [l'app](https://github.com/flyingeek/lido-online) et [le proxy](https://github.com/flyingeek/ofp2map-gramet)
+
+## Hébergement
 
 L'hébergement des images est normalement fourni par alwaysdata.com (pack gratuit) mais en raison d'un blacklistage sur le réseau internet d'AF, les fonds de cartes sont à présent hébergés sur netlify. Le proxy gramet est lui dorénavant hébergé sur vercel.
 
