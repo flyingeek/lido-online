@@ -9,7 +9,7 @@ OFP2MAP est une application PWA (ou Web Application), elle peut être lancée so
 
 1. Dans Pilot Mission, onglet «Dossier de vol», affichez le PDF nommé "Dossier de vol OFP". Sur la gauche, cliquez sur le carré avec une flèche vers le haut. Choisissez «Enregistrer dans Fichiers». Dans l'app, c'est cet OFP qu'il faut ensuite sélectionner.
 
-2. Dans l'application, il est possible, lorsque l'on visualise la carte, d'afficher le menu de personnalisation en cliquant sur  l'icône en haut à droite (le "hamburger"). Dans les résolutions plus faibles, sur iPhone ou en mode "split view", ces réglages sont affichés sous la carte. Le type avion pour l'adéquation des terrains est détecté dans l'OFP. Pour vous entrainer, je vous recommande de modifier la couleur des terrains en vert/rouge et de sauvegarder votre choix.
+2. Lorsque l'on visualise la carte, le menu de personnalisation s'affiche en cliquant sur <svg style="vertical-align: bottom;"><use xlink:href="#bars" /></svg> en haut à droite. Le type avion pour l'adéquation des terrains est détecté dans l'OFP. Pour vous entrainer, je vous recommande de modifier la couleur des terrains en vert/rouge et de sauvegarder votre choix.
 
 3. Pour Exporter vers une app, direction le menu EXPORT, vous pouvez exporter une route pour mPilot, télécharger le KML (routes et tracks uniquement), ou envoyer vers l'app **Raccourcis** d'Apple.
 
@@ -28,13 +28,13 @@ OFP2MAP ne peut être lancé que depuis l'écran d'accueil, l'application se lan
 
 Pour partager le lien vers OFP2MAP, utilisez le menu PARTAGER puis utilisez AirDrop.
 
-L'export des fichiers KML affiche une page nommée "data:", en dessous du nom du fichier, vous trouverez un lien "Ouvrir dans 'nom_application'", pour changer l'application d'export, cliquez en dessous sur "Options...". Cliquez en haut à gauche sur OK pour revenir à OFP2MAP, il faudra peut-être recharger l'OFP.
+L'export des fichiers KML affiche une page nommée "data:", utilisez le bouton <svg style="vertical-align: bottom;"><use xlink:href="#share" /></svg> pour choisir l'app qui recevra le fichier. Cliquez en haut à gauche sur OK pour revenir à OFP2MAP. En raison d'un bug d'iOS, il est impossible de nommer le fichier pour le moment.
 
 À noter que parfois, des bugs d'affichage peuvent apparaître&#8239;:  lorsque l'on retourne sur l'app, l'app est zoomée, il faut alors juste dézoomer en utilisant un pinch de deux doigts sur la barre de menu. Il est aussi possible de tuer l'app,  même en mode déconnecté, pour la relancer.
 
 ## Mode off-line
 
-Une fois un premier OFP chargé, il est possible même en mode déconnecté de charger un autre OFP pour l'exporter. Le cache de l'App vous permettra de naviguer sur les cartes déjà visualisées. Pour mettre en cache les cartes, cliquez sur le symbole ↓ situé à droite du sélecteur de carte. Les cartes Lambert sont mises en cache en totalité, il en est de même pour l'atlas The World, par contre pour la Mercator, seule la partie de carte incluant la route sera mise en cache. Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 40Mo de données. Les caches des autres projections utilisent&#8239;: North 7.1 Mo, Pacific 3.7Mo, South 6.4Mo et The World 31.7Mo.
+Une fois un premier OFP chargé, il est possible même en mode déconnecté de charger un autre OFP pour l'exporter. Le cache de l'App vous permettra de naviguer sur les cartes déjà visualisées. Pour mettre en cache les cartes, cliquez sur le symbole ↓ situé à droite du sélecteur de carte. Les cartes Lambert sont mises en cache en totalité, il en est de même pour l'atlas The World, par contre pour la Mercator, seule la partie de carte incluant la route sera mise en cache. Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 40Mo de données. Les caches des autres projections utilisent&#8239;: 7Mo pour la _North_, 4Mo pour la _Pacific_, 7Mo pour la _South_ et 32Mo pour _The World_.
 
 ## Mise à jour
 
