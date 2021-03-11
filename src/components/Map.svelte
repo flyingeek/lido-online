@@ -40,16 +40,10 @@
             attribution.appendChild(document.createTextNode(`${"CONF_AIRAC".substring(0,2)}.${"CONF_AIRAC".substring(2,4)}`));
         }
     }
-    function destroyMap() {
-        if (map) map.remove();
-    }
-    function getMap() { //for resizeAction
-        return map;
-    }
 
     function projectionChange(e) {
         e.target.blur(); // to avoid zoom problem in standalone mode
-        destroyMap();
+        if (map) map.remove();
         cacheValue = 0;
         cacheError = false;
         tilesMissing = [];
@@ -113,7 +107,7 @@
 
 </script>
 
-<div id={id} use:mapResizeAction={[getMap, destroyMap]}></div>
+<div id={id} use:mapResizeAction={map}></div>
 <div class="mapmenu">
     <MapProjectionSelect bind:selected={selectedProjection} {ofp} on:change={projectionChange}/>
     {#if (selectedProjection && !ofp.isFake && window.indexedDB && $online && caches[selectedProjection.id]!==true && !mapIsCached)}
