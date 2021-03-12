@@ -3,7 +3,9 @@ import Helpmarkup from './Help.md';
 import {wb} from '../stores';
 const version = "APP_VERSION";
 let swVersion = '';
-const updateVersion = (_wb) => (_wb) ? _wb.messageSW({type: 'GET_VERSION'}).then(v => swVersion = v) : '';
+const updateVersion = (_wb) => {
+    return (_wb) ? _wb.messageSW({type: 'GET_VERSION'}).then(v => swVersion = v) : '';
+}
 const reload = () => {
     window.location.hash = '#/';
     console.log('reload page');
@@ -15,7 +17,7 @@ $: updateVersion($wb);
 
 <div class="markdown">
     <h1><img src="images/ofp2map-icons/icon-128x128.png" alt="logo"> OFP2MAP v{version} 
-        <small on:click|once={() => $wb.update() && console.log('updating SW')}>/ ServiceWorker&#8239;: {swVersion}</small>
+        <small on:click|once={() => $wb && $wb.update() && console.log('updating SW')}>/ ServiceWorker&#8239;: {swVersion}</small>
         {#if navigator.standalone === true || 'process.env.NODE_ENV' === '"development"'}<button class="btn btn-primary btn-sm" on:click={reload}>Recharger l'App</button>{/if}
     </h1>
     <Helpmarkup/>
