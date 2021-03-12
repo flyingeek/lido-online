@@ -35,7 +35,7 @@
       <HomePwaInstall/>
     {:else}
       <Navbar>
-          <form class:invisible={$route === '/help'} class="form-inline" on:submit|preventDefault>
+          <form class="form-inline" on:submit|preventDefault>
             <OfpInput {kmlOptions} on:change={() => $sidebar = $swDismiss = false} />
           </form>
       </Navbar>
@@ -129,14 +129,6 @@
     min-height: 100%;
     position: relative;
   }
-  form {
-      margin-right: 30px; /* for hamburger */
-  }
-  @media (max-width: 330px), (max-height: 720px) {
-    main.map {
-      display:block;
-    }
-  }
   @media (max-width: 575px) { /* allow scrolling long pages */
     :global(html, body) {
       position: relative;
@@ -151,5 +143,8 @@
       margin-right: auto;
       margin-left: auto;
     }
+  }
+  .form-inline {
+    padding-bottom: 2px;
   }
 </style>

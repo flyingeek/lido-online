@@ -84,7 +84,8 @@
     nav {
       flex: 0 1 auto;
       margin: 0 -10px;
-      position: static; /* for no ofp prompt */
+      position: static; /* for no ofp prompt on home page bottom */
+      padding: 2px 10px 0px 10px;
     }
     ul {
       flex-direction: row;

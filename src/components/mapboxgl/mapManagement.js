@@ -2,6 +2,7 @@
 
 import {clamp, isInside, addToSWCache, lineclip, getBounds} from '../utils';
 import {loadMapLayers} from './layersManagement';
+import {sidebar} from '../../stores';
 import times from './pj_times';
 
 export const token = 'MAPBOX_TOKEN';
@@ -136,6 +137,29 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
         }
     }
     const mapData = {map, affine, affineAndClamp, affineAndClip, affineOrDrop, bbox, mapOptions};
+
+    class LayersControl {
+        onAdd(map) {
+        this._map = map;
+        this._container = document.createElement('div');
+        this._container.className = 'mapboxgl-ctrl  mapboxgl-ctrl-group';
+        this._button = document.createElement('button');
+        this._button.className = 'mapboxgl-ctrl-layers';
+        this._button.setAttribute('type', "button");
+        this._button.setAttribute('title', "Personnaliser la carte");
+        this._button.innerHTML = `<span class="mapboxgl-ctrl-icon" aria-hidden="true"></span>`;
+        this._container.appendChild(this._button);
+        this._toggleSidebar = () => sidebar.update((value) => !value);
+        this._button.addEventListener('click', this._toggleSidebar);
+        return this._container;
+        }
+        onRemove() {
+        this._button.removeEventListener('click', this._toggleSidebar);
+        this._container.parentNode.removeChild(this._container);
+        this._map = undefined;
+        }
+    }
+    map.addControl(new(LayersControl));
     map.addControl(geolocate);
     map.on('load', function() {
 

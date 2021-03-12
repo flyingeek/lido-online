@@ -182,9 +182,7 @@ input:lang(fr) ~ label::after {
 }
 
 label {
-    padding-right: 120px;
-    display: inline-block;
-    width: auto;
+    justify-content: flex-start
 }
 .custom-file {
     width: auto
@@ -221,9 +219,6 @@ select {
 @media (max-width: 767px){
     input ~ label::after, input:lang(fr) ~ label::after {
         content: "OFP…" !important;
-    }
-    label {
-        width: 0;
     }
     .custom-file {
         width: 140px;

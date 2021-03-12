@@ -22,7 +22,6 @@
     const store = stores.optionsKML;
     export let kmlOptions;
     let storedOptions = {...kmlDefaultOptions, ...(storage.getItem(store) ||{})};
-    let hamburgerBlink = compare(kmlDefaultOptions, kmlOptions); // check only on entry
     $: isDefault = compare(kmlDefaultOptions, kmlOptions);
     $: isChanged = !compare(storedOptions, kmlOptions);
 
@@ -74,24 +73,15 @@
         storedOptions = {...kmlOptions};
     }
 </script>
-<a
-class="hamburger"
-role="button"
-href="."
-on:click|preventDefault={() =>  {$sidebar = !$sidebar; hamburgerBlink = false;}}>
-<svg class:blink={isDefault}>
-    <use xlink:href="#bars" />
-</svg>
-</a>
+
 {#if $sidebar}
 <div class:sidebar={$sidebar} class="settings"  use:clickOutside on:click_outside={() => $sidebar=false} transition:fly="{{duration: 300, x: 200, y: 0}}">
-
     <a
     class="closeB"
     role="button"
     href="."
-    on:click|preventDefault={() =>  {$sidebar = !$sidebar; hamburgerBlink = false;}}>
-    <svg class:blink={hamburgerBlink}>
+    on:click|preventDefault={() =>  {$sidebar = !$sidebar}}>
+    <svg>
         <use xlink:href="#close" />
     </svg>
     </a>
@@ -156,26 +146,21 @@ on:click|preventDefault={() =>  {$sidebar = !$sidebar; hamburgerBlink = false;}}
         width: 250px;
         margin-top: 3px;
     }
-    .hamburger {
-        position: absolute;
-        right: 10px;
-        top: 0.7rem;
-    }
     .closeB {
         position: absolute;
         right:10px;
-        top: 10px;
+        top: 7px;
     }
     .settings {
         position: absolute;
-        right: 0;
+        right: -10px;
         transition: right 0.15s ease-out;
         background-color: #eee;
         border-left: 1px solid rgba(255,255,255,0.2);
         padding: 5px;
         z-index: 2;
-        height: 100%;
-        top: 0;
+        /* height: 100%; */
+        /* top: 0; */
     }
     .reset button{
         background-color: #e2e6ea;
@@ -197,17 +182,5 @@ on:click|preventDefault={() =>  {$sidebar = !$sidebar; hamburgerBlink = false;}}
         height: 20px;
         animation: none;
     }
-    svg.blink {
-        animation: blink 3s ease infinite;
-    }
-
-
-    @keyframes blink {
-        0% { transform: scale(1.0);}
-        75% { transform: scale(1.0); }
-        80% { transform: scale(1.2); }
-        95% { transform: scale(1.2); }
-        100% { transform: scale(1.0); }
-    } 
 
 </style>

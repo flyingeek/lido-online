@@ -14,7 +14,7 @@ L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au pl
 
 1. Dans Pilot Mission, onglet «Dossier de vol», affichez le PDF nommé "Dossier de vol OFP". Sur la gauche, cliquez sur le carré avec une flèche vers le haut. Choisissez «Enregistrer dans Fichiers». Dans l'app, c'est cet OFP qu'il faut ensuite sélectionner.
 
-2. Lorsque l'on visualise la carte, le menu de personnalisation s'affiche en cliquant sur <svg style="vertical-align: bottom;"><use xlink:href="#bars" /></svg> en haut à droite. Le type avion pour l'adéquation des terrains est détecté dans l'OFP. Pour vous entrainer, je vous recommande de modifier la couleur des terrains en vert/rouge et de sauvegarder votre choix.
+2. La carte dispose d'un bouton pour personnaliser les couleurs. Le type avion pour l'adéquation des terrains est détecté dans l'OFP. Pour vous entrainer, je vous recommande de modifier la couleur des terrains en vert/rouge et de sauvegarder votre choix.
 
 3. Pour Exporter vers une app, direction le menu EXPORT, vous pouvez exporter une route pour mPilot, télécharger le KML (routes et tracks uniquement), ou envoyer vers l'app **Raccourcis** d'Apple.
 
@@ -25,7 +25,7 @@ L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au pl
     - MERCATOR est une Web Mercator avec un thème est inspiré des cartes VFR. Il y a 12 niveaux de zoom, dont 6 disponibles off-line
 
 
-5. Navigation dans la carte: on peut avec un doigt déplacer la carte, zoomer ou orienter la carte avec deux doigts. Il est aussi possible de modifier l'angle de vue en balayant de haut en bas avec deux doigts.
+5. Navigation dans la carte: on peut avec un doigt déplacer la carte, zoomer ou orienter la carte avec deux doigts. Il est aussi possible de modifier l'angle de vue en balayant de haut en bas avec deux doigts. Si vous activez le bouton de géolocalisation, la carte peut se centrer automatiquement.
 
 ## Particularités de l'iPad
 

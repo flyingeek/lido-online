@@ -3,24 +3,24 @@ import {folderName} from './utils';
 
 export const kmlDefaultOptions = {
     "routePin": 0,
-    "routeColor": "FFDA25A8",
+    "routeColor": "FFDA25A8", /* #A825DAFF */
     "alternateDisplay": true,
     "alternatePin": 0,
-    "alternateColor": "FFFF00FF",
+    "alternateColor": "FFFF00FF", /* #FF00FFFF */
     "natDisplay": true,
     "natPin": 8,
     "natPinPosition": 0,
     "natColor": "80DA25A8",
-    "natIncompleteColor": "FF0000FF",
+    "natIncompleteColor": "FF0000FF", /* #FF0000FF */
     "greatCircleDisplay": true,
-    "greatCircleColor": "5F1478FF",
+    "greatCircleColor": "5F1478FF", /* #FF78145F */
     "ogimetDisplay": true,
-    "ogimetColor": "40FF0000",
+    "ogimetColor": "40FF0000", /* #0000FF40 */
     "airportDisplay": true,
     "airportPin": 0,
     "firDisplay": true,
     "etopsDisplay": true,
-    "etopsColor": "FF0324FC"
+    "etopsColor": "FF0324FC" /* #FC2403FF */
     // "sigmetDisplay": false,
     // "sigmetPin": 2,
     // "sigmetColor": "6200FBFF"
