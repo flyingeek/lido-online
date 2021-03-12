@@ -12,8 +12,8 @@
     import {kmlDefaultOptions} from "../kml.js";
     import { createEventDispatcher } from 'svelte';
     import { fly } from 'svelte/transition';
-    import KmlColor from "./KmlColor.svelte";
-    import PinSelector from './PinSelector.svelte';
+    import ColorPinCombo from './ColorPinCombo.svelte';
+    import CheckboxColorCombo from './CheckboxColorCombo.svelte';
     import AirportSelector from './AirportSelector.svelte';
     import {storage, stores} from './storage.js';
     import {sidebar} from "../../stores.js";
@@ -21,7 +21,6 @@
     const dispatch = createEventDispatcher();
     const store = stores.optionsKML;
     export let kmlOptions;
-    export let mode = "col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12";
     let storedOptions = {...kmlDefaultOptions, ...(storage.getItem(store) ||{})};
     let hamburgerBlink = compare(kmlDefaultOptions, kmlOptions); // check only on entry
     $: isDefault = compare(kmlDefaultOptions, kmlOptions);
@@ -98,128 +97,56 @@ on:click|preventDefault={() =>  {$sidebar = !$sidebar; hamburgerBlink = false;}}
     </a>
     <form on:submit|preventDefault>
         <div class="reset">
-            {#if !isDefault }<button class="btn btn-link btn-sm reset" type="button" on:click={reset}>Revenir aux valeurs par défaut</button>{/if}
+            <button class="btn btn-light btn-sm" class:invisible={isDefault} type="button" on:click={reset}>Revenir aux valeurs par défaut</button>
         </div>
         <fieldset class="form-group">
             <legend>Route</legend>
-            <div class="row">
-                <div class={mode}>
-                    <KmlColor name="route-color" kmlColor={kmlOptions['routeColor']} on:change={update}/>
-                </div>
-                <div class={mode}>
-                    <PinSelector name="route-pin" selected={kmlOptions['routePin']} on:change={update}/>
-                </div>
-            </div>
+                <ColorPinCombo name="route" kmlColor={kmlOptions['routeColor']} selected={kmlOptions['routePin']} on:change={update} />
         </fieldset>
         <fieldset class="form-group">
             <legend><input name="alternate-display" checked={kmlOptions['alternateDisplay']} type="checkbox" on:change={update} />Dégagement</legend>
-            <div class="row">
-                <div class={mode}>
-                    <KmlColor name="alternate-color" kmlColor={kmlOptions['alternateColor']} on:change={update}/>
-                </div>
-                <div class={mode}>
-                    <PinSelector name="alternate-pin" selected={kmlOptions['alternatePin']} on:change={update}/>
-                </div>
-            </div>
+            <ColorPinCombo name="alternate" kmlColor={kmlOptions['alternateColor']} selected={kmlOptions['alternatePin']} on:change={update} />
         </fieldset>
         <fieldset class="form-group">
             <legend><input name="nat-display" checked={kmlOptions['natDisplay']} type="checkbox" on:change={update}/>Tracks</legend>
-            <div class="row">
-                <div class={mode}>
-                    <KmlColor  name="nat-color" kmlColor={kmlOptions['natColor']} on:change={update}/>
-                    <small class="form-text text-muted">Un track incomplet restera rouge.</small>
-                </div>
-                <div class={mode}>
-                    <PinSelector  name="nat-pin" selected={kmlOptions['natPin']} on:change={update}/>
-                    <small class="form-text text-muted">Positionné à l'entrée des tracks.</small>
-                </div>
-            </div>
+            <ColorPinCombo name="nat" kmlColor={kmlOptions['natColor']} selected={kmlOptions['natPin']} on:change={update} />
+            <small class="form-text text-muted">Positionné à l'entrée des tracks, un track incomplet restera rouge.</small>
         </fieldset>
-        <div class="row">
-            <div class={mode}>
-                <fieldset class="form-group">
-                    <legend><input name="great-circle-display" checked={kmlOptions['greatCircleDisplay']} type="checkbox" on:change={update}/>Orthodromie</legend>
-                    <div class="row">
-                        <div class="col">
-                            <KmlColor name="great-circle-color" kmlColor={kmlOptions['greatCircleColor']} on:change={update}/>
-                        </div>
-                    </div>
-                </fieldset>
-            </div>
-            <div class={mode}>
-                <fieldset class="form-group">
-                    <legend><input name="ogimet-display" checked={kmlOptions['ogimetDisplay']} type="checkbox" on:change={update}/>Route du GRAMET</legend>
-                    <div class="row">
-                        <div class="col">
-                            <KmlColor name="ogimet-color" kmlColor={kmlOptions['ogimetColor']} on:change={update}/>
-                        </div>
-                    </div>
-                </fieldset>
-            </div>
-        </div>
-        <div class="row">
-            <div class={mode}>
-                <fieldset class="form-group">
-                    <legend><input name="etops-display" checked={kmlOptions['etopsDisplay']} type="checkbox" on:change={update}/>Etops</legend>
-                    <div class="row">
-                        <div class="col">
-                            <KmlColor name="etops-color" kmlColor={kmlOptions['etopsColor']} on:change={update}/>
-                        </div>
-                    </div>
-                </fieldset>
-            </div>
-            <div class={mode}>
-                <fieldset class="form-group">
-                    <legend><input name="airport-display" checked={kmlOptions['airportDisplay']} type="checkbox" on:change={update}/>Airports</legend>
-                    <div class="row">
-                        <div class="col">
-                            <AirportSelector name="airport-pin" selected={kmlOptions['airportPin']} on:change={update} />
-                        </div>
-                    </div>
-                </fieldset>
-            </div>
-        </div>
-        <div class="row">
-            <div class={mode}>
-                <fieldset class="form-group">
-                    <legend><input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR SÛRETÉ</legend>
-                </fieldset>
-            </div>
-        </div>
-        <!-- <fieldset class="form-group">
-            <legend><input name="sigmet-display" checked={kmlOptions['sigmetDisplay']} type="checkbox" on:change={update}/>Sigmet</legend>
-            <div class="row">
-                <div class={mode}>
-                    <KmlColor  name="sigmet-color" kmlColor={kmlOptions['sigmetColor']} on:change={update}/>
-                </div>
-                <div class={mode}>
-                    <PinSelector  name="sigmet-pin" selected={kmlOptions['sigmetPin']} on:change={update}/>
-                </div>
-            </div>
-        </fieldset> -->
-        <div class="row last">
-            <div class={mode}>
+        <fieldset class="form-group">
+            <CheckboxColorCombo name="great-circle" label="Orthodromie" kmlColor={kmlOptions['greatCircleColor']} checked={kmlOptions['greatCircleDisplay']} on:change={update}/>
+        </fieldset>
+        <fieldset class="form-group">
+            <CheckboxColorCombo name="ogimet" label="Route GRAMET" kmlColor={kmlOptions['ogimetColor']} checked={kmlOptions['ogimetDisplay']} on:change={update}/>
+        </fieldset>
+        <fieldset class="form-group">
+            <CheckboxColorCombo name="etops" label="ETOPS" kmlColor={kmlOptions['etopsColor']} checked={kmlOptions['etopsDisplay']} on:change={update}/>
+        </fieldset>
+        <fieldset class="form-group">
+            <AirportSelector name="airport" selected={kmlOptions['airportPin']} checked={kmlOptions['airportDisplay']} on:change={update} />
+        </fieldset>
+        <fieldset class="form-group">
+            <legend><input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR SÛRETÉ</legend>
+        </fieldset>
+
+        <div class="last">
             <button disabled={!isChanged} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
             <button disabled={!isChanged} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
-            </div>
         </div>
     </form>
 </div>
 {/if}
 <style>
-    input[type="checkbox"] {
-        margin-bottom: 0.2rem;
+    .settings :global(input[type="checkbox"]) {
         margin-right: 0.5ch;
-        vertical-align: middle;
     }
-    .btn.disabled, .btn:disabled {
+    .btn:disabled {
         opacity: .3;
     }
     small {
-        margin-top: -0.3rem;
+        line-height: 1.1;
         margin-bottom: 0.25rem;
     }
-    legend {
+    .settings :global(legend, .checkbox-combo .input-group-text) {
         font-size: 1rem;
         font-weight: bold;
         font-variant-caps: all-small-caps;
@@ -236,7 +163,7 @@ on:click|preventDefault={() =>  {$sidebar = !$sidebar; hamburgerBlink = false;}}
     }
     .closeB {
         position: absolute;
-        left: 230px;
+        right:10px;
         top: 10px;
     }
     .settings {
@@ -251,11 +178,8 @@ on:click|preventDefault={() =>  {$sidebar = !$sidebar; hamburgerBlink = false;}}
         top: 0;
     }
     .reset button{
-        padding: 0;
+        background-color: #e2e6ea;
         color: var(--gray);
-    }
-    .reset {
-        min-height: 30px;
     }
     @supports ( backdrop-filter: blur(4px) ) or ( -webkit-backdrop-filter: blur(4px) ) {
         .settings {
@@ -264,32 +188,14 @@ on:click|preventDefault={() =>  {$sidebar = !$sidebar; hamburgerBlink = false;}}
             -webkit-backdrop-filter: blur(4px);
         }
     }
-    .form-group {
-        margin-bottom: 0;
-        margin-top: 2px;    
-    }
-    .row.last {
+    .last {
         margin-top: 24px;
     }
-    /* @media (max-width: 330px), (max-height: 720px){
-        .hamburger, .closeB {
-            display: none;
-        }
-        .settings {
-            position: relative;
-            background-color: inherit;
-            right: 0;
-            height: auto;
-        }
-        form {
-            width: auto;
-        }
-    } */
     svg {
-      fill:#555;
-      width: 20px;
-      height: 20px;
-      animation: none;
+        fill:#555;
+        width: 20px;
+        height: 20px;
+        animation: none;
     }
     svg.blink {
         animation: blink 3s ease infinite;

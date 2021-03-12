@@ -1,5 +1,5 @@
 import {addLines} from '../utils';
-import {kml2mapColor} from "../../mapSettings/KmlColor.svelte";
+import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
 
 const folder = 'etops';
 const epCircleLayer = `${folder}-ep-circle-line-layer`;

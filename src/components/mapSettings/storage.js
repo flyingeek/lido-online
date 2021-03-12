@@ -1,4 +1,4 @@
-import {kmlRegex} from './KmlColor.svelte';
+import {kmlRegex} from './ColorPinCombo.svelte';
 import {kmlDefaultOptions} from '../kml';
 
 class Storage {

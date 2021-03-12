@@ -18,14 +18,14 @@
     export let name;
 </script>
 
-<div class="input-group">
+<kmlpin class="input-group">
     <div class="input-group-prepend">
         <label class="input-group-text" for="{name}">Repère</label>
-        <span class="input-group-text">
+        <pin class="input-group-text">
             <svg>
                 <use xlink:href="#marker" style="stroke: {(selected === 0) ? '#fff': '#000' }; fill: {options[selected].color};"></use>
             </svg>
-        </span>
+        </pin>
     </div>
     <!-- svelte-ignore a11y-no-onchange -->
     <select name="{name}" bind:value={selected} class="custom-select" on:change={dispatch("change", {name, 'value': selected})}>
@@ -33,26 +33,11 @@
         <option value="{index}" selected={index === selected}>{option.label}</option>
         {/each}
     </select>
-</div>
+</kmlpin>
 
 <style>
-    div.input-group {
+    kmlpin.input-group {
         margin-bottom: 0.4em;
-    }
-    select {
-        border-left: 0px;
-        padding-left: 0.2rem;
-    }
-    span {
-        background-color: white;
-        padding: 0 0 0 0.2rem;
-        border-right: 0px;
-    }
-    svg{
-        stroke: white;
-        fill: white;
-        height: 1.1rem;
-        width: 1.1rem;
     }
     label {
         width: 5em;

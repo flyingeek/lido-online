@@ -1,5 +1,5 @@
 /* global mapboxgl */
-import {kml2mapColor} from "../../mapSettings/KmlColor.svelte";
+import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
 import {supportsHover} from "../../utils";
 
 const folder = 'airport';

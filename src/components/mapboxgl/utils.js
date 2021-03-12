@@ -1,5 +1,5 @@
 import {jsonLine, jsonPoint, featureCollection} from './json';
-import {kml2mapColor} from "../mapSettings/KmlColor.svelte";
+import {kml2mapColor} from "../mapSettings/ColorPinCombo.svelte";
 
 export const pinColors = [
     '#FFFFFF', '#6699FF', '#FFFF00',
@@ -134,6 +134,7 @@ export function changeMarkerGeneric(folder, data){
         map.setLayoutProperty(markerLayer, 'icon-image', (selectedPin !== 0) ? 'sdf-marker-15' : 'sdf-triangle');
         map.setLayoutProperty(markerLayer, 'icon-anchor', (selectedPin !== 0) ? 'bottom' : 'center');
     }
+    return true; // allows chaining
 }
 export function changeLineGeneric(folder, data){
     const {map, value} = data;
@@ -147,6 +148,7 @@ export function changeLineGeneric(folder, data){
     if (map.getLayer(markerLayer)) {
         map.setPaintProperty(markerLayer, 'text-color', hexcolor);
     }
+    return true; // allows chaining
 }
 export function changeDisplayGeneric(folder, visibility, data){
     const {map} = data;
@@ -158,4 +160,5 @@ export function changeDisplayGeneric(folder, visibility, data){
     if (map.getLayer(markerLayer)) {
         map.setLayoutProperty(markerLayer, 'visibility', (visibility) ? 'visible' : 'none');
     }
+    return true; // allows chaining
 }
