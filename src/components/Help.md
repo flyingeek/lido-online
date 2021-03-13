@@ -31,7 +31,7 @@ L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au pl
 
 OFP2MAP ne peut être lancé que depuis l'écran d'accueil, l'application se lance en plein écran. On ne peut pas recharger la page comme dans un navigateur&#8239;: il faudra pour cela aller dans le menu d'aide (cet écran) ou un bouton spécifique sera affiché en haut.
 
-Pour partager le lien vers OFP2MAP, utilisez le menu PARTAGER puis utilisez AirDrop.
+Pour partager le lien vers OFP2MAP, utilisez le bouton situé en haut sur cette page, ou le lien situé sous le logo sur la page d'accueil, puis utilisez AirDrop. {#if navigator.standalone !== true}Pour mémoire, dans un navigateur, il suffit de partager l'url ou [ce lien](http://flyingeek.github.io/lido-online/index.html).{/if}
 
 L'export des fichiers KML affiche une page nommée "data:", utilisez le bouton <svg style="vertical-align: bottom;"><use xlink:href="#share-symbol" /></svg> pour choisir l'app qui recevra le fichier. Cliquez en haut à gauche sur OK pour revenir à OFP2MAP. En raison d'un bug d'iOS, il est impossible de nommer le fichier pour le moment.
 

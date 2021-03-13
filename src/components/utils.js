@@ -211,3 +211,16 @@ export const isPatchUpdate = (current, next) => {
     const nParts = next.split('.');
     return cParts.slice(0, -1).join('.') === nParts.slice(0, -1).join('.');
 }
+
+export const shareAppLink = async () => {
+    const shareData = {
+        'title': 'OFP2MAP',
+        'url': window.location.pathname
+    };
+    try {
+        await navigator.share(shareData)
+    } catch(err) {
+        console.log(err);
+    }
+    return false;
+}
