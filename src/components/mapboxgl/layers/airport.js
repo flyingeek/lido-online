@@ -1,5 +1,6 @@
 /* global mapboxgl */
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
+import {computeIconTextSize, computeIconSize} from '../utils';
 import {supportsHover} from "../../utils";
 
 const folder = 'airport';
@@ -48,6 +49,24 @@ const getTextColor = (raltNames, hexColor) => ["case",
     ["==", 0, ["get", "level"]], '#000',
     '#C60'];
 
+const adequateTextSize = (etopsNames, textRatio) => {
+    return ["case",
+    ["in", ["get", "name"], ["literal", etopsNames]], computeIconTextSize(textRatio, 10),
+    computeIconTextSize(textRatio, 8, 1.15)]
+}
+const emergencyTextSize = (textRatio) => {
+    return computeIconTextSize(textRatio, 8, 1.15)
+}
+const adequateIconSize = (etopsNames, iconRatio) => {
+    return ["case",
+    ["in", ["get", "name"], ["literal", etopsNames]], computeIconSize(iconRatio, 1),
+    computeIconSize(iconRatio, 0.6)]
+}
+const emergencyIconSize = (iconRatio) => {
+    return ["case",
+    ["==", 2, ["get", "level"]], computeIconSize(iconRatio, 0.5, 1.2),
+    computeIconSize(iconRatio, 0.4, 1.2)]
+}
 export const addAirports = (data) => {
     const {map, mapData, ofp, kmlOptions} = data;
     const {affineOrDrop} = mapData;
@@ -89,9 +108,7 @@ export const addAirports = (data) => {
                 'icon-image': ["case",
                     ["==", 2, ["get", "level"]], 'sdf-star',
                     'sdf-airport'],
-                'icon-size': ["case",
-                    ["==", 2, ["get", "level"]], 0.5,
-                    0.4],
+                'icon-size': emergencyIconSize(kmlOptions['iconSizeChange']),
                 'icon-anchor': 'center',
                 'icon-offset': [0, 0],
                 //'icon-rotate': ['get', 'orientation'],
@@ -100,7 +117,7 @@ export const addAirports = (data) => {
                 'visibility': (visibility) ? 'visible' : 'none',
                 'text-field': ['get', 'name'],
                 //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-                'text-size': 8,
+                'text-size': emergencyTextSize(kmlOptions['iconTextChange']),
                 'text-offset': [0, 0.7],
                 'text-anchor': 'top',
                 'text-allow-overlap': false,
@@ -124,9 +141,7 @@ export const addAirports = (data) => {
                 'icon-image': ["case",
                     ["in", ["get", "name"], ["literal", etopsNames]], 'sdf-triangle',
                     'sdf-airport'],
-                'icon-size': ["case",
-                    ["in", ["get", "name"], ["literal", etopsNames]], 1,
-                    0.6],
+                'icon-size': adequateIconSize(etopsNames, kmlOptions['iconSizeChange']),
                 'icon-anchor': 'center',
                 'icon-offset': [0, 0],
                 //'icon-rotate': ['get', 'orientation'],
@@ -135,9 +150,7 @@ export const addAirports = (data) => {
                 'visibility': (visibility) ? 'visible' : 'none',
                 'text-field': ['get', 'name'],
                 //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-                'text-size': ["case",
-                    ["in", ["get", "name"], ["literal", etopsNames]], 10,
-                    8],
+                'text-size': adequateTextSize(etopsNames, kmlOptions['iconTextChange']),
                 'text-offset': [0, 0.7],
                 'text-anchor': 'top',
                 'text-allow-overlap': false,
@@ -226,29 +239,50 @@ export function changeAirportStyle(data) {
         map.setPaintProperty(adequateLayer, 'icon-halo-width', getIconHaloWidth(style));
     }
 }
-
-export function changeAircraftType(data) {
-    const {map, kmlOptions, aircraftType, ofp} = data;
+const getEtopsNames = (ofp) => {
     const raltNames = (ofp.isFake) ? [] : ofp.infos.ralts;
-    const [hexcolorEtops,] = kml2mapColor(kmlOptions.etopsColor);
-    const style = kmlOptions.airportPin;
     let epNames = [];
     if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
         epNames = [ofp.infos['EEP'].name, ofp.infos['EXP'].name];
     }
-    const etopsNames = epNames.concat(raltNames);
+    return [raltNames, epNames.concat(raltNames)];
+}
+export function changeAircraftType(data) {
+    const {map, kmlOptions, aircraftType, ofp} = data;
+    const [raltNames, etopsNames] = getEtopsNames(ofp);
+    const [hexcolorEtops,] = kml2mapColor(kmlOptions.etopsColor);
+    const style = kmlOptions.airportPin;
     map.setFilter(adequateLayer, filterByAircraftType(aircraftType));
     map.setPaintProperty(adequateLayer, 'icon-color', getIconColor(style, aircraftType, raltNames, hexcolorEtops));
     map.setLayoutProperty(adequateLayer, 'symbol-sort-key', symbolSortKey(aircraftType, etopsNames));
     map.setFilter(emergencyLayer, filterByAircraftType(aircraftType, false));
 }
-
+const changeIconText = (data) => {
+    const {map, kmlOptions, ofp} = data;
+    const [, etopsNames] = getEtopsNames(ofp);
+    if (map.getLayer(adequateLayer)) {
+        map.setLayoutProperty(adequateLayer, 'text-size', adequateTextSize(etopsNames, kmlOptions['iconTextChange']));
+    }
+    if (map.getLayer(emergencyLayer)) {
+        map.setLayoutProperty(emergencyLayer, 'text-size', emergencyTextSize(kmlOptions['iconTextChange']));
+    }
+}
+const changeIconSize = (data) => {
+    const {map, kmlOptions, ofp} = data;
+    const [, etopsNames] = getEtopsNames(ofp);
+    if (map.getLayer(adequateLayer)) {
+        map.setLayoutProperty(adequateLayer, 'icon-size', adequateIconSize(etopsNames, kmlOptions['iconSizeChange']));
+    }
+    if (map.getLayer(emergencyLayer)) {
+        map.setLayoutProperty(emergencyLayer, 'icon-size', emergencyIconSize(kmlOptions['iconSizeChange']));
+    }
+}
 export default {
     show: (data) => changeAirportDisplay(data, true),
     hide: (data) => changeAirportDisplay(data, false),
-    remove: () => {},
     add: addAirports,
-    changeLine: () => {},
     changeMarker: changeAirportStyle,
-    change: changeAircraftType
+    change: changeAircraftType,
+    changeIconText,
+    changeIconSize
 }

@@ -1,4 +1,4 @@
-import {addLine, changeDisplayGeneric, changeLineGeneric, changeMarkerGeneric} from '../utils';
+import {addLine, changeDisplayGeneric, changeLineGeneric} from '../utils';
 
 const folder = 'ogimet';
 
@@ -12,8 +12,6 @@ const addOgimet = (data) => {
 export default {
     show: changeDisplayGeneric.bind(null, folder, true),
     hide: changeDisplayGeneric.bind(null, folder, false),
-    remove: () => {},
     add: addOgimet,
     changeLine: changeLineGeneric.bind(null, folder),
-    changeMarker: changeMarkerGeneric.bind(null, folder),
 }

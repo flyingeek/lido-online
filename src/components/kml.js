@@ -2,6 +2,7 @@
 import {folderName} from './utils';
 
 export const kmlDefaultOptions = {
+    "routeDisplay": true,
     "routePin": 0,
     "routeColor": "FFDA25A8", /* #A825DAFF */
     "alternateDisplay": true,
@@ -20,7 +21,10 @@ export const kmlDefaultOptions = {
     "airportPin": 0,
     "firDisplay": true,
     "etopsDisplay": true,
-    "etopsColor": "FF0324FC" /* #FC2403FF */
+    "etopsColor": "FF0324FC", /* #FC2403FF */
+    "iconTextChange": '1.0',
+    "lineWidthChange": '1.0',
+    "iconSizeChange": '1.0'
     // "sigmetDisplay": false,
     // "sigmetPin": 2,
     // "sigmetColor": "6200FBFF"
@@ -60,7 +64,7 @@ export const KmlGenerator = () => {
 
 
 export function updateKml(name, value) {
-  if (name.startsWith('etops-') || name.startsWith('airport-') || name.startsWith('fir-')) return;
+  if (name.startsWith('etops-') || name.startsWith('airport-') || name.startsWith('fir-') || name.endsWith('-change')) return;
   const kmlGen = KmlGenerator();
   const folder = folderName(name);
   if (name.endsWith('-display')) {

@@ -82,11 +82,6 @@
     .nav-item.active {
       border-bottom: 2px solid var(--pink);
     }
-    @media (max-width: 767px) {
-      li.optional {
-        display: none;
-      }
-    }
     @media (max-width: 500px){
       svg.f {
         display: inline-block;

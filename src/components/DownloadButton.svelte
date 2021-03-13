@@ -1,5 +1,5 @@
 <script context="module">
-    console.log(navigator.platform);
+    //console.log(navigator.platform);
     const target = (navigator.standalone || (!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))) ? '_blank' : null;
     const dataURL = function (str, type = "application/vnd.google-earth.kml+xml") {
         return "data:" + type + ";base64," + btoa(unescape(encodeURIComponent(str)));

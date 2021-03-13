@@ -40,6 +40,18 @@ export function folderName(str) {
             return name;
     }
 }
+export function folder2prefix(str){
+    switch (str) {
+        case "rmain":
+            return "route";
+        case "ralt":
+            return "alternate";
+        case "rnat":
+            return "nat";
+        default:
+            return str;
+    }
+}
 
 export function clamp(num, min, max) {
     return num <= min ? min : num >= max ? max : num;

@@ -37,27 +37,34 @@ export const loadMapLayers = (data) => {
             }
         });
     }
-    Object.values(layers).forEach(layer => layer.add(data));
+    Object.values(layers).forEach(layer => layer.add && layer.add(data));
 }
 
 export const updateMapLayers = (data) => {
     const {name, value} = data;
     const folder = folderName(name);
+    if (folder === 'icontext') {
+        return Object.values(layers).forEach(layer => layer.changeIconText && layer.changeIconText(data));
+    }else if (folder === 'linewidth'){
+        return Object.values(layers).forEach(layer => layer.changeLineWidth && layer.changeLineWidth(data));
+    }else if (folder === 'iconsize'){
+        return Object.values(layers).forEach(layer => layer.changeIconSize && layer.changeIconSize(data));
+    }
     const module = layers[folder];
     if (module) {
         if (name.endsWith('-display')){
-            (value) ? module.show(data) : module.hide(data);
+            (value) ? module.show && module.show(data) : module.hide && module.hide(data);
         }else if (name.endsWith('-pin')) {
-            module.changeMarker(data);
+            module.changeMarker && module.changeMarker(data);
         }else if (name.endsWith('-color')) {
-            module.changeLine(data);
+            module.changeLine && module.changeLine(data);
         }else if (name.endsWith('-change')) {
-            module.change(data);
+            module.change && module.change(data);
         }else{
             console.error(`ignoring map layer update for ${name}`);
         }
     }else{
-        console.error(`unknown layer ${name}`);
+        console.error(`unknown layer ${name} / folder ${folder}`);
     }
 }
 

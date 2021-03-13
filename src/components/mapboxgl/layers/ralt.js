@@ -1,4 +1,4 @@
-import {addLine, addPoints, changeDisplayGeneric, changeLineGeneric, changeMarkerGeneric} from '../utils';
+import {addLine, addPoints, changeDisplayGeneric, changeLineGeneric, changeMarkerGeneric, changeIconTextGeneric, changeLineWidthGeneric, changeIconSizeGeneric} from '../utils';
 
 const folder = 'ralt';
 
@@ -8,15 +8,16 @@ const addRalt = (data) => {
     const {affineAndClip, affineOrDrop} = mapData;
     const alternateRoute = new editolido.Route(ofp.wptCoordinatesAlternate(), {"name": "Route Dégagement"});
     addLine(map, folder, alternateRoute.points, affineAndClip, kmlOptions.alternateColor, kmlOptions.alternateDisplay);
-    addPoints(map, folder, alternateRoute.points, affineOrDrop, kmlOptions.alternatePin, kmlOptions.alternateDisplay, kmlOptions.alternateColor);
+    addPoints(map, folder, alternateRoute.points, affineOrDrop, kmlOptions);
 }
 
 export default {
     show: changeDisplayGeneric.bind(null, folder, true),
     hide: changeDisplayGeneric.bind(null, folder, false),
-    remove: () => {},
     add: addRalt,
     changeLine: changeLineGeneric.bind(null, folder),
     changeMarker: changeMarkerGeneric.bind(null, folder),
-    change: () => {}
+    changeIconText: changeIconTextGeneric.bind(null, folder),
+    changeLineWidth: changeLineWidthGeneric.bind(null, folder),
+    changeIconSize: changeIconSizeGeneric.bind(null, folder)
 }

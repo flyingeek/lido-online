@@ -16,9 +16,9 @@ class Storage {
         return null;
     }
     setItem(key, value) {
-        value = JSON.stringify(value);
-        if (value !== '{}') {
-            localStorage.setItem(key, value);
+        const toSave = JSON.stringify(value);
+        if (toSave !== '{}') {
+            localStorage.setItem(key, toSave);
         }
     }
     removeItem(key) {
@@ -46,6 +46,11 @@ export const validate = (options) => {
                 validated[key] = value.toUpperCase();
             } else if (key.endsWith('Display')) {
                 validated[key] = !!(value); //coerce to boolean
+            } else if (key.endsWith('Change')) {
+                value *= 1; // coalesce to number or NaN
+                if (!isNaN(value)) {
+                    validated[key] = value.toFixed(1);
+                }
             }
         }
     }
@@ -107,6 +112,11 @@ export const storeSettingsFromURL = (url) => {
                 valid = value.toUpperCase();
             } else if (key.endsWith('Display')) {
                 valid = !!(value); //coerce to boolean
+            } else if (key.endsWith('Change')) {
+                value *= 1; // coalesce to number or NaN
+                if (!isNaN(value)) {
+                    valid = value.toFixed(1);
+                }
             }
             if (valid !== undefined) {
                 validated[key] = valid;

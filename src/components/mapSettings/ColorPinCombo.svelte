@@ -23,8 +23,8 @@
             const hex = "#" + v.slice(6,8) + v.slice(4,6) + v.slice(2,4);
             return [hex, range];
         }catch(err){
-            console.error(`invalid KML color ${kmlColor}`);
-            swatch = defaultSwatch;
+            console.error(`invalid KML color ${v}`);
+            return defaultSwatch;
         }
     };
     export const pickerStyle = (hex) => {

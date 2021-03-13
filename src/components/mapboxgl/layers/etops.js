@@ -1,19 +1,21 @@
-import {addLines} from '../utils';
+import {addLines, computeLineWidthSize} from '../utils';
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
 
 const folder = 'etops';
+const lineWidthDefault = 1;
 const epCircleLayer = `${folder}-ep-circle-line-layer`;
 const etopsCircleLayer = `${folder}-etops-circle-line-layer`;
 function addEtops(data) {
     const {map, mapData, ofp, kmlOptions} = data;
     if (ofp.isFake) return;
+    const lineWidth = computeLineWidthSize(kmlOptions['lineWidthChange'], lineWidthDefault);
     if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
         const {affineAndClip} = mapData;
         const epPoints = [ofp.infos['EEP'], ofp.infos['EXP']];
         const etopsTime = ofp.infos['ETOPS'];
         const visibility = kmlOptions.etopsDisplay;
-        addLines(map, `${folder}-ep-circle`, [ofp.infos['EEP'].circle(420, 48), ofp.infos['EXP'].circle(420, 48)] , affineAndClip, kmlOptions.routeColor, visibility);
-        addLines(map, `${folder}-etops-circle`, ofp.infos['raltPoints'].map(d => d.circle(7 * etopsTime)), affineAndClip, kmlOptions.etopsColor, visibility);
+        addLines(map, `${folder}-ep-circle`, [ofp.infos['EEP'].circle(420, 48), ofp.infos['EXP'].circle(420, 48)] , affineAndClip, kmlOptions.routeColor, visibility, lineWidth, true);
+        addLines(map, `${folder}-etops-circle`, ofp.infos['raltPoints'].map(d => d.circle(7 * etopsTime)), affineAndClip, kmlOptions.etopsColor, visibility, lineWidth, true);
     }
 }
 
@@ -44,13 +46,21 @@ function changeETOPSDisplay(data, visible) {
         map.setLayoutProperty(epCircleLayer, 'visibility', (visible) ? 'visible': 'none');
     }
 }
-
+function changeLineWidth(data){
+    const {map, value} = data;
+    const lineWidth = computeLineWidthSize(value, lineWidthDefault);
+    if (map.getLayer(etopsCircleLayer)) {
+        map.setPaintProperty(etopsCircleLayer, 'line-width', lineWidth);
+    }
+    if (map.getLayer(epCircleLayer)) {
+        map.setPaintProperty(epCircleLayer, 'line-width', lineWidth);
+    }
+    return true; // allows chaining
+}
 export default {
     show: (data) => changeETOPSDisplay(data, true),
     hide: (data) => changeETOPSDisplay(data, false),
-    remove: () => {},
     add: addEtops,
     changeLine: (data) => changeETOPSCircleColor(data),
-    changeMarker: () => {},
-    change: () => {}
+    changeLineWidth
 }

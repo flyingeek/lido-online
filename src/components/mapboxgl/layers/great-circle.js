@@ -1,4 +1,4 @@
-import {addLine, changeDisplayGeneric, changeLineGeneric, changeMarkerGeneric} from '../utils';
+import {addLine, changeDisplayGeneric, changeLineGeneric} from '../utils';
 
 const folder = 'great-circle';
 
@@ -15,8 +15,6 @@ const addGreatCircle = (data) => {
 export default {
     show: changeDisplayGeneric.bind(null, folder, true),
     hide: changeDisplayGeneric.bind(null, folder, false),
-    remove: () => {},
     add: addGreatCircle,
     changeLine: changeLineGeneric.bind(null, folder),
-    changeMarker: changeMarkerGeneric.bind(null, folder),
 }

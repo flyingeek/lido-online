@@ -1,4 +1,5 @@
 import {jsonLine, jsonPoint, featureCollection} from './json';
+import {folder2prefix} from '../utils';
 import {kml2mapColor} from "../mapSettings/ColorPinCombo.svelte";
 
 export const pinColors = [
@@ -26,14 +27,38 @@ export const geoPoints2LngLats = (data, affine, cb) => {
 //     return lngLats;
 // }
 
-export function addPoints(map, id, data, affine, selectedPin, visibility, kmlcolor) {
+export const iconTextSizeDefault = 10;
+export const computeIconTextSize = (ratio, size=iconTextSizeDefault, extraFactor=1) => {
+    const result = ratio * size * ((ratio > 1) ? extraFactor : 1);
+    if (isNaN(result)) return iconTextSizeDefault;
+    return result;
+}
+export const lineWidthDefault = 2;
+export const computeLineWidthSize = (ratio, size=lineWidthDefault) => {
+    const result = ratio * size;
+    if (isNaN(result)) return 1;
+    return result;
+}
+export const iconSizeDefault = 1;
+export const iconSizeDefaultNoPin = 0.2;
+export const computeIconSize = (ratio, size=iconSizeDefault, extraFactor=1) => {
+    const result = ratio * size * ((ratio > 1) ? extraFactor : 1);
+    if (isNaN(result)) return 1;
+    return result;
+}
+export function addPoints(map, id, data, affine, kmlOptions) {
+    const prefix = folder2prefix(id);
+    const selectedPin = kmlOptions[`${prefix}Pin`];
+    const visibility = kmlOptions[`${prefix}Display`];
+    const kmlcolor = kmlOptions[`${prefix}Color`];
+    const textSize = computeIconTextSize(kmlOptions[`iconTextChange`]);
     map.addSource(`${id}-marker-source`, featureCollection(
         geoPoints2LngLats(data, affine, (lngLat, geoPoint) => jsonPoint(lngLat, geoPoint.name.replace(/00\.0/g,'')))
     ));
-    map.addLayer(markerLayer(id, selectedPin, kmlcolor, visibility));
+    map.addLayer(markerLayer(id, selectedPin, kmlcolor, visibility, textSize));
 }
 
-export function addLine(map, id, data, affineLine, kmlcolor, visibility) {
+export function addLine(map, id, data, affineLine, kmlcolor, visibility, lineWidth, dashes) {
     if (affineLine) {
         map.addSource(`${id}-line-source`, featureCollection(affineLine(data).map(l =>jsonLine(l))));
     } else {
@@ -42,10 +67,10 @@ export function addLine(map, id, data, affineLine, kmlcolor, visibility) {
             'data': jsonLine(data.map(g => [g.longitude, g.latitude]))
         });
     }
-    map.addLayer(lineLayer(id, kmlcolor, visibility));
+    map.addLayer(lineLayer(id, kmlcolor, visibility, lineWidth, dashes));
 }
 
-export function addLines(map, id, data, affineLine, kmlcolor, visibility) {
+export function addLines(map, id, data, affineLine, kmlcolor, visibility, lineWidth, dashes) {
     if (affineLine) {
         const len = data.length;
         const results = [];
@@ -60,10 +85,9 @@ export function addLines(map, id, data, affineLine, kmlcolor, visibility) {
     }else{
         map.addSource(`${id}-line-source`, featureCollection(data.map(ar => jsonLine(ar.map(g => [g.longitude, g.latitude])))));
     }
-    map.addLayer(lineLayer(id, kmlcolor, visibility));
+    map.addLayer(lineLayer(id, kmlcolor, visibility, lineWidth, dashes));
 }
-
-export function markerLayer (folder, selectedPin, kmlcolor, visibility) {
+export function markerLayer (folder, selectedPin, kmlcolor, visibility, textSize) {
     const [hexcolor, opacity] = kml2mapColor(kmlcolor);
     return {
         'id': `${folder}-marker-layer`,
@@ -71,7 +95,7 @@ export function markerLayer (folder, selectedPin, kmlcolor, visibility) {
         'source': `${folder}-marker-source`,
         'layout': {
             'icon-image': (selectedPin !== 0) ? 'sdf-marker-15' : 'sdf-triangle',
-            'icon-size': (selectedPin !== 0) ? 1 : 0.2,
+            'icon-size': (selectedPin !== 0) ? iconSizeDefault : iconSizeDefaultNoPin,
             'icon-anchor': (selectedPin !== 0) ? 'bottom' : 'center',
             'icon-offset': [0, 0],
             //'icon-rotate': ['get', 'orientation'],
@@ -79,7 +103,7 @@ export function markerLayer (folder, selectedPin, kmlcolor, visibility) {
             'visibility': ( visibility) ? 'visible' : 'none',
             'text-field': ['get', 'title'],
             //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-            'text-size': 10,
+            'text-size': textSize,
             'text-offset': [0, 0.7],
             'text-anchor': 'top'
         },
@@ -92,16 +116,8 @@ export function markerLayer (folder, selectedPin, kmlcolor, visibility) {
         }
     };
 }
-export function lineLayer(folder, kmlcolor, visibility) {
+export function lineLayer(folder, kmlcolor, visibility, lineWidth=lineWidthDefault, dashes=false) {
     const [hexcolor, opacity] = kml2mapColor(kmlcolor);
-    let lineWidth = 2;
-    let lineDashArray = [1];
-    if (folder.indexOf('-ep-') !== -1 || folder.indexOf('-etops-') !== -1) {
-        lineWidth = 1;
-        lineDashArray = [10, 10];
-    } else if (folder.indexOf('rnat') !== -1){
-        lineWidth = 1;
-    }
     return {
         'id': `${folder}-line-layer`,
         'type': 'line',
@@ -115,11 +131,35 @@ export function lineLayer(folder, kmlcolor, visibility) {
             'line-color': hexcolor,
             'line-opacity': opacity,
             'line-width': lineWidth,
-            'line-dasharray': lineDashArray
+            'line-dasharray': (dashes) ? [10, 10] : [1]
         }
     }
 }
-
+export function changeIconSizeGeneric(folder, data, iconSize=iconSizeDefault){
+    const {map, value, kmlOptions} = data;
+    const markerLayer = `${folder}-marker-layer`;
+    const selectedPin = kmlOptions[`${folder2prefix(folder)}Pin`];
+    if (map.getLayer(markerLayer)) {
+        map.setLayoutProperty(markerLayer, 'icon-size', (selectedPin) ? computeIconSize(value, iconSize) : iconSizeDefaultNoPin);
+    }
+    return true; // allows chaining
+}
+export function changeIconTextGeneric(folder, data, textSize=iconTextSizeDefault){
+    const {map, value} = data;
+    const markerLayer = `${folder}-marker-layer`;
+    if (map.getLayer(markerLayer)) {
+        map.setLayoutProperty(markerLayer, 'text-size', computeIconTextSize(value, textSize));
+    }
+    return true; // allows chaining
+}
+export function changeLineWidthGeneric(folder, data, lineWidth=lineWidthDefault){
+    const {map, value} = data;
+    const lineLayer = `${folder}-line-layer`;
+    if (map.getLayer(lineLayer)) {
+        map.setPaintProperty(lineLayer, 'line-width', computeLineWidthSize(value, lineWidth));
+    }
+    return true; // allows chaining
+}
 export function changeMarkerGeneric(folder, data){
     const {map, value} = data;
     const lineLayer = `${folder}-line-layer`;

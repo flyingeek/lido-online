@@ -1,4 +1,4 @@
-import {addLine, addPoints, changeDisplayGeneric, changeLineGeneric, changeMarkerGeneric} from '../utils';
+import {addLine, addPoints, changeDisplayGeneric, changeLineGeneric, changeMarkerGeneric, changeIconTextGeneric, changeLineWidthGeneric, changeIconSizeGeneric} from '../utils';
 import {changeEPCircleColor} from './etops';
 
 const folder = 'rmain';
@@ -11,15 +11,16 @@ const addRmain = (data) => {
     route.name = `${ofp.infos.departure}-${ofp.infos.destination}`;
     route.description = ofp.description;
     addLine(map, folder, route.points, affineAndClip, kmlOptions.routeColor, true);
-    addPoints(map, folder, route.points, affineOrDrop, kmlOptions.routePin, true, kmlOptions.routeColor);
+    addPoints(map, folder, route.points, affineOrDrop, kmlOptions);
 }
 
 export default {
     show: changeDisplayGeneric.bind(null, folder, true),
     hide: changeDisplayGeneric.bind(null, folder, false),
-    remove: () => {},
     add: addRmain,
     changeLine: (data) => changeLineGeneric(folder, data) && changeEPCircleColor(data),
     changeMarker: changeMarkerGeneric.bind(null, folder),
-    change: () => {}
+    changeIconText: changeIconTextGeneric.bind(null, folder),
+    changeLineWidth: changeLineWidthGeneric.bind(null, folder),
+    changeIconSize: changeIconSizeGeneric.bind(null, folder)
 }

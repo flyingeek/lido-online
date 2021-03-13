@@ -15,6 +15,7 @@
     import ColorPinCombo from './ColorPinCombo.svelte';
     import CheckboxColorCombo from './CheckboxColorCombo.svelte';
     import AirportSelector from './AirportSelector.svelte';
+    import ZoomLevel from './ZoomLevel.svelte';
     import {storage, stores} from './storage.js';
     import {sidebar} from "../../stores.js";
     import clickOutside from '../../actions/clickOutsideAction';
@@ -117,6 +118,11 @@
         <fieldset class="form-group">
             <legend><input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR SÛRETÉ</legend>
         </fieldset>
+        <fieldset class="form-group">
+            <ZoomLevel name="icon-text-change" label="Label" value={kmlOptions['iconTextChange']} on:change={update}/>
+            <ZoomLevel name="line-width-change" label="Ligne" value={kmlOptions['lineWidthChange']} min={0.6} max={2} step={0.2} on:change={update}/>
+            <ZoomLevel name="icon-size-change" label="Icône" value={kmlOptions['iconSizeChange']} min={0.6} max={2} step={0.1} on:change={update}/>
+        </fieldset>
 
         <div class="last">
             <button disabled={!isChanged} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
@@ -145,6 +151,9 @@
     form {
         width: 250px;
         margin-top: 3px;
+    }
+    .form-group{
+        margin-bottom: 0.8em;
     }
     .closeB {
         position: absolute;

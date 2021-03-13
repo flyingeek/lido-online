@@ -58,9 +58,5 @@ export function changeFirDisplay(data, visible) {
 export default {
     show: (data) => changeFirDisplay(data, true),
     hide: (data) => changeFirDisplay(data, false),
-    remove: () => {},
     add: addFirReg,
-    changeLine: () => {},
-    changeMarker: () => {},
-    change: () => {},
 }
