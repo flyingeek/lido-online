@@ -82,7 +82,7 @@
     href="."
     on:click|preventDefault={() =>  {$sidebar = !$sidebar}}>
     <svg>
-        <use xlink:href="#close" />
+        <use xlink:href="#close-symbol" />
     </svg>
     </a>
     <form on:submit|preventDefault>
@@ -177,7 +177,7 @@
         margin-top: 24px;
     }
     svg {
-        fill:#555;
+        stroke:#555;
         width: 20px;
         height: 20px;
         animation: none;

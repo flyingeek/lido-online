@@ -33,7 +33,7 @@ OFP2MAP ne peut être lancé que depuis l'écran d'accueil, l'application se lan
 
 Pour partager le lien vers OFP2MAP, utilisez le menu PARTAGER puis utilisez AirDrop.
 
-L'export des fichiers KML affiche une page nommée "data:", utilisez le bouton <svg style="vertical-align: bottom;"><use xlink:href="#share" /></svg> pour choisir l'app qui recevra le fichier. Cliquez en haut à gauche sur OK pour revenir à OFP2MAP. En raison d'un bug d'iOS, il est impossible de nommer le fichier pour le moment.
+L'export des fichiers KML affiche une page nommée "data:", utilisez le bouton <svg style="vertical-align: bottom;"><use xlink:href="#share-symbol" /></svg> pour choisir l'app qui recevra le fichier. Cliquez en haut à gauche sur OK pour revenir à OFP2MAP. En raison d'un bug d'iOS, il est impossible de nommer le fichier pour le moment.
 
 À noter que parfois, des bugs d'affichage peuvent apparaître&#8239;:  lorsque l'on retourne sur l'app, l'app est zoomée, il faut alors juste dézoomer en utilisant un pinch de deux doigts sur la barre de menu. Il est aussi possible de tuer l'app,  même en mode déconnecté, pour la relancer.
 

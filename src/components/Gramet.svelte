@@ -41,7 +41,7 @@
         {#if status !== 'error'}
 <!--             {#if status === 'success'}
                 <svg on:click={() => share(ofp.ogimetData.proxyImg)}>
-                    <use xlink:href="#share" />
+                    <use xlink:href="#share-symbol" />
                 </svg>
             {/if} -->
         <img crossorigin="anonymous" src={ofp.ogimetData.proxyImg} on:error={() => status = "error"} on:load={() => status = "success"} alt="gramet demo" class="img-fluid"/>

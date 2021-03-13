@@ -23,7 +23,7 @@
         <label class="input-group-text" for="{name}">Repère</label>
         <pin class="input-group-text">
             <svg>
-                <use xlink:href="#marker" style="stroke: {(selected === 0) ? '#fff': '#000' }; fill: {options[selected].color};"></use>
+                <use xlink:href="#marker-symbol" style="stroke: {(selected === 0) ? '#fff': '#000' }; fill: {options[selected].color};"></use>
             </svg>
         </pin>
     </div>

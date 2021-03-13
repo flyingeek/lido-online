@@ -82,7 +82,7 @@
 <kmlcolor class="input-group" use:changeSwatch={kmlColor}>
     <pin class="form-control">
         <svg>
-            <use xlink:href="#marker" style="stroke: {(selected === 0) ? '#fff': '#000' }; fill: {options[selected].color};"></use>
+            <use xlink:href="#marker-symbol" style="stroke: {(selected === 0) ? '#fff': '#000' }; fill: {options[selected].color};"></use>
         </svg>
     </pin>
     <!-- svelte-ignore a11y-no-onchange -->

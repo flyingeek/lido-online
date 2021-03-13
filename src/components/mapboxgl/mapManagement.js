@@ -147,7 +147,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
         this._button.className = 'mapboxgl-ctrl-layers';
         this._button.setAttribute('type', "button");
         this._button.setAttribute('title', "Personnaliser la carte");
-        this._button.innerHTML = `<span class="mapboxgl-ctrl-icon" aria-hidden="true"></span>`;
+        this._button.innerHTML = `<svg><use xlink:href="#layers-symbol"/></svg>`;
         this._container.appendChild(this._button);
         this._toggleSidebar = () => sidebar.update((value) => !value);
         this._button.addEventListener('click', this._toggleSidebar);
