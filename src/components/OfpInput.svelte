@@ -175,6 +175,7 @@
 
 input:lang(fr) ~ label::after {
     content: "Sélectionner";
+    font-variant: all-small-caps;
 }
 .blink label::after {
     background-color: var(--blue);

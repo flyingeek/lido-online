@@ -147,4 +147,7 @@
   .form-inline {
     padding-bottom: 2px;
   }
+  :global(.btn) {
+    font-variant: all-small-caps;
+  }
 </style>
