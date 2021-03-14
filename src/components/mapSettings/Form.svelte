@@ -87,9 +87,6 @@
     </svg>
     </a>
     <form on:submit|preventDefault>
-        <div class="reset">
-            <button class="btn btn-light btn-sm" class:invisible={isDefault} type="button" on:click={reset}>Revenir aux valeurs par défaut</button>
-        </div>
         <fieldset class="form-group">
             <legend>Route</legend>
                 <ColorPinCombo name="route" kmlColor={kmlOptions['routeColor']} selected={kmlOptions['routePin']} on:change={update} />
@@ -120,13 +117,14 @@
         </fieldset>
         <fieldset class="form-group">
             <ZoomLevel name="icon-text-change" label="Label" value={kmlOptions['iconTextChange']} on:change={update}/>
-            <ZoomLevel name="line-width-change" label="Ligne" value={kmlOptions['lineWidthChange']} min={0.6} max={2} step={0.2} on:change={update}/>
+            <ZoomLevel name="line-width-change" label="Ligne" value={kmlOptions['lineWidthChange']} min={0.6} max={2} step={0.1} on:change={update}/>
             <ZoomLevel name="icon-size-change" label="Icône" value={kmlOptions['iconSizeChange']} min={0.6} max={2} step={0.1} on:change={update}/>
         </fieldset>
 
         <div class="last">
             <button disabled={!isChanged} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
             <button disabled={!isChanged} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
+            {#if !isDefault}<button class="btn btn-outline-dark btn-sm reset" type="button" on:click={reset}>Reset</button>{/if}
         </div>
     </form>
 </div>
@@ -150,7 +148,7 @@
     }
     form {
         width: 250px;
-        margin-top: 3px;
+        margin-top: 13px;
     }
     .form-group{
         margin-bottom: 0.8em;
@@ -171,9 +169,8 @@
         /* height: 100%; */
         /* top: 0; */
     }
-    .reset button{
-        background-color: #e2e6ea;
-        color: var(--gray);
+    .reset{
+        float: right;
     }
     @supports ( backdrop-filter: blur(4px) ) or ( -webkit-backdrop-filter: blur(4px) ) {
         .settings {
