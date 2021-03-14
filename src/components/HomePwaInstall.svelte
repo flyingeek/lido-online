@@ -94,12 +94,6 @@
         height: 30px;
         fill: #007AFF;
     }
-    svg[fill=none]{
-        fill: transparent;
-        width: 22px;
-        height: 22px;
-        margin-left: 12px;
-    }
     ol {
         list-style: none;
         counter-reset: guide-counter;
