@@ -82,7 +82,7 @@
 <kmlcolor class="input-group" use:changeSwatch={kmlColor}>
     <pin class="form-control">
         <svg>
-            <use xlink:href="#marker-symbol" style="stroke: {(selected === 0) ? '#fff': '#000' }; fill: {options[selected].color};"></use>
+            <use xlink:href="#marker-symbol" style="stroke: {(selected === 0) ? '#fff': options[selected].color }; fill: {options[selected].color};"></use>
         </svg>
     </pin>
     <!-- svelte-ignore a11y-no-onchange -->
@@ -182,7 +182,7 @@
         margin-bottom: 0;
     }
     :global(kmlcolor select, kmlpin select) {
-        border-left: 0px !important;
+        border-left: 20px solid #FFFFFF !important;
         padding-left: 0.2rem !important;
     }
     :global(kmlcolor pin, kmlpin pin) {
@@ -195,6 +195,9 @@
         padding: 0 2px !important;
         align-items: center !important;
         display: flex !important;
+        position: absolute !important;
+        width: 20px !important;
+        z-index: 4;
     }
     :global(kmlcolor pin svg, kmlpin pin svg){
         stroke: white;
