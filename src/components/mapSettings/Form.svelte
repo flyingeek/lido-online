@@ -160,7 +160,7 @@
     }
     .settings {
         position: absolute;
-        right: -10px;
+        right: 0px;
         transition: right 0.15s ease-out;
         background-color: #eee;
         border-left: 1px solid rgba(255,255,255,0.2);
@@ -187,6 +187,9 @@
         width: 20px;
         height: 20px;
         animation: none;
+    }
+    .btn {
+        font-variant: all-small-caps;
     }
 
 </style>

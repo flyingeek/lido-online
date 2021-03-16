@@ -2,6 +2,7 @@
     import Overlay from 'svelte-overlay';
     import {fade} from 'svelte/transition';
     import {grametThumbAction, grametStatus} from '../actions/grametAction';
+    import Link from '../components/Link.svelte';
     import {showGramet, ofpPromise, isFakeOfp, route} from '../stores';
 
     const toggleGramet = () => {
@@ -27,7 +28,7 @@
                     <div class="popover" role="tooltip" style="width: 330px; max-width: 330px;">
                     <h3 class="popover-header">😱: Erreur de récupération du Gramet<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>
                     <div class="popover-body">
-                        <p><a href="." on:click|preventDefault={() => $grametStatus = 'loading'}>essayez à nouveau</a> ou allez sur <a href={ofp.ogimetData.url} target="_blank">ogimet</a>.</p>
+                        <p><a href="." on:click|preventDefault={() => $grametStatus = 'loading'}>essayez à nouveau</a> ou allez sur <Link href={ofp.ogimetData.url} target="_blank">ogimet</Link>.</p>
                     </div>
                     </div>
                 </div>

@@ -148,7 +148,7 @@
     padding-bottom: 2px;
   }
   :global(.btn) {
-    font-variant: all-small-caps;
+    text-transform: uppercase
   }
 
 </style>

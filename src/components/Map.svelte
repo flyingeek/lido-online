@@ -187,7 +187,4 @@
     :global(.map page) {
         overflow: hidden;
     }
-    :global(.mapboxgl-ctrl-top-right){
-        right: 10px !important;
-    }
 </style>
