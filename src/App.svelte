@@ -97,8 +97,7 @@
     --light-grey: #eee; /* used to print tables */
     --maximum-yellow-red: #FCBF49; /* used for warnings in LogWindow */
     --electric-blue: #87F1FF;
-    --gramet-height: 700px;
-    --gramet-inner-height: 380px;
+    --gramet-inner-height: 390px;
   }
   .content{
     background-color: var(--blueaf);

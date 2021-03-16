@@ -1,27 +1,23 @@
 <script>
     import {showGramet} from '../stores';
     import { fly } from "svelte/transition";
-    import {grametWidth, setGramet, setHeight} from '../actions/grametAction';
+    import {setGramet, setHeight} from '../actions/grametAction';
+    const maxHeight = 370
 </script>
 
 {#if $showGramet}
-    <div class="pinch-zoom-parent" width="{$grametWidth}" transition:fly="{{y: 380}}" use:setHeight={$grametWidth}>
+    <div class="pinch-zoom-parent" transition:fly="{{y: maxHeight}}" data-max-height={maxHeight} use:setHeight>
         <pinch-zoom use:setGramet min-scale="0.3"></pinch-zoom>
     </div>
 {/if}
 <style>
-    pinch-zoom{
-        max-height: var(--gramet-inner-height);
-    }
     .pinch-zoom-parent{
-        /*height:var(--gramet-inner-height);
-        min-height: var(--gramet-inner-height);*/
         width: 100%;
         position:absolute;
         bottom: -10px;
         left:50%;
         transform: translateX(-50%);
         background-color: rgba(255,255,255,0.6);
-        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='50px' width='120px'><text x='0' y='15' fill='white' font-size='10'>GRAMET</text></svg>");
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='120px' width='120px' ><text transform='rotate(45)' x='20' y='7' fill='lightblue' fill-opacity='0.7' font-size='14'>GRAMET</text></svg>");
     }
 </style>

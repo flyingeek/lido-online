@@ -10,11 +10,11 @@ export function grametThumbAction(container, ofp){
     //const cWidth = container.clientWidth;
     const cHeight = container.clientHeight;
     const style = getComputedStyle(document.body);
-    const gHeight = parseFloat(style.getPropertyValue('--gramet-height', 700).slice(0, -2)); //remove px
-    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', 380).slice(0, -2)); //remove px
+    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', 390).slice(0, -2)); //remove px
 
     const loadListener = () => {
         grametWidth.set(img.width);
+        const gHeight = img.height;
         grametHeight.set(img.height);
         clone = img.cloneNode();
         clone.id = "grametImg";
@@ -52,7 +52,6 @@ export function grametThumbAction(container, ofp){
     }
     const createImg = (ofp) => {
         img = document.createElement('img')
-
         img.addEventListener('load', loadListener);
         img.addEventListener('error', errorListener);
         grametStatus.set('loading');
@@ -76,21 +75,27 @@ export function grametThumbAction(container, ofp){
 //due to problem with Safari, we keep a clone in the document
 //that way there is less reload and incomplete image appearing in the pinchzoom view
 export const setGramet = (pinchZoom) => {
-    const img = document.getElementById('grametImg');//e.target;
+    const img = document.getElementById('grametImg');
+    const style = getComputedStyle(document.body);
+    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', 390).slice(0, -2)); //remove px
+    const maxHeight = parseFloat(pinchZoom.parentNode.dataset.maxHeight || "370");
     const iWidth = img.width;
+    //const iHeight = img.height;
     const nav = document.querySelector('nav');
     const nWidth = nav.clientWidth;
-    // console.log(img, iWidth, nav, nWidth);
-    const ratio = nWidth/iWidth;
-    img.classList.remove("invisible");
+    let scale = nWidth/iWidth;
+    let x = 0;
+    const maxScale = maxHeight / (gInnerHeight + 50 + 10);  // we want the first 440px visible (why extra 10 ?)
+    if (scale > maxScale) { 
+        scale = maxScale;
+        x = (nWidth - (iWidth * scale)) / 2;
+    }
     img.style.display = "block";
+    pinchZoom.style.maxHeight = `${maxHeight}px`;
     pinchZoom.appendChild(img);
-    const timeout = setTimeout(() => {
-        pinchZoom.setTransform({scale: ratio, x:0, y: 0});
-    }, 100);
+    pinchZoom.setTransform({scale, x, y: 0});
     return {
         destroy(){
-            clearTimeout(timeout);
             img.style.display = 'none';
             document.body.appendChild(img);
         }
@@ -99,14 +104,14 @@ export const setGramet = (pinchZoom) => {
 
 //To set the pinchzoom drawer height
 // adjust the size of the parent (the larger the gramet, the less height)
-export const setHeight = (container, grametWidth) => {
-    const style = getComputedStyle(document.body);
-    const gHeight = parseFloat(style.getPropertyValue('--gramet-height', 700).slice(0, -2)); //remove px
-    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', 380).slice(0, -2)); //remove px
+export const setHeight = (container) => {
+    const img = document.getElementById('grametImg');
+    const gWidth = img.width;
+    const gHeight = img.height;
+    const maxHeight = parseFloat(container.dataset.maxHeight || "370");
     const nav = document.querySelector('nav');
     const nWidth = nav.clientWidth;
-    const ratio = nWidth / grametWidth;
-    const height = Math.min(ratio * gHeight, gInnerHeight);
+    const ratio = nWidth / gWidth;
+    const height = Math.min(ratio * gHeight, maxHeight);
     container.style.height = `${height}px`;
-    container.style.minHeight = `${height}px`;
 }
