@@ -1,6 +1,6 @@
 /* global editolido mapboxgl */
 
-import {clamp, isInside, addToSWCache, lineclip, getBounds} from '../utils';
+import {clamp, isInside, lineclip, getBounds} from '../utils';
 import {loadMapLayers} from './layersManagement';
 import {sidebar} from '../../stores';
 import times from './pj_times';
@@ -171,7 +171,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
             mapOptions
         });
 
-        if (!ofp.isFake) addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');
+        // if (!ofp.isFake) addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');
         //fetch(ofp.ogimetData.proxyImg); // add to cache
         if (onLoadCb) onLoadCb(map, mapOptions);
     });

@@ -49,7 +49,8 @@ const thirdPartyUrls = [
     'CONF_MAPBOXGL_JS',
     'CONF_MAPBOXGL_CSS',
     'CONF_BOOTSTRAP_CSS',
-    'CONF_PROJ4_JS'
+    'CONF_PROJ4_JS',
+    'CONF_PINCHZOOM_JS'
 ];
 const lidoUrls = [
     'CONF_LIDOJS_JS',

@@ -2,7 +2,7 @@
     import FormSettings from "./mapSettings/Form.svelte";
     import {createMap, token} from './mapboxgl/mapManagement';
     import {updateMapLayers} from './mapboxgl/layersManagement';
-    import {online, route} from "../stores.js";
+    import {online} from "../stores.js";
     import {updateKml} from './kml.js';
     import {promiseTimeout, fetchSimultaneously} from './utils';
     import { createEventDispatcher, onMount } from 'svelte';
@@ -10,7 +10,9 @@
     import CircleProgress from "./CircleProgress.svelte";
     import AircraftType from "./AircraftType.svelte";
     import MapProjectionSelect from "./MapProjectionSelect.svelte";
+    import Gramet from './Gramet.svelte';
     import mapResizeAction from '../actions/mapResizeAction';
+    // import Gramet2 from "./Gramet2.svelte";
 
     const dispatch = createEventDispatcher();
     export let kmlOptions;
@@ -104,7 +106,6 @@
         mapData = createMap(id, selectedProjection, ofp, kmlOptions, afterMapLoad);
         map = mapData.map;
     });
-
 </script>
 
 <div id={id} use:mapResizeAction={map}></div>
@@ -120,18 +121,19 @@
 </div>
 <AircraftType bind:selectedAircraft bind:aircraftTypeSelectElement {ofp} on:change={aircraftChange}/>
 <FormSettings bind:kmlOptions on:change={update} on:save />
+<Gramet />
+
 <style>
 
     #map {
         flex: 1 1 auto;
         height: auto;
-        margin: 0px -10px -10px -10px;
     }
     .mapmenu {
         position: absolute;
         top: 10px;
+        left: 10px;
     }
-
     :global(.mapboxgl-ctrl-attrib-inner select[name=aircraftType]){
         display: inline-block !important;
     }
@@ -181,5 +183,11 @@
     :global(.mapboxgl-ctrl button.mapboxgl-ctrl-layers svg){
         width: 22px;
         height: 22px;
+    }
+    :global(.map page) {
+        overflow: hidden;
+    }
+    :global(.mapboxgl-ctrl-top-right){
+        right: 10px !important;
     }
 </style>

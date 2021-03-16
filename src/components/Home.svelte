@@ -57,6 +57,7 @@
 }
 .row {
   margin-bottom: 15px; /* for no ofp prompt */
+  padding: 0 10px 10px 10px;
 }
 @media (min-width: 576px) and (max-width: 1199.8px) {
   .col-sm-6, .col-md-6 {

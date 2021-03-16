@@ -9,6 +9,7 @@
         { type: 'script', url: 'CONF_PROJ4_JS' },
         { type: 'script', url: 'CONF_WMO_JS' },
         { type: 'script', url: 'CONF_MAPBOXGL_JS' },
+        { type: 'script', url: 'CONF_PINCHZOOM_JS'},
         { type: 'link', url: 'CONF_MAPBOXGL_CSS'}
     ];
     //const editolidoSrc = 'https://github.com/flyingeek/lidojs/releases/download/v1.1.2/lidojs.min.js';

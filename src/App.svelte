@@ -2,16 +2,16 @@
   import {onMount} from 'svelte';
   import LidoRoute from "./components/LidoRoute.svelte";
   import Export from "./components/Export.svelte";
-  import Gramet from "./components/Gramet.svelte";
   import Home from "./components/Home.svelte";
   import Map from "./components/Map.svelte";
   import Navbar from "./components/Navbar.svelte";
   import OfpInput from './components/OfpInput.svelte';
+  import GrametTrigger from './components/GrametTrigger.svelte';
   import Page from "./components/Page.svelte";
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
   import {storage, stores, validate, setHistory, storeSettingsFromURL} from "./components/mapSettings/storage.js";
-  import {swDismiss, sidebar, route, ofpPromise, checkSwOnVisibilityChange} from "./stores.js";
+  import {swDismiss, sidebar, route, ofpPromise, checkSwOnVisibilityChange, showGramet} from "./stores.js";
   import HomePwaInstall from './components/HomePwaInstall.svelte';
   import {runningOnIpad} from './components/utils';
 
@@ -23,6 +23,7 @@
   storeSettingsFromURL(window.location.search);
   let kmlOptions = validate(storage.getItem(stores.optionsKML) || {}); //include default
   setHistory(kmlOptions, $route);
+
   onMount(() => {
         document.addEventListener("visibilitychange", checkSwOnVisibilityChange, false);
         return () => document.removeEventListener("visibilitychange", checkSwOnVisibilityChange);
@@ -35,9 +36,10 @@
       <HomePwaInstall/>
     {:else}
       <Navbar>
-          <form class="form-inline" on:submit|preventDefault>
-            <OfpInput {kmlOptions} on:change={() => $sidebar = $swDismiss = false} />
-          </form>
+        <GrametTrigger/>
+        <form class="form-inline" on:submit|preventDefault>
+          <OfpInput {kmlOptions} on:change={() => $sidebar = $swDismiss = $showGramet = false} />
+        </form>
       </Navbar>
       <SWUpdate prompt={!!$ofpPromise}/>
       <!-- START We do not want the map element to disappear from the dom -->
@@ -54,18 +56,14 @@
         {/await}
       {/if}
       <!-- END of We do not want the map element to disappear from the dom (to keep cache)-->
-      {#if $ofpPromise && ($route === '/gramet' || $route === '/export')}
+      {#if $ofpPromise && ($route === '/export')}
         {#await $ofpPromise}
           <Page><div style="margin: auto;">traitement en cours...</div></Page>
         {:then ofp}
-          {#if $route === '/gramet'}
-              <Page><Gramet {ofp}/></Page>
-          {:else if $route === '/export'}
               <Page>
               <Export {ofp} on:save={() => setHistory(kmlOptions, $route)} />
               <LidoRoute {ofp}/>
               </Page>
-          {/if}
         {:catch error}
           <p>😱: {error.message}</p>
         {/await}
@@ -75,7 +73,7 @@
         </Page>
       {:else if $route === '/help'}
         <Page><Help /></Page>
-      {:else if !$ofpPromise}
+      {:else if !($ofpPromise && $route === '/map')}
         <!-- redirect -->
         { redirect($route) }
       {/if}
@@ -99,6 +97,8 @@
     --light-grey: #eee; /* used to print tables */
     --maximum-yellow-red: #FCBF49; /* used for warnings in LogWindow */
     --electric-blue: #87F1FF;
+    --gramet-height: 700px;
+    --gramet-inner-height: 380px;
   }
   .content{
     background-color: var(--blueaf);
@@ -107,7 +107,7 @@
     background-size: cover;
     transition:background-position 0.3s ease;
     width: 100%;
-    padding: 0 10px 10px 10px;
+    padding: 0;
     flex-direction: column;
     display: flex;
   }
@@ -150,4 +150,5 @@
   :global(.btn) {
     font-variant: all-small-caps;
   }
+
 </style>

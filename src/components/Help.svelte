@@ -40,7 +40,7 @@ $: updateVersion($wb);
     }
     .markdown {
         background-color: white;
-        margin: 0 -10px -10px;
+        margin: 0;
         padding: 0.5em 1em;
         overflow-y: scroll;
         flex: 1 1 auto;

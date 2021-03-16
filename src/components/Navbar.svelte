@@ -1,6 +1,5 @@
 <script>
     import {ofpPromise, isFakeOfp, route} from '../stores';
-    import {shareAppLink} from '../components/utils';
 </script>
 <nav class="navbar navbar-expand-md navbar-light bg-light">
   <ul class="navbar-nav mr-auto">
@@ -12,13 +11,6 @@
       <a class:disabled={!$ofpPromise} class="nav-link" href="#/map">
       <svg class="f"><use xlink:href="#map-symbol"/></svg>
       <span>CARTE</span></a>
-    </li>
-    {/if}
-    {#if  ($ofpPromise && !$isFakeOfp) || $route === '/gramet'}
-    <li class="nav-item" class:active={$route === '/gramet'}>
-      <a class:disabled={!$ofpPromise} class="nav-link" href="#/gramet">
-      <svg class="f"><use xlink:href="#cloud-symbol"/></svg>
-      <span>GRAMET</span></a>
     </li>
     {/if}
     {#if  ($ofpPromise && !$isFakeOfp) || $route === '/export'}
@@ -69,7 +61,6 @@
     }
     nav {
       flex: 0 1 auto;
-      margin: 0 -10px;
       position: static; /* for no ofp prompt on home page bottom */
       padding: 2px 10px 0px 10px;
     }

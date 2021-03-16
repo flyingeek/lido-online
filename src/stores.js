@@ -1,14 +1,16 @@
-import { writable, readable, get } from 'svelte/store';
+import { writable, readable } from 'svelte/store';
 
 export const wb = writable();
 export const swDismiss = writable(false);
 export const sidebar = writable(false);
 export const ofpPromise = writable();
 export const isFakeOfp = writable(false);
+export const showGramet = writable(false);
 
 let swLastUpdateDate = new Date();
 export const checkSWUpdate = () => {
     if ('serviceWorker' in navigator) {
+        // eslint-disable-next-line no-constant-condition
         const timeout = ('process.env.NODE_ENV' !== '"development"') ? 1800000 /* 30 mn */ : 2000;
         if ((new Date() - swLastUpdateDate) > timeout) {
             navigator.serviceWorker.getRegistration().then(reg => {

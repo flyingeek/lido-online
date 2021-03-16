@@ -34,6 +34,7 @@ const U = {
   'CONF_PROJ4_JS': 'https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.6.2/proj4.min.js',
   'CONF_LIDOJS_JS': `./js/lidojs.${lidojsPkg.version}.min.js`,
   'CONF_WMO_JS': `./js/wmo.${lidojsPkg.version}.var.js`,
+  'CONF_PINCHZOOM_JS': 'https://unpkg.com/pinch-zoom-element-js@1.1.2/dist/pinch-zoom-min.js',
   'CONF_BUNDLE_JS': './js/bundle.js',
   'CONF_BUNDLE_CSS': './css/bundle.css',
   'CONF_AIRAC': config.AIRAC,
