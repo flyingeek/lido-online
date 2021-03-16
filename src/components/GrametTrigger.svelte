@@ -1,6 +1,5 @@
 <script>
     import Overlay from 'svelte-overlay';
-    import {fade} from 'svelte/transition';
     import {grametThumbAction, grametStatus} from '../actions/grametAction';
     import Link from '../components/Link.svelte';
     import {showGramet, ofpPromise, isFakeOfp, route} from '../stores';
@@ -13,7 +12,7 @@
 {#if  ($ofpPromise && !$isFakeOfp)}
     {#await $ofpPromise then ofp}
         {#if $grametStatus !== 'error'}
-            <div class="gramet-thumbnail" class:open={$showGramet} class:invisible={$route !== '/map'} use:grametThumbAction={ofp} on:click={toggleGramet} in:fade>
+            <div class="gramet-thumbnail" class:open={$showGramet} class:invisible={$route !== '/map'} use:grametThumbAction={ofp} on:click={toggleGramet}>
                 {#if ($showGramet)}
                     <svg class="gramet-close"><use xlink:href="#close-symbol"/></svg>
                 {/if}
@@ -69,5 +68,8 @@ button.close svg{
     stroke: black;
     top: -5px;
     position: relative;
+}
+.gramet-thumbnail :global(img){
+    transition: opacity 0.5s ease-in;
 }
 </style>
