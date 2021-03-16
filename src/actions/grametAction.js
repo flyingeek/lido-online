@@ -7,7 +7,6 @@ export const grametHeight = writable();
 export function grametThumbAction(container, ofp){
     let img;
     let clone;
-    let timeout;
     //const cWidth = container.clientWidth;
     const cHeight = container.clientHeight;
     const style = getComputedStyle(document.body);
@@ -19,7 +18,9 @@ export function grametThumbAction(container, ofp){
         grametHeight.set(img.height);
         clone = img.cloneNode();
         clone.id = "grametImg";
-        //clone.style.display = 'none';
+        clone.style.display = 'none';
+        clone.addEventListener('load', cloneLoadListener); // Safari required the clone to be loaded before adding it to pinchzoom
+        clone.addEventListener('error', errorListener);
         document.body.appendChild(clone);
         img.style.height = `${(gHeight/gInnerHeight) * cHeight}px`; // 700 is the full gramet height, 380 is the real gramet height
         img.style.objectFit = 'contain';
@@ -31,10 +32,10 @@ export function grametThumbAction(container, ofp){
         const ratio = h / 700;
         img.style.top = `-${30 * ratio}px`; // 30px is the top frame size of the gramet (white border)
         img.style.left = `-${64 * ratio}px`;// 64px is the left/right frame size of the gramet (white border)
-        timeout = setTimeout(() => {
-            grametStatus.set('success');
-            img.style.opacity = 1;
-        }, 2500); // delay needed for Safari
+    };
+    const cloneLoadListener = () => {
+        grametStatus.set('success');
+        img.style.opacity = 1;
     };
     const errorListener = () => {
         grametStatus.set('error');
@@ -43,8 +44,9 @@ export function grametThumbAction(container, ofp){
         if (img) img.removeEventListener('load', loadListener);
         if (img) img.removeEventListener('error', errorListener);
         if (img) img.remove();
+        if (clone) clone.removeEventListener('load', cloneLoadListener);
+        if (clone) clone.removeEventListener('error', errorListener);
         if (clone) clone.remove();
-        clearTimeout(timeout);
         clone = undefined;
         img = undefined;
     }
