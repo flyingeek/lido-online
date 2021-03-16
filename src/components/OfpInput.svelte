@@ -41,7 +41,7 @@
 </script>
 <script>
     import { createEventDispatcher } from 'svelte';
-    import {ofpPromise, isFakeOfp} from '../stores';
+    import {ofpPromise, isFakeOfp, showGramet} from '../stores';
     export let kmlOptions;
     let disabled = false;
     let ready = new Deferred();
@@ -115,6 +115,7 @@
     };
     async function process(e) {
         disabled = true;
+        $showGramet = false;
         preload(); // in case click event not supported or missed
 
         await ready.promise.then(() => {
