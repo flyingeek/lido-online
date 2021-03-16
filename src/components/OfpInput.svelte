@@ -115,7 +115,7 @@
     };
     async function process(e) {
         disabled = true;
-        $showGramet = false;
+        $showGramet = false; // must be set here and not in App.svelte (why ?)
         preload(); // in case click event not supported or missed
 
         await ready.promise.then(() => {

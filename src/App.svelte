@@ -7,6 +7,7 @@
   import Navbar from "./components/Navbar.svelte";
   import OfpInput from './components/OfpInput.svelte';
   import GrametTrigger from './components/GrametTrigger.svelte';
+  import GrametPosition from './components/GrametPosition.svelte';
   import Page from "./components/Page.svelte";
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
@@ -24,6 +25,11 @@
   let kmlOptions = validate(storage.getItem(stores.optionsKML) || {}); //include default
   setHistory(kmlOptions, $route);
 
+  const ofpChange = () =>{
+    $sidebar = false;
+    $swDismiss = false;
+    //$showGramet = false; // this one is set in OfpInput instead
+  };
   onMount(() => {
         document.addEventListener("visibilitychange", checkSwOnVisibilityChange, false);
         return () => document.removeEventListener("visibilitychange", checkSwOnVisibilityChange);
@@ -36,9 +42,10 @@
       <HomePwaInstall/>
     {:else}
       <Navbar>
+        <GrametPosition/>
         <GrametTrigger/>
         <form class="form-inline" on:submit|preventDefault>
-          <OfpInput {kmlOptions} on:change={() => $sidebar = $swDismiss = $showGramet = false} />
+          <OfpInput {kmlOptions} on:change={ofpChange} />
         </form>
       </Navbar>
       <SWUpdate prompt={!!$ofpPromise}/>
