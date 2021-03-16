@@ -1,8 +1,6 @@
 import {writable} from 'svelte/store';
 
 export const grametStatus = writable();
-export const grametWidth = writable();
-export const grametHeight = writable();
 
 export function grametThumbAction(container, ofp){
     let img;
@@ -13,9 +11,7 @@ export function grametThumbAction(container, ofp){
     const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', 390).slice(0, -2)); //remove px
 
     const loadListener = () => {
-        grametWidth.set(img.width);
         const gHeight = img.height;
-        grametHeight.set(img.height);
         clone = img.cloneNode();
         clone.id = "grametImg";
         clone.style.display = 'none';
