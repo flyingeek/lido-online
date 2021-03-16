@@ -28,6 +28,8 @@
                     <h3 class="popover-header">😱: Erreur de récupération du Gramet<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>
                     <div class="popover-body">
                         <p><a href="." on:click|preventDefault={() => $grametStatus = 'loading'}>essayez à nouveau</a> ou allez sur <Link href={ofp.ogimetData.url} target="_blank">ogimet</Link>.</p>
+                        <p>A certaines heures le site ogimet est saturé, il faut essayer 2 ou 3 fois.
+                            Parfois le site est indisponible, avec la mention "no grib data" sur leur page web, dans ce cas il est inutile de faire une nouvelle tentative.</p>
                     </div>
                     </div>
                 </div>
@@ -68,6 +70,9 @@ button.close svg{
     stroke: black;
     top: -5px;
     position: relative;
+}
+button[slot=parent]{
+    vertical-align: text-bottom;
 }
 .gramet-thumbnail :global(img){
     transition: opacity 0.5s ease-in;
