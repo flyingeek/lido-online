@@ -121,7 +121,7 @@
 </div>
 <AircraftType bind:selectedAircraft bind:aircraftTypeSelectElement {ofp} on:change={aircraftChange}/>
 <FormSettings bind:kmlOptions on:change={update} on:save />
-<Gramet />
+<Gramet {ofp}/>
 
 <style>
 

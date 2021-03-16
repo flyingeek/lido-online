@@ -70,7 +70,10 @@ export function grametThumbAction(container, ofp){
 //To load Gramet Img im pinchzoom
 //due to problem with Safari, we keep a clone in the document
 //that way there is less reload and incomplete image appearing in the pinchzoom view
-export const setGramet = (pinchZoom) => {
+export const setGramet = (pinchZoom, {pos, fl}) => {
+    const plane = pinchZoom.parentNode.querySelector('svg');
+    const position = parseFloat(pos);
+    const level = parseFloat(fl);
     const img = document.getElementById('grametImg');
     const style = getComputedStyle(document.body);
     const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', 390).slice(0, -2)); //remove px
@@ -80,17 +83,54 @@ export const setGramet = (pinchZoom) => {
     const nav = document.querySelector('nav');
     const nWidth = nav.clientWidth;
     let scale = nWidth/iWidth;
-    let x = 0;
     const maxScale = maxHeight / (gInnerHeight + 50 + 10);  // we want the first 440px visible (why extra 10 ?)
-    if (scale > maxScale) { 
-        scale = maxScale;
-        x = (nWidth - (iWidth * scale)) / 2;
+    let x = 0;
+    const position2pixel = (position) =>  {
+        return (65 + ((iWidth - (65 * 2)) * position / 100)) * scale;
     }
+    const placePlane = (plane, planePosition, planeLevel) => {
+        // before and after flight, displays the full gramet
+        plane.style.left = (x + (position2pixel(planePosition) - (plane.clientWidth / 2))) + 'px';
+        plane.style.top = (((-0.57 * planeLevel + 292 + 33) * scale) - (plane.clientHeight / 2)) + 'px';//TODO
+    }
+    const imageOffsetForPosition = (position) => {
+        const pixelPosX = position2pixel(position);
+        if (pixelPosX > nWidth /2 && pixelPosX < (iWidth * scale) - (nWidth/2)){
+            return -(pixelPosX - nWidth /2);
+        }else{
+            return 0;
+        }
+    }
+
+    if (position <= 0 || position >= 100) {
+        if (scale > maxScale) { 
+            scale = maxScale;
+            x = (nWidth - (iWidth * scale)) / 2;
+        }
+    } else {
+        // in flight, zoom in on the inner Gramet
+        scale = maxHeight / (gInnerHeight + 30 + 10);  // we want the first 420px visible (why extra 10 ?)
+    }
+    const offset = imageOffsetForPosition(position);
+    if (offset !== 0) {
+        x = offset;
+    }
+    placePlane(plane, position, level);
     img.style.display = "block";
     pinchZoom.style.maxHeight = `${maxHeight}px`;
     pinchZoom.appendChild(img);
     pinchZoom.setTransform({scale, x, y: 0});
     return {
+        update({pos, fl}){
+            const position = parseFloat(pos);
+            const level = parseFloat(fl);
+            const offset = imageOffsetForPosition(position);
+            if (offset !== 0) {
+                x = offset;
+                pinchZoom.setTransform({x});
+            }
+            placePlane(plane, position, level);
+        },
         destroy(){
             img.style.display = 'none';
             document.body.appendChild(img);
