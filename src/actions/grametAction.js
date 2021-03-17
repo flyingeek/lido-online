@@ -45,6 +45,7 @@ export function grametThumbAction(container, {ofp, pos}){
         clone = img.cloneNode();
         clone.id = "grametImg";
         clone.style.display = 'none';
+        clone.crossOrigin = "anonymous"; // otherwise sw does not cache
         clone.addEventListener('load', cloneLoadListener); // Safari required the clone to be loaded before adding it to pinchzoom
         clone.addEventListener('error', errorListener);
         document.body.appendChild(clone);
@@ -88,6 +89,7 @@ export function grametThumbAction(container, {ofp, pos}){
         grametStatus.set('loading');
         //img.src= 'https://ofp2map-gramet.vercel.app/api/0-1580128800-8-330-LFPG_LFPB_07002_03781_EGDL_EIME_03976_71179_71428_74389_KPVD_72501_72505_KJFK__Route_Gramet_AF006_LFPG-KJFK_27Jan20_12_40z_OFP_5_0_1.png';
         img.src = ofp.ogimetData.proxyImg;
+        img.crossOrigin = "anonymous"; // otherwise sw does not cache
     };
     createImg(ofp);
 
