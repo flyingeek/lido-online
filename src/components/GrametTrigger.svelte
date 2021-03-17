@@ -13,7 +13,7 @@
     {#await $ofpPromise then ofp}
         {#if $grametStatus !== 'error'}
             <div class="gramet-thumbnail" class:open={$showGramet} class:invisible={$route !== '/map'} use:grametThumbAction={{ofp, pos: $grametPosition}} on:click={toggleGramet}>
-                <svg id="gt-plane" width="4" fill="red" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <svg id="gt-plane" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="50" cy="50" r="50"/>
                 </svg>
                 {#if ($showGramet)}
@@ -85,5 +85,7 @@ button[slot=parent]{
     position: absolute;
     z-index: 1;
     display: none;
+    fill: var(--plane-color);
+    width: 4px;
 }
 </style>

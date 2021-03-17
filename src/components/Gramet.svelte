@@ -10,7 +10,7 @@
 {#if $showGramet}
     <div class="pinch-zoom-parent" transition:fly="{{y: maxHeight}}" data-max-height={maxHeight} use:setHeight>
         <pinch-zoom use:setGramet={{pos: $grametPosition, fl: ogimetParams.get('fl')}} min-scale="0.3"></pinch-zoom>
-        <svg width="10" fill="red" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
 
             <circle cx="50" cy="50" r="50"/>
           
@@ -29,7 +29,9 @@
     }
     svg {
         position:absolute;
+        width: 10px;
         top:60px;
         left: 0;
+        fill: var(--plane-color);
     }
 </style>
