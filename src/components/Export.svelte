@@ -1,7 +1,6 @@
 <script>
   import ShortcutsLink from "./ShortcutsLink.svelte";
   import DownloadButton from "./DownloadButton.svelte";
-  export let ofp;
 </script>
 <div class="card mb-3">
   <div class="card-body">
@@ -12,7 +11,7 @@
             <small class="text-muted">Le fichier est généré en fonction des options choisies sur la carte.</small>
         </div>
         <div class="col-12 col-sm-6 col-md-6">
-            <ShortcutsLink {ofp} on:save /> 
+            <ShortcutsLink on:save /> 
             <small class="text-muted">Sur iOS on peut lancer un raccourci.
                 <a href="https://www.icloud.com/shortcuts/2585d34bc76941febff60b8d064517ee" target="_blank">
                     Exemple de raccourci à installer

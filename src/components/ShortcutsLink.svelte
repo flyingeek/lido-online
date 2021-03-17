@@ -2,14 +2,15 @@
     import {KmlGenerator} from "./kml.js";
     import {runningOnIpad} from "./utils.js";
     import {storage, stores} from './mapSettings/storage.js';
+    import {ofp} from '../stores';
     import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
     const store = stores.shortcut;
     const defaultValue = "OFP2MAP";
     let shortcutName = storage.getItem(store) || defaultValue;
-    export let ofp;
+
     let url;
-    const lidoRoute = (ofp) ? ofp.lidoRoute().join(' ') : '';
+    const lidoRoute = (!!$ofp) ? $ofp.lidoRoute().join(' ') : '';
     function click(e) {
         const name = shortcutName.trim();
         if (name && runningOnIpad) {
@@ -23,7 +24,7 @@
                     "iconTemplate": editolido.avenzaIconTemplate,
                     "icons": editolido.AVENZAICONS
                 }),
-                "grametProxyURL": ofp.ogimetData.proxyImg
+                "grametProxyURL": $ofp.ogimetData.proxyImg
             };
             url = "shortcuts://run-shortcut?name=" + encodeURIComponent(name) + "&input=text&text=" + encodeURIComponent(JSON.stringify(obj));
         } else {

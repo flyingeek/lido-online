@@ -2,7 +2,7 @@
     import FormSettings from "./mapSettings/Form.svelte";
     import {createMap, token} from './mapboxgl/mapManagement';
     import {updateMapLayers} from './mapboxgl/layersManagement';
-    import {online} from "../stores.js";
+    import {online, isFakeOfp} from "../stores.js";
     import {updateKml} from './kml.js';
     import {promiseTimeout, fetchSimultaneously} from './utils';
     import { createEventDispatcher, onMount } from 'svelte';
@@ -33,7 +33,11 @@
     export let id = 'map';
 
     async function afterMapLoad(){
-        tilesMissing = await findMissingCacheTiles(ofp, mapData);
+        if (!$isFakeOfp) {
+            tilesMissing = await findMissingCacheTiles(ofp, mapData);
+        }else{
+            tilesMissing = [];
+        }
         //console.log(tilesMissing);
         const attribution = document.querySelector(`#${id} .mapboxgl-ctrl-attrib-inner`);
         if (attribution) {
@@ -65,7 +69,7 @@
             mapData,
             name: e.detail.name,
             value: e.detail.value,
-            ofp,
+            ofp: ofp,
             kmlOptions,
             aircraftType: selectedAircraft
         });
@@ -110,7 +114,7 @@
 
 <div id={id} use:mapResizeAction={map}></div>
 <div class="mapmenu">
-    <MapProjectionSelect bind:selected={selectedProjection} {ofp} on:change={projectionChange}/>
+    <MapProjectionSelect bind:selected={selectedProjection} ofp={ofp} on:change={projectionChange}/>
     {#if (selectedProjection && !ofp.isFake && window.indexedDB && $online && caches[selectedProjection.id]!==true && !mapIsCached)}
         <div class="cacheButton" class:cacheError={cacheError} class:cacheProgress={cacheValue > 0||cacheMaxValue > 0} on:click={(cacheButtonDisabled) ? () => false : cacheMap}>
             <CircleProgress value={cacheValue} max={cacheMaxValue}>
@@ -119,9 +123,9 @@
         </div>
     {/if}
 </div>
-<AircraftType bind:selectedAircraft bind:aircraftTypeSelectElement {ofp} on:change={aircraftChange}/>
+<AircraftType bind:selectedAircraft bind:aircraftTypeSelectElement ofp={ofp} on:change={aircraftChange}/>
 <FormSettings bind:kmlOptions on:change={update} on:save />
-<Gramet {ofp}/>
+<Gramet/>
 
 <style>
 

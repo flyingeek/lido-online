@@ -41,7 +41,7 @@
 </script>
 <script>
     import { createEventDispatcher } from 'svelte';
-    import {ofpPromise, isFakeOfp, showGramet} from '../stores';
+    import {showGramet, ofp as ofpStore, ofpStatus, isFakeOfp} from '../stores';
     export let kmlOptions;
     let disabled = false;
     let ready = new Deferred();
@@ -64,7 +64,6 @@
     };
     const getOFP = (file) => {
         const reader = new FileReader();
-        $isFakeOfp = false;
         return new Promise((resolve, reject) => {
             reader.onload = (ev) => {
                 if (!pdfWorker || pdfWorker.destroyed) {
@@ -87,7 +86,7 @@
                                 ofp.ogimetData = data;
                                 //console.timeLog('start');
                                 try {
-                                    const kmlGen = KmlGenerator();
+                                    KmlGenerator();
                                     generateKML(ofp, kmlOptions);
                                     //console.timeEnd('start')
                                     resolve(ofp);
@@ -106,7 +105,9 @@
                             reject(Error("OFP non reconnu, il faut choisir \"Dossier de vol OFP\" dans Pilot Mission."));
                         }
                     },
-                    (err) => reject(err)
+                    (err) => {
+                        reject(err);
+                    }
                 );
             };
             reader.onerror = (err) => { reject(Error("Fichier illisible !")) };
@@ -121,34 +122,37 @@
         await ready.promise.then(() => {
             const file = e.target.files[0];
             if (file) {
+                $ofpStatus = 'loading';
                 label = e.target.value.split(/([\\/])/g).pop();
                 dispatch('change', label);
-                $ofpPromise = getOFP(file);
-                if (window.location.hash !== '#/gramet') {
-                    window.location.hash = '#/map';
-                }
+                getOFP(file).then((ofp) => {
+                    $ofpStore = ofp;
+                    $isFakeOfp = false;
+                    $ofpStatus = 'success';
+                }, (err) => $ofpStatus = err);
+                window.location.hash = '#/map';
             }
         });
         disabled = false;
     };
     async function processAircraftType(e) {
         disabled = true;
+        $ofpStatus = 'loading';
         preload(); // in case click event not supported or missed
         await ready.promise.then(() => {
-            $isFakeOfp = true;
-            $ofpPromise = new Promise((resolve, reject) => {
-                let ofp = new editolido.Ofp('_PDFJS_AF 681 KATL/LFPG 11Mar2020/2235zReleased: 11Mar/1724z3Main OFP (Long copy #1)OFP 6/0/1 ATC FLIGHT PLAN (FPL-AFR681-IS -B77W/ -KATL2235 -LFPG0724 LFPO ) FLIGHT SUMMARY 0012 TAXI IN Generated');
+            let ofp = new editolido.Ofp('_PDFJS_AF 681 KATL/LFPG 11Mar2020/2235zReleased: 11Mar/1724z3Main OFP (Long copy #1)OFP 6/0/1 ATC FLIGHT PLAN (FPL-AFR681-IS -B77W/ -KATL2235 -LFPG0724 LFPO ) FLIGHT SUMMARY 0012 TAXI IN Generated');
+            try {
+                KmlGenerator();
+                generateKML(ofp, kmlOptions);
+                $isFakeOfp = e.target.value;
                 ofp.isFake = e.target.value;
-                try {
-                    const kmlGen = KmlGenerator();
-                    generateKML(ofp, kmlOptions);
-                    resolve(ofp);
-                } catch (err) {
-                    console.log(text);
-                    console.log(ofp.infos);
-                    reject(err);
-                }
-            });
+                $ofpStore = ofp;
+                $ofpStatus = 'success';
+            } catch (err) {
+                console.log(text);
+                console.log(ofp.infos);
+                $ofpStatus = err;
+            }
             window.location.hash = '#/map';
         });
         disabled = false;
@@ -156,11 +160,11 @@
 
 </script>
 
-<div class="custom-file" class:blink={!$ofpPromise}>
+<div class="custom-file" class:blink={!$ofpStore}>
     <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} on:click|once={preload} class="custom-file-input">
     <label class:ready={readyClass} class="custom-file-label text-truncate" for="{name}">{label}</label>
 </div>
-{#if !$ofpPromise}
+{#if !$ofpStore}
     <div class="footer">
     <!-- svelte-ignore a11y-no-onchange -->
     <select class="form-control-sm" on:click|once={preload} disabled={disabled} on:change={processAircraftType}>
@@ -206,6 +210,7 @@ label {
   bottom: 0;
   text-align: right;
   display: none;
+  z-index: 1;
 }
 :global(.home .footer){
     display: block !important;

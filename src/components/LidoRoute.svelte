@@ -16,10 +16,10 @@
 </script>
 <script>
     import { fade } from 'svelte/transition';
-    export let ofp;
+    import {ofp} from '../stores';
     let valueCopy = null;
     let areaDom;
-    const lidoRoute = (ofp) ? ofp.lidoRoute().join(' ') : '';
+    const lidoRoute = (!!$ofp) ? $ofp.lidoRoute().join(' ') : '';
     let copied = false;
     const click = (e) => {
         e.target.classList.remove("hasactive");

@@ -1,10 +1,25 @@
 <script>
-    import {showGramet, grametPosition} from '../stores';
+    import {showGramet, grametPosition, ofp} from '../stores';
     import { fly } from "svelte/transition";
     import {setGramet, setHeight} from '../actions/grametAction';
-    export let ofp;
-    const ogimetParams = (new URL(ofp.ogimetData.url)).searchParams;
+    const ogimetParams = (!$ofp.isFake) ? (new URL($ofp.ogimetData.url)).searchParams : {};
     const maxHeight = 370;
+    if(!$ofp.isFake){
+        const takeOff = $ofp.infos.datetime2;
+        const landing = $ofp.infos.datetime2;
+        const duration = $ofp.infos.duration;
+        landing.setMinutes(takeOff.getMinutes() + duration[1]);
+        landing.setHours(takeOff.getHours() + duration[0]);
+        const now = new Date();
+        if (now < takeOff) {
+            $grametPosition = 0;
+        } else if (now > landing) {
+            $grametPosition = 100;
+        } else {
+            $grametPosition = (now - takeOff) / (duration[0] * 3600 + duration[1] * 60) / 1000;
+        }
+        //console.log($ofp.infos.datetime2, new Date(), $ofp.infos.duration)
+    }
 </script>
 
 {#if $showGramet}

@@ -12,12 +12,12 @@
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
   import {storage, stores, validate, setHistory, storeSettingsFromURL} from "./components/mapSettings/storage.js";
-  import {swDismiss, sidebar, route, ofpPromise, checkSwOnVisibilityChange, showGramet} from "./stores.js";
+  import {swDismiss, sidebar, route, checkSwOnVisibilityChange, ofp, ofpStatus} from "./stores.js";
   import HomePwaInstall from './components/HomePwaInstall.svelte';
   import {runningOnIpad} from './components/utils';
 
   const redirect = (requestedRoute) => {
-    console.log(`unkwnown route ${requestedRoute}, redirecting to #/`, !!$ofpPromise); 
+    console.log(`unkwnown route ${requestedRoute}, redirecting to #/`, !!$ofp, $ofpStatus); 
     window.location.hash = '#/';
   }
 
@@ -30,6 +30,7 @@
     $swDismiss = false;
     //$showGramet = false; // this one is set in OfpInput instead
   };
+
   onMount(() => {
         document.addEventListener("visibilitychange", checkSwOnVisibilityChange, false);
         return () => document.removeEventListener("visibilitychange", checkSwOnVisibilityChange);
@@ -48,39 +49,29 @@
           <OfpInput {kmlOptions} on:change={ofpChange} />
         </form>
       </Navbar>
-      <SWUpdate prompt={!!$ofpPromise}/>
-      <!-- START We do not want the map element to disappear from the dom -->
-      {#if $ofpPromise}
-        {#await $ofpPromise}
-          <!-- this cause the map to reinitialize-->
-          <Page hidden={$route !== '/map'}><div style="margin: auto;">traitement en cours...</div></Page>
-        {:then ofp}
-          <Page hidden={$route !== '/map'}>
-            <Map id="map" bind:kmlOptions {ofp} on:save={() => setHistory(kmlOptions, $route)}/>
-          </Page>
-        {:catch error}
-          <p class:d-none={$route !== '/map'}>😱: {error.message}</p>
-        {/await}
+      <SWUpdate prompt={!!$ofp}/>
+      {#if $ofp && $ofpStatus === 'success'}
+        <Page hidden={$route !== '/map'}>
+          <Map id="map" bind:kmlOptions ofp={$ofp} on:save={() => setHistory(kmlOptions, $route)}/>
+        </Page>
       {/if}
-      <!-- END of We do not want the map element to disappear from the dom (to keep cache)-->
-      {#if $ofpPromise && ($route === '/export')}
-        {#await $ofpPromise}
-          <Page><div style="margin: auto;">traitement en cours...</div></Page>
-        {:then ofp}
-              <Page>
-              <Export {ofp} on:save={() => setHistory(kmlOptions, $route)} />
-              <LidoRoute {ofp}/>
-              </Page>
-        {:catch error}
-          <p>😱: {error.message}</p>
-        {/await}
+
+      {#if ($ofpStatus === 'loading')}
+        <Page><div style="margin: auto;">traitement en cours...</div></Page>
+      {:else if $ofpStatus && $ofpStatus !== 'success' && $route === '/map'}
+        <Page><p class="ofpError">😱: {$ofpStatus}</p></Page>
+      {:else if ($route === '/export') && $ofpStatus === 'success'}
+        <Page>
+          <Export on:save={() => setHistory(kmlOptions, $route)} />
+          <LidoRoute />
+        </Page>
       {:else if $route === '/'}
         <Page>
           <Home />
         </Page>
       {:else if $route === '/help'}
         <Page><Help /></Page>
-      {:else if !($ofpPromise && $route === '/map')}
+      {:else if !($ofp && $route === '/map')}
         <!-- redirect -->
         { redirect($route) }
       {/if}
@@ -156,6 +147,13 @@
   }
   :global(.btn) {
     text-transform: uppercase
+  }
+  .ofpError {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    background-color: var(--snow);
   }
 
 </style>

@@ -1,21 +1,21 @@
 <script>
-    import {ofpPromise, isFakeOfp, route} from '../stores';
+    import {ofp, route} from '../stores';
 </script>
 <nav class="navbar navbar-expand-md navbar-light bg-light">
   <ul class="navbar-nav mr-auto">
     <li class="nav-item" class:active={$route === '/'}>
       <a class="nav-link" href="#/"><svg><use xlink:href="#home-symbol"/></svg>{#if 'process.env.NODE_ENV' === '"development"'}<sup>dev</sup>{/if}</a>
     </li>
-    {#if ($ofpPromise) || $route === '/map'}
+    {#if ($ofp) || $route === '/map'}
     <li class="nav-item" class:active={$route === '/map'}>
-      <a class:disabled={!$ofpPromise} class="nav-link" href="#/map">
+      <a class="nav-link" href="#/map">
       <svg class="f"><use xlink:href="#map-symbol"/></svg>
       <span>CARTE</span></a>
     </li>
     {/if}
-    {#if  ($ofpPromise && !$isFakeOfp) || $route === '/export'}
+    {#if  ($ofp && !$ofp.isFake) || $route === '/export'}
     <li class="nav-item" class:active={$route === '/export'}>
-      <a class:disabled={!$ofpPromise} class="nav-link" href="#/export">
+      <a class="nav-link" href="#/export">
       <svg class="f"><use xlink:href="#share-symbol"/></svg>
       <span>EXPORT</span></a>
     </li>
@@ -30,9 +30,7 @@
 </nav>
 
 <style>
-    a.disabled {
-      text-decoration: line-through;
-    }
+
     sup {
         background-color: var(--red);
         color: var(--white);
