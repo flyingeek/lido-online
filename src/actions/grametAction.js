@@ -2,7 +2,7 @@ import {writable} from 'svelte/store';
 
 export const grametStatus = writable();
 const grametMargin = 65; // left and right margin to the "inner gramet" image in px
-const grametTop = 33;// top margin to the "inner gramet" image in px
+const grametTop = 31;// top margin to the "inner gramet" image in px
 
 export function grametThumbAction(container, {ofp, pos}){
     const plane = document.getElementById('gt-plane');
@@ -15,7 +15,7 @@ export function grametThumbAction(container, {ofp, pos}){
     const viewportHeight = container.clientHeight;
     const viewportWidth = container.clientWidth;
     const style = getComputedStyle(document.body);
-    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', 390).slice(0, -2)); //remove px
+    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', 395).slice(0, -2)); //remove px
     const position2pixel = (position) =>  {
         return ((grametMargin * scale) + ((iWidth - (grametMargin * 2 * scale)) * position / 100));
     }
@@ -87,7 +87,6 @@ export function grametThumbAction(container, {ofp, pos}){
         img.addEventListener('load', loadListener);
         img.addEventListener('error', errorListener);
         grametStatus.set('loading');
-        //img.src= 'https://ofp2map-gramet.vercel.app/api/0-1580128800-8-330-LFPG_LFPB_07002_03781_EGDL_EIME_03976_71179_71428_74389_KPVD_72501_72505_KJFK__Route_Gramet_AF006_LFPG-KJFK_27Jan20_12_40z_OFP_5_0_1.png';
         img.src = ofp.ogimetData.proxyImg;
         img.crossOrigin = "anonymous"; // otherwise sw does not cache
     };
@@ -118,27 +117,27 @@ export function grametThumbAction(container, {ofp, pos}){
 //that way there is less reload and incomplete image appearing in the pinchzoom view
 export const setGramet = (pinchZoom, {pos, fl}) => {
     const plane = pinchZoom.parentNode.querySelector('svg');
-    const position = parseFloat(pos);
-    const level = parseFloat(fl);
     const img = document.getElementById('grametImg');
     const style = getComputedStyle(document.body);
-    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', 390).slice(0, -2)); //remove px
+    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', 395).slice(0, -2)); //remove px
     const maxHeight = parseFloat(pinchZoom.parentNode.dataset.maxHeight || "370");
     const iWidth = img.width;
     //const iHeight = img.height;
     const nav = document.querySelector('nav');
     const viewportWidth = nav.clientWidth;
-    let scale = viewportWidth/iWidth;
-    const maxScale = maxHeight / (gInnerHeight + 50 + 10);  // we want the first 440px visible (why extra 10 ?)
+    let position = parseFloat(pos);
+    let scale;
     let x = 0;
-    let allowImgScroll = false;
+    let y = 0;
+    let level = parseFloat(fl);
+    let allowImgScroll;
     const position2pixel = (position) =>  {
         return (grametMargin + ((iWidth - (grametMargin * 2)) * position / 100)) * scale;
     }
     const placePlane = (plane, planePosition, planeLevel) => {
         // before and after flight, displays the full gramet
         plane.style.left = (x + (position2pixel(planePosition) - (plane.clientWidth / 2))) + 'px';
-        plane.style.top = (((-0.57 * planeLevel + 292 + grametTop) * scale) - (plane.clientHeight / 2)) + 'px';//TODO
+        plane.style.top = (((-0.57 * planeLevel + 292 + grametTop) * scale) - (plane.clientHeight / 2)) + y + 'px';//TODO
     }
     const imageOffsetForPosition = (position) => {
         const pixelPosX = position2pixel(position);
@@ -155,30 +154,41 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
             return lock - max;
         }
     }
-
+    const pinchzoomChange = () => {
+        x = pinchZoom.x; // x offset
+        y = pinchZoom.y; // y offset
+        scale = pinchZoom.scale; // scale
+        allowImgScroll = (viewportWidth <= iWidth * scale);
+        placePlane(plane, position, level);
+    }
+    
     if (position <= 0 || position >= 100) {
-        allowImgScroll = false; // x should never be changed on update if set
-        if (scale > maxScale) { 
-            scale = maxScale;
-            x = (viewportWidth - (iWidth * scale)) / 3;
-        }
+        // flight is not yet progress or finished
+        scale = Math.min(viewportWidth/iWidth, maxHeight / (gInnerHeight + 50)); // we want the first 445px visible
+        y = 0;
     } else {
-        allowImgScroll = true; // 
-        // in flight, zoom in on the inner Gramet
-        scale = maxHeight / (gInnerHeight + 30 + 10);  // we want the first 420px visible (why extra 10 ?)
+        // flight is in progress
+        scale = maxHeight / (gInnerHeight);  // (why extra 10 ?)
+        y = - grametTop * scale;
     }
-    if (allowImgScroll) {
+    if (viewportWidth > iWidth * scale) {
+        x = (viewportWidth - (iWidth * scale)) / 2;
+        allowImgScroll = false;
+    } else {
         x = imageOffsetForPosition(position);
+        allowImgScroll = true;
     }
+
     placePlane(plane, position, level);
     img.style.display = "block";
     pinchZoom.style.maxHeight = `${maxHeight}px`;
     pinchZoom.appendChild(img);
-    pinchZoom.setTransform({scale, x, y: 0});
+    pinchZoom.setTransform({scale, x, y});
+    pinchZoom.addEventListener("change", pinchzoomChange);
     return {
         update({pos, fl}){
-            const position = parseFloat(pos);
-            const level = parseFloat(fl);
+            position = parseFloat(pos);
+            level = parseFloat(fl);
             if (allowImgScroll) {
                 x = imageOffsetForPosition(position);
                 pinchZoom.setTransform({x});
@@ -188,6 +198,7 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
         destroy(){
             img.style.display = 'none';
             document.body.appendChild(img);
+            pinchZoom.removeEventListener("change", pinchzoomChange);
         }
     }
 };
