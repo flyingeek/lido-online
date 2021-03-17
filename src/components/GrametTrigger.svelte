@@ -2,7 +2,7 @@
     import Overlay from 'svelte-overlay';
     import {grametThumbAction, grametStatus} from '../actions/grametAction';
     import Link from '../components/Link.svelte';
-    import {showGramet, ofpPromise, isFakeOfp, route} from '../stores';
+    import {showGramet, ofpPromise, isFakeOfp, route, grametPosition} from '../stores';
 
     const toggleGramet = () => {
         if ($grametStatus === 'success') $showGramet = !$showGramet;
@@ -12,7 +12,10 @@
 {#if  ($ofpPromise && !$isFakeOfp)}
     {#await $ofpPromise then ofp}
         {#if $grametStatus !== 'error'}
-            <div class="gramet-thumbnail" class:open={$showGramet} class:invisible={$route !== '/map'} use:grametThumbAction={ofp} on:click={toggleGramet}>
+            <div class="gramet-thumbnail" class:open={$showGramet} class:invisible={$route !== '/map'} use:grametThumbAction={{ofp, pos: $grametPosition}} on:click={toggleGramet}>
+                <svg id="gt-plane" width="4" fill="red" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="50"/>
+                </svg>
                 {#if ($showGramet)}
                     <svg class="gramet-close"><use xlink:href="#close-symbol"/></svg>
                 {/if}
@@ -70,11 +73,17 @@ button.close svg{
     stroke: black;
     top: -5px;
     position: relative;
+    z-index: 2;
 }
 button[slot=parent]{
     vertical-align: text-bottom;
 }
 .gramet-thumbnail :global(img){
     transition: opacity 0.5s ease-in;
+}
+#gt-plane {
+    position: absolute;
+    z-index: 1;
+    display: none;
 }
 </style>

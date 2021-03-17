@@ -1,17 +1,15 @@
 <script>
-    import {showGramet, grametPosition, fl} from '../stores';
+    import {showGramet, grametPosition} from '../stores';
     import { fly } from "svelte/transition";
     import {setGramet, setHeight} from '../actions/grametAction';
     export let ofp;
     const ogimetParams = (new URL(ofp.ogimetData.url)).searchParams;
-
     const maxHeight = 370;
-    $fl = ogimetParams.get('fl')
 </script>
 
 {#if $showGramet}
     <div class="pinch-zoom-parent" transition:fly="{{y: maxHeight}}" data-max-height={maxHeight} use:setHeight>
-        <pinch-zoom use:setGramet={{pos: $grametPosition, fl:$fl}} min-scale="0.3"></pinch-zoom>
+        <pinch-zoom use:setGramet={{pos: $grametPosition, fl: ogimetParams.get('fl')}} min-scale="0.3"></pinch-zoom>
         <svg width="10" fill="red" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
 
             <circle cx="50" cy="50" r="50"/>
