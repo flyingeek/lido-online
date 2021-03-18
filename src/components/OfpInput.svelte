@@ -142,14 +142,13 @@
         await ready.promise.then(() => {
             let ofp = new editolido.Ofp('_PDFJS_AF 681 KATL/LFPG 11Mar2020/2235zReleased: 11Mar/1724z3Main OFP (Long copy #1)OFP 6/0/1 ATC FLIGHT PLAN (FPL-AFR681-IS -B77W/ -KATL2235 -LFPG0724 LFPO ) FLIGHT SUMMARY 0012 TAXI IN Generated');
             try {
-                KmlGenerator();
-                generateKML(ofp, kmlOptions);
+                KmlGenerator(); // to have a minimum skeleton for map settings
                 $isFakeOfp = e.target.value;
                 ofp.isFake = e.target.value;
                 $ofpStore = ofp;
                 $ofpStatus = 'success';
             } catch (err) {
-                console.log(text);
+                console.log(err);
                 console.log(ofp.infos);
                 $ofpStatus = err;
             }
