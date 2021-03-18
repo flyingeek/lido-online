@@ -100,7 +100,7 @@
     --maximum-yellow-red: #FCBF49; /* used for warnings in LogWindow */
     --electric-blue: #87F1FF;
     --gramet-inner-height: 395px;
-    --plane-color: var(--redaf);
+    --plane-color: var(--yellow);
   }
   .content{
     background-color: var(--blueaf);

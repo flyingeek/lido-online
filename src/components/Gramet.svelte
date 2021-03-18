@@ -8,9 +8,7 @@
 
 <div class="pinch-zoom-parent" transition:fly="{{y: maxHeight}}" data-max-height={maxHeight} use:setHeight>
     <pinch-zoom use:setGramet={{pos: $flightProgress, fl: ogimetParams.get('fl')}} min-scale="0.3"></pinch-zoom>
-    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="50"/>
-    </svg>
+    <svg><use xlink:href="#plane-symbol"/></svg>
 </div>
 
 <style>
@@ -25,7 +23,8 @@
     }
     svg {
         position:absolute;
-        width: 10px;
+        width: 40px;
+        height: 40px;
         top:60px;
         left: 0;
         fill: var(--plane-color);
