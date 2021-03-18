@@ -56,7 +56,8 @@
     width: 20px;
     stroke: red;
     transform: rotate(180deg);
-    margin-top: calc((var(--gramet-thumb-height) - var(--height)) / 2);
+    vertical-align: text-bottom;
+    /* margin-top: calc((var(--gramet-thumb-height) - var(--height)) / 2); */
 }
 .gramet-thumbnail .gramet-close{
     stroke: var(--white);

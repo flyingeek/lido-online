@@ -54,6 +54,10 @@
         margin-right: 1rem;
         display: flex;
         align-items: flex-start;
+        /* outline: 1px solid rgba(0,0,0,0.2); */
+        /* outline-style: dashed; */
+        outline: 1px solid #ced4da55;
+        margin-top: -1px;
     }
     svg {
         width: 30px;
