@@ -2,7 +2,7 @@
     import {flightProgress, ofp} from '../stores';
     import { fly } from "svelte/transition";
     import {setGramet, setHeight} from '../actions/grametAction';
-    const ogimetParams = (!$ofp.isFake) ? (new URL($ofp.ogimetData.url)).searchParams : {};
+    const ogimetParams = new URL($ofp.ogimetData.url).searchParams;
     const maxHeight = 370;
 </script>
 
