@@ -61,12 +61,13 @@ export function grametThumbAction(container, {ofp, pos}){
         const offset = imageOffsetForPosition(position);
         img.style.top = `-${grametTop * ratio}px`;
         img.style.left = `${offset}px`;
-        placePlane(plane, position, offset);
     };
     const cloneLoadListener = () => {
         grametStatus.set('success');
         plane.style.display = 'block';
         img.style.opacity = 1;
+        const offset = imageOffsetForPosition(position);
+        placePlane(plane, position, offset);
     };
     const errorListener = () => {
         plane.style.display = 'none';

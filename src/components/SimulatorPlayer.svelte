@@ -18,6 +18,7 @@
         display: none;
     }
     label{
-        margin-right: 0.5rem;
+        margin-right: 1rem;
+        font-size: large;
     }
 </style>

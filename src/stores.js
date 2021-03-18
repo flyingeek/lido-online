@@ -9,6 +9,7 @@ export const grametPosition = writable(100);
 export const simulate = writable(-1);
 export const ofp = writable();
 export const ofpStatus = writable();
+export const takeOffTime = writable(new Date());
 export const fl = writable();
 export const isFakeOfp = writable(false);
 let swLastUpdateDate = new Date();
@@ -84,8 +85,8 @@ export const route = readable('/', set => {
 });
 
 export const flightProgress = derived(
-    [ofp, simulate],
-    ([$ofp, $simulate], set) => {
+    [ofp, simulate, takeOffTime],
+    ([$ofp, $simulate, $takeOffTime], set) => {
         console.log('fp init')
         let interval;
         const frequency = 60 * 1000;
@@ -102,7 +103,7 @@ export const flightProgress = derived(
                     simulate.set(-1); 
                 }
             };
-
+            
             if ($simulate >= 0) {
                 console.log('start of simulated session');
                 let value = $simulate;
@@ -111,19 +112,19 @@ export const flightProgress = derived(
                     value++;
                 }, simulatorFrequency);
             } else {
-                const takeOff = $ofp.infos.datetime2;
-                const landing = new Date($ofp.infos.datetime2);
+                const ofpTakeOff = $takeOffTime;
+                const landing = new Date(ofpTakeOff);
                 const duration = $ofp.infos.duration;
-                landing.setMinutes(landing.getMinutes() + duration[1]);
-                landing.setHours(landing.getHours() + duration[0]);
+                landing.setUTCMinutes(landing.getUTCMinutes() + duration[1]);
+                landing.setUTCHours(landing.getUTCHours() + duration[0]);
                 const computePosition = () => {
                     let now = new Date();
-                    if (now <= takeOff) {
+                    if (now <= ofpTakeOff) {
                         return 0;
                     } else if (now >= landing) {
                         return  100;
                     } else {
-                        return (now - takeOff) / (duration[0] * 3600 + duration[1] * 60) / 10;
+                        return (now - ofpTakeOff) / (duration[0] * 3600 + duration[1] * 60) / 10;
                     }
                 };
                 const pos = computePosition();

@@ -8,6 +8,7 @@
   import OfpInput from './components/OfpInput.svelte';
   import GrametTrigger from './components/GrametTrigger.svelte';
   import SimulatorPlayer from './components/SimulatorPlayer.svelte';
+  import TakeOffInput from './components/TakeOffInput.svelte';
   import Page from "./components/Page.svelte";
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
@@ -46,6 +47,7 @@
         {#if ($ofp && !$ofp.isFake && $route === '/map') }
         <GrametTrigger/>
         <SimulatorPlayer/>
+        <TakeOffInput/>
         {/if}
         <form class="form-inline" on:submit|preventDefault>
           <OfpInput {kmlOptions} on:change={ofpChange} />

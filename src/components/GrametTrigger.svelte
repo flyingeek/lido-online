@@ -43,7 +43,7 @@
 .gramet-thumbnail{
     --gramet-thumb-height: 39px;
     height: var(--gramet-thumb-height);
-    margin-right: 0.5rem;
+    margin-right: 1rem;
     overflow: hidden;
     position: relative;
     flex: 0 1 70px; /* a cdg-dub flight is 78px*/
