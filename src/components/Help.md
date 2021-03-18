@@ -43,7 +43,7 @@ Le GRAMET est un météogramme représentant le temps et l'espace. Il indique, e
 Le GRAMET est réalisé par <Link href="http://www.ogimet.com">www.ogimet.com</Link> à partir d'une route calculée. Il est possible d'afficher le GRAMET et sa route sur la carte. La route est particulièrement utile lors des vols océaniques car il n'y a aucune station en mer.
 Pour construire la route du GRAMET, on ne peut se baser sur des waypoints, il faut utiliser au plus 21 stations météo (WMO). Il y a au total 13000 WMO dans le monde.
 
-Pour afficher le Gramet, cliquez sur sa miniature à gauche de l'OFP. Pour afficher la route, direction le réglages des calques de la carte. Par défaut elle est affichée en bleu.
+Pour afficher le Gramet, cliquez sur sa miniature à gauche de l'OFP. Pour afficher la route, direction le réglages des calques de la carte. Par défaut elle est affichée en bleu. En fonction de l'heure de décollage (modifiable), le Gramet et sa miniature affiche la position avion.
 
 Pour mieux comprendre le GRAMET, je vous conseille son <Link href="http://www.ogimet.com/guia_gramet.phtml.en">Guide d'interprétation</Link>.
 
