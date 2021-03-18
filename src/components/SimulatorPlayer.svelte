@@ -21,5 +21,11 @@
         margin-right: 1rem;
         font-size: large;
         font-family: monospace;
+        display: none;
+    }
+    @media (min-width: 768px){
+        label {
+            display: block;
+        }
     }
 </style>

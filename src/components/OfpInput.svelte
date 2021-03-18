@@ -223,15 +223,15 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
 }
-@media (max-width: 767px){
+@media (max-width: 900px){
     input ~ label::after, input:lang(fr) ~ label::after {
         content: "OFP…" !important;
     }
     .custom-file {
-        width: 140px;
+        width: 155px;
     }
 }
-@media (max-width: 380px){
+@media (max-width: 768px){
     label {
         padding-right: 70px;
     }

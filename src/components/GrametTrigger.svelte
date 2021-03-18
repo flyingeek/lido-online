@@ -40,6 +40,7 @@
 
 
 <style>
+
 .gramet-thumbnail{
     --gramet-thumb-height: 39px;
     height: var(--gramet-thumb-height);
@@ -49,6 +50,12 @@
     flex: 0 1 70px; /* a cdg-dub flight is 78px*/
     border-radius: 3px;
     align-self: baseline;
+    display: none;
+}
+@media (min-width: 400px){ /* ipad portrait half screen*/
+    .gramet-thumbnail {
+        display:block;
+    }
 }
 .gramet-error {
     --height: 20px;
