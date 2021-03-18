@@ -83,11 +83,12 @@ export function grametThumbAction(container, {ofp, pos}){
         clone = undefined;
         img = undefined;
     }
-    const createImg = (ofp) => {
+    const createImg = async (ofp) => {
         img = document.createElement('img')
         img.addEventListener('load', loadListener);
         img.addEventListener('error', errorListener);
         grametStatus.set('loading');
+        plane.style.display = 'none';
         img.src = ofp.ogimetData.proxyImg;
         img.crossOrigin = "anonymous"; // otherwise sw does not cache
     };
