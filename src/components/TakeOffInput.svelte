@@ -3,9 +3,14 @@
     import blurAction from '../actions/blurAction';
     export let name="take-off";
 
-    const ofpTakeOff = new Date($ofp.infos.datetime);
-    ofpTakeOff.setUTCMinutes(ofpTakeOff.getMinutes() + $ofp.infos.taxitime);
-    $takeOffTime = ofpTakeOff;
+    const getOfpTakeOffTime =  (currentOfp) => {
+        const value = new Date(currentOfp.infos.datetime);
+        value.setUTCMinutes(value.getMinutes() + $ofp.infos.taxitime);
+        $takeOffTime = value;
+        return value;
+    };
+
+    $: ofpTakeOff = getOfpTakeOffTime($ofp);
 
     const hm2input = (hours, minutes) => `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 
