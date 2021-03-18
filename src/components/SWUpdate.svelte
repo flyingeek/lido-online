@@ -1,10 +1,9 @@
 <script context="module">
     import {writable} from 'svelte/store';
-    import {swDismiss} from '../stores';
+    import {swDismiss, swUpdated, majorUpdate} from '../stores';
     import {isPatchUpdate} from '../components/utils';
-    export const swUpdated = writable(false);
     export const swRegistration = writable();
-    export const majorUpdate = writable(false);
+
     export const showSkipWaitingPrompt = (nextVersion) => {
         swUpdated.set(true);
         swDismiss.set(false);

@@ -2,6 +2,8 @@ import { writable, readable, derived } from 'svelte/store';
 
 export const wb = writable();
 export const swDismiss = writable(false);
+export const swUpdated = writable(false);
+export const majorUpdate = writable(false);
 export const sidebar = writable(false);
 
 export const showGramet = writable(false);
@@ -20,7 +22,13 @@ export const checkSWUpdate = () => {
         if ((new Date() - swLastUpdateDate) > timeout) {
             navigator.serviceWorker.getRegistration().then(reg => {
                 if (reg) {
-                    if (!reg.waiting) reg.update();
+                    if (!reg.waiting) {
+                        reg.update();
+                    } else {
+                        // service worker quit while in background ?
+                        swUpdated.set(true);
+                        majorUpdate.set(true); // show immediatly
+                    }
                     swDismiss.set(false);
                     swLastUpdateDate = new Date();
                 }
