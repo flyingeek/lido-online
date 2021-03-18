@@ -84,7 +84,7 @@ button[slot=parent]{
     position: absolute;
     z-index: 1;
     display: none;
-    fill: var(--plane-color);
+    fill: var(--redaf);
     width: 4px;
 }
 </style>
