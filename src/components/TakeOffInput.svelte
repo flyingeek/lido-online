@@ -1,5 +1,6 @@
 <script>
     import {ofp, takeOffTime} from '../stores';
+    import blurAction from '../actions/blurAction';
     export let name="take-off";
 
     const ofpTakeOff = new Date($ofp.infos.datetime);
@@ -41,7 +42,7 @@
 <div>
     <svg><use xlink:href="#takeoff-symbol"/></svg>
     <label for="{name}">Heure de décollage</label><!-- displayed in ios popup -->
-    <input id="{name}" name="{name}" type="time" required="required" on:change={changeTime} value="{hm2input(ofpTakeOff.getUTCHours(), ofpTakeOff.getUTCMinutes())}" />
+    <input id="{name}" name="{name}" type="time" use:blurAction on:change={changeTime} value="{hm2input(ofpTakeOff.getUTCHours(), ofpTakeOff.getUTCMinutes())}" />
 </div>
 
 <style>
