@@ -45,9 +45,13 @@
     {:else}
       <Navbar>
         {#if ($ofp && !$ofp.isFake && $route === '/map') }
-        <GrametTrigger/>
-        <SimulatorPlayer/>
-        <TakeOffInput/>
+          <GrametTrigger/>
+          {#if ('process.env.NODE_ENV' === '"development"')}
+            <SimulatorPlayer/>
+          {/if}
+        {/if}
+        {#if ($ofp && !$ofp.isFake)}
+          <TakeOffInput/>
         {/if}
         <form class="form-inline" on:submit|preventDefault>
           <OfpInput {kmlOptions} on:change={ofpChange} />
