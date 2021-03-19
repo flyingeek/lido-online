@@ -1,13 +1,13 @@
 <script context="module">
     import {resetable} from '../stores';
     export const showPlaneOnMap = resetable(false);
-    const showPlane = () => {
-        showPlaneOnMap.set(true);
-        console.log('show plane');
+    const showPlane = (e) => {
+        if('BACKGROUND' !== e.target._watchState) showPlaneOnMap.set(true);
+        //console.log('show plane', e.target._watchState);
     };
-    const hidePlane = () => {
+    const hidePlane = (e) => {
         showPlaneOnMap.set(false);
-        console.log('hide plane');
+        //console.log('hide plane', e.target._watchState);
     }
 </script>
 <script>
