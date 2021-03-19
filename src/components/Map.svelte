@@ -1,3 +1,15 @@
+<script context="module">
+    import {resetable} from '../stores';
+    export const showPlaneOnMap = resetable(false);
+    const showPlane = () => {
+        showPlaneOnMap.set(true);
+        console.log('show plane');
+    };
+    const hidePlane = () => {
+        showPlaneOnMap.set(false);
+        console.log('hide plane');
+    }
+</script>
 <script>
     import FormSettings from "./mapSettings/Form.svelte";
     import {createMap, token} from './mapboxgl/mapManagement';
@@ -5,10 +17,11 @@
     import {online, isFakeOfp, showGramet} from "../stores.js";
     import {updateKml} from './kml.js';
     import {promiseTimeout, fetchSimultaneously} from './utils';
-    import { createEventDispatcher, onMount } from 'svelte';
+    import { createEventDispatcher, onMount, onDestroy } from 'svelte';
     import {findMissingCacheTiles} from '../tilesCache';
     import CircleProgress from "./CircleProgress.svelte";
     import AircraftType from "./AircraftType.svelte";
+    import MapPlane from "./MapPlane.svelte";
     import MapProjectionSelect from "./MapProjectionSelect.svelte";
     import Gramet from './Gramet.svelte';
     import mapResizeAction from '../actions/mapResizeAction';
@@ -109,6 +122,16 @@
         mapboxgl.accessToken = token;
         mapData = createMap(id, selectedProjection, ofp, kmlOptions, afterMapLoad);
         map = mapData.map;
+        mapData.geolocate.on('trackuserlocationstart', hidePlane);
+        mapData.geolocate.on('trackuserlocationend', showPlane);
+
+    });
+    onDestroy(() => {
+        mapData.geolocate.off('trackuserlocationstart', hidePlane);
+        mapData.geolocate.off('trackuserlocationend', showPlane);
+        showPlaneOnMap.reset();
+        map = undefined;
+        mapData = undefined;
     });
 </script>
 
@@ -123,6 +146,7 @@
         </div>
     {/if}
 </div>
+{#if (mapData && $showPlaneOnMap)}<MapPlane {mapData}/>{/if}
 <AircraftType bind:selectedAircraft bind:aircraftTypeSelectElement ofp={ofp} on:change={aircraftChange}/>
 <FormSettings bind:kmlOptions on:change={update} on:save />
 {#if $showGramet}<Gramet/>{/if}

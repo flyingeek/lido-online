@@ -7,6 +7,7 @@ export const majorUpdate = writable(false);
 export const sidebar = writable(false);
 
 export const showGramet = writable(false);
+
 export const grametPosition = writable(100);
 export const simulate = writable(-1);
 export const ofp = writable();
@@ -159,3 +160,12 @@ export const flightProgress = derived(
     0 // initial value
 );
 
+export function resetable(resetValue) {
+    const { subscribe, set, update } = writable(resetValue);
+    return {
+        subscribe,
+        set,
+        update,
+        reset: () => set((typeof resetValue === 'object') ? {...resetValue} : Array.isArray(resetValue) ? [...resetValue] : resetValue)
+    };
+}

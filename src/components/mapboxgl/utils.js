@@ -202,3 +202,4 @@ export function changeDisplayGeneric(folder, visibility, data){
     }
     return true; // allows chaining
 }
+

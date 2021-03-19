@@ -136,7 +136,8 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
             return originalOnSuccess.apply(this, [{'coords': {'longitude': lng, 'latitude': lat, 'accuracy': position.coords.accuracy}}]);
         }
     }
-    const mapData = {map, affine, affineAndClamp, affineAndClip, affineOrDrop, bbox, mapOptions};
+
+    const mapData = {map, affine, affineAndClamp, affineAndClip, affineOrDrop, bbox, mapOptions, geolocate};
 
     class LayersControl {
         onAdd(map) {
