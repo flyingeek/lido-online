@@ -1,5 +1,5 @@
 <script>
-    import {simulate} from '../stores'; 
+    import {simulate} from '../stores';
     export let name = "simulator";
     let input;
     const toggle = () => {
@@ -21,11 +21,5 @@
         margin-right: 1rem;
         font-size: large;
         font-family: monospace;
-        display: none;
-    }
-    @media (min-width: 768px){
-        label {
-            display: block;
-        }
     }
 </style>

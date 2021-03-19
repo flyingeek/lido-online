@@ -46,9 +46,6 @@
       <Navbar>
         {#if ($ofp && !$ofp.isFake && $route === '/map') }
           <GrametTrigger/>
-          {#if ('process.env.NODE_ENV' === '"development"')}
-            <SimulatorPlayer/>
-          {/if}
         {/if}
         {#if ($ofp && !$ofp.isFake)}
           <TakeOffInput/>

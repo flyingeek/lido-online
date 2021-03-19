@@ -1,14 +1,21 @@
 <script>
-    import {flightProgress, ofp} from '../stores';
+    import {flightProgress, ofp, simulate} from '../stores';
+    import SimulatorPlayer from './SimulatorPlayer.svelte';
     import { fly } from "svelte/transition";
     import {setGramet, setHeight} from '../actions/grametAction';
-    const ogimetParams = new URL($ofp.ogimetData.url).searchParams;
+    $: ogimetParams = new URL($ofp.ogimetData.url).searchParams;
     const maxHeight = 370;
 </script>
 
 <div class="pinch-zoom-parent" transition:fly="{{y: maxHeight}}" data-max-height={maxHeight} use:setHeight>
     <pinch-zoom use:setGramet={{pos: $flightProgress, fl: ogimetParams.get('fl')}} min-scale="0.3"></pinch-zoom>
     <svg><use xlink:href="#plane-symbol"/></svg>
+    <!-- {#if (($flightProgress === 0 || $flightProgress === 100) && ogimetParams.get('tref') * 1000 > $ofp.infos.takeoff.getTime())}
+        <div class="warning">GRAMET pour décollage maintenant</div>
+    {/if} -->
+    {#if (($flightProgress === 0 || $flightProgress === 100 || simulate))}
+        <SimulatorPlayer/>
+    {/if}
 </div>
 
 <style>
@@ -28,5 +35,23 @@
         top:60px;
         left: 0;
         fill: var(--plane-color);
+    }
+    /* .warning {
+        position: absolute;
+        z-index: 10;
+        top: 10px;
+        color: white;
+        background-color: var(--warning);
+        padding: 5px;
+        left: 10px;
+    } */
+    div :global(label) {
+        position: absolute;
+        color: var(--plane-color);
+        top: 0px;
+        left: 5px;
+        font-size: 45px;
+        -webkit-text-stroke-width: 3px;
+        -webkit-text-stroke-color: black;
     }
 </style>

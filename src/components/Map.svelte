@@ -14,7 +14,7 @@
     import FormSettings from "./mapSettings/Form.svelte";
     import {createMap, token} from './mapboxgl/mapManagement';
     import {updateMapLayers} from './mapboxgl/layersManagement';
-    import {online, isFakeOfp, showGramet} from "../stores.js";
+    import {online, isFakeOfp, showGramet, simulate} from "../stores.js";
     import {updateKml} from './kml.js';
     import {promiseTimeout, fetchSimultaneously} from './utils';
     import { createEventDispatcher, onMount, onDestroy } from 'svelte';
@@ -146,7 +146,7 @@
         </div>
     {/if}
 </div>
-{#if (mapData && $showPlaneOnMap)}<MapPlane {mapData}/>{/if}
+{#if (mapData && ($showPlaneOnMap || $simulate >= 0))}<MapPlane {mapData}/>{/if}
 <AircraftType bind:selectedAircraft bind:aircraftTypeSelectElement ofp={ofp} on:change={aircraftChange}/>
 <FormSettings bind:kmlOptions on:change={update} on:save />
 {#if $showGramet}<Gramet/>{/if}
