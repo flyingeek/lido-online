@@ -1,7 +1,7 @@
 <script>
     import {ofp, route} from '../stores';
 </script>
-<nav class="navbar navbar-expand-sm navbar-light">
+<nav class="navbar navbar-expand-md navbar-light">
   <input type="checkbox" id="menu">
   <label class="navbar-toggler" for="menu"><span class="navbar-toggler-icon"></span></label>
   <ul class="navbar-nav collapse navbar-collapse" id="navbarToggler">
@@ -73,12 +73,16 @@
     li span{
       display: inline-block;
     }
-    @media (min-width: 576px){
+    @media (min-width: 768px){
       .nav-item.active {
         border-bottom: 2px solid var(--pink);
       }
     }
-
+    @media (min-width: 830px){
+      :global(nav > div) {
+        margin-right: 2rem !important;
+      }
+    }
     input:checked ~ .collapse{
         display: block;
     }

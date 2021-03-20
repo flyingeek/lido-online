@@ -41,7 +41,7 @@ L'export des fichiers KML affiche une page nommée "data:", utilisez le bouton <
 
 Le GRAMET est un météogramme représentant le temps et l'espace. Il indique, en tout point de la route, et à l'heure de passage estimée, une coupe verticale de la météo prévue.
 Le GRAMET est réalisé par <Link href="http://www.ogimet.com">www.ogimet.com</Link> à partir d'une route calculée. Il est possible d'afficher le GRAMET et sa route sur la carte. La route est particulièrement utile lors des vols océaniques car il n'y a aucune station en mer.
-Pour construire la route du GRAMET, on ne peut se baser sur des waypoints, il faut utiliser au plus 21 stations météo (WMO). Il y a au total 13000 WMO dans le monde. Concernant l'heure du GRAMET, l'heure du take off est arrondie à l'heure la plus proche, et pour les OFP anciens, c'est l'heure actuelle qui est arrondie. Pour pouvoir consulter en off-line, le GRAMET est mis en cache 48h.
+Pour construire la route du GRAMET, on utilise non pas les waypoints, mais au plus 21 stations météo (WMO). Il y a au total 13000 WMO dans le monde. Le GRAMET débute toujours à l'heure hh:00. Pour un decollage à 19h30, il débutera à 19h, pour un décollage à 19h31, il débutera à 20h. Pour les OFP anciens, c'est l'heure actuelle qui est envoyée. De plus OFP2MAP utilise la version du GRAMET qu'il a mis en cache pendant 48h.
 
 Pour afficher le Gramet, cliquez sur sa miniature à gauche de l'OFP. Pour afficher la route, direction le réglages des calques de la carte. Par défaut elle est affichée en bleu. En fonction de l'heure de décollage (modifiable), le Gramet et sa miniature affiche la position avion. Avant l'horaire prévu de décollage, un bouton play permet de lancer une animation.
 
@@ -49,7 +49,9 @@ Pour mieux comprendre le GRAMET, je vous conseille son <Link href="http://www.og
 
 ## Position avion
 
-Il est possible d'afficher la position avion sur la carte (bouton en dessous des calques). Si vous l'autorisez, la position GPS sera prise en compte. En l'absence de GPS, l'avion dans la barre de menu (à gauche de l'heure de décollage) permet d'afficher la position estimée. Si cela est possible , les estimées de l'OFP sont prises en compte, à défaut, ce sera simple ratio horaire et dans ce cas le halo du marqueur avion sera rouge. L'heure de décollage est modifiable et permet d'ajuster la position estimée.
+Il est possible d'afficher la position avion sur la carte (bouton en forme de mire). Si vous l'autorisez, la position GPS sera prise en compte.
+
+En l'absence de GPS, l'avion dans la barre de menu (à gauche de l'heure de décollage) permet d'afficher la position estimée. Si la reconnaissance des waypoints s'est bien effectuée, les estimées de l'OFP seront prises en compte. Sinon, ce sera un simple ratio horaire, et le halo du marqueur avion sera alors rouge. L'heure de décollage est modifiable et permet toujours d'ajuster la position estimée.
 
 ## Mode off-line
 

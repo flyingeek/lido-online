@@ -150,6 +150,8 @@
                     $ofpStore = ofp;
                     $isFakeOfp = false;
                     $ofpStatus = 'success';
+                    form.blur();
+                    e.target.blur();
                     form.reset();
                 }, (err) => {
                     $ofpStatus = err;
@@ -184,10 +186,16 @@
 
 </script>
 <!-- the parentNode.parentNode of input must be the form -->
+{#if (!$ofpStore)}
 <div class="custom-file" class:blink={!$ofpStore}>
     <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} on:click|once={preload} class="custom-file-input">
     <label class:ready={readyClass} class="custom-file-label text-truncate" for="{name}">{label}</label>
 </div>
+{:else}
+    <label class="btn btn-outline-secondary btn-sm">
+        Changer<input id={name} name={name} type="file" accept="application/pdf" on:change={process} hidden>
+    </label>
+{/if}
 {#if !$ofpStore}
     <div class="footer">
     <!-- svelte-ignore a11y-no-onchange -->
@@ -248,7 +256,7 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
 }
-@media (max-width: 900px){
+@media (max-width: 576px){
     input ~ label::after, input:lang(fr) ~ label::after {
         content: "OFP…" !important;
     }
@@ -256,12 +264,20 @@ select {
         width: 155px;
     }
 }
-@media (max-width: 768px){
+label.btn {
+    margin-bottom: 0;
+    font-variant: all-small-caps;
+}
+.btn-outline-secondary:hover{
+    color: var(--secondary);
+    background-color: transparent;
+}
+/* @media (max-width: 768px){
     label {
         padding-right: 70px;
     }
     .custom-file {
         width: 90px;
     }
-}
+} */
 </style>

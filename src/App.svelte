@@ -7,7 +7,7 @@
   import Navbar from "./components/Navbar.svelte";
   import OfpInput from './components/OfpInput.svelte';
   import GrametTrigger from './components/GrametTrigger.svelte';
-  import SimulatorPlayer from './components/SimulatorPlayer.svelte';
+  import OfpInfos from './components/OfpInfos.svelte';
   import TakeOffInput from './components/TakeOffInput.svelte';
   import Page from "./components/Page.svelte";
   import Help from "./components/Help.svelte";
@@ -49,6 +49,7 @@
         {/if}
         {#if ($ofp && !$ofp.isFake)}
           <TakeOffInput/>
+          <OfpInfos/>
         {/if}
         <form class="form-inline" on:submit|preventDefault>
           <OfpInput {kmlOptions} on:change={ofpChange} />

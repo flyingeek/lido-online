@@ -52,7 +52,7 @@
     align-self: baseline;
     display: none;
 }
-@media (min-width: 400px){ /* ipad portrait half screen*/
+@media (min-width: 576px){
     .gramet-thumbnail {
         display:block;
     }
