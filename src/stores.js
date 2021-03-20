@@ -96,7 +96,7 @@ export const route = readable('/', set => {
 export const flightProgress = derived(
     [ofp, simulate, takeOffTime],
     ([$ofp, $simulate, $takeOffTime], set) => {
-        console.log('fp init')
+        //console.log('fp init')
         let interval;
         const frequency = 60 * 1000;
         const simulatorFrequency = 100;
@@ -108,13 +108,13 @@ export const flightProgress = derived(
                     set(100);
                     clearInterval(interval);
                     interval = undefined;
-                    console.log('fp: last update', value);
+                    //console.log('fp: last update', value);
                     simulate.set(-1); 
                 }
             };
             
             if ($simulate >= 0) {
-                console.log('start of simulated session');
+                //console.log('start of simulated session');
                 let value = $simulate;
                 interval = setInterval(() => {
                     setValue(value);
@@ -145,16 +145,16 @@ export const flightProgress = derived(
                     set(pos);
                 }else{
                     set(100);
-                    console.log('set to max, no interval set', 100);
+                    //console.log('set to max, no interval set', 100);
                 }
             }
         } else {
             set(0);
-            console.log('set to zero (no ofp of fakeOfp), no interval set', 0)
+            //console.log('set to zero (no ofp of fakeOfp), no interval set', 0)
         }
         return () => {
             if (interval) clearInterval(interval);
-            console.log('closing flight progress')
+            //console.log('closing flight progress')
         }
     },
     0 // initial value
