@@ -84,6 +84,26 @@
                                 data.proxyImg = `CONF_GRAMET_PROXY`;
                                 data.route.description = data.wmo.join(' ');
                                 ofp.ogimetData = data;
+                                let sum = 0;
+                                const distanceMatrix = ofp.route.segments.map(([p1, p2]) => {
+                                    sum += p1.distanceTo(p2);
+                                    return [p2, sum];
+                                });
+                                distanceMatrix.unshift([ofp.route.points[0], 0]);
+                                ofp.distanceMatrix = distanceMatrix;
+                                let timeMatrix = [];
+                                try{
+                                    timeMatrix = ofp.wptNamesEET(ofp.route.points);
+                                }catch(err){
+                                    console.error(err);
+                                }
+                                if (timeMatrix.length === 0) {
+                                    document.body.style.setProperty('--plane-halo-color', 'red');
+                                } else {
+                                    document.body.style.setProperty('--plane-halo-color', 'var(--plane-color)');
+                                }
+                                ofp.timeMatrix = timeMatrix;
+                                //console.log(timeMatrix)
                                 //console.timeLog('start');
                                 try {
                                     KmlGenerator();

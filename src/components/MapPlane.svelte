@@ -2,31 +2,10 @@
     import { ofp, flightProgress } from "../stores";
     import { onMount, onDestroy } from "svelte";
 
-    let distanceMatrix;
-    let timeMatrix;
+    $: distanceMatrix = $ofp.distanceMatrix || [];
+    $: timeMatrix = $ofp.timeMatrix || [];
     let planeMarker;
     export let mapData;
-
-    $: {
-        let sum = 0;
-        distanceMatrix = $ofp.route.segments.map(([p1, p2]) => {
-            sum += p1.distanceTo(p2);
-            return [p2, sum];
-        });
-        distanceMatrix.unshift([$ofp.route.points[0], 0]);
-        try{
-            timeMatrix = $ofp.wptNamesEET($ofp.route.points);
-        }catch(err){
-            console.error(err);
-            timeMatrix = [];
-        }
-        if (timeMatrix.length === 0) {
-            document.body.style.setProperty('--plane-halo-color', 'red');
-        } else {
-            document.body.style.setProperty('--plane-halo-color', 'var(--plane-color)');
-        }
-        //console.log(timeMatrix)
-    }
 
     const findPosition = (flightProgress) => {
         if (timeMatrix.length !== 0) {
