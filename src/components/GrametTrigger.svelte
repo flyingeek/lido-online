@@ -67,11 +67,12 @@
     /* margin-top: calc((var(--gramet-thumb-height) - var(--height)) / 2); */
 }
 .gramet-thumbnail .gramet-close{
-    stroke: var(--white);
+    stroke: var(--light);
     width: 100%;
     height: 100%;
     position: relative;
     top: 0;
+    z-index: 2;
 }
 button.close svg{
     height: 20px;
@@ -91,7 +92,9 @@ button[slot=parent]{
     position: absolute;
     z-index: 1;
     display: none;
-    fill: var(--redaf);
-    width: 4px;
+    fill: var(--plane-color);
+    stroke: black;
+    width: 6px;
+    stroke-width: 10px;
 }
 </style>
