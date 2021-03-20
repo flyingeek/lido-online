@@ -121,6 +121,7 @@
 
         await ready.promise.then(() => {
             const file = e.target.files[0];
+            const form = e.target.parentNode.parentNode;
             if (file) {
                 $ofpStatus = 'loading';
                 label = e.target.value.split(/([\\/])/g).pop();
@@ -129,7 +130,11 @@
                     $ofpStore = ofp;
                     $isFakeOfp = false;
                     $ofpStatus = 'success';
-                }, (err) => $ofpStatus = err);
+                    form.reset();
+                }, (err) => {
+                    $ofpStatus = err;
+                    form.reset();
+                });
                 window.location.hash = '#/map';
             }
         });
@@ -158,7 +163,7 @@
     }
 
 </script>
-
+<!-- the parentNode.parentNode of input must be the form -->
 <div class="custom-file" class:blink={!$ofpStore}>
     <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} on:click|once={preload} class="custom-file-input">
     <label class:ready={readyClass} class="custom-file-label text-truncate" for="{name}">{label}</label>
