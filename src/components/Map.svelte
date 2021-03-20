@@ -7,7 +7,7 @@
     };
     const hidePlane = (e) => {
         showPlaneOnMap.set(false);
-        //console.log('hide plane', e.target._watchState);
+        //if (e) console.log('hide plane', e.target._watchState);
     }
 </script>
 <script>
@@ -67,7 +67,15 @@
         cacheError = false;
         tilesMissing = [];
         cacheMaxValue = 0;
+        if (mapData && mapData.geolocate) {
+            mapData.geolocate.off('trackuserlocationstart', hidePlane);
+            //mapData.geolocate.off('trackuserlocationend', showPlane);
+        }
         mapData = createMap(id, selectedProjection, ofp, kmlOptions, afterMapLoad);
+        mapData.geolocate.on('trackuserlocationstart', hidePlane);
+        //mapData.geolocate.on('trackuserlocationend', showPlane);
+        hidePlane(); // dom element was removed by createMap
+        showPlaneOnMap.reset();
         map = mapData.map;
     }
 
@@ -121,15 +129,16 @@
     onMount(() => {
         mapboxgl.accessToken = token;
         mapData = createMap(id, selectedProjection, ofp, kmlOptions, afterMapLoad);
+        hidePlane(); // dom element was removed by createMap
+        showPlaneOnMap.reset();
         map = mapData.map;
         mapData.geolocate.on('trackuserlocationstart', hidePlane);
-        mapData.geolocate.on('trackuserlocationend', showPlane);
+        //mapData.geolocate.on('trackuserlocationend', showPlane);
 
     });
     onDestroy(() => {
         mapData.geolocate.off('trackuserlocationstart', hidePlane);
-        mapData.geolocate.off('trackuserlocationend', showPlane);
-        showPlaneOnMap.reset();
+        //mapData.geolocate.off('trackuserlocationend', showPlane);
         map = undefined;
         mapData = undefined;
     });

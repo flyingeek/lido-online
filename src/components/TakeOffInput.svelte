@@ -1,6 +1,7 @@
 <script>
-    import {ofp, takeOffTime} from '../stores';
+    import {ofp, simulate, takeOffTime} from '../stores';
     import blurAction from '../actions/blurAction';
+    import { showPlaneOnMap } from './Map.svelte';
     export let name="take-off";
 
     const getOfpTakeOffTime =  (currentOfp) => {
@@ -45,7 +46,7 @@
 </script>
 
 <div>
-    <svg><use xlink:href="#takeoff-symbol"/></svg>
+    <svg class:show={$showPlaneOnMap || $simulate >= 0} class:hide={!($showPlaneOnMap || $simulate >= 0)} on:click={() => $showPlaneOnMap = !$showPlaneOnMap}><use xlink:href="#takeoff-symbol"/></svg>
     <label for="{name}">Heure de décollage</label><!-- displayed in ios popup -->
     <input id="{name}" name="{name}" type="time" use:blurAction on:change={changeTime} value="{hm2input(ofpTakeOff.getUTCHours(), ofpTakeOff.getUTCMinutes())}" />
 </div>
@@ -69,9 +70,17 @@
         width: 30px;
         height: 30px;
         display: inline-block;
-        margin-right: 2px;
-        fill: rgba(0,0,0,.5);
+        margin-right: 5px;
         margin-top: -1px;
+        cursor: pointer;
+    }
+    svg.show {
+        stroke: rgba(0,0,0,.9);
+        fill: var(--plane-color);
+    }
+    svg.hide {
+        stroke:transparent;
+        fill: rgba(0,0,0,.5);
     }
     input {
         background-color: var(--light);

@@ -49,7 +49,7 @@ Pour mieux comprendre le GRAMET, je vous conseille son <Link href="http://www.og
 
 ## Position avion
 
-Il est possible d'afficher la position avion sur la carte (bouton en dessous des calques). Si vous l'autorisez, la position GPS sera prise en compte. Si vous stoppez la position GPS alors une position estimée sera affichée. Si cela est possible , la position tiendra compte des estimées de l'OFP, à défaut, ce sera simple ratio horaire et dans ce cas le halo du marqueur avion sera rouge. En résumé, en attendant une possible évolution, cliquer 2 fois sur le bouton de géoposition affiche le marqueur, et une fois le marqueur affiché, il faut recharger l'ofp pour l'effacer.
+Il est possible d'afficher la position avion sur la carte (bouton en dessous des calques). Si vous l'autorisez, la position GPS sera prise en compte. En l'absence de GPS, l'avion dans la barre de menu (à gauche de l'heure de décollage) permet d'afficher la position estimée. Si cela est possible , les estimées de l'OFP sont prises en compte, à défaut, ce sera simple ratio horaire et dans ce cas le halo du marqueur avion sera rouge. L'heure de décollage est modifiable et permet d'ajuster la position estimée.
 
 ## Mode off-line
 
