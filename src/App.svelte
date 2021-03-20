@@ -102,6 +102,7 @@
     --electric-blue: #87F1FF;
     --gramet-inner-height: 395px;
     --plane-color: var(--yellow);
+    --plane-halo-color: var(--plane-color);
   }
   .content{
     background-color: var(--blueaf);

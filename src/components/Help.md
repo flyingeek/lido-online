@@ -41,11 +41,15 @@ L'export des fichiers KML affiche une page nommée "data:", utilisez le bouton <
 
 Le GRAMET est un météogramme représentant le temps et l'espace. Il indique, en tout point de la route, et à l'heure de passage estimée, une coupe verticale de la météo prévue.
 Le GRAMET est réalisé par <Link href="http://www.ogimet.com">www.ogimet.com</Link> à partir d'une route calculée. Il est possible d'afficher le GRAMET et sa route sur la carte. La route est particulièrement utile lors des vols océaniques car il n'y a aucune station en mer.
-Pour construire la route du GRAMET, on ne peut se baser sur des waypoints, il faut utiliser au plus 21 stations météo (WMO). Il y a au total 13000 WMO dans le monde.
+Pour construire la route du GRAMET, on ne peut se baser sur des waypoints, il faut utiliser au plus 21 stations météo (WMO). Il y a au total 13000 WMO dans le monde. Concernant l'heure du GRAMET, l'heure du take off est arrondie à l'heure la plus proche, et pour les OFP anciens, c'est l'heure actuelle qui est arrondie. Pour pouvoir consulter en off-line, le GRAMET est mis en cache 48h.
 
-Pour afficher le Gramet, cliquez sur sa miniature à gauche de l'OFP. Pour afficher la route, direction le réglages des calques de la carte. Par défaut elle est affichée en bleu. En fonction de l'heure de décollage (modifiable), le Gramet et sa miniature affiche la position avion.
+Pour afficher le Gramet, cliquez sur sa miniature à gauche de l'OFP. Pour afficher la route, direction le réglages des calques de la carte. Par défaut elle est affichée en bleu. En fonction de l'heure de décollage (modifiable), le Gramet et sa miniature affiche la position avion. Avant l'horaire prévu de décollage, un bouton play permet de lancer une animation.
 
 Pour mieux comprendre le GRAMET, je vous conseille son <Link href="http://www.ogimet.com/guia_gramet.phtml.en">Guide d'interprétation</Link>.
+
+## Position avion
+
+Il est possible d'afficher la position avion sur la carte (bouton en dessous des calques). Si vous l'autorisez, la position GPS sera prise en compte. Si vous stoppez la position GPS alors une position estimée sera affichée. Si cela est possible , la position tiendra compte des estimées de l'OFP, à défaut, ce sera simple ratio horaire et dans ce cas le halo du marqueur avion sera rouge. En résumé, en attendant une possible évolution, cliquer 2 fois sur le bouton de géoposition affiche le marqueur, et une fois le marqueur affiché, il faut recharger l'ofp pour l'effacer.
 
 ## Mode off-line
 
