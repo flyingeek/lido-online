@@ -1,5 +1,6 @@
 <script>
     import {aircraftTypes} from './OfpInput.svelte';
+    import blurAction from '../actions/blurAction';
     import {onMount} from 'svelte';
 
     export let selectedAircraft = '???';
@@ -16,7 +17,7 @@
 </script>
 
 <!-- svelte-ignore a11y-no-onchange -->
-<select bind:this={aircraftTypeSelectElement} name="aircraftType" bind:value={selectedAircraft} on:change>
+<select bind:this={aircraftTypeSelectElement} name="aircraftType" bind:value={selectedAircraft} on:change use:blurAction>
     {#if selectedAircraft === '???'}
         <option value="???" selected={true}>???</option>
     {/if}

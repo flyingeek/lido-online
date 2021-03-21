@@ -1,5 +1,6 @@
 <script>
     import options from './mapboxgl/mapOptions';
+    import blurAction from '../actions/blurAction';
     import {onMount} from 'svelte';
     export let name = 'map-style';
     export let ofp;
@@ -40,7 +41,7 @@
     });
 </script>
 <!-- svelte-ignore a11y-no-onchange -->
-<select name="{name}" bind:value={selected} class="form-control form-control-sm" on:change>
+<select name="{name}" bind:value={selected} class="form-control form-control-sm" on:change use:blurAction>
     {#each options as option, index}
     <option value="{option}" selected={option.id === selected.id}>{(option.proj4 && mapContainsOfp(option)) ? `${option.label.toUpperCase()}`: option.label}</option>
     {/each}
