@@ -4,7 +4,7 @@
 
 <div>
     <p><b>{$ofp.infos.flight}</b> {$ofp.infos.departure}-{$ofp.infos.destination}</p>
-    <p>{$ofp.infos.date} ofp: {$ofp.infos.ofp}</p>
+    <p>{$ofp.infos.date} {($ofp.infos.ofp.includes('/')) ? '' : 'ofp: '}{$ofp.infos.ofp}</p>
 </div>
 
 <style>
