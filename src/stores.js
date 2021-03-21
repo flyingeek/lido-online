@@ -1,5 +1,16 @@
 import { writable, readable, derived } from 'svelte/store';
 
+
+export function resetable(resetValue) {
+    const { subscribe, set, update } = writable(resetValue);
+    return {
+        subscribe,
+        set,
+        update,
+        reset: () => set((typeof resetValue === 'object') ? {...resetValue} : Array.isArray(resetValue) ? [...resetValue] : resetValue)
+    };
+}
+
 export const wb = writable();
 export const swDismiss = writable(false);
 export const swUpdated = writable(false);
@@ -7,7 +18,7 @@ export const majorUpdate = writable(false);
 export const sidebar = writable(false);
 
 export const showGramet = writable(false);
-
+export const showPlaneOnMap = resetable(false);
 export const grametPosition = writable(100);
 export const simulate = writable(-1);
 export const ofp = writable();
@@ -43,6 +54,27 @@ export const checkSwOnVisibilityChange = () =>{
         checkSWUpdate();
     }
 }
+export const visible = readable(true, set => {
+    const changeVisibleState = () => {
+        if (document && document.visibilityState) {
+            if (document.visibilityState === 'visible'){
+                //console.log('visibility visible')
+                set(true);
+            } else {
+                //console.log('visibility not visible')
+                set(false);
+            }
+        } else {
+            //console.log('visibility not supported, visible')
+            set(true);
+        }
+    };
+    document.addEventListener("visibilitychange", changeVisibleState);
+    changeVisibleState();
+    return () => {
+        document.removeEventListener("visibilitychange", changeVisibleState);
+    }
+});
 
 export const online = readable({}, set => {
     const update_network_status = () => {
@@ -94,11 +126,11 @@ export const route = readable('/', set => {
 });
 
 export const flightProgress = derived(
-    [ofp, simulate, takeOffTime],
-    ([$ofp, $simulate, $takeOffTime], set) => {
+    [ofp, simulate, takeOffTime, showPlaneOnMap, visible],
+    ([$ofp, $simulate, $takeOffTime, $showPlaneOnMap, $visible], set) => {
         //console.log('fp init')
         let interval;
-        const frequency = 60 * 1000;
+        const frequency = ($showPlaneOnMap) ? 10 * 1000 : 60 * 1000;
         const simulatorFrequency = 100;
         if($ofp && !$ofp.isFake){
             const setValue = (value) => {
@@ -138,10 +170,12 @@ export const flightProgress = derived(
                 };
                 const pos = computePosition();
                 if (pos < 100) {
-                    interval = setInterval(() => {
-                        const value = computePosition();
-                        setValue(value);
-                    }, frequency);
+                    if ($visible) {
+                        interval = setInterval(() => {
+                            const value = computePosition();
+                            setValue(value);
+                        }, frequency);
+                    }
                     set(pos);
                 }else{
                     set(100);
@@ -159,13 +193,3 @@ export const flightProgress = derived(
     },
     0 // initial value
 );
-
-export function resetable(resetValue) {
-    const { subscribe, set, update } = writable(resetValue);
-    return {
-        subscribe,
-        set,
-        update,
-        reset: () => set((typeof resetValue === 'object') ? {...resetValue} : Array.isArray(resetValue) ? [...resetValue] : resetValue)
-    };
-}

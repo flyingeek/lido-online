@@ -1,6 +1,6 @@
 <script context="module">
-    import {resetable} from '../stores';
-    export const showPlaneOnMap = resetable(false);
+    import {showPlaneOnMap} from '../stores';
+
     const showPlane = (e) => {
         if('BACKGROUND' !== e.target._watchState) showPlaneOnMap.set(true);
         //console.log('show plane', e.target._watchState);
@@ -25,8 +25,7 @@
     import MapProjectionSelect from "./MapProjectionSelect.svelte";
     import Gramet from './Gramet.svelte';
     import mapResizeAction from '../actions/mapResizeAction';
-    // import Gramet2 from "./Gramet2.svelte";
-
+    
     const dispatch = createEventDispatcher();
     export let kmlOptions;
     export let ofp;

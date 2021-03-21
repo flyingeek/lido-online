@@ -1,7 +1,6 @@
 <script>
-    import {ofp, simulate, takeOffTime} from '../stores';
+    import {ofp, simulate, takeOffTime, showPlaneOnMap} from '../stores';
     import blurAction from '../actions/blurAction';
-    import { showPlaneOnMap } from './Map.svelte';
     export let name="take-off";
 
     const getOfpTakeOffTime =  (currentOfp) => {

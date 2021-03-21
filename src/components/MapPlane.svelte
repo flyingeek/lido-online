@@ -93,15 +93,15 @@
     :global(.mapboxgl-user-location-dot.map-plane:before) {
         /* content: ""; */
         /* position: absolute; */
-        -webkit-animation: mapboxgl-map-plane-dot-pulse 2s infinite;
-        -moz-animation: mapboxgl-map-plane-dot-pulse 2s infinite;
-        -ms-animation: mapboxgl-map-plane-dot-pulse 2s infinite;
-        animation: mapboxgl-map-plane-dot-pulse 2s infinite;
+        -webkit-animation: mapboxgl-map-plane-dot-pulse 10s infinite;
+        -moz-animation: mapboxgl-map-plane-dot-pulse 10s infinite;
+        -ms-animation: mapboxgl-map-plane-dot-pulse 10s infinite;
+        animation: mapboxgl-map-plane-dot-pulse 10s infinite;
         /* align-content: baseline; */
     }
     @keyframes -global-mapboxgl-map-plane-dot-pulse {
         0%   { transform: scale(1); opacity: 1; background-color: var(--plane-color);}
-        70%  { transform: scale(3); opacity: 0; background-color: var(--plane-halo-color);}
-        100% { transform: scale(1); opacity: 0; background-color: var(--plane-color);}
+        14%  { transform: scale(3); opacity: 0; background-color: var(--plane-halo-color);}
+        20% { transform: scale(1); opacity: 0; background-color: var(--plane-color);}
     }
 </style>
