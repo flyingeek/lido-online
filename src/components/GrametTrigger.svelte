@@ -1,16 +1,41 @@
 <script>
+    import {onDestroy, tick} from 'svelte';
     import Overlay from 'svelte-overlay';
     import {grametThumbAction, grametStatus} from '../actions/grametAction';
     import Link from '../components/Link.svelte';
     import {showGramet, flightProgress, ofp} from '../stores';
+    let grametUpdateAvailable = false;
 
     const toggleGramet = () => {
         if ($grametStatus === 'success') $showGramet = !$showGramet;
     }
+    const grametSourceUpdate = async (event) => {
+        if (event.data.meta === 'workbox-broadcast-update' && event.data.type === 'CACHE_UPDATED') {
+                const {updatedURL} = event.data.payload;
+                if (updatedURL === $ofp.ogimetData.proxyImg) {
+                    grametUpdateAvailable = true;
+                }
+            }
+    };
+    const reload = async () => {
+        $grametStatus = 'reload';
+        $showGramet = false;
+        grametUpdateAvailable = false;
+        await tick;
+        $grametStatus = 'loading';
+    };
+    if (navigator && navigator.serviceWorker){
+            navigator.serviceWorker.addEventListener('message', grametSourceUpdate);
+    }
+    onDestroy(() => {
+        if (navigator && navigator.serviceWorker){
+            navigator.serviceWorker.removeEventListener('message', grametSourceUpdate);
+        }
+    });
 </script>
 
 
-{#if $grametStatus !== 'error'}
+{#if $grametStatus !== 'error' && $grametStatus !== 'reload'}
     <div class="gramet-thumbnail" class:open={$showGramet} use:grametThumbAction={{ofp: $ofp, pos: $flightProgress}} on:click={toggleGramet}>
         <svg id="gt-plane" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <circle cx="50" cy="50" r="50"/>
@@ -19,7 +44,18 @@
             <svg class="gramet-close"><use xlink:href="#close-symbol"/></svg>
         {/if}
     </div>
-{:else}
+    <Overlay  position="bottom-center" isOpen={grametUpdateAvailable}>
+        <div slot="parent" class="d-none"></div>
+        <div slot="content" let:close>
+            <div class="popover" role="tooltip" style="left: calc(-2rem - 70px); width: 290px; max-width: 290px; top: 20px;">
+                <h3 class="popover-header">Nouveau GRAMET disponible<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>
+                <div class="popover-body">
+                    <p class="text-center"><button class="btn btn-primary" on:click={reload}>Mettre à jour</button></p>
+                </div>
+            </div>
+        </div>
+    </Overlay>
+{:else if ($grametStatus !== 'reload')}
     <Overlay  position="bottom-center" >
         <button slot="parent" class="btn btn-light" let:toggle on:click={toggle}>
             <svg class="gramet-error"><use xlink:href="#info-symbol"/></svg>

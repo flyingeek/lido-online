@@ -82,6 +82,9 @@
       :global(nav > div) {
         margin-right: 2rem !important;
       }
+      :global(nav > div.overlay) {
+        margin-right: 0 !important;
+      }
     }
     input:checked ~ .collapse{
         display: block;

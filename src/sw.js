@@ -1,11 +1,14 @@
 import {precacheAndRoute} from 'workbox-precaching';
 import {registerRoute} from 'workbox-routing';
 import {StaleWhileRevalidate, CacheFirst} from 'workbox-strategies';
+import {CacheableResponsePlugin} from 'workbox-cacheable-response';
+import {BroadcastUpdatePlugin} from 'workbox-broadcast-update';
 import {ExpirationPlugin} from 'workbox-expiration';
 import {TilesCache} from './tilesCache';
 
 //import { openDB, deleteDB, wrap, unwrap } from 'idb';
 
+//self.__WB_DISABLE_DEV_LOGS = false;
 const maps = {
   'north': 'CONF_NORTH',
   'south': 'CONF_SOUTH',
@@ -25,7 +28,7 @@ const validCaches ={
   'mapbox': 'lido-mapbox',
   'airports': 'lido-data',
   'fir-reg': 'lido-fir',
-  'gramet': 'lido-gramet2', // if you change here, you must also change in Map.svelte/map.load 
+  'gramet': 'lido-gramet2', // if you change here, you must also change in GrametTrigger.svelte 
   //'north': 'lido-' + hostId('CONF_NORTH_TILES_BASE_URL') + maps['north'],
   //'south': 'lido-' + hostId('CONF_SOUTH_TILES_BASE_URL') + maps['south'],
   //'pacific': 'lido-' + hostId('CONF_PACIFIC_TILES_BASE_URL') + maps['pacific'],
@@ -36,7 +39,6 @@ const validCaches ={
 const deprecatedCaches = ['lido-ona-theworldv1', 'lido-zoom5_ona1', 'lido-ona-theworldv2', 'lido-zoom5_ona2', 'lido-ona-southv3', 'lido-ona-northv3', 'lido-ona-pacificv1', 'lido-zoom4_ona3_ona3_ona1'];
 const deprecatedDB = ['swtest'];
 const SW_VERSION = 'APP_VERSION';
-
 precacheAndRoute(
     self.__WB_MANIFEST, {
     "directoryIndex": null,
@@ -103,9 +105,16 @@ registerRoute(
 registerRoute(
   // ({url}) => url.href.match(new RegExp("CONF_GRAMET_PROXY".replace(/\$\{[^}]+\}/g, ".+").replace(/\//g, "\\/"))),
   ({url}) => url.origin === 'https://ofp2map-gramet.vercel.app' && url.pathname.endsWith('.png'),
-  new CacheFirst({
+  new StaleWhileRevalidate({
     cacheName: validCaches['gramet'],
     plugins: [
+      new CacheableResponsePlugin({
+        statuses: [200],
+      }),
+      new BroadcastUpdatePlugin({
+        // Due to CORS restrictions you'll need response.headers.add("Access-Control-Expose-Headers", "X-ETag") on server
+        headersToCheck: ['X-ETag']
+      }),
       new ExpirationPlugin({
         maxEntries: 5,
         maxAgeSeconds: 48 * 3600
