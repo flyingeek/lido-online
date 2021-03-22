@@ -1,5 +1,5 @@
 <script>
-    import {flightProgress, ofp, simulate} from '../stores';
+    import {position, ofp, simulate} from '../stores';
     import SimulatorPlayer from './SimulatorPlayer.svelte';
     import { fly } from "svelte/transition";
     import {setGramet, setHeight} from '../actions/grametAction';
@@ -8,12 +8,12 @@
 </script>
 
 <div class="pinch-zoom-parent" transition:fly="{{y: maxHeight}}" data-max-height={maxHeight} use:setHeight>
-    <pinch-zoom use:setGramet={{pos: $flightProgress, fl: ogimetParams.get('fl')}} min-scale="0.3"></pinch-zoom>
+    <pinch-zoom use:setGramet={{pos: $position.gramet, fl: ogimetParams.get('fl')}} min-scale="0.3"></pinch-zoom>
     <svg><use xlink:href="#plane-symbol"/></svg>
     <!-- {#if (($flightProgress === 0 || $flightProgress === 100) && ogimetParams.get('tref') * 1000 > $ofp.infos.takeoff.getTime())}
         <div class="warning">GRAMET pour décollage maintenant</div>
     {/if} -->
-    {#if (($flightProgress === 0 || $flightProgress === 100 || simulate))}
+    {#if (($position.gramet === 0 || $position.gramet === 100 || $simulate))}
         <SimulatorPlayer/>
     {/if}
 </div>

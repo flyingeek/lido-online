@@ -193,3 +193,72 @@ export const flightProgress = derived(
     },
     0 // initial value
 );
+export const position = derived([ofp, flightProgress], ([$ofp, $flightProgress]) => {
+    if (!$ofp || $ofp.isFake) return { map: {latitude: 0, longitude: 0}, gramet: $flightProgress};
+    const timeMatrix = $ofp.timeMatrix;
+    const distanceMatrix = $ofp.distanceMatrix;
+    const firstPoint = distanceMatrix[0][0];
+    const lastPoint = distanceMatrix[distanceMatrix.length - 1][0];
+    const routeDistance = distanceMatrix[distanceMatrix.length - 1][1];
+    if ($flightProgress <= 0) return {map: firstPoint, gramet: 0};
+    if ($flightProgress >= 100) return {map: lastPoint, gramet: 100};
+
+    if (timeMatrix.length !== 0) {
+        const routeTime = timeMatrix[timeMatrix.length - 1][1];
+        const posTime = ($flightProgress * routeTime) / 100;
+
+        for (const [i, [p, sum]] of timeMatrix.entries()) {
+            // console.log(i, p, d)
+            if (sum >= posTime) {
+                if (posTime - sum === 0) {
+                    return {
+                        map: p,
+                        gramet: 100 * distanceMatrix[i][1] / routeDistance,
+                    };
+                }
+                const previous = timeMatrix[i - 1];
+                if (previous) {
+                    const segmentLength = distanceMatrix[i][1] - distanceMatrix[i - 1][1];
+                    const fraction = (sum - posTime) / (sum - previous[1]);
+                    return {
+                        map: p.atFraction(previous[0], fraction, segmentLength),
+                        gramet: 100 * ((distanceMatrix[i][1] - (fraction * segmentLength))) / routeDistance
+                    }
+                }
+                return {
+                    map: firstPoint,
+                    gramet: 0
+                };
+            }
+        }
+    } else {
+        const routeDistance = distanceMatrix[distanceMatrix.length - 1][1];
+        const posDistance = ($flightProgress * routeDistance) / 100;
+        for (const [i, [p, sum]] of distanceMatrix.entries()) {
+            // console.log(i, p, d)
+            if (sum >= posDistance) {
+                if (posDistance - sum === 0) return {
+                    map: p,
+                    gramet: $flightProgress
+                };
+                const previous = distanceMatrix[i - 1];
+                if (previous) {
+                    const segmentLength = sum - previous[1];
+                    return {
+                        map: p.atFraction(previous[0], (sum - posDistance) / segmentLength, segmentLength),
+                        gramet: $flightProgress
+                    }
+                }
+                return {
+                    map: firstPoint,
+                    gramet: 0
+                };
+            }
+        }
+    }
+    return {
+        map: lastPoint,
+        gramet: 100
+    };
+
+}, { map: {latitude: 0, longitude: 0}, gramet: 0});

@@ -3,7 +3,7 @@
     import Overlay from 'svelte-overlay';
     import {grametThumbAction, grametStatus} from '../actions/grametAction';
     import Link from '../components/Link.svelte';
-    import {showGramet, flightProgress, ofp} from '../stores';
+    import {showGramet, ofp, position} from '../stores';
     let grametUpdateAvailable = false;
 
     const toggleGramet = () => {
@@ -36,7 +36,7 @@
 
 
 {#if $grametStatus !== 'error' && $grametStatus !== 'reload'}
-    <div class="gramet-thumbnail" class:open={$showGramet} use:grametThumbAction={{ofp: $ofp, pos: $flightProgress}} on:click={toggleGramet}>
+    <div class="gramet-thumbnail" class:open={$showGramet} use:grametThumbAction={{ofp: $ofp, pos: $position.gramet}} on:click={toggleGramet}>
         <svg id="gt-plane" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <circle cx="50" cy="50" r="50"/>
         </svg>

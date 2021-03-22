@@ -1,56 +1,10 @@
 <script>
-    import { ofp, flightProgress } from "../stores";
+    import { position } from "../stores";
     import { onMount, onDestroy } from "svelte";
 
-    $: distanceMatrix = $ofp.distanceMatrix || [];
-    $: timeMatrix = $ofp.timeMatrix || [];
     let planeMarker;
     export let mapData;
 
-    const findPosition = (flightProgress) => {
-        if (timeMatrix.length !== 0) {
-            const routeTime = timeMatrix[timeMatrix.length - 1][1];
-            const posTime = (flightProgress * routeTime) / 100;
-            const last = timeMatrix[timeMatrix.length - 1][0];
-
-            for (const [i, [p, sum]] of timeMatrix.entries()) {
-                // console.log(i, p, d)
-                if (sum >= posTime) {
-                    if (posTime - sum === 0) return p;
-                    const previous = timeMatrix[i - 1];
-                    if (previous) {
-                        return p.atFraction(
-                            previous[0],
-                            (sum - posTime) / (sum - previous[1])
-                        );
-                    }
-                    return p;
-                }
-            }
-            return last;
-        } else {
-            const routeDistance = distanceMatrix[distanceMatrix.length - 1][1];
-            const posDistance = (flightProgress * routeDistance) / 100;
-            const last = distanceMatrix[distanceMatrix.length - 1][0];
-            for (const [i, [p, sum]] of distanceMatrix.entries()) {
-                // console.log(i, p, d)
-                if (sum >= posDistance) {
-                    if (posDistance - sum === 0) return p;
-                    const previous = distanceMatrix[i - 1];
-                    if (previous) {
-                        const segmentLength = sum - previous[1];
-                        return p.atFraction(
-                            previous[0],
-                            (sum - posDistance) / segmentLength,
-                            segmentLength
-                        );
-                    }
-                    return p;
-                }
-            }
-            return last;
-        }
-    };
     const planeElement = window.document.createElement("div");
     planeElement.classList.add("mapboxgl-user-location-dot", "map-plane");
     const placePlane = (geoPoint) => {
@@ -63,14 +17,13 @@
         }
     };
 
-    $: placePlane(findPosition($flightProgress));
+    $: placePlane($position.map);
 
     onMount(() => {
-        if (!ofp.isFake) {
-            planeMarker = new mapboxgl.Marker(planeElement);
-            placePlane(findPosition($flightProgress));
-            planeMarker.addTo(mapData.map);
-        }
+        planeMarker = new mapboxgl.Marker(planeElement);
+        placePlane($position.map);
+        planeMarker.addTo(mapData.map);
+
     });
     onDestroy(() => {
         if (planeMarker) {
