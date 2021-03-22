@@ -186,7 +186,7 @@
 
 </script>
 <!-- the parentNode.parentNode of input must be the form -->
-{#if (!$ofpStore)}
+{#if (!$ofpStore || $ofpStore.isFake)}
 <div class="custom-file" class:blink={!$ofpStore}>
     <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} on:click|once={preload} class="custom-file-input">
     <label class:ready={readyClass} class="custom-file-label text-truncate" for="{name}">{label}</label>
