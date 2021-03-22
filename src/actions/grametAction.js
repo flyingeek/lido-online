@@ -2,11 +2,13 @@ import {writable} from 'svelte/store';
 import {showGramet} from '../stores';
 
 export const grametStatus = writable();
+export const grametResponseStatus = writable({});
 const grametMargin = 65; // left and right margin to the "inner gramet" image in px
 const grametTop = 31;// top margin to the "inner gramet" image in px
 
 export function grametThumbAction(container, {ofp, pos}){
     const plane = document.getElementById('gt-plane');
+    let objectURL;
     let position = parseFloat(pos);
     let ofpDescription = ofp.description;
     let img;
@@ -84,15 +86,33 @@ export function grametThumbAction(container, {ofp, pos}){
         if (clone) clone.remove();
         clone = undefined;
         img = undefined;
+        if(objectURL) URL.revokeObjectURL(objectURL);
+        objectURL = undefined;
     }
     const createImg = async (ofp) => {
         img = document.createElement('img')
-        img.addEventListener('load', loadListener);
-        img.addEventListener('error', errorListener);
         grametStatus.set('loading');
         plane.style.display = 'none';
-        img.src = ofp.ogimetData.proxyImg;
-        img.crossOrigin = "anonymous"; // otherwise sw does not cache
+        fetch(ofp.ogimetData.proxyImg).then(function(response) {
+            if(response.ok) {
+                grametResponseStatus.set({status: response.status, text: response.statusText || 'OK'});
+                response.blob().then((blob) => {
+                    objectURL = URL.createObjectURL(blob);
+                    img.addEventListener('load', loadListener);
+                    img.addEventListener('error', errorListener);
+                    img.src = objectURL;
+                });
+            } else {
+                errorListener();
+                response.text().then(text => {
+                    grametResponseStatus.set({status: response.status, text});
+                });
+            }
+        })
+        .catch(function(error) {
+                errorListener();
+                grametResponseStatus.set({status: 0, text: error.message});
+        });
     };
     createImg(ofp);
 

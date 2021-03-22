@@ -1,7 +1,7 @@
 <script>
     import {onDestroy, tick} from 'svelte';
     import Overlay from 'svelte-overlay';
-    import {grametThumbAction, grametStatus} from '../actions/grametAction';
+    import {grametThumbAction, grametStatus, grametResponseStatus} from '../actions/grametAction';
     import Link from '../components/Link.svelte';
     import {showGramet, ofp, position} from '../stores';
     let grametUpdateAvailable = false;
@@ -66,9 +66,18 @@
             <h3 class="popover-header">😱: Erreur de récupération du Gramet<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>
             <div class="popover-body">
                 <p><a href="." on:click|preventDefault={() => $grametStatus = 'loading'}>essayez à nouveau</a> ou allez sur <Link href={$ofp.ogimetData.url} target="_blank">ogimet</Link>.</p>
-                <p>A certaines heures le site ogimet est saturé, il faut essayer 2 ou 3 fois.
-                    Parfois le site est indisponible, avec la mention "no grib data" sur leur page web, dans ce cas il est inutile de faire une nouvelle tentative.</p>
-            </div>
+                {#if $grametResponseStatus.status === 409}
+                    <p>Erreur construction route GRAMET: Station "<code>{$grametResponseStatus.text}</code>" non reconnue par ogimet,
+                    merci de me remonter l'information pour que je corrige l'application. Inutile de réessayer.</p>
+                {:else if $grametResponseStatus.text === "no grib data"}
+                    <p>Le serveur ogimet indique qu'il est indisponible (no grib data). Inutile de réessayer.</p>
+                {:else}
+                    <p>A certaines heures le site ogimet est saturé, il faut essayer 2 ou 3 fois en temporisant de 30 secondes à chaque essai.</p>
+                    {#if $grametResponseStatus.status !== 0}
+                        <p>Pour information, le proxy a retourné: <code>{$grametResponseStatus.status} {$grametResponseStatus.text}</code></p>
+                    {/if}
+                {/if}
+                </div>
             </div>
         </div>
     </Overlay>
