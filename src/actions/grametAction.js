@@ -1,4 +1,5 @@
 import {writable} from 'svelte/store';
+import {showGramet} from '../stores';
 
 export const grametStatus = writable();
 const grametMargin = 65; // left and right margin to the "inner gramet" image in px
@@ -77,6 +78,7 @@ export function grametThumbAction(container, {ofp, pos}){
         if (img) img.removeEventListener('load', loadListener);
         if (img) img.removeEventListener('error', errorListener);
         if (img) img.remove();
+        showGramet.set(false);
         if (clone) clone.removeEventListener('load', cloneLoadListener);
         if (clone) clone.removeEventListener('error', errorListener);
         if (clone) clone.remove();
