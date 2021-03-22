@@ -17,7 +17,8 @@
     import {online, showGramet, simulate} from "../stores.js";
     import {updateKml} from './kml.js';
     import {promiseTimeout, fetchSimultaneously} from './utils';
-    import { createEventDispatcher, onMount, onDestroy } from 'svelte';
+    import { createEventDispatcher, onMount, onDestroy, tick} from 'svelte';
+    import {get} from 'svelte/store';
     import {findMissingCacheTiles} from '../tilesCache';
     import CircleProgress from "./CircleProgress.svelte";
     import AircraftType from "./AircraftType.svelte";
@@ -70,12 +71,16 @@
             mapData.geolocate.off('trackuserlocationstart', hidePlane);
             //mapData.geolocate.off('trackuserlocationend', showPlane);
         }
+        const showPlaneState = get(showPlaneOnMap);
+        hidePlane(); // dom element will be removed by createMap
         mapData = createMap(id, selectedProjection, ofp, kmlOptions, afterMapLoad);
+        map = mapData.map;
         mapData.geolocate.on('trackuserlocationstart', hidePlane);
         //mapData.geolocate.on('trackuserlocationend', showPlane);
-        hidePlane(); // dom element was removed by createMap
-        showPlaneOnMap.reset();
-        map = mapData.map;
+        setTimeout(async () => {
+            await tick;
+            showPlaneOnMap.set(showPlaneState);
+        }, 0);
     }
 
     function aircraftChange(e) {
