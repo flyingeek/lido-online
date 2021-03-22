@@ -75,7 +75,7 @@
     }
     svg.show {
         stroke: rgba(0,0,0,.9);
-        fill: var(--plane-color);
+        fill: var(--plane-halo-color);
     }
     svg.hide {
         stroke:transparent;
