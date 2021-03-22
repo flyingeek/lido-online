@@ -13,7 +13,7 @@
     <!-- {#if (($flightProgress === 0 || $flightProgress === 100) && ogimetParams.get('tref') * 1000 > $ofp.infos.takeoff.getTime())}
         <div class="warning">GRAMET pour décollage maintenant</div>
     {/if} -->
-    {#if (($position.gramet === 0 || $position.gramet === 100 || $simulate))}
+    {#if (($position.gramet === 0 || $position.gramet === 100 || $simulate>=0))}
         <SimulatorPlayer/>
     {/if}
 </div>
