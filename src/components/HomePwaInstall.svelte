@@ -14,7 +14,7 @@
         <div class="prompt-content">
             <h3 class="title">Installez OFP2MAP</h3>
             <p class="text">Si OFP2MAP est déjà sur l'écran d'accueil, ne l'installez pas une deuxième fois. Attention: l'installation ne peut se faire que depuis
-                le navigateur Safari, ce n'est pas possible depuis une "WebView" (à l'intérieur d'une app). Si en haut à droite il y a l'icône de Safari, vous n'êtes pas dans Safari!
+                le navigateur Safari, si présent, cliquez sur <svg class="safari"><use xlink:href="#safari-symbol"/></svg> en haut à droite.
             </p>
             {#if !requiredNavigator}
                 <p class="guide error">Merci d'ouvrir cette page dans Safari</p>
@@ -93,6 +93,10 @@
         width: 30px;
         height: 30px;
         fill: #007AFF;
+    }
+    svg.safari {
+        width: 20px;
+        height: 20px;
     }
     ol {
         list-style: none;

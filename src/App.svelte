@@ -40,7 +40,7 @@
 
 <main class="container {$route.substr(1) || 'home'}">
   <div class="content">
-    {#if navigator && navigator.standalone === false && runningOnIpad}
+    {#if (navigator && navigator.standalone === false && runningOnIpad)}
       <HomePwaInstall/>
     {:else}
       <Navbar>
