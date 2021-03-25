@@ -61,7 +61,7 @@ const lidoUrls = [
 const allUrls = thirdPartyUrls.concat(lidoUrls);
 
 registerRoute(
-    /.+\/(bootstrap\.min\.css|pdf\.min\.js|pdf\.worker\.min\.js|proj4\.min\.js|mapbox-gl\.js|mapbox-gl\.css|lidojs.+\.js|wmo.+\.var\.js)$/,
+    /.+\/(bootstrap\.min\.css|pdf\.min\.js|pdf\.worker\.min\.js|proj4\.min\.js|mapbox-gl\.js|mapbox-gl\.css|lidojs.+\.js|wmo.+\.var\.js|pinch-zoom-min\.js)$/,
     new CacheFirst({
       cacheName: validCaches['warmup'],
     })
