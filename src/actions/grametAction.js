@@ -143,7 +143,7 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
     const plane = pinchZoom.parentNode.querySelector('svg');
     const img = document.getElementById('grametImg');
     const style = getComputedStyle(document.body);
-    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', 395).slice(0, -2)); //remove px
+    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', "395px").slice(0, -2)); //remove px
     const maxHeight = parseFloat(pinchZoom.parentNode.dataset.maxHeight || "370");
     const iWidth = img.width;
     //const iHeight = img.height;
@@ -188,7 +188,11 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
     
     if (position <= 0 || position >= 100) {
         // flight is not yet progress or finished
-        scale = Math.min(viewportWidth/iWidth, maxHeight / (gInnerHeight + 50)); // we want the first 445px visible
+        if (iWidth === 0){
+            scale = maxHeight / (gInnerHeight + 50);
+        } else {
+            scale = Math.min(viewportWidth/iWidth, maxHeight / (gInnerHeight + 50)); // we want the first 445px visible
+        }
         y = 0;
     } else {
         // flight is in progress
