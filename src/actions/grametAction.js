@@ -18,7 +18,7 @@ export function grametThumbAction(container, {ofp, pos}){
     const viewportHeight = container.clientHeight;
     const viewportWidth = container.clientWidth;
     const style = getComputedStyle(document.body);
-    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', 395).slice(0, -2)); //remove px
+    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', "395px").slice(0, -2)); //remove px
     const position2pixel = (position) =>  {
         return ((grametMargin * scale) + ((iWidth - (grametMargin * 2 * scale)) * position / 100));
     }
@@ -232,11 +232,14 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
 export const setHeight = (container) => {
     const img = document.getElementById('grametImg');
     const gWidth = img.width;
-    const gHeight = img.height;
+    const gHeight = img.height || 700;
     const maxHeight = parseFloat(container.dataset.maxHeight || "370");
     const nav = document.querySelector('nav');
     const nWidth = nav.clientWidth;
-    const ratio = nWidth / gWidth;
+    let ratio = 1;
+    if (gWidth !== 0){
+        ratio = nWidth / gWidth;
+    }
     const height = Math.min(ratio * gHeight, maxHeight);
     container.style.height = `${height}px`;
 }
