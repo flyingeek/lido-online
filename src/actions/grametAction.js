@@ -44,7 +44,7 @@ export function grametThumbAction(container, {ofp, pos}){
         }
     }
     const loadListener = () => {
-        const gHeight = img.height;
+        const gHeight = img.height || 700;
         clone = img.cloneNode();
         clone.id = "grametImg";
         clone.style.display = 'none';
