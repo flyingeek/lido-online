@@ -10,7 +10,7 @@ export function grametThumbAction(container, {ofp, pos}){
     const plane = document.getElementById('gt-plane');
     let objectURL;
     let position = parseFloat(pos);
-    let ofpDescription = ofp.description;
+    let currentOfp = ofp;
     let img;
     let clone;
     let iWidth; // the image width (small size computed by browser)
@@ -119,8 +119,8 @@ export function grametThumbAction(container, {ofp, pos}){
     return {
         update({ofp, pos}){
             position = parseFloat(pos);
-            if (ofp.description !== ofpDescription) {
-                ofpDescription = ofp.description;
+            if (ofp !== currentOfp) {
+                currentOfp = ofp;
                 cleanup();
                 createImg(ofp);
             }else{
