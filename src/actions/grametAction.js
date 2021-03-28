@@ -4,9 +4,9 @@ import {showGramet} from '../stores';
 export const grametStatus = writable();
 export const grametResponseStatus = writable({});
 const grametMargin = 65; // left and right margin to the "inner gramet" image in px
-const grametTop = 31;// top margin to the "inner gramet" image in px
+const grametTop = 33;// top margin to the "inner gramet" image in px
 
-export function grametThumbAction(container, {ofp, pos}){
+export function grametThumbAction(container, {ofp, pos, fl}){
     const plane = document.getElementById('gt-plane');
     let objectURL;
     let position = parseFloat(pos);
@@ -18,15 +18,9 @@ export function grametThumbAction(container, {ofp, pos}){
     const viewportHeight = container.clientHeight;
     const viewportWidth = container.clientWidth;
     const style = getComputedStyle(document.body);
-    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', "395px").slice(0, -2)); //remove px
+    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', "384px").slice(0, -2)); //remove px
     const position2pixel = (position) =>  {
         return ((grametMargin * scale) + ((iWidth - (grametMargin * 2 * scale)) * position / 100));
-    }
-    const placePlane = (plane, planePosition, x) => {
-        if(plane){
-            plane.style.left = (x + (position2pixel(planePosition) - (plane.clientWidth / 2))) + 'px';
-            plane.style.top = ((120 * scale) - (plane.clientHeight / 2)) + 'px';//TODO
-        }
     }
     const imageOffsetForPosition = (position) => {
         const pixelPosX = position2pixel(position);
@@ -41,6 +35,12 @@ export function grametThumbAction(container, {ofp, pos}){
             return lock - min;
         }else{
             return lock -max;
+        }
+    }
+    const placePlane = (plane, planePosition, x, planeLevel) => {
+        if(plane){
+            plane.style.left = (x + (position2pixel(planePosition) - (plane.clientWidth / 2))) + 'px';
+            plane.style.top = (((gInnerHeight - Math.round((-0.0006 * planeLevel * planeLevel) + (0.8985 * planeLevel) + 46.264)) * scale) - (plane.clientHeight / 2)) + 'px';
         }
     }
     const loadListener = () => {
@@ -70,7 +70,7 @@ export function grametThumbAction(container, {ofp, pos}){
         plane.style.display = 'block';
         img.style.opacity = 1;
         const offset = imageOffsetForPosition(position);
-        placePlane(plane, position, offset);
+        placePlane(plane, position, offset, fl);
     };
     const errorListener = () => {
         plane.style.display = 'none';
@@ -117,7 +117,7 @@ export function grametThumbAction(container, {ofp, pos}){
     createImg(ofp);
 
     return {
-        update({ofp, pos}){
+        update({ofp, pos, fl}){
             position = parseFloat(pos);
             if (ofp !== currentOfp) {
                 currentOfp = ofp;
@@ -126,7 +126,7 @@ export function grametThumbAction(container, {ofp, pos}){
             }else{
                 const offset = imageOffsetForPosition(position);
                 img.style.left = offset  + 'px';
-                placePlane(plane, position, offset);
+                placePlane(plane, position, offset, fl);
             }
         },
         destroy(){
@@ -143,12 +143,18 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
     const plane = pinchZoom.parentNode.querySelector('svg');
     const img = document.getElementById('grametImg');
     const style = getComputedStyle(document.body);
-    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', "395px").slice(0, -2)); //remove px
+    const gInnerHeight = parseFloat(style.getPropertyValue('--gramet-inner-height', "384px").slice(0, -2)); //remove px
     const maxHeight = parseFloat(pinchZoom.parentNode.dataset.maxHeight || "370");
     const iWidth = img.width;
-    //const iHeight = img.height;
+    const iHeight = img.height;
     const nav = document.querySelector('nav');
     const viewportWidth = nav.clientWidth;
+    let cHeight;
+    if (iWidth !== 0){
+        cHeight = Math.min((viewportWidth / iWidth) * iHeight, maxHeight);
+    } else {
+        cHeight = Math.min(iHeight, maxHeight);
+    }
     let position = parseFloat(pos);
     let scale;
     let x = 0;
@@ -160,8 +166,8 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
     }
     const placePlane = (plane, planePosition, planeLevel) => {
         // before and after flight, displays the full gramet
-        plane.style.left = (x + (position2pixel(planePosition) - (plane.clientWidth / 2))) + 'px';
-        plane.style.top = (((-0.57 * planeLevel + 292 + grametTop) * scale) - (plane.clientHeight / 2)) + y + 'px';//TODO
+        plane.style.left = (x + (position2pixel(planePosition) - (plane.clientWidth) + 2)) + 'px';
+        plane.style.top = (((gInnerHeight  + grametTop - 2 - Math.round((-0.0006 * planeLevel * planeLevel) + (0.8985 * planeLevel) + 46.264)) * scale) - (plane.clientHeight / 2)) + y + 'px';//TODO
     }
     const imageOffsetForPosition = (position) => {
         const pixelPosX = position2pixel(position);
@@ -189,14 +195,14 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
     if (position <= 0 || position >= 100) {
         // flight is not yet progress or finished
         if (iWidth === 0){
-            scale = maxHeight / (gInnerHeight + 50);
+            scale = maxHeight / (gInnerHeight + 70);
         } else {
-            scale = Math.min(viewportWidth/iWidth, maxHeight / (gInnerHeight + 50)); // we want the first 445px visible
+            scale = Math.min(viewportWidth/iWidth, cHeight / (gInnerHeight + 70));
         }
         y = 0;
     } else {
         // flight is in progress
-        scale = maxHeight / (gInnerHeight);  // (why extra 10 ?)
+        scale = cHeight / (gInnerHeight);
         y = - grametTop * scale;
     }
     if (viewportWidth > iWidth * scale) {
