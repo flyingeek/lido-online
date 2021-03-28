@@ -15,6 +15,7 @@ export function grametThumbAction(container, {ofp, pos, fl}){
     let clone;
     let iWidth; // the image width (small size computed by browser)
     let scale;
+    let level = fl;
     const viewportHeight = container.clientHeight;
     const viewportWidth = container.clientWidth;
     const style = getComputedStyle(document.body);
@@ -70,7 +71,7 @@ export function grametThumbAction(container, {ofp, pos, fl}){
         plane.style.display = 'block';
         img.style.opacity = 1;
         const offset = imageOffsetForPosition(position);
-        placePlane(plane, position, offset, fl);
+        placePlane(plane, position, offset, level);
     };
     const errorListener = () => {
         plane.style.display = 'none';
@@ -126,6 +127,7 @@ export function grametThumbAction(container, {ofp, pos, fl}){
             }else{
                 const offset = imageOffsetForPosition(position);
                 img.style.left = offset  + 'px';
+                level = fl;
                 placePlane(plane, position, offset, fl);
             }
         },
@@ -159,8 +161,8 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
     let scale;
     let x = 0;
     let y = 0;
-    let level = parseFloat(fl);
     let allowImgScroll;
+    let level = fl;
     const position2pixel = (position) =>  {
         return (grametMargin + ((iWidth - (grametMargin * 2)) * position / 100)) * scale;
     }
@@ -212,7 +214,6 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
         x = imageOffsetForPosition(position);
         allowImgScroll = true;
     }
-
     placePlane(plane, position, level);
     img.style.display = "block";
     pinchZoom.style.maxHeight = `${maxHeight}px`;
@@ -222,12 +223,12 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
     return {
         update({pos, fl}){
             position = parseFloat(pos);
-            level = parseFloat(fl);
+            level = fl;
             if (allowImgScroll) {
                 x = imageOffsetForPosition(position);
                 pinchZoom.setTransform({x});
             }
-            placePlane(plane, position, level);
+            placePlane(plane, position, fl);
         },
         destroy(){
             img.style.display = 'none';

@@ -85,9 +85,10 @@
                                 data.route.description = data.wmo.join(' ');
                                 ofp.ogimetData = data;
                                 let sum = 0;
+                                let fl = ofp.infos['fl'];
                                 const distanceMatrix = ofp.route.segments.map(([p1, p2]) => {
                                     sum += p1.distanceTo(p2);
-                                    return [p2, sum];
+                                    return [p2, sum, fl];
                                 });
                                 distanceMatrix.unshift([ofp.route.points[0], 0]);
                                 ofp.distanceMatrix = distanceMatrix;
