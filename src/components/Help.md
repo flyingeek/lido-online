@@ -63,9 +63,13 @@ Il existe aussi un bouton de mise en cache&#8239;: le pictogramme ↓ situé à 
 
 Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 40Mo de données. Les caches des autres projections utilisent&#8239;: 7Mo pour la NORTH, 4Mo pour la PACIFIC, 7Mo pour la SOUTH et 32Mo pour THE WORLD.
 
+## ETOPS
+
+La capacité ETOPS est determinée depuis l'OFP et les cercles sont tracés. Un drapeau ETOPS apparait dans le pavé d'information de l'OFP si le carburant est limitatif (20mn, soit environ 2T de marge sur 777). Pour avoir plus d'informations vous pouvez utiliser un plugin (voir ci-dessous).
+
 ## Plugins (Raccourcis)
 
-Sur iOS, OFP2MAP permet de lancer des raccourcis. Il est possible d'exporter la route au format KML depuis le menu EXPORT mais il est aussi possible de lancer des raccourcis ayant accès au contenu de l'OFP depuis le pavé d'informations du vol dans la barre de menu. Un exemple de plugin est le [cartouche ETOPS](https://www.icloud.com/shortcuts/85acce199353490c9f3a3db0618da19e) qu'il faut au préalable installer dans l'app Raccourcis. [OFP2MAP-PLUGIN](https://www.icloud.com/shortcuts/d484cdf5939b4cb2a54535ae94c371d1) permet de visualiser les données (format json) transmises par OFP2MAP.
+Sur iOS, OFP2MAP permet de lancer des raccourcis. Il est possible d'exporter la route au format KML depuis le menu EXPORT mais il est aussi possible de lancer des raccourcis ayant accès au contenu de l'OFP depuis le pavé d'informations du vol dans la barre de menu. Un exemple de plugin est le [cartouche&nbsp;ETOPS](https://www.icloud.com/shortcuts/85acce199353490c9f3a3db0618da19e) qu'il faut au préalable installer dans l'app Raccourcis. Si vous souhaitez créer un plugin, [OFP2MAP-PLUGIN](https://www.icloud.com/shortcuts/d484cdf5939b4cb2a54535ae94c371d1) permet de visualiser les données (format json) transmises par OFP2MAP.
 
 ## Mise à jour
 
