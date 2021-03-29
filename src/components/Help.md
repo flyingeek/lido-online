@@ -63,6 +63,10 @@ Il existe aussi un bouton de mise en cache&#8239;: le pictogramme ↓ situé à 
 
 Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 40Mo de données. Les caches des autres projections utilisent&#8239;: 7Mo pour la NORTH, 4Mo pour la PACIFIC, 7Mo pour la SOUTH et 32Mo pour THE WORLD.
 
+## Plugins (Raccourcis)
+
+Sur iOS, OFP2MAP permet de lancer des raccourcis. Il est possible d'exporter la route au format KML depuis le menu EXPORT mais il est aussi possible de lancer des raccourcis ayant accès au contenu de l'OFP depuis le pavé d'informations du vol dans la barre de menu. Un exemple de plugin est le [cartouche ETOPS](https://www.icloud.com/shortcuts/85acce199353490c9f3a3db0618da19e) qu'il faut au préalable installer dans l'app Raccourcis. [OFP2MAP-PLUGIN](https://www.icloud.com/shortcuts/d484cdf5939b4cb2a54535ae94c371d1) permet de visualiser les données (format json) transmises par OFP2MAP.
+
 ## Mise à jour
 
 L'app détecte les mises à jour automatiquement, normalement vous n'avez rien à faire. Eventuellement un prompt peut
