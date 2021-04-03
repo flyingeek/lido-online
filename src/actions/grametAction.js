@@ -105,13 +105,16 @@ export function grametThumbAction(container, {ofp, pos, fl}){
                 });
             } else {
                 errorListener();
-                response.text().then(text => {
-                    grametResponseStatus.set({status: response.status, text});
-                });
+                if (response.headers) {
+                    grametResponseStatus.set({status: response.status, text:response.statusText ||response.headers.get('X-ofp2map-status')})
+                } else {
+                    grametResponseStatus.set({status: response.status, text:response.statusText || ""})
+                }
             }
         })
         .catch(function(error) {
                 errorListener();
+                console.log('catch', error);
                 grametResponseStatus.set({status: 0, text: error.message});
         });
     };

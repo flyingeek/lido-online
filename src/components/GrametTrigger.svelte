@@ -74,7 +74,7 @@
                 {:else}
                     <p>A certaines heures le site ogimet est saturé, il faut essayer 2 ou 3 fois en temporisant de 30 secondes à chaque essai.</p>
                     {#if $grametResponseStatus.status !== 0}
-                        <p>Pour information, le proxy a retourné: <code>{$grametResponseStatus.status} {$grametResponseStatus.text}</code></p>
+                        <p>Pour information, le proxy a retourné: <code>{$grametResponseStatus.text || $grametResponseStatus.status}</code></p>
                     {/if}
                 {/if}
                 </div>
