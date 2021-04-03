@@ -41,7 +41,7 @@
 </script>
 <script>
     import { createEventDispatcher } from 'svelte';
-    import {showGramet, ofp as ofpStore, ofpStatus, isFakeOfp} from '../stores';
+    import {showGramet, ofp as ofpStore, ofpStatus, isRealOfp} from '../stores';
     export let kmlOptions;
     let disabled = false;
     let ready = new Deferred();
@@ -142,14 +142,13 @@
 
         await ready.promise.then(() => {
             const file = e.target.files[0];
-            const form = e.target.parentNode.parentNode;
+            const form = e.target.closest('form');
             if (file) {
                 $ofpStatus = 'loading';
                 label = e.target.value.split(/([\\/])/g).pop();
                 dispatch('change', label);
                 getOFP(file).then((ofp) => {
                     $ofpStore = ofp;
-                    $isFakeOfp = false;
                     $ofpStatus = 'success';
                     form.blur();
                     e.target.blur();
@@ -171,7 +170,6 @@
             let ofp = new editolido.Ofp('_PDFJS_AF 681 KATL/LFPG 11Mar2020/2235zReleased: 11Mar/1724z3Main OFP (Long copy #1)OFP 6/0/1 ATC FLIGHT PLAN (FPL-AFR681-IS -B77W/ -KATL2235 -LFPG0724 LFPO ) FLIGHT SUMMARY 0012 TAXI IN Generated');
             try {
                 KmlGenerator(); // to have a minimum skeleton for map settings
-                $isFakeOfp = e.target.value;
                 ofp.isFake = e.target.value;
                 $ofpStore = ofp;
                 $ofpStatus = 'success';
@@ -186,29 +184,29 @@
     }
 
 </script>
-<!-- the parentNode.parentNode of input must be the form -->
-{#if (!$ofpStore || $ofpStore.isFake)}
-<div class="custom-file" class:blink={!$ofpStore}>
-    <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} on:click|once={preload} class="custom-file-input">
-    <label class:ready={readyClass} class="custom-file-label text-truncate" for="{name}">{label}</label>
-</div>
-{:else}
-    <label class="btn btn-outline-secondary btn-sm">
-        Changer<input id={name} name={name} type="file" accept="application/pdf" on:change={process} hidden>
-    </label>
-{/if}
-{#if !$ofpStore}
-    <div class="footer">
-    <!-- svelte-ignore a11y-no-onchange -->
-    <select class="form-control-sm" on:click|once={preload} disabled={disabled} on:change={processAircraftType}>
-        <option value="none">pas d'ofp ?</option>
-        {#each aircraftTypes as aircraft}
-        <option value={aircraft}>{aircraft}</option>
-        {/each}
-    </select>
+<form class="form-inline" on:submit|preventDefault>
+    {#if (!$isRealOfp)}
+    <div class="custom-file" class:blink={!$ofpStore}>
+        <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} on:click|once={preload} class="custom-file-input">
+        <label class:ready={readyClass} class="custom-file-label text-truncate" for="{name}">{label}</label>
     </div>
-{/if}
-<!-- <svelte:window on:load={preload}/> -->
+    {:else}
+        <label class="btn btn-outline-secondary btn-sm">
+            Changer<input id={name} name={name} type="file" accept="application/pdf" on:change={process} hidden>
+        </label>
+    {/if}
+    {#if !$ofpStore}
+        <div class="footer">
+        <!-- svelte-ignore a11y-no-onchange -->
+        <select class="form-control-sm" on:click|once={preload} disabled={disabled} on:change={processAircraftType}>
+            <option value="none">pas d'ofp ?</option>
+            {#each aircraftTypes as aircraft}
+            <option value={aircraft}>{aircraft}</option>
+            {/each}
+        </select>
+        </div>
+    {/if}
+</form>
 
 <style>
 

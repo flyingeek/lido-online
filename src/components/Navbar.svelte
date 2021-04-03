@@ -1,5 +1,8 @@
 <script>
-    import {ofp, route} from '../stores';
+    import {ofp, route, isRealOfp} from '../stores';
+    import GrametTrigger from './GrametTrigger.svelte';
+    import OfpInfos from './OfpInfos.svelte';
+    import TakeOffInput from './TakeOffInput.svelte';
 </script>
 <nav class="navbar navbar-expand-md navbar-light">
   <input type="checkbox" id="menu">
@@ -14,7 +17,7 @@
       <span>CARTE</span></a>
     </li>
     {/if}
-    {#if  ($ofp && !$ofp.isFake) || $route === '/export'}
+    {#if  ($isRealOfp) || $route === '/export'}
     <li class="nav-item" class:active={$route === '/export'}>
       <a class="nav-link" href="#/export">
       <span>EXPORT</span></a>
@@ -25,6 +28,11 @@
       <span>AIDE</span></a>
     </li>
   </ul>
+  {#if ($isRealOfp) }
+    {#if $route === '/map'}<GrametTrigger/>{/if}
+    <TakeOffInput/>
+    <OfpInfos/>
+  {/if}
   <slot></slot>
 </nav>
 

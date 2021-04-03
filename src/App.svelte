@@ -6,9 +6,6 @@
   import Map from "./components/Map.svelte";
   import Navbar from "./components/Navbar.svelte";
   import OfpInput from './components/OfpInput.svelte';
-  import GrametTrigger from './components/GrametTrigger.svelte';
-  import OfpInfos from './components/OfpInfos.svelte';
-  import TakeOffInput from './components/TakeOffInput.svelte';
   import Page from "./components/Page.svelte";
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
@@ -44,16 +41,7 @@
       <HomePwaInstall/>
     {:else}
       <Navbar>
-        {#if ($ofp && !$ofp.isFake && $route === '/map') }
-          <GrametTrigger/>
-        {/if}
-        {#if ($ofp && !$ofp.isFake)}
-          <TakeOffInput/>
-          <OfpInfos/>
-        {/if}
-        <form class="form-inline" on:submit|preventDefault>
-          <OfpInput {kmlOptions} on:change={ofpChange} />
-        </form>
+        <OfpInput {kmlOptions} on:change={ofpChange} />
       </Navbar>
       <SWUpdate prompt={!!$ofp}/>
       {#if $ofp && $ofpStatus === 'success'}

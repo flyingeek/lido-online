@@ -25,7 +25,7 @@ export const ofp = writable();
 export const ofpStatus = writable();
 export const takeOffTime = writable(new Date());
 export const fl = writable();
-export const isFakeOfp = writable(false);
+export const isRealOfp = derived([ofp, ofpStatus], ($ofp, $ofpStatus) => $ofp && !$ofp.isFake && $ofpStatus === 'success', false);
 let swLastUpdateDate = new Date();
 export const checkSWUpdate = () => {
     if ('serviceWorker' in navigator) {
