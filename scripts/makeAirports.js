@@ -35,7 +35,7 @@ Papa.parse(file, {
         for (let i = 18; i <=29; i++) {
             const [aircraft, cat] = data[i].trim().split('-');
             if (!aircraft) {
-                console.log(`${data[0]}: empty aircraft column ${i}`)
+                if (i!==23 && i!==25 ) console.log(`${data[0]}: empty aircraft column ${i}`); // 23=A340 25=A380 both removed
                 continue;
             }
             if (cat !== '0') aircrafts.push(aircraft);
@@ -67,6 +67,7 @@ Papa.parse(file, {
             default:
                 console.log(`unkwnown airport level ${data[47]}`, data);
         }
+        //if (level>0) console.log(data[0], level);
         results[data[0].trim()] = [parseFloat(data[3]),parseFloat(data[4])];
         const feature = {
             'type': 'Feature',
