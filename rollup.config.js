@@ -242,6 +242,7 @@ export default [{
         "images/ofp2map-icons/icon-180x180.png",
         "images/ofp2map-icons/icon-128x128.png",
         "images/map-help.webp",
+        "images/layers-settings.webp",
         "css/bundle.css",
         "js/bundle.js",
         "svg/*.svg",

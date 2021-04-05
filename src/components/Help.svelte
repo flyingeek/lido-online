@@ -62,6 +62,16 @@ $: updateVersion($wb);
         max-width: 100%;
         height: auto;
     }
+    :global(.markdown figure){
+        width: 300px;
+        margin-left: 1em;
+        float: right;
+    }
+    :global(.markdown figcaption){
+        text-align: center;
+        font-size: small;
+        font-variant: all-small-caps;
+    }
     .app {
         display: inline-block;
         vertical-align: middle;

@@ -16,13 +16,13 @@ L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au pl
 
 1. Dans Pilot Mission, onglet «Dossier de vol», affichez le PDF nommé "Dossier de vol OFP". Sur la gauche, cliquez sur le carré avec une flèche vers le haut. Choisissez «Enregistrer dans Fichiers». Dans l'app, c'est cet OFP qu'il faut ensuite sélectionner.
 
-2. La carte dispose d'un bouton pour personnaliser les calques et les couleurs. Le type avion pour l'adéquation des terrains est détecté dans l'OFP. Pour vous entrainer, je vous recommande de modifier la couleur des terrains en vert/rouge et de sauvegarder votre choix.
+2. <figure>![layers settings help](./images/layers-settings.webp)<figcaption>Réglages des calques</figcaption></figure>La carte dispose d'un bouton pour personnaliser les calques et les couleurs. Le type avion pour l'adéquation des terrains est détecté dans l'OFP. Pour vous entrainer, je vous recommande de modifier la couleur des terrains en vert/rouge et de sauvegarder votre choix.
 
 3. Pour Exporter vers une app, direction le menu EXPORT, vous pouvez exporter une route pour mPilot, télécharger le KML (routes et tracks uniquement), ou envoyer vers l'app **Raccourcis** d'Apple.
 
 4. La carte par défaut est une LAMBERT, il est possible sur la carte, en haut à gauche, de basculer sur d'autres projections.
     - LAMBERT NORTH (parallèles sécants N30 et N65) est recommandée au-dessus du N40
-    - LAMBERT SOUTH & PACIFIC (parallèles sécants N30 et S15 ) sont recommandées sous N30
+    - LAMBERT SOUTH & PACIFIC (sécants N30 et S15 ) sont recommandées sous N30
     - THE WORLD permet de disposer d'un Atlas off-line, c'est une projection Times
     - MERCATOR est une Web Mercator avec un thème est inspiré des cartes VFR. Il y a 12 niveaux de zoom, dont 6 disponibles off-line
 
@@ -48,7 +48,7 @@ L'export des fichiers KML affiche une page nommée "data:", utilisez le bouton <
 
 Le GRAMET est un météogramme représentant le temps et l'espace. Il indique, en tout point de la route, et à l'heure de passage estimée, une coupe verticale de la météo prévue.
 Le GRAMET est réalisé par <Link href="{ogimetURL}">ogimet.com</Link> à partir d'une route calculée. Il est possible d'afficher le GRAMET et sa route sur la carte. La route est particulièrement utile lors des vols océaniques car il n'y a aucune station en mer.
-Pour construire la route du GRAMET, on utilise non pas les waypoints, mais au plus 21 stations météo (WMO). Il y a au total 13000 WMO dans le monde. Le GRAMET débute toujours à l'heure hh:00. Pour un decollage à 19h30, il débutera à 19h, pour un décollage à 19h31, il débutera à 20h. Pour les OFP anciens, c'est l'heure actuelle qui est envoyée. De plus OFP2MAP utilise la version du GRAMET qu'il a mis en cache pendant 48h.
+Pour construire la route du GRAMET, on utilise non pas les waypoints, mais au plus 21 stations météo (WMO). Il y a au total 13000 WMO dans le monde. Le GRAMET débute toujours à l'heure hh:00. Pour un decollage à 19h30, il débutera à 19h, pour un décollage à 19h31, il débutera à 20h. Pour les OFP anciens, c'est l'heure actuelle qui est envoyée. En mode déconnecté, OFP2MAP utilise la version du GRAMET qu'il a mis en cache pendant 48h. Après l'heure de décollage initialement prévue, vous pouvez forcer une mise à jour, soit en rechargeant l'ofp, soit en changeant brièvement de page.
 
 Pour afficher le Gramet, cliquez sur sa miniature à gauche de l'OFP. Pour afficher la route, direction le réglage des calques de la carte. Par défaut elle est affichée en bleu. En fonction de l'heure de décollage (modifiable), le Gramet et sa miniature affiche la position avion. Avant l'horaire prévu de décollage, un bouton play permet de lancer une animation.
 
