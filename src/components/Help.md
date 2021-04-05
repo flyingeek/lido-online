@@ -81,6 +81,8 @@ Sur iOS, OFP2MAP permet de lancer des raccourcis. Il est possible d'exporter la 
 L'app détecte les mises à jour automatiquement, normalement vous n'avez rien à faire. Eventuellement un prompt peut
 apparaitre vous demandant d'autoriser cette mise à jour. La version AIRAC et le type avion détecté dans l'OFP sont affichés en bas à droite de la carte dans le champ d'attribution.
 
+Pour connaître les dernières nouveautés d'OFP2MAP, je poste dans Yammer/Mapsme et Teams/MyConcorde. En attendant une solution plus conviviale, vous pouvez aussi consulter la <Link href="https://github.com/flyingeek/lido-online/commits/master">liste des commits</Link> sur GitHub (ce n'est pas "user friendly").
+
 ## Crédits
 
 - Les données terrains/FIR sont fournies par Olivier Ravet forum Yammer/Mapsme
@@ -88,7 +90,7 @@ apparaitre vous demandant d'autoriser cette mise à jour. La version AIRAC et le
 - Le GRAMET provient du site ogimet.com
 - Le site est développé en javascript à l'aide du framework SVELTE
 - La partie serveur (un proxy pour pouvoir récupérer l'image du GRAMET) est en python.
-- Eric Delord CDB 777 est l'auteur. Le code source est disponible sur GitHub pour [l'app](https://github.com/flyingeek/lido-online) et [le proxy](https://github.com/flyingeek/ofp2map-gramet)
+- Eric Delord CDB 777 est l'auteur. Le code source est disponible sur GitHub pour <Link href="https://github.com/flyingeek/lido-online">l'app</Link> et <Link href="https://github.com/flyingeek/ofp2map-gramet">le proxy</Link>
 
 ## Hébergement
 
