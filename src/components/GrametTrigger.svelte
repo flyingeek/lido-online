@@ -47,8 +47,8 @@
     </div>
     <Overlay  position="bottom-center" isOpen={grametUpdateAvailable}>
         <div slot="parent" class="d-none"></div>
-        <div slot="content" let:close>
-            <div class="popover" role="tooltip" style="left: calc(-2rem - 70px); width: 290px; max-width: 290px; top: 20px;">
+        <div slot="content" let:close style="width: 290px;">
+            <div class="popover" role="tooltip" style="left: calc(-1rem - 35px); max-width: 290px; top: 20px;">
                 <h3 class="popover-header">Nouveau GRAMET disponible<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>
                 <div class="popover-body">
                     <p class="text-center"><button class="btn btn-primary" on:click={reload}>Mettre à jour</button></p>
@@ -62,8 +62,8 @@
             <svg class="gramet-error"><use xlink:href="#info-symbol"/></svg>
         </button>
     
-        <div slot="content" let:close>
-            <div class="popover" role="tooltip" style="width: 330px; max-width: 330px;">
+        <div slot="content" let:close style="width: 330px;">
+            <div class="popover" role="tooltip" style="max-width: 330px;">
             <h3 class="popover-header">😱: Erreur de récupération du Gramet<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>
             <div class="popover-body">
                 <p><a href="." on:click|preventDefault={() => $grametStatus = 'loading'}>essayez à nouveau</a> ou allez sur <Link href={$ofp.ogimetData.url} target="_blank">ogimet</Link>.</p>
