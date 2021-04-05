@@ -58,6 +58,10 @@ $: updateVersion($wb);
     :global(span.flytax > span){
         color: var(--redaf);
     }
+    :global(.markdown img) {
+        max-width: 100%;
+        height: auto;
+    }
     .app {
         display: inline-block;
         vertical-align: middle;

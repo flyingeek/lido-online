@@ -28,6 +28,7 @@
             navigator.serviceWorker.addEventListener('message', grametSourceUpdate);
     }
     onDestroy(() => {
+        //console.log('destroy gramet trigger');
         if (navigator && navigator.serviceWorker){
             navigator.serviceWorker.removeEventListener('message', grametSourceUpdate);
         }

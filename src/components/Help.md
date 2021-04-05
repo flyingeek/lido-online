@@ -29,6 +29,11 @@ L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au pl
 
 5. Navigation dans la carte: on peut avec un doigt déplacer la carte, zoomer ou orienter la carte avec deux doigts. Il est aussi possible de modifier l'angle de vue en balayant de haut en bas avec deux doigts. Si vous activez le bouton de géolocalisation, la carte peut se centrer automatiquement.
 
+
+## Mémo visuel
+
+![map help](./images/map-help.webp "Aide Carte")
+
 ## Particularités de l'iPad
 
 OFP2MAP ne peut être lancé que depuis l'écran d'accueil, l'application se lance en plein écran. On ne peut pas recharger la page comme dans un navigateur&#8239;: il faudra pour cela aller dans le menu d'aide (cet écran) ou un bouton spécifique sera affiché en haut.
