@@ -88,7 +88,7 @@
     </a>
     <form on:submit|preventDefault>
         <fieldset class="form-group">
-            <legend>Route</legend>
+            <legend><input name="route-display" checked={kmlOptions['routeDisplay']} type="checkbox" on:change={update} />Route</legend>
                 <ColorPinCombo name="route" kmlColor={kmlOptions['routeColor']} selected={kmlOptions['routePin']} on:change={update} />
         </fieldset>
         <fieldset class="form-group">
@@ -116,6 +116,7 @@
             <legend><input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR SÛRETÉ</legend>
         </fieldset>
         <fieldset class="form-group">
+            <legend>Aspect général</legend>
             <ZoomLevel name="icon-text-change" label="Label" value={kmlOptions['iconTextChange']} on:change={update}/>
             <ZoomLevel name="line-width-change" label="Ligne" value={kmlOptions['lineWidthChange']} min={0.6} max={2} step={0.1} on:change={update}/>
             <ZoomLevel name="icon-size-change" label="Icône" value={kmlOptions['iconSizeChange']} min={0.6} max={2} step={0.1} on:change={update}/>
