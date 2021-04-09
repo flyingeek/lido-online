@@ -228,4 +228,63 @@
     :global(.map page) {
         overflow: hidden;
     }
+    :global(.mapboxgl-popup-content .airport p){
+        margin: 0 auto;
+        display: inline-block;
+        line-height: 1em;
+    }
+    :global(.mapboxgl-popup-content .security-1,
+            .mapboxgl-popup-content .security-2,
+            .mapboxgl-popup-content p.status) {
+        font-variant: all-small-caps;
+        font-weight: bold;
+        padding: 0.2em 0.4em;
+        border-radius: 2px;
+    }
+    :global(.mapboxgl-popup-content .airport){
+        text-align: center;
+    }
+    :global(.mapboxgl-popup-content .airport h1){
+        font-size: small;
+        font-weight: normal;
+    }
+    :global(.mapboxgl-popup-content p.security-1){
+        color:black;
+        background-color: orange;
+        border: 1px solid orange;
+        margin-left: 1rem;
+    }
+    :global(.mapboxgl-popup-content p.security-2){
+        color:white;
+        background-color: red;
+        border: 1px solid red;
+        margin-left: 1rem;
+    }
+    :global(.mapboxgl-popup-content p.status){
+        color: black;
+        font-variant: all-small-caps;
+        font-weight: bold;
+        padding: 0.2em 0.4em;
+        border: 1px solid;
+    }
+    :global(.mapboxgl-popup-content p.status-1){
+        background-color: #ea80d8;
+        border-color: #ea80d8;
+    }
+    :global(.mapboxgl-popup-content p.status-2){
+        background-color:#fbfe98;
+        border-color:#fbfe98;
+    }
+    :global(.mapboxgl-popup-content p.status-3){
+        background-color:#00b0f1;
+        border-color:#00b0f1;
+    }
+    :global(.mapboxgl-popup-content p.status-0){
+        border:1px solid #ff0000;
+    }
+    :global(.mapboxgl-popup-content p.status-text){
+        color: #aaa;
+        display: block;
+        margin-top: 0.3em;
+    }
 </style>

@@ -187,7 +187,40 @@ export const addAirports = (data) => {
             while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
             }
-            popup.setLngLat(coordinates).setHTML(title).addTo(map);
+            let html = `<div class="airport"><h1>${title}</h1>`;
+            const security = e.features[0].properties.level;
+            const status = e.features[0].properties[aircraftType];
+            console.log(status, typeof status)
+            let statusText = "";
+            let statusNum = "0";
+            switch(status) {
+                case 1:
+                case 2:
+                    statusText = "Destination & RCF";
+                    statusNum = "3";
+                    break;
+                case 3:
+                case 4:
+                    statusText = "Dégagement à destination";
+                    statusNum = "2";
+                    break;
+                case 5:
+                case 6:
+                    statusText = "Dégagement en route";
+                    statusNum = "2 ERA";
+                    break;
+                case 7:
+                case 8:
+                    statusText = "Appui etops, o2, panne moteur, adéquat en route";
+                    statusNum = "1";
+                    break;
+            }
+
+            html +=  `<p class="status status-${statusNum.charAt(0)}">STATUT ${statusNum}</p>`;
+            if(security > 0) html += `<p class="security-${security}">SECURITY ${(security==1) ? 'ORANGE' : 'RED'}</p>`;
+            if(statusText) html += `<p class="status-text">${statusText}</p>`;
+            html += "</div>";
+            popup.setLngLat(coordinates).setHTML(html).addTo(map);
         };
         const setCursorPointer = () => map.getCanvas().style.cursor = 'pointer';
         const resetCursor = () => map.getCanvas().style.cursor = '';

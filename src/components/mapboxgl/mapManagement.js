@@ -1,4 +1,4 @@
-/* global editolido mapboxgl */
+/* global mapboxgl */
 
 import {clamp, isInside, lineclip, getBounds} from '../utils';
 import {loadMapLayers} from './layersManagement';
