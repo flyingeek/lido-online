@@ -21,6 +21,7 @@ jobs:
       - run: |
           npm install
           npm run build
+          echo "google-site-verification: googleece5115d3add3491.html" > public/googleece5115d3add3491.html
         env:
           NODE_AUTH_TOKEN: ${{secrets.GH_READ_NPM_PACKAGE}}
 
