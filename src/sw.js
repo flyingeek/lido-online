@@ -14,14 +14,15 @@ const maps = {
   'south': 'CONF_SOUTH',
   'pacific': 'CONF_PACIFIC',
   'theworld': 'CONF_THEWORLD',
-  'mercator': 'CONF_MERCATOR'
+  'mercator': 'CONF_MERCATOR',
+  'eqephysicalfr': 'CONF_EQE_PHYSICAL_FR'
 };
 // compute a host hash based on url origin
 // simply use first letters of url's origin
-const hostId = (url, postfix='-') => {
-  const hash = (new URL(url)).hostname.split('.').map(name => name.charAt(0)).join('');
-  return (hash === 'ean' ? '' : hash + postfix);
-};
+// const hostId = (url, postfix='-') => {
+//   const hash = (new URL(url)).hostname.split('.').map(name => name.charAt(0)).join('');
+//   return (hash === 'ean' ? '' : hash + postfix);
+// };
 
 const validCaches ={
   'warmup': 'lido-warmup',
@@ -123,7 +124,7 @@ registerRoute(
   })
 );
 
-const tilesCache = new TilesCache('CONF_TILES_DB', 3, (open, evt) => {
+const tilesCache = new TilesCache('CONF_TILES_DB', 4, (open, evt) => {
     if (evt.oldVersion < 1) {
         open.result.createObjectStore(maps['theworld']);
     }
@@ -134,6 +135,9 @@ const tilesCache = new TilesCache('CONF_TILES_DB', 3, (open, evt) => {
     }
     if (evt.oldVersion < 3) {
       open.result.createObjectStore(maps['mercator']);
+    }
+    if (evt.oldVersion < 4) {
+      open.result.createObjectStore(maps['eqephysicalfr']);
     }
 });
 
@@ -148,6 +152,10 @@ registerRoute(
 registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_THEWORLD_TILES_BASE_URL' + '/[0-5]/.*')),
   tilesCache.getCacheHandler(maps['theworld'])
+);
+registerRoute(
+  ({url}) => url.href.match(new RegExp('CONF_EQE_PHYSICAL_FR_TILES_BASE_URL' + '/[0-5]/.*')),
+  tilesCache.getCacheHandler(maps['eqephysicalfr'])
 );
 const baseMercator = `https://api.mapbox.com/v4/${maps['mercator'].slice(0,-2)}`;
 registerRoute(
@@ -165,6 +173,10 @@ registerRoute(
 );
 registerRoute(
   ({url}) => url.href.match(new RegExp('(CONF_THEWORLD_TILES_BASE_URL)/[6-9]/.*')),
+  async () => new Response('', { "status" : 404 , "statusText" : "sw says nope!"})
+);
+registerRoute(
+  ({url}) => url.href.match(new RegExp('(CONF_EQE_PHYSICAL_FR_TILES_BASE_URL)/[6-9]/.*')),
   async () => new Response('', { "status" : 404 , "statusText" : "sw says nope!"})
 );
 // from https://github.com/TalAter/cache.adderall

@@ -16,6 +16,8 @@
             if (dest.latitude > 30 && dep.latitude > 30) return false;
         }else if (option.id === 'jb_theworld') {
             return false;
+        }else if (option.id.startsWith('ed_eqe_')) {
+            return false;
         }
         const bounds = (option.validity) ? option.validity : option.extent;
         for (let p of [dep, dest]) {

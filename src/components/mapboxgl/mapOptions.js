@@ -77,6 +77,7 @@ const options = [
         'id': 'jb_theworld',
         // for wide map
         //'ratio': [16358, 10084], /* width, height, but we use affineTransform instead */
+        //'affineTransform': [1.314746085506463, -40260.546626176685, 1.3162291162962998, 6490582.670755925]
         //'affineTransform': [1.314746085506463, -40260.546626176685, 1.3145 ,6475000],
         //1.314746085506463 -40260.546626176685 1.316835790740793 6484333.360029304
         //'affineTransform': [1.314746085506463, -45260.546626176685, 1.3162291881 ,6490582],
@@ -95,12 +96,55 @@ const options = [
             'maxZoom': 5
         },
         'tiles': ['CONF_THEWORLD_TILES_BASE_URL/{z}/{x}/{y}.webp'],
-        'matrix': [[1, 1], [2, 2], [4, 3], [8, 5], [16, 10], [32, 20]],
+        'matrix': [[1, 1], [2, 2], [4, 3], [8, 5], [16, 10], [32, 20], [64, 40]],
         'cacheZoom': 5,
         'cacheName': 'CONF_THEWORLD',
         'cacheAll': true,
         'tileSize': tilesResolution
+    },
+    {
+        'label': '=Physique=',
+        'id': 'ed_eqe_physical_fr',
+        // for wide map
+        //"ratio": [19268, 10630],
+        //'affineTransform': [1.1037001869442906, 855.8520345054567, 1.1049451584091474, 9308847.034806727]
+        'affineTransform': [1.104, -855.8520345054567, 1.10, 9310000],
+        "extent": [-18145536.69460000, -10300589.33644032, 18143985.81684419, 9720047.17470000],
+        "proj4": "+proj=eqearth +datum=WGS84 +wktext",
+        'mapboxOptions': {
+            'style': blankStyle,
+            'renderWorldCopies': false,
+            'maxZoom': 5
+        },
+        'tiles': ['CONF_EQE_PHYSICAL_FR_TILES_BASE_URL/{z}/{x}/{y}.webp'],
+        'matrix': [[1, 1], [2, 2], [4, 3], [8, 5], [16, 9], [32, 18], [64, 36]],
+        'cacheZoom': 5,
+        'cacheName': 'CONF_EQE_PHYSICAL_FR',
+        'cacheAll': true,
+        'tileSize': tilesResolution
     }
+    //,
+    // {
+    //     'label': '=Politique=',
+    //     'id': 'ed_eqe_political_fr',
+    //     // for wide map
+    //     //"ratio": [19268, 10630],
+    //     //'affineTransform': [1.1037001869442906, 855.8520345054567, 1.1049451584091474, 9308847.034806727]
+    //     'affineTransform': [1.104, -855.8520345054567, 1.10, 9310000],
+    //     "extent": [-18144998.39890000, -9405510.77770950, 18144670.32165249, 9729041.82040000],
+    //     "proj4": "+proj=eqearth +datum=WGS84 +wktext",
+    //     'mapboxOptions': {
+    //         'style': blankStyle,
+    //         'renderWorldCopies': false,
+    //         'maxZoom': 6
+    //     },
+    //     'tiles': ['CONF_EQE_POLITICAL_FR_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
+    //     'matrix': [[1, 1], [2, 2], [4, 3], [8, 5], [16, 9], [32, 17], [64, 34]],
+    //     'cacheZoom': 6,
+    //     'cacheName': 'CONF_EQE_POLITICAL_FR',
+    //     'cacheAll': true,
+    //     'tileSize': tilesResolution
+    // }
     // ,
     // {
     //     'label': 'JB Mercator',

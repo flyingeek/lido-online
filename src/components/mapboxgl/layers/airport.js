@@ -190,7 +190,7 @@ export const addAirports = (data) => {
             let html = `<div class="airport"><h1>${title}</h1>`;
             const security = e.features[0].properties.level;
             const status = e.features[0].properties[aircraftType];
-            console.log(status, typeof status)
+            //console.log(status, typeof status)
             let statusText = "";
             let statusNum = "0";
             switch(status) {

@@ -1,3 +1,4 @@
+/* global mapboxgl */
 export class TilesCache {
     constructor(dbName, version, callback) {
         this.dbName = dbName;

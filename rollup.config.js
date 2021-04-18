@@ -21,7 +21,9 @@ const northId = 'northv3';
 const southId = 'southv3';
 const pacificId = 'pacificv1';
 const theworldId = 'theworldv2';
-const mercatorId = 'denizotjbv1'
+const mercatorId = 'denizotjbv1';
+const eqePhysicalFrId = 'eqephysicalfrv1';
+//const eqePoliticalFrId = 'eqepoliticalfrv1';
 
 // All URL, local or remote
 const U = {
@@ -43,6 +45,8 @@ const U = {
   'CONF_PACIFIC': pacificId,
   'CONF_THEWORLD': theworldId,
   'CONF_MERCATOR': mercatorId,
+  'CONF_EQE_PHYSICAL_FR': eqePhysicalFrId,
+  //'CONF_EQE_POLITICAL_FR': eqePoliticalFrId,
   'CONF_TILES_DB': 'lido-tiles',
   //'CONF_GRAMET_PROXY': "https://editolido.alwaysdata.net/proxy_gramet2/${data.proxy}/${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png",
   'CONF_GRAMET_PROXY': "https://ofp2map-gramet.vercel.app/api/${data.proxy}__${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png",
@@ -52,7 +56,9 @@ const U = {
   'CONF_SOUTH_TILES_BASE_URL': `https://ofp2map-${southId}.netlify.app/${southId}`,
   //'CONF_PACIFIC_TILES_BASE_URL': `https://editolido.alwaysdata.net/i/${pacificId}`
   'CONF_PACIFIC_TILES_BASE_URL': `https://ofp2map-${pacificId}.netlify.app/${pacificId}`,
-  'CONF_THEWORLD_TILES_BASE_URL': `https://ofp2map-${theworldId}.netlify.app/${theworldId}`
+  'CONF_THEWORLD_TILES_BASE_URL': `https://ofp2map-${theworldId}.netlify.app/${theworldId}`,
+  'CONF_EQE_PHYSICAL_FR_TILES_BASE_URL': `https://ofp2map-${eqePhysicalFrId}.netlify.app/${eqePhysicalFrId}`
+  //'CONF_EQE_POLITICAL_FR_TILES_BASE_URL': './eqe-political-fr'
 };
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
 

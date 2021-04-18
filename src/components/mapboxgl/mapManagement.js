@@ -4,6 +4,7 @@ import {clamp, isInside, lineclip, getBounds} from '../utils';
 import {loadMapLayers} from './layersManagement';
 import {sidebar} from '../../stores';
 import times from './pj_times';
+import eqearth from './pj_eqearth';
 
 export const token = 'MAPBOX_TOKEN';
 
@@ -11,7 +12,8 @@ export const key = {};
 
 export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
     if (!window.proj4.Proj.projections.get('times')) window.proj4.Proj.projections.add(times);
-    const isAvenza = mapOptions.id.startsWith('jb_');
+    if (!window.proj4.Proj.projections.get('eqearth')) window.proj4.Proj.projections.add(eqearth);
+    const isAvenza = mapOptions.id.startsWith('jb_') || mapOptions.id.startsWith('ed_');
     let mapboxOptions = {
         'container':id,
         'center': [0, 49],
@@ -65,14 +67,15 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
             const mercatorHeight = mercatorBounds[3] - mercatorBounds[1];
             const [x0, y0, x1, y1] = mapOptions.extent;
             const [w, h] = mapOptions.ratio;
-            const dx = mercatorWidth / w;
-            const dy = dx * h * (mercatorHeight/mercatorWidth);
+            //const dx = mercatorWidth / w;
+            console.log({mercatorHeight, mercatorWidth})
+            const dy = (h / w) * mercatorHeight;
             const [u0, v0, u1, v1] = [mercatorBounds[0], mercatorBounds[3] - dy, mercatorBounds[2],  mercatorBounds[3]];
             a = (u1 - u0) / (x1 -x0);
             b = u0 - (a * x0);
             c = (v1 - v0) / (y1 - y0);
             d = v0 - (c * y0);
-            //console.log(a,b,c,d)
+            console.log(a,b,c,d)
         } else {
             const [x0, y0, x1, y1] = mapOptions.extent;
             const [u0, v0, u1, v1] = [-20026376.39, -20048966.10, 20026376.39, 20048966.10];
