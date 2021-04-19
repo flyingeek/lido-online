@@ -51,7 +51,10 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
             map.addImage('sdf-star', image, { pixelRatio: 2, sdf: true});
         }
     });
-    window.proj4.defs('WGS84', "+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees");
+    // definitions from epsg.io
+    //https://epsg.io/4326
+    window.proj4.defs('WGS84', "+proj=longlat +datum=WGS84");
+    //https://epsg.io/3857
     window.proj4.defs("EPSG:3857","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
     let affine, affineAndClamp, affineOrDrop, affineAndClip;
     let affine2xy = (lngLat) => window.proj4('WGS84', 'EPSG:3857', lngLat);
@@ -61,25 +64,17 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
         let a, b, c, d;
         if (mapOptions.affineTransform) {
             [a, b, c, d] = mapOptions.affineTransform;
-        } else if (mapOptions.ratio) { /* this is not exact, still in progress */
-            const mercatorBounds = [-20026376.39, -20048966.10, 20026376.39, 20048966.10];
-            const mercatorWidth = mercatorBounds[2] - mercatorBounds[0];
-            const mercatorHeight = mercatorBounds[3] - mercatorBounds[1];
+        }else{
+            const mercatorBounds = [-20026376.39, -20048966.10, 20026376.39, 20048966.10]; //EPSG:3857 bounds
             const [x0, y0, x1, y1] = mapOptions.extent;
-            const [w, h] = mapOptions.ratio;
-            //const dx = mercatorWidth / w;
-            console.log({mercatorHeight, mercatorWidth})
-            const dy = (h / w) * mercatorHeight;
-            const [u0, v0, u1, v1] = [mercatorBounds[0], mercatorBounds[3] - dy, mercatorBounds[2],  mercatorBounds[3]];
-            a = (u1 - u0) / (x1 -x0);
-            b = u0 - (a * x0);
-            c = (v1 - v0) / (y1 - y0);
-            d = v0 - (c * y0);
-            console.log(a,b,c,d)
-        } else {
-            const [x0, y0, x1, y1] = mapOptions.extent;
-            const [u0, v0, u1, v1] = [-20026376.39, -20048966.10, 20026376.39, 20048966.10];
-            a = (u1 - u0) / (x1 -x0);
+            let [u0, v0, u1, v1] = mercatorBounds;
+            if (mapOptions.ratio) { /* this is not exact, still in progress */
+                const mercatorHeight = mercatorBounds[3] - mercatorBounds[1];
+                const [w, h] = mapOptions.ratio;
+                const dy = (h / w) * mercatorHeight;
+                [u0, v0, u1, v1] = [mercatorBounds[0], mercatorBounds[3] - dy, mercatorBounds[2],  mercatorBounds[3]];
+            }
+            a = (u1 - u0) / (x1 - x0);
             b = u0 - (a * x0);
             c = (v1 - v0) / (y1 - y0);
             d = v0 - (c * y0);

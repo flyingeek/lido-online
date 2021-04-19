@@ -77,10 +77,9 @@ const options = [
         'id': 'jb_theworld',
         // for wide map
         //'ratio': [16358, 10084], /* width, height, but we use affineTransform instead */
+        // coefficients based on ratio
         //'affineTransform': [1.314746085506463, -40260.546626176685, 1.3162291162962998, 6490582.670755925]
-        //'affineTransform': [1.314746085506463, -40260.546626176685, 1.3145 ,6475000],
-        //1.314746085506463 -40260.546626176685 1.316835790740793 6484333.360029304
-        //'affineTransform': [1.314746085506463, -45260.546626176685, 1.3162291881 ,6490582],
+        // coefficients adjusted manually
         'affineTransform': [1.314746085506463, -45260.546626176685, 1.315 ,6480000],
         "extent": [-15201502.45260082, -8478963.56607166, 15262747.04890729, 10300929.57326125],
         //
@@ -90,6 +89,7 @@ const options = [
         //'affineTransform': [1.342031311736757, 1178.4237424843013, 1.3421, -1100000],
         //"extent": [-14923314.11241390, -14113585.79413393, 14921557.93320679, 15731286.25148677],
         "proj4": "+proj=times +ellps=sphere +no_defs +wktext +lon_0=0 +x_0=0 +y_0=0",
+        // zoom6 available on netlify but to reduce size we limit to 5
         'mapboxOptions': {
             'style': blankStyle,
             'renderWorldCopies': false,
@@ -107,10 +107,13 @@ const options = [
         'id': 'ed_eqe_physical_fr',
         // for wide map
         //"ratio": [19268, 10630],
+        // coefficients based on ratio
         //'affineTransform': [1.1037001869442906, 855.8520345054567, 1.1049451584091474, 9308847.034806727]
+        // coefficients adjusted manually
         'affineTransform': [1.104, -855.8520345054567, 1.10, 9310000],
         "extent": [-18145536.69460000, -10300589.33644032, 18143985.81684419, 9720047.17470000],
         "proj4": "+proj=eqearth +datum=WGS84 +wktext",
+        // zoom6 available on netlify but to reduce size we limit to 5
         'mapboxOptions': {
             'style': blankStyle,
             'renderWorldCopies': false,
