@@ -111,6 +111,10 @@ const options = [
         //'affineTransform': [1.1037001869442906, 855.8520345054567, 1.1049451584091474, 9308847.034806727]
         // coefficients adjusted manually
         'affineTransform': [1.104, -855.8520345054567, 1.10, 9310000],
+        // coefficients using calibration
+        //'affineTransform': [1.1037, 855, 1.10, 9305000],
+        // coefficients using calibration zoom 9
+        //'affineTransform': [1.1036, -630, 1.09925, 9304530],
         "extent": [-18145536.69460000, -10300589.33644032, 18143985.81684419, 9720047.17470000],
         "proj4": "+proj=eqearth +datum=WGS84 +wktext",
         // zoom6 available on netlify but to reduce size we limit to 5

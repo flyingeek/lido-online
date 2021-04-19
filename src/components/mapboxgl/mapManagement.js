@@ -59,6 +59,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
     let affine, affineAndClamp, affineOrDrop, affineAndClip;
     let affine2xy = (lngLat) => window.proj4('WGS84', 'EPSG:3857', lngLat);
     let xy2wgs84 = (xy) => window.proj4('EPSG:3857', 'WGS84', xy);
+    let reverseLngLat = (lngLat) => window.proj4('EPSG:3857', 'WGS84', window.proj4('WGS84', 'EPSG:3857', lngLat));
     if (mapOptions.extent) {
         window.proj4.defs('CUSTOM', mapOptions.proj4);
         let a, b, c, d;
@@ -82,8 +83,10 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
         }
         const [minX, minY, maxX, maxY] = (mapOptions.viewport) ? mapOptions.viewport : mapOptions.extent;
         const customXY = (lngLat) => window.proj4('WGS84', 'CUSTOM', lngLat);
+        const xy2customXY = ([x, y]) => [(x - b) / a, (y - d) / c];
         const customXY2xy = (XY) => [(a * XY[0]) + b, (c * XY[1]) + d];
         const customXY2wgs84 = (XY) => {/*console.log('XY2xy', customXY2xy(XY)); */return xy2wgs84(customXY2xy(XY));}
+        reverseLngLat = (lngLat) => window.proj4('CUSTOM', 'WGS84', xy2customXY(window.proj4('WGS84', 'EPSG:3857', lngLat)));
         affine2xy = (lngLat) => {
             return customXY2xy(customXY(lngLat));
         }
@@ -160,6 +163,43 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
     }
     map.addControl(new(LayersControl));
     map.addControl(geolocate);
+    let calibrateMode = false;
+    let calibrateData = [];
+    const calibrate = (e) => {
+        console.log(reverseLngLat([e.lngLat.lng, e.lngLat.lat]));
+        const expectedLngLat = reverseLngLat([e.lngLat.lng, e.lngLat.lat]).map(v => Math.round(v));
+        const [X, Y] = window.proj4('WGS84', 'CUSTOM', expectedLngLat);
+        const [x, y] = window.proj4('WGS84', 'EPSG:3857', [e.lngLat.lng, e.lngLat.lat]);
+        // x1 = aX1+b
+        // y1 = cY1+d
+        // x2 = aX2+b
+        // y2 = cY2+d
+        calibrateData.push([X, Y, x, y]);
+        console.log(`point${calibrateData.length}: ${expectedLngLat}`);
+        if (calibrateData.length === 2) {
+            const [X1, Y1, x1, y1] = calibrateData[0];
+            const [X2, Y2, x2, y2] = calibrateData[1];
+            const a = (x1 - x2)/(X1 - X2);
+            const b = x1 - (a * X1);
+            const c = (y1 - y2)/(Y1 - Y2);
+            const d = y1 - (c * Y1);
+            console.log({a, b, c, d});
+            calibrateData = [];
+        }
+    };
+    const handleKeydown = (event) => {
+        if (event.ctrlKey) {
+            calibrateMode = !calibrateMode;
+            map.getCanvasContainer().style.cursor = (calibrateMode) ? "crosshair" : "grab";
+            calibrateData = [];
+            if (calibrateMode) {
+                map.on('click', calibrate);
+            } else {
+                map.off('click', calibrate);
+            }
+        }
+        
+    };
     map.on('load', function() {
 
         loadMapLayers({
@@ -173,13 +213,15 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
         // if (!ofp.isFake) addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');
         //fetch(ofp.ogimetData.proxyImg); // add to cache
         if (onLoadCb) onLoadCb(map, mapOptions);
+        // eslint-disable-next-line no-constant-condition
+        if ('process.env.NODE_ENV' === '"development"') document.addEventListener('keydown', handleKeydown);
+    });
+    map.on('remove', function() {
+        // eslint-disable-next-line no-constant-condition
+        if ('process.env.NODE_ENV' === '"development"') document.removeEventListener('keydown', handleKeydown);
     });
     // map.on('zoom', function() {
     //     console.log(map.getZoom());
-    // });
-    // map.on('click', function(e) {
-    //     e.lngLat.wrap();
-    //     console.log(e.lngLat.wrap());
     // });
     return mapData;
 }
