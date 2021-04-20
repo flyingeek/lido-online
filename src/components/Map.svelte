@@ -47,7 +47,12 @@
 
     async function afterMapLoad(){
         if (!!ofp && !ofp.isFake) {
-            tilesMissing = await findMissingCacheTiles(ofp, mapData);
+            try {
+                tilesMissing = await findMissingCacheTiles(ofp, mapData);
+            } catch (err){
+                tilesMissing = [];
+                console.error(`Could not find missing cache tiles`, err);
+            }
         }else{
             tilesMissing = [];
         }

@@ -1,9 +1,11 @@
+/* global editolido */
 import {addLine, changeDisplayGeneric, changeLineGeneric} from '../utils';
 
 const folder = 'great-circle';
 
 const addGreatCircle = (data) => {
-    const {ofp, kmlOptions, mapData, map} = data;
+    const {ofp, kmlOptions, mapData, map, mapOptions} = data;
+    if (mapOptions.id.startsWith('vb_')) return; // not relevant on this map
     if (ofp.isFake) return;
     const {affineAndClip} = mapData;
     const routeName = `${ofp.infos.departure}-${ofp.infos.destination}`;

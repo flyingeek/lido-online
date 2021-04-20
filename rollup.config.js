@@ -23,6 +23,7 @@ const pacificId = 'pacificv1';
 const theworldId = 'theworldv2';
 const mercatorId = 'denizotjbv1';
 const eqePhysicalFrId = 'eqephysicalfrv1';
+const cbId = 'cb2020v1';
 //const eqePoliticalFrId = 'eqepoliticalfrv1';
 
 // All URL, local or remote
@@ -46,6 +47,7 @@ const U = {
   'CONF_THEWORLD': theworldId,
   'CONF_MERCATOR': mercatorId,
   'CONF_EQE_PHYSICAL_FR': eqePhysicalFrId,
+  'CONF_CB': cbId,
   //'CONF_EQE_POLITICAL_FR': eqePoliticalFrId,
   'CONF_TILES_DB': 'lido-tiles',
   //'CONF_GRAMET_PROXY': "https://editolido.alwaysdata.net/proxy_gramet2/${data.proxy}/${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png",
@@ -57,8 +59,8 @@ const U = {
   //'CONF_PACIFIC_TILES_BASE_URL': `https://editolido.alwaysdata.net/i/${pacificId}`
   'CONF_PACIFIC_TILES_BASE_URL': `https://ofp2map-${pacificId}.netlify.app/${pacificId}`,
   'CONF_THEWORLD_TILES_BASE_URL': `https://ofp2map-${theworldId}.netlify.app/${theworldId}`,
-  'CONF_EQE_PHYSICAL_FR_TILES_BASE_URL': `https://ofp2map-${eqePhysicalFrId}.netlify.app/${eqePhysicalFrId}`
-  //'CONF_EQE_POLITICAL_FR_TILES_BASE_URL': './eqe-political-fr'
+  'CONF_EQE_PHYSICAL_FR_TILES_BASE_URL': `https://ofp2map-${eqePhysicalFrId}.netlify.app/${eqePhysicalFrId}`,
+  'CONF_CB_TILES_BASE_URL': `https://ofp2map-${cbId}.netlify.app/${cbId}`
 };
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
 

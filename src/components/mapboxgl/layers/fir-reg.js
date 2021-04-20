@@ -5,7 +5,7 @@ const source = `${folder}-source`;
 
 export const addFirReg = (data) => {
     const {map, mapData, kmlOptions, mapOptions} = data;
-    if (mapOptions.id === 'jb_pacific') return; // displays badly on this map
+    if (mapOptions.id === 'jb_pacific' || mapOptions.id.startsWith('vb_')) return; // displays badly on this map
     const {affine} = mapData;
     const visibility = kmlOptions.firDisplay;
     fetch('data/fir-reg.CONF_AIRAC.geojson')

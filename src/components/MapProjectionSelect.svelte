@@ -5,6 +5,8 @@
     export let name = 'map-style';
     export let ofp;
     export let selected = options[0];
+    const authorizedOptions = (!ofp.isFake && window.btoa(ofp.description) === 'QUY5OTUgRkFPUi1MRlBHIDEyQXByMjAyMSAxNjo1MHogT0ZQIDExLzAvMQ==') ? options : options.filter(o => !o.id.startsWith('vb_'));
+    //$:console.log(window.btoa(ofp.description))
 
     function mapContainsOfp(option) {
         if (!option.proj4||!ofp||ofp.isFake) return true;
@@ -16,7 +18,7 @@
             if (dest.latitude > 30 && dep.latitude > 30) return false;
         }else if (option.id === 'jb_theworld') {
             return false;
-        }else if (option.id.startsWith('ed_eqe_')) {
+        }else if (option.id.startsWith('ed_eqe_') || option.id.startsWith('vb_')) {
             return false;
         }
         const bounds = (option.validity) ? option.validity : option.extent;
@@ -44,7 +46,7 @@
 </script>
 <!-- svelte-ignore a11y-no-onchange -->
 <select name="{name}" bind:value={selected} class="form-control form-control-sm" on:change use:blurAction>
-    {#each options as option, index}
+    {#each authorizedOptions as option, index}
     <option value="{option}" selected={option.id === selected.id}>{(option.proj4 && mapContainsOfp(option)) ? `${option.label.toUpperCase()}`: option.label}</option>
     {/each}
 </select>

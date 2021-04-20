@@ -13,13 +13,22 @@ export const key = {};
 export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
     if (!window.proj4.Proj.projections.get('times')) window.proj4.Proj.projections.add(times);
     if (!window.proj4.Proj.projections.get('eqearth')) window.proj4.Proj.projections.add(eqearth);
-    const isAvenza = mapOptions.id.startsWith('jb_') || mapOptions.id.startsWith('ed_');
+    const customAttribution = () => {
+        const airportsAttribution = 'Airports/FIR © Olivier Ravet';
+        if (mapOptions.id.startsWith('jb_') || mapOptions.id.startsWith('ed_')) {
+            return `Yammer/QGIS & Avenza maps - ${airportsAttribution}`;
+        } else if (mapOptions.id.startsWith('vb_')) {
+            return `© ${window.atob("Q2FydGFCb3NzeQ==")}.com - ${airportsAttribution}`;
+        } else{
+            return `Yammer/Maps.me - ${airportsAttribution}`;
+        }
+    }
     let mapboxOptions = {
         'container':id,
         'center': [0, 49],
         'zoom': 2,
         'attributionControl': true,
-        'customAttribution': `Yammer/${(isAvenza) ? 'QGIS & Avenza maps': 'Maps.me'} - Airports/FIR © Olivier Ravet`
+        'customAttribution': customAttribution()
     }
     const map = new mapboxgl.Map({...mapOptions.mapboxOptions, ...mapboxOptions});
     map._setCacheLimits(320, 32);
