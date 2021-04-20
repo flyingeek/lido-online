@@ -18,7 +18,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
         if (mapOptions.id.startsWith('jb_') || mapOptions.id.startsWith('ed_')) {
             return `Yammer/QGIS & Avenza maps - ${airportsAttribution}`;
         } else if (mapOptions.id.startsWith('vb_')) {
-            return `© ${window.atob("Q2FydGFCb3NzeQ==")}.com - ${airportsAttribution}`;
+            return `© ${window.atob("Q2FydGFCb3NzeQ==")}.com - Airports © Olivier Ravet`;
         } else{
             return `Yammer/Maps.me - ${airportsAttribution}`;
         }

@@ -5,8 +5,7 @@
     export let name = 'map-style';
     export let ofp;
     export let selected = options[0];
-    const authorizedOptions = (!ofp.isFake && window.btoa(ofp.description) === 'QUY5OTUgRkFPUi1MRlBHIDEyQXByMjAyMSAxNjo1MHogT0ZQIDExLzAvMQ==') ? options : options.filter(o => !o.id.startsWith('vb_'));
-    //$:console.log(window.btoa(ofp.description))
+    const authorizedOptions = (!ofp.isFake) ? options : options.filter(o => !o.id.startsWith('vb_'));
 
     function mapContainsOfp(option) {
         if (!option.proj4||!ofp||ofp.isFake) return true;

@@ -2,6 +2,7 @@
     import Link from '../components/Link.svelte';
     import {isRealOfp, ofp} from '../stores.js';
     $: ogimetURL = ($isRealOfp) ? $ofp.ogimetData.url: 'http://www.ogimet.com';
+    const cbName = window.atob("Q2FydGFCb3NzeQ==");
 </script>
 
 ## Préambule
@@ -26,6 +27,7 @@ L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au pl
     - THE WORLD permet de disposer d'un Atlas off-line, c'est une projection Times
     - MERCATOR est une Web Mercator avec un thème est inspiré des cartes VFR. Il y a 12 niveaux de zoom, dont 6 disponibles off-line
     - =Physique= est un Atlas physique basé sur une projection Equal Earth (qui montre les continents et les pays à leur taille réelle) avec des étiquettes en français (par Tom Patterson).
+    - {cbName} 2020 est une carte VFR, elle couvre France/Belgique/Luxembourg/Suisse et {window.atob("VmluY2VudCBCb3NzeQ==")} a autorisé son utilisation (OFP obligatoire). Sur cette carte, déjà très dense en informations, la route Gramet, l'orthodromie et les FIR sont désactivées. La dernière version est disponible sur <Link href="{`https://www.${cbName.toLowerCase()}.com`}">{cbName}.com</Link>.
 
 
 5. Navigation dans la carte: on peut avec un doigt déplacer la carte, zoomer ou orienter la carte avec deux doigts. Il est aussi possible de modifier l'angle de vue en balayant de haut en bas avec deux doigts. Si vous activez le bouton de géolocalisation, la carte peut se centrer automatiquement.
@@ -65,9 +67,9 @@ En l'absence de GPS, l'avion dans la barre de menu (à gauche de l'heure de déc
 
 Une fois un premier OFP chargé, il est possible même en mode déconnecté de charger un autre OFP pour l'exporter. Le cache de l'App vous permettra de naviguer sur les cartes déjà visualisées. Pour mettre en cache les cartes, il suffit de les consulter.
 
-Il existe aussi un bouton de mise en cache&#8239;: le pictogramme ↓ situé à droite du sélecteur de carte. Sur les cartes LAMBERT, THE WORLD et =Physique=, il mettra en cache la totalité de la carte. Sur la MERCATOR, seule la partie de carte incluant la route sera mise en cache.
+Il existe aussi un bouton de mise en cache&#8239;: le pictogramme ↓ situé à droite du sélecteur de carte. Sur les cartes LAMBERT, THE WORLD, =Physique= et {cbName}, il mettra en cache la totalité de la carte. Sur la MERCATOR, seule la partie de carte incluant la route sera mise en cache.
 
-Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 40Mo de données. Les caches des autres projections utilisent&#8239;: 7Mo pour la NORTH, 4Mo pour la PACIFIC, 7Mo pour la SOUTH, 32Mo pour THE WORLD, et 40Mo pour =Physique=.
+Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 40Mo de données. Les caches des autres projections utilisent&#8239;: 7Mo pour la NORTH, 4Mo pour la PACIFIC, 7Mo pour la SOUTH, 32Mo pour THE WORLD, 40Mo pour =Physique= et 40Mo pour {cbName}.
 
 ## ETOPS
 
@@ -88,6 +90,7 @@ Pour connaître les dernières nouveautés d'OFP2MAP, je poste dans Yammer/Mapsm
 
 - Les données terrains/FIR sont fournies par Olivier Ravet forum Yammer/Mapsme
 - =Physique= est une carte de Tom Patterson disponible sur <Link href="https://equal-earth.com/physical/">Equal Earth</Link>
+- La dernière version de la carte {cbName} est disponible sur le site <Link href="{`https://www.${cbName.toLowerCase()}.com`}">{cbName}.com</Link>
 - Les autres cartes sont de Jean-Baptiste Denizot forum Yammer/QGIS & Avenza Maps
 - Le GRAMET provient du site ogimet.com
 - Le site est développé en javascript à l'aide du framework SVELTE
