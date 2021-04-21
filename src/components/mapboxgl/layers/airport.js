@@ -215,10 +215,11 @@ export const addAirports = (data) => {
                     statusNum = "1";
                     break;
             }
-
-            html +=  `<p class="status status-${statusNum.charAt(0)}">STATUT ${statusNum}</p>`;
-            if(security > 0) html += `<p class="security-${security}">SECURITY ${(security==1) ? 'ORANGE' : 'RED'}</p>`;
-            if(statusText) html += `<p class="status-text">${statusText}</p>`;
+            if (!ofp.isFake) {
+                html +=  `<p class="status status-${statusNum.charAt(0)}">STATUT ${statusNum}</p>`;
+                if(security > 0) html += `<p class="security-${security}">SECURITY ${(security==1) ? 'ORANGE' : 'RED'}</p>`;
+                if(statusText) html += `<p class="status-text">${statusText}</p>`;
+            }
             html += "</div>";
             popup.setLngLat(coordinates).setHTML(html).addTo(map);
         };
