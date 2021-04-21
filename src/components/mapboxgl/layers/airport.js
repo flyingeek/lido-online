@@ -211,13 +211,13 @@ export const addAirports = (data) => {
                     break;
                 case 7:
                 case 8:
-                    statusText = "Appui etops, o2, panne moteur, adéquat en route";
+                    statusText = "Appui ou adéquat en route";
                     statusNum = "1";
                     break;
             }
             if (!ofp.isFake) {
                 html +=  `<p class="status status-${statusNum.charAt(0)}">STATUT ${statusNum}</p>`;
-                if(security > 0) html += `<p class="security-${security}">SECURITY ${(security==1) ? 'ORANGE' : 'RED'}</p>`;
+                if(security > 0) html += `<p class="security-${security}">${(security==1) ? 'ORANGE' : 'RED'}</p>`;
                 if(statusText) html += `<p class="status-text">${statusText}</p>`;
             }
             html += "</div>";
