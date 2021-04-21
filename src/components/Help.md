@@ -21,7 +21,7 @@ L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au pl
 
 3. Pour Exporter vers une app, direction le menu EXPORT, vous pouvez exporter une route pour mPilot, télécharger le KML (routes et tracks uniquement), ou envoyer vers l'app **Raccourcis** d'Apple.
 
-4. La carte par défaut est une LAMBERT, il est possible sur la carte, en haut à gauche, de basculer sur d'autres projections.
+4. La carte par défaut dépend de la distance: Cartabossy 2020, puis Mercator jusqu'à 1500nm puis LAMBERT, il est possible sur la carte, en haut à gauche, de basculer sur d'autres projections.
     - LAMBERT NORTH (parallèles sécants N30 et N65) est recommandée au-dessus du N40
     - LAMBERT SOUTH & PACIFIC (sécants N30 et S15 ) sont recommandées sous N30
     - THE WORLD permet de disposer d'un Atlas off-line, c'est une projection Times

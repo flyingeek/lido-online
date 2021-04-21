@@ -223,7 +223,10 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
         //fetch(ofp.ogimetData.proxyImg); // add to cache
         if (onLoadCb) onLoadCb(map, mapOptions);
         // eslint-disable-next-line no-constant-condition
-        if ('process.env.NODE_ENV' === '"development"') document.addEventListener('keydown', handleKeydown);
+        if ('process.env.NODE_ENV' === '"development"') {
+            document.addEventListener('keydown', handleKeydown);
+            console.log(`map initial zoom: ${map.getZoom()}`);
+        }
     });
     map.on('remove', function() {
         // eslint-disable-next-line no-constant-condition
