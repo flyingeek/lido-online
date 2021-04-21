@@ -134,6 +134,17 @@
             cacheButtonDisabled = false;
         }
     }
+    let supportWebP = true;
+    const canUseWebP = async () => {
+        const handler = (event) => {
+            supportWebP = event && event.type === 'load' ? image.width == 1 : false;
+        }
+        const image = new Image();
+        image.onerror = handler;
+        image.onload = handler;
+        image.src = 'data:image/webp;base64,UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAwA0JaQAA3AA/vuUAAA=';
+    };
+    canUseWebP();
 
     onMount(() => {
         mapboxgl.accessToken = token;
@@ -162,6 +173,9 @@
                 <slot><span>↓</span></slot>
             </CircleProgress>
         </div>
+    {/if}
+    {#if (!supportWebP && mapData && mapData.mapOptions && mapData.mapOptions.tiles && mapData.mapOptions.tiles[0].endsWith('.webp'))}
+        <div class="nowebp">Votre navigateur ne supporte pas l'affichage d'images au format .webp</div>
     {/if}
 </div>
 {#if (mapData && !!ofp && !ofp.isFake && ($showPlaneOnMap || $simulate >= 0))}<MapPlane {mapData}/>{/if}
@@ -291,5 +305,13 @@
         color: #aaa;
         display: block;
         margin-top: 0.3em;
+    }
+    .nowebp {
+        background-color: #ff0000;
+        color:white;
+        max-width: 30vw;
+        font-size:small;
+        padding: 10px;
+        margin-top: 10px;
     }
 </style>
