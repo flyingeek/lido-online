@@ -195,7 +195,7 @@
             Changer<input id={name} name={name} type="file" accept="application/pdf" on:change={process} hidden>
         </label>
     {/if}
-    {#if !$ofpStore}
+    {#if false && !$ofpStore}
         <div class="footer">
         <!-- svelte-ignore a11y-no-onchange -->
         <select class="form-control-sm" on:click|once={preload} disabled={disabled} on:change={processAircraftType}>
