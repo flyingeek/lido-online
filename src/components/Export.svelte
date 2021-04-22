@@ -13,7 +13,7 @@
         <div class="col-12 col-sm-6 col-md-6">
             <ShortcutsLink on:save /> 
             <small class="text-muted">Sur iOS on peut lancer un raccourci.
-                <a href="https://www.icloud.com/shortcuts/2585d34bc76941febff60b8d064517ee" target="_blank">
+                <a href="https://www.icloud.com/shortcuts/4e0efd763522428fbc5ee4b9db76b8fd" target="_blank">
                     Exemple de raccourci à installer
                 </a>
             </small>
