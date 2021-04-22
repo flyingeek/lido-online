@@ -2,6 +2,8 @@
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
 import {computeIconTextSize, computeIconSize} from '../utils';
 import {supportsHover} from "../../utils";
+import {get} from "svelte/store";
+import {aircraftType as aircraftTypeStore} from '../../../stores';
 
 const folder = 'airport';
 const adequateLayer = `${folder}-layer`;
@@ -72,11 +74,11 @@ export const addAirports = (data) => {
     const {affineOrDrop} = mapData;
     const affine = affineOrDrop;
     let epPoints = [];
-    if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
+    if (ofp && ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
         epPoints = [ofp.infos['EEP'], ofp.infos['EXP']];
     }
-    const aircraftType = (ofp.isFake) ? ofp.isFake : ofp.infos.aircraft;
-    const raltPoints = ofp.infos['raltPoints'];
+    const aircraftType = get(aircraftTypeStore);
+    const raltPoints = (ofp) ? ofp.infos['raltPoints'] : [];
     const etopsKmlColor = kmlOptions.etopsColor;
     const style = kmlOptions.airportPin;
     const visibility = kmlOptions.airportDisplay;
@@ -215,7 +217,7 @@ export const addAirports = (data) => {
                     statusNum = "1";
                     break;
             }
-            if (!ofp.isFake) {
+            if (ofp) {
                 html +=  `<p class="status status-${statusNum.charAt(0)}">STATUT ${statusNum}</p>`;
                 if(security > 0) html += `<p class="security-${security}">${(security==1) ? 'ORANGE' : 'RED'}</p>`;
                 if(statusText) html += `<p class="status-text">${statusText}</p>`;
@@ -264,7 +266,7 @@ export function changeAirportDisplay(data, visible) {
 
 export function changeAirportStyle(data) {
     const {map, kmlOptions, ofp, aircraftType} = data;
-    const raltNames = (ofp.isFake) ? [] : ofp.infos.ralts;
+    const raltNames = (ofp) ? ofp.infos.ralts : [];
     const [hexcolorEtops,] = kml2mapColor(kmlOptions.etopsColor);
     const style = kmlOptions.airportPin;
     if (map.getLayer(adequateLayer)) {
@@ -274,9 +276,9 @@ export function changeAirportStyle(data) {
     }
 }
 const getEtopsNames = (ofp) => {
-    const raltNames = (ofp.isFake) ? [] : ofp.infos.ralts;
+    const raltNames = (ofp) ? ofp.infos.ralts : [];
     let epNames = [];
-    if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
+    if (ofp && ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
         epNames = [ofp.infos['EEP'].name, ofp.infos['EXP'].name];
     }
     return [raltNames, epNames.concat(raltNames)];

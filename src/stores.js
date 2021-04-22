@@ -1,5 +1,5 @@
 import { writable, readable, derived } from 'svelte/store';
-
+import {aircraftTypes} from "./constants";
 
 export function resetable(resetValue) {
     const { subscribe, set, update } = writable(resetValue);
@@ -25,7 +25,19 @@ export const ofp = writable();
 export const ofpStatus = writable();
 export const takeOffTime = writable(new Date());
 export const fl = writable();
-export const isRealOfp = derived([ofp, ofpStatus], ([$ofp, $ofpStatus]) => !!$ofp && !$ofp.isFake && $ofpStatus === 'success', false);
+
+export const selectedAircraftType = writable();
+export const aircraftType = derived([ofp, selectedAircraftType], ([$ofp, $selectedAircraftType]) => {
+    let aircraft;
+    if ($selectedAircraftType) {
+        aircraft = $selectedAircraftType;
+    }else if ($ofp){
+        aircraft = $ofp.infos.aircraft;
+    }
+    if (!aircraft || aircraftTypes.indexOf(aircraft) === -1) return undefined;
+    return aircraft;
+});
+
 let swLastUpdateDate = new Date();
 export const checkSWUpdate = () => {
     if ('serviceWorker' in navigator) {
@@ -132,7 +144,7 @@ export const flightProgress = derived(
         let interval;
         const frequency = ($showPlaneOnMap) ? 10 * 1000 : 60 * 1000;
         const simulatorFrequency = 100;
-        if($ofp && !$ofp.isFake){
+        if($ofp){
             const setValue = (value) => {
                 if (value < 100) {
                     set(value);
@@ -194,7 +206,7 @@ export const flightProgress = derived(
     0 // initial value
 );
 export const position = derived([ofp, flightProgress], ([$ofp, $flightProgress]) => {
-    if (!$ofp || $ofp.isFake) return { map: {latitude: 0, longitude: 0}, gramet: $flightProgress, fl: 300};
+    if (!$ofp) return { map: {latitude: 0, longitude: 0}, gramet: $flightProgress, fl: 300};
     const timeMatrix = $ofp.timeMatrix;
     const distanceMatrix = $ofp.distanceMatrix;
     const firstPoint = distanceMatrix[0][0];

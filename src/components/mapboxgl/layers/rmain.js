@@ -5,7 +5,7 @@ const folder = 'rmain';
 
 const addRmain = (data) => {
     const {map, ofp, kmlOptions, mapData} = data;
-    if (ofp.isFake) return;
+    if (!ofp) return;
     const {affineAndClip, affineOrDrop} = mapData;
     const route = ofp.route;
     route.name = `${ofp.infos.departure}-${ofp.infos.destination}`;

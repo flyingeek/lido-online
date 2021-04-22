@@ -1,5 +1,5 @@
 <script>
-    import {ofp, route, isRealOfp} from '../stores';
+    import {aircraftType, ofp, route} from '../stores';
     import GrametTrigger from './GrametTrigger.svelte';
     import OfpInfos from './OfpInfos.svelte';
     import TakeOffInput from './TakeOffInput.svelte';
@@ -11,13 +11,13 @@
     <li class="nav-item" class:active={$route === '/'}>
       <a class="nav-link" href="#/"><strong class="d-none">OFP2MAP </strong><svg><use xlink:href="#home-symbol"/></svg>{#if 'process.env.NODE_ENV' === '"development"'}<sup>dev</sup>{/if}</a>
     </li>
-    {#if ($ofp) || $route === '/map'}
+    {#if $ofp|| $aircraftType || $route === '/map'}
     <li class="nav-item" class:active={$route === '/map'}>
       <a class="nav-link" href="#/map">
       <span>CARTE</span></a>
     </li>
     {/if}
-    {#if  ($isRealOfp) || $route === '/export'}
+    {#if  ($ofp) || $route === '/export'}
     <li class="nav-item" class:active={$route === '/export'}>
       <a class="nav-link" href="#/export">
       <span>EXPORT</span></a>
@@ -28,7 +28,7 @@
       <span>AIDE</span></a>
     </li>
   </ul>
-  {#if ($isRealOfp) }
+  {#if ($ofp) }
     {#if $route === '/map'}<GrametTrigger/>{/if}
     <TakeOffInput/>
     <OfpInfos/>

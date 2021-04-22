@@ -14,7 +14,7 @@
     import FormSettings from "./mapSettings/Form.svelte";
     import {createMap, token} from './mapboxgl/mapManagement';
     import {updateMapLayers} from './mapboxgl/layersManagement';
-    import {online, showGramet, simulate} from "../stores.js";
+    import {online, showGramet, simulate, aircraftType} from "../stores.js";
     import {updateKml} from './kml.js';
     import {promiseTimeout, fetchSimultaneously} from './utils';
     import { createEventDispatcher, onMount, onDestroy, tick} from 'svelte';
@@ -33,7 +33,6 @@
     let map;
     let mapData;
     let selectedProjection;
-    let selectedAircraft;
     let aircraftTypeSelectElement;
     let cacheMaxValue = 0;
     let cacheValue = 0;
@@ -46,7 +45,7 @@
     export let id = 'map';
 
     async function afterMapLoad(){
-        if (!!ofp && !ofp.isFake) {
+        if (!!ofp) {
             try {
                 tilesMissing = await findMissingCacheTiles(ofp, mapData);
             } catch (err){
@@ -90,7 +89,7 @@
 
     function aircraftChange(e) {
         e.target.blur(); // to avoid zoom problem in standalone mode
-        update({detail: {value: selectedAircraft, name: "airport-change"}});
+        update({detail: {value: $aircraftType, name: "airport-change"}});
     }
 
     const update = (e) => {
@@ -101,7 +100,7 @@
             value: e.detail.value,
             ofp: ofp,
             kmlOptions,
-            aircraftType: selectedAircraft
+            aircraftType: $aircraftType
         });
         updateKml(e.detail.name, e.detail.value);
         dispatch('save'); // set History
@@ -167,7 +166,7 @@
 <div id={id} use:mapResizeAction={map}></div>
 <div class="mapmenu">
     <MapProjectionSelect bind:selected={selectedProjection} ofp={ofp} on:change={projectionChange}/>
-    {#if (selectedProjection && !ofp.isFake && window.indexedDB && $online && caches[selectedProjection.id]!==true && !mapIsCached)}
+    {#if (selectedProjection && ofp && window.indexedDB && $online && caches[selectedProjection.id]!==true && !mapIsCached)}
         <div class="cacheButton" class:cacheError={cacheError} class:cacheProgress={cacheValue > 0||cacheMaxValue > 0} on:click={(cacheButtonDisabled) ? () => false : cacheMap}>
             <CircleProgress value={cacheValue} max={cacheMaxValue}>
                 <slot><span>↓</span></slot>
@@ -178,8 +177,8 @@
         <div class="nowebp">Votre navigateur ne supporte pas l'affichage d'images au format .webp</div>
     {/if}
 </div>
-{#if (mapData && !!ofp && !ofp.isFake && ($showPlaneOnMap || $simulate >= 0))}<MapPlane {mapData}/>{/if}
-<AircraftType bind:selectedAircraft bind:aircraftTypeSelectElement ofp={ofp} on:change={aircraftChange}/>
+{#if (mapData && !!ofp  && ($showPlaneOnMap || $simulate >= 0))}<MapPlane {mapData}/>{/if}
+<AircraftType bind:aircraftTypeSelectElement on:change={aircraftChange}/>
 <FormSettings bind:kmlOptions on:change={update} on:save />
 {#if $showGramet}<Gramet/>{/if}
 

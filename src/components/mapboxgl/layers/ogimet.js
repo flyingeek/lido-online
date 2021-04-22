@@ -5,7 +5,7 @@ const folder = 'ogimet';
 const addOgimet = (data) => {
     const {map, ofp, kmlOptions, mapData, mapOptions} = data;
     if (mapOptions.id.startsWith('vb_')) return; // not relevant on this map
-    if (ofp.isFake) return;
+    if (!ofp) return;
     const {affineAndClip} = mapData;
     addLine(map, folder, ofp.ogimetData.route.points, affineAndClip, kmlOptions.ogimetColor, kmlOptions.ogimetDisplay);
 }

@@ -1,7 +1,7 @@
 <script>
     import Link from '../components/Link.svelte';
-    import {isRealOfp, ofp} from '../stores.js';
-    $: ogimetURL = ($isRealOfp) ? $ofp.ogimetData.url: 'http://www.ogimet.com';
+    import {ofp} from '../stores.js';
+    $: ogimetURL = ($ofp) ? $ofp.ogimetData.url: 'http://www.ogimet.com';
     const cbName = window.atob("Q2FydGFCb3NzeQ==");
 </script>
 

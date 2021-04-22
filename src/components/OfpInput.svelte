@@ -12,8 +12,6 @@
         { type: 'script', url: 'CONF_PINCHZOOM_JS'},
         { type: 'link', url: 'CONF_MAPBOXGL_CSS'}
     ];
-    //const editolidoSrc = 'https://github.com/flyingeek/lidojs/releases/download/v1.1.2/lidojs.min.js';
-    export const aircraftTypes = ["318", "319", "320", "321", "330", "340", "350", "380", "787", "772", "773", "77F"];
     const getPageText = async (pdf, pageNo) => {
         const page = await pdf.getPage(pageNo);
         const tokenizedText = await page.getTextContent();
@@ -41,7 +39,8 @@
 </script>
 <script>
     import { createEventDispatcher } from 'svelte';
-    import {showGramet, ofp as ofpStore, ofpStatus, isRealOfp} from '../stores';
+    import {showGramet, ofp as ofpStore, ofpStatus, selectedAircraftType} from '../stores';
+    import {aircraftTypes, discontinuatedAircraftTypes} from '../constants';
     export let kmlOptions;
     let disabled = false;
     let ready = new Deferred();
@@ -149,12 +148,14 @@
                 dispatch('change', label);
                 getOFP(file).then((ofp) => {
                     $ofpStore = ofp;
+                    $selectedAircraftType = undefined;
                     $ofpStatus = 'success';
                     form.blur();
                     e.target.blur();
                     form.reset();
                 }, (err) => {
                     $ofpStatus = err;
+                    $ofpStore = undefined;
                     form.reset();
                 });
                 window.location.hash = '#/map';
@@ -167,15 +168,13 @@
         $ofpStatus = 'loading';
         preload(); // in case click event not supported or missed
         await ready.promise.then(() => {
-            let ofp = new editolido.Ofp('_PDFJS_AF 681 KATL/LFPG 11Mar2020/2235zReleased: 11Mar/1724z3Main OFP (Long copy #1)OFP 6/0/1 ATC FLIGHT PLAN (FPL-AFR681-IS -B77W/ -KATL2235 -LFPG0724 LFPO ) FLIGHT SUMMARY 0012 TAXI IN Generated');
+            $ofpStore = undefined;
             try {
                 KmlGenerator(); // to have a minimum skeleton for map settings
-                ofp.isFake = e.target.value;
-                $ofpStore = ofp;
+                $selectedAircraftType = e.target.value;
                 $ofpStatus = 'success';
             } catch (err) {
                 console.log(err);
-                console.log(ofp.infos);
                 $ofpStatus = err;
             }
             window.location.hash = '#/map';
@@ -185,7 +184,7 @@
 
 </script>
 <form class="form-inline" on:submit|preventDefault>
-    {#if (!$isRealOfp)}
+    {#if (!$ofpStore)}
     <div class="custom-file" class:blink={!$ofpStore}>
         <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} on:click|once={preload} class="custom-file-input">
         <label class:ready={readyClass} class="custom-file-label text-truncate" for="{name}">{label}</label>
@@ -195,12 +194,12 @@
             Changer<input id={name} name={name} type="file" accept="application/pdf" on:change={process} hidden>
         </label>
     {/if}
-    {#if false && !$ofpStore}
+    {#if false && !$ofpStore && !$selectedAircraftType}
         <div class="footer">
         <!-- svelte-ignore a11y-no-onchange -->
         <select class="form-control-sm" on:click|once={preload} disabled={disabled} on:change={processAircraftType}>
-            <option value="none">pas d'ofp ?</option>
-            {#each aircraftTypes as aircraft}
+            <option value="{undefined}">pas d'ofp ?</option>
+            {#each aircraftTypes.filter(v => !discontinuatedAircraftTypes.includes(v)) as aircraft}
             <option value={aircraft}>{aircraft}</option>
             {/each}
         </select>
@@ -236,24 +235,24 @@ label {
     100% { transform: scale(1.0); }
 }
 .footer {
-  position: absolute;
-  right: 5px;
-  bottom: 0;
-  text-align: right;
-  display: none;
-  z-index: 1;
+    position: absolute;
+    right: 5px;
+    bottom: 0;
+    text-align: right;
+    display: none;
+    z-index: 1;
 }
 :global(.home .footer){
     display: block !important;
 }
 select {
-  background-color: var(--blueaf);
-  border-color: var(--blueaf);
-  color: #888;
-  margin: 5px;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+    background-color: var(--blueaf);
+    border-color: var(--blueaf);
+    color: #888;
+    margin: 5px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 @media (max-width: 576px){
     input ~ label::after, input:lang(fr) ~ label::after {

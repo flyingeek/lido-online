@@ -10,7 +10,7 @@
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
   import {storage, stores, validate, setHistory, storeSettingsFromURL} from "./components/mapSettings/storage.js";
-  import {swDismiss, sidebar, route, checkSwOnVisibilityChange, ofp, ofpStatus} from "./stores.js";
+  import {swDismiss, sidebar, route, checkSwOnVisibilityChange, ofp, ofpStatus, aircraftType} from "./stores.js";
   import HomePwaInstall from './components/HomePwaInstall.svelte';
   import {runningOnIpad} from './components/utils';
 
@@ -44,7 +44,7 @@
         <OfpInput {kmlOptions} on:change={ofpChange} />
       </Navbar>
       <SWUpdate prompt={!!$ofp}/>
-      {#if $ofp && $ofpStatus === 'success'}
+      {#if ($ofp || $aircraftType) && $ofpStatus === 'success'}
         <Page hidden={$route !== '/map'}>
           <Map id="map" bind:kmlOptions ofp={$ofp} on:save={() => setHistory(kmlOptions, $route)}/>
         </Page>
@@ -65,7 +65,7 @@
         </Page>
       {:else if $route === '/help'}
         <Page><Help /></Page>
-      {:else if !($ofp && $route === '/map')}
+      {:else if !(($ofp || $aircraftType) && $route === '/map')}
         <!-- redirect -->
         { redirect($route) }
       {/if}

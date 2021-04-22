@@ -1,28 +1,19 @@
 <script>
-    import {aircraftTypes} from './OfpInput.svelte';
+    import {selectedAircraftType, aircraftType} from '../stores';
+    import {aircraftTypes, discontinuatedAircraftTypes} from '../constants';
     import blurAction from '../actions/blurAction';
-    import {onMount} from 'svelte';
-
-    export let selectedAircraft = '???';
     export let aircraftTypeSelectElement = null;
-    //const aircraftTypes = ['???', ...aircrafts];
-    export let ofp;
-
-    onMount(() =>{
-        if (selectedAircraft === '???' && ofp) {
-            selectedAircraft = (ofp.isFake) ? ofp.isFake :ofp.infos.aircraft;
-        }
-        if (aircraftTypes.indexOf(selectedAircraft) === -1) selectedAircraft = '???';
-    });
 </script>
 
 <!-- svelte-ignore a11y-no-onchange -->
-<select bind:this={aircraftTypeSelectElement} name="aircraftType" bind:value={selectedAircraft} on:change use:blurAction>
-    {#if selectedAircraft === '???'}
-        <option value="???" selected={true}>???</option>
+<select bind:this={aircraftTypeSelectElement} name="aircraftType" bind:value={$selectedAircraftType} on:change use:blurAction>
+    {#if (!$aircraftType)}
+        <option value="{undefined}" selected={true}>???</option>
     {/if}
-    {#each aircraftTypes as aircraftType}
-        <option value="{aircraftType}" selected={aircraftType === selectedAircraft}>{aircraftType}</option>
+    {#each aircraftTypes as type}
+        {#if (type === $aircraftType || !discontinuatedAircraftTypes.includes(type))}
+            <option value="{type}" selected={type === $aircraftType}>{type}</option>
+        {/if}
     {/each}
 </select>
 

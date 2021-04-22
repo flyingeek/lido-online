@@ -124,7 +124,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
     }
     let bbox = undefined;
     let points = [];
-    if (!ofp.isFake) {
+    if (ofp) {
         for (const track of ofp.tracks) {
             points = points.concat(track.points);
         }
@@ -221,7 +221,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
             mapOptions
         });
 
-        // if (!ofp.isFake) addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');
+        // if (ofp) addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');
         //fetch(ofp.ogimetData.proxyImg); // add to cache
         if (onLoadCb) onLoadCb(map, mapOptions);
         // eslint-disable-next-line no-constant-condition

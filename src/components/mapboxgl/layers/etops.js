@@ -7,11 +7,10 @@ const epCircleLayer = `${folder}-ep-circle-line-layer`;
 const etopsCircleLayer = `${folder}-etops-circle-line-layer`;
 function addEtops(data) {
     const {map, mapData, ofp, kmlOptions} = data;
-    if (ofp.isFake) return;
+    if (!ofp) return;
     const lineWidth = computeLineWidthSize(kmlOptions['lineWidthChange'], lineWidthDefault);
     if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
         const {affineAndClip} = mapData;
-        const epPoints = [ofp.infos['EEP'], ofp.infos['EXP']];
         const etopsTime = ofp.infos['ETOPS'];
         const visibility = kmlOptions.etopsDisplay;
         addLines(map, `${folder}-ep-circle`, [ofp.infos['EEP'].circle(420, 48), ofp.infos['EXP'].circle(420, 48)] , affineAndClip, kmlOptions.routeColor, visibility, lineWidth, true);

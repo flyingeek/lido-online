@@ -6,7 +6,7 @@ const folder = 'great-circle';
 const addGreatCircle = (data) => {
     const {ofp, kmlOptions, mapData, map, mapOptions} = data;
     if (mapOptions.id.startsWith('vb_')) return; // not relevant on this map
-    if (ofp.isFake) return;
+    if (!ofp) return;
     const {affineAndClip} = mapData;
     const routeName = `${ofp.infos.departure}-${ofp.infos.destination}`;
     const route = ofp.route;

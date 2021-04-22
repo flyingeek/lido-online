@@ -7,7 +7,7 @@ const lineWidthDefault = 1;
 
 export function addTracks(data) {
     const {map, ofp, mapData, kmlOptions} = data;
-    if (ofp.isFake) return;
+    if (!ofp) return;
     const {affineOrDrop, affineAndClip} = mapData;
     const affine = affineOrDrop;
     const affineLine = affineAndClip;

@@ -7,7 +7,7 @@
     export let ofp;
     export let selected = options[0];
     let autoSelectedId = selected.id;
-    const authorizedOptions = (!ofp.isFake) ? options : options.filter(o => (!o.id.startsWith('vb_') && o.id !== 'jb_theworld'));
+    const authorizedOptions = (ofp) ? options : options.filter(o => (!o.id.startsWith('vb_') && o.id !== 'jb_theworld'));
 
     function isInBounds(option, dep, dest) {
         if (!option.proj4) return false;
@@ -27,7 +27,7 @@
     }
 
     onMount(() => {
-        if (selected.id === options[0].id && ofp && !ofp.isFake) {
+        if (selected.id === options[0].id && ofp) {
             const dep = ofp.route.points[0];
             const dest = ofp.route.points[ofp.route.points.length - 1];
             const cbMapOption = options.find(o => o.id === 'vb_2020');
