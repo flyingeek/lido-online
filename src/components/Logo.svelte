@@ -1,7 +1,7 @@
 <script>
     import {shareAppLink} from './utils';
 </script>
-<h1>Cartographie pour l'OFP 
+<h1><strong class="d-none">OFP2MAP </strong>Cartographie pour l'OFP 
     <img src="svg/Air_France_Logo.svg" alt="logo Air France">
     {#if (navigator.standalone === true || 'process.env.NODE_ENV' === '"development"') && navigator.share}
         <button class="btn btn-link" on:click={shareAppLink}>Partager l'App</button>

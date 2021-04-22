@@ -9,7 +9,7 @@
   <label class="navbar-toggler" for="menu"><span class="navbar-toggler-icon"></span></label>
   <ul class="navbar-nav collapse navbar-collapse" id="navbarToggler">
     <li class="nav-item" class:active={$route === '/'}>
-      <a class="nav-link" href="#/"><svg><use xlink:href="#home-symbol"/></svg>{#if 'process.env.NODE_ENV' === '"development"'}<sup>dev</sup>{/if}</a>
+      <a class="nav-link" href="#/"><strong class="d-none">OFP2MAP </strong><svg><use xlink:href="#home-symbol"/></svg>{#if 'process.env.NODE_ENV' === '"development"'}<sup>dev</sup>{/if}</a>
     </li>
     {#if ($ofp) || $route === '/map'}
     <li class="nav-item" class:active={$route === '/map'}>
