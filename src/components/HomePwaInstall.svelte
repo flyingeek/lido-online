@@ -13,8 +13,8 @@
         </div>
         <div class="prompt-content">
             <h3 class="title">Installez OFP2MAP</h3>
-            <p class="text">Si OFP2MAP est déjà sur l'écran d'accueil, ne l'installez pas une deuxième fois. Attention: l'installation ne peut se faire que depuis
-                le navigateur Safari, si présent, cliquez sur <svg class="safari"><use xlink:href="#safari-symbol"/></svg> en haut à droite.
+            <p class="text">Si OFP2MAP est déjà sur l'écran d'accueil, ne l'installez pas une deuxième fois. <b>Attention:</b> l'installation ne peut se faire que depuis
+                le navigateur Safari, <b>si présent, cliquez sur <svg class="safari"><use xlink:href="#safari-symbol"/></svg> en haut à droite</b>.
             </p>
             {#if !requiredNavigator}
                 <p class="guide error">Merci d'ouvrir cette page dans Safari</p>
