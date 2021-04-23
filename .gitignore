@@ -9,3 +9,4 @@ data/airports.json
 data/fir-reg-orig.geojson
 localhost-cert.pem
 localhost-key.pem
+.vscode/settings.json
