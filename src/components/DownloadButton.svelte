@@ -1,10 +1,5 @@
 <script context="module">
-    //console.log(navigator.platform);
-    const target = (navigator.standalone || (!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))) ? '_blank' : null;
-    const dataURL = function (str, type = "application/vnd.google-earth.kml+xml") {
-        return "data:" + type + ";base64," + btoa(unescape(encodeURIComponent(str)));
-    };
-    const options = ['KML Mapsme', 'KML Avenza'];
+    const options = ['KML Mapsme', 'KML Avenza', 'KML Google Earth'];
 </script>
 <script>
     import {KmlGenerator} from './kml.js';
@@ -20,10 +15,14 @@
     if (selected < 0 || selected >= options.length) selected = 0;
     let url = "";
     let filename = "";
+    const blobURL = (data, type="application/vnd.google-earth.kml+xml")  => {
+        const blob = new Blob( data, { type });
+        return URL.createObjectURL(blob);
+    }
 
     const download = function (e) {
         const kmlGen = KmlGenerator();
-        const extensions = ['_mapsme.kml', '_avenza.kml', '.geojson']
+        const extensions = ['_mapsme.kml', '_avenza.kml', '_googleearth.kml']
         const extension = extensions[selected];
         let str = kmlGen.name;
         if (!str) {
@@ -35,16 +34,18 @@
         }
         if (url && url.startsWith('blob:')) URL.revokeObjectURL(url);
         if (selected === 0) {
-            const blob = new Blob( [kmlGen.render()], { type: "application/vnd.google-earth.kml+xml" });
-            url = URL.createObjectURL(blob);
+            url = blobURL([kmlGen.render()]);
         } else if (selected === 1) {
-            const blob = new Blob( [kmlGen.render({
+            url = blobURL([kmlGen.render({
                 "template": editolido.avenzaTemplate,
                 "styleTemplate": editolido.avenzaStyleTemplate,
                 "iconTemplate": editolido.avenzaIconTemplate,
                 "icons": editolido.AVENZAICONS
-            })], { type: "application/vnd.google-earth.kml+xml" });
-            url = URL.createObjectURL(blob);
+            })]);
+        } else if (selected === 2) {
+            url = blobURL([kmlGen.render({
+                "styleTemplate": editolido.googleEarthStyleTemplate
+            })]);
         } else {
             e.preventDefault();
             return false;
@@ -76,6 +77,7 @@
   <select bind:value={selected} class="custom-select"aria-label="Example select with button addon" on:change={save}>
     <option selected={selected === 0} value="{0}">{options[0]}</option>
     <option selected={selected === 1} value="{1}">{options[1]}</option>
+    <option selected={selected === 2} value="{2}">{options[2]}</option>
   </select>
   <div class="input-group-append">
       <!-- Using the download attribute in standalone mode makes the app to lost the ofp on return (last check on iPadOS 14.4)-->
