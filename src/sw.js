@@ -73,8 +73,8 @@ registerRoute(
   ({url}) => url.origin === 'https://api.mapbox.com' && ( 
     (url.pathname.startsWith('/styles/') || url.pathname.startsWith('/fonts/')) ||
     url.pathname === '/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2.json' ||
-    url.pathname === '/v4/denizotjb.63g5ah66.json' ||
-    url.pathname === '/v4/denizotjb.9001lcsf,denizotjb.494jxmoa,mapbox.mapbox-streets-v8,denizotjb.bifqeinj,denizotjb.cz0kdfpx,mapbox.mapbox-terrain-v2.json'
+    url.pathname === '/v4/denizotjb.6nts91f3.json' ||
+    url.pathname === '/v4/denizotjb.9001lcsf,denizotjb.494jxmoa,mapbox.mapbox-streets-v8,denizotjb.1x3i1g8r,denizotjb.bifqeinj,denizotjb.cz0kdfpx,denizotjb.aop85z8z,mapbox.mapbox-terrain-v2.json'
   ),
   new StaleWhileRevalidate({
     cacheName: validCaches['mapbox']
@@ -125,7 +125,7 @@ registerRoute(
   })
 );
 
-const tilesCache = new TilesCache('CONF_TILES_DB', 5, (open, evt) => {
+const tilesCache = new TilesCache('CONF_TILES_DB', 6, (open, evt) => {
     if (evt.oldVersion < 1) {
         open.result.createObjectStore(maps['theworld']);
     }
@@ -135,13 +135,17 @@ const tilesCache = new TilesCache('CONF_TILES_DB', 5, (open, evt) => {
         open.result.createObjectStore(maps['pacific']);
     }
     if (evt.oldVersion < 3) {
-      open.result.createObjectStore(maps['mercator']);
+      open.result.createObjectStore('denizotjbv1');
     }
     if (evt.oldVersion < 4) {
       open.result.createObjectStore(maps['eqephysicalfr']);
     }
     if (evt.oldVersion < 5) {
       open.result.createObjectStore(maps['cb202x']);
+    }
+    if (evt.oldVersion < 6) {
+      open.result.deleteObjectStore('denizotjbv1');
+      open.result.createObjectStore('denizotjbv2');
     }
 });
 

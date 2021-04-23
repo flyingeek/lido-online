@@ -15,7 +15,8 @@ const options = [
         'id': 'mercator',
         'mapboxOptions': {
             //'style': 'mapbox://styles/flyingeek/ckc4yge17166a1ip66rkf0zhr',
-            'style': 'mapbox://styles/flyingeek/cklgh38ep0xsr17qsvlrhth1e',
+            //'style': 'mapbox://styles/flyingeek/cklgh38ep0xsr17qsvlrhth1e',
+            'style': 'mapbox://styles/flyingeek/cknj4nmwu0t8117ny6rk7dwbg',
             'renderWorldCopies': false,
             'maxZoom': 12
         },

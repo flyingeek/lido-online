@@ -156,9 +156,9 @@ export const findMissingCacheTiles = async (ofp, mapData) => {
                         url = new URL(mapOptions.tiles[0].replace('{z}', zoom).replace('{x}', x).replace('{y}', y));
                         promises.push(tilesCaches.isNotCached(mapOptions.cacheName, url));
                     } else {
-                        url = new URL(`https://api.mapbox.com/v4/denizotjb.63g5ah66/${zoom}/${x}/${y}@2x.webp?sku=${map._requestManager._skuToken}&access_token=${mapboxgl.accessToken}`);
+                        url = new URL(`https://api.mapbox.com/v4/denizotjb.6nts91f3/${zoom}/${x}/${y}@2x.webp?sku=${map._requestManager._skuToken}&access_token=${mapboxgl.accessToken}`);
                         promises.push(tilesCaches.isNotCached(mapOptions.cacheName, url));
-                        url = new URL(`https://api.mapbox.com/v4/denizotjb.9001lcsf,denizotjb.494jxmoa,mapbox.mapbox-streets-v8,denizotjb.bifqeinj,denizotjb.cz0kdfpx,mapbox.mapbox-terrain-v2/${zoom}/${x}/${y}.vector.pbf?sku=${map._requestManager._skuToken}&access_token=${mapboxgl.accessToken}`);
+                        url = new URL(`https://api.mapbox.com/v4/denizotjb.9001lcsf,denizotjb.494jxmoa,mapbox.mapbox-streets-v8,denizotjb.1x3i1g8r,denizotjb.bifqeinj,denizotjb.cz0kdfpx,denizotjb.aop85z8z,mapbox.mapbox-terrain-v2/${zoom}/${x}/${y}.vector.pbf?sku=${map._requestManager._skuToken}&access_token=${mapboxgl.accessToken}`);
                         promises.push(tilesCaches.isNotCached(mapOptions.cacheName, url));
                     }
                 }
