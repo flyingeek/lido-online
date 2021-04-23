@@ -9,7 +9,7 @@
 <script>
     import {KmlGenerator} from './kml.js';
     import {storage, stores} from './mapSettings/storage.js';
-    import { createEventDispatcher } from 'svelte';
+    import { createEventDispatcher, onDestroy } from 'svelte';
     const dispatch = createEventDispatcher();
 
     export let label;
@@ -33,15 +33,18 @@
             str = str.trim();
             filename = str.replace(/[ \/]/g, "_").replace(/:/g, '') + extension;
         }
+        if (url && url.startsWith('blob:')) URL.revokeObjectURL(url);
         if (selected === 0) {
-            url = dataURL(kmlGen.render());
+            const blob = new Blob( [kmlGen.render()], { type: "application/vnd.google-earth.kml+xml" });
+            url = URL.createObjectURL(blob);
         } else if (selected === 1) {
-            url = dataURL(kmlGen.render({
+            const blob = new Blob( [kmlGen.render({
                 "template": editolido.avenzaTemplate,
                 "styleTemplate": editolido.avenzaStyleTemplate,
                 "iconTemplate": editolido.avenzaIconTemplate,
                 "icons": editolido.AVENZAICONS
-            }));
+            })], { type: "application/vnd.google-earth.kml+xml" });
+            url = URL.createObjectURL(blob);
         } else {
             e.preventDefault();
             return false;
@@ -63,6 +66,9 @@
         }
         dispatch("save", [store, selected]);
     }
+    onDestroy(() => {
+        if (url && url.startsWith('blob:')) URL.revokeObjectURL(url);
+    });
 </script>
 
 <div class="input-group">
@@ -73,7 +79,7 @@
   </select>
   <div class="input-group-append">
       <!-- Using the download attribute in standalone mode makes the app to lost the ofp on return (last check on iPadOS 14.4)-->
-    <a class="btn btn-success" download={(navigator.standalone) ? null : filename} href={url} on:click={download} target={target}>{label}</a>
+    <a class="btn btn-success" download={filename} href={url} on:click={download}>{label}</a>
   </div>
 </div>
 <style>
