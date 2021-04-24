@@ -24,6 +24,9 @@
                     "iconTemplate": editolido.avenzaIconTemplate,
                     "icons": editolido.AVENZAICONS
                 }),
+                "kmlGoogleEarth": kmlGen.render({
+                    "styleTemplate": editolido.googleEarthStyleTemplate
+                }),
                 "grametProxyURL": $ofp.ogimetData.proxyImg
             };
             url = "shortcuts://run-shortcut?name=" + encodeURIComponent(name) + "&input=text&text=" + encodeURIComponent(JSON.stringify(obj));
