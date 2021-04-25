@@ -22,7 +22,6 @@
     const lidoRoute = (!!$ofp) ? $ofp.lidoRoute().join(' ') : '';
     let copied = false;
     const click = (e) => {
-        e.target.classList.remove("hasactive");
         const success = copyText(lidoRoute);
         if (!runningOnIpad) {
             copied = success;
@@ -32,11 +31,8 @@
             e.preventDefault();
         }
     };
-    const toggle = (e) => {
-        e.target.classList.remove("hasactive");
-        show = !show;
-    }
-        async function copyText(text) {
+
+    async function copyText(text) {
         let success = true;
         if (copyPermission) {
             navigator.clipboard.writeText(text).then(() => success = true, () => success = false) ;
@@ -46,7 +42,6 @@
             await tick();
             areaDom.focus();
             areaDom.select();
-            let message = 'Copying text was successful';
             try {
                 success = document.execCommand('copy');
                 if (!success) {
@@ -62,31 +57,36 @@
     }
 </script>
 {#if valueCopy != null}
-  <textarea bind:this={areaDom}>{valueCopy}</textarea>
+    <textarea bind:this={areaDom}>{valueCopy}</textarea>
 {/if}
 <div class="card mb-3">
-  <!-- <img class="card-img-top" src="./lido1.jpg" alt="Card image cap"> -->
-  <div class="card-body">
-    <h5 class="card-title">Route Lido</h5>
-    <p class="card-text">Cette route est optimisée par rapport à celle de PilotMission car elle utilise les airways. Utiliser cette route permet
-d'avoir une application Lido plus réactive.</p>
-
+    <div class="card-body">
+        <h5 class="card-title">Route Lido</h5>
+        <div class="row mb-3">
+            <div class="col-12 col-md-9">
+                <p class="card-text">Cette route est optimisée par rapport à celle de PilotMission car elle utilise les airways. Utiliser cette route permet
+                    d'avoir une application Lido plus réactive.</p>
+            </div>
+            <div class="text-md-right col align-self-center col-12 col-md-3 py-3 py-md-0">
+                {#if runningOnIpad}
+                    <a role="button" class="btn btn-primary" on:click={click} href='lhs-mpilot://'>ouvrir mPilot <sup>*</sup></a>
+                {:else}
+                    <a role="button" class="btn btn-primary" on:click={click} href='lhs-mpilot://'>copier la route</a>
+                {/if}
+            </div>
+        </div>
         {#if runningOnIpad}
-            <a role="button" class="btn btn-primary" on:click={click} href='lhs-mpilot://'>ouvrir mPilot <sup>*</sup></a>
-            <p class="card-text"><small class="text-muted"><sup>*</sup> Une fois dans l'application mPilot,
-             il vous suffira de faire un coller (la route aura été copiée automatiquement).</small></p>
-        {:else}
-            <a role="button" class="btn btn-primary" on:click={click} href='lhs-mpilot://'>copier la route</a>
+            <div class="card-text">
+                <small class="text-muted"><sup>*</sup> Une fois dans l'application mPilot,
+                il vous suffira de faire un coller (la route aura été copiée automatiquement).</small>
+            </div>
         {/if}
-    
-
-
-    <div class="text-monospace">{lidoRoute}
-{#if copied}
-    <span out:fade>copié!</span>
-{/if}
+        <div class="text-monospace">{lidoRoute}
+            {#if copied}
+                <span out:fade>copié!</span>
+            {/if}
+        </div>
     </div>
-  </div>
 </div>
 
 
@@ -94,15 +94,11 @@ d'avoir une application Lido plus réactive.</p>
     .card {
         flex: 0 1 auto; /* pixel size use when not using full screen ipad mode */
         overflow-y: scroll;
-        margin: 1rem 1rem 1rem 1rem;
-    }
-    .btn {
-        margin: 1em 0;
+        margin: 1rem;
     }
     @media (max-width: 767px), (max-height: 700px) {
         .card {
             flex-basis: auto;
-            margin: 1rem 0;
         }
     }
     span {
