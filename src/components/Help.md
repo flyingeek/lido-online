@@ -35,7 +35,7 @@ L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au pl
 
 ## Mémo visuel
 
-![map help](./images/map-help.webp "Aide Carte")
+<img src="./images/map-help.webp" alt="mémo visuel" id="memovisuel">
 
 ## Particularités de l'iPad
 

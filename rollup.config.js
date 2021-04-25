@@ -109,7 +109,10 @@ export default [{
       // we'll extract any component CSS out into
       // a separate file - better for performance
       extensions: ['.svelte','.md'],
-      preprocess: markdown()
+      preprocess: markdown({
+        headerPrefix: 'md_',
+        headerIds: true
+      })
     }),
     // we'll extract any component CSS out into
     // a separate file - better for performance
