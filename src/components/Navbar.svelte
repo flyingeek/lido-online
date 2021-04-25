@@ -3,37 +3,43 @@
     import GrametTrigger from './GrametTrigger.svelte';
     import OfpInfos from './OfpInfos.svelte';
     import TakeOffInput from './TakeOffInput.svelte';
+    let menuCheckBox;
+    const collapse = () => menuCheckBox.checked = false;
 </script>
 <nav class="navbar navbar-expand-md navbar-light">
-  <input type="checkbox" id="menu">
+  <input bind:this={menuCheckBox} type="checkbox" id="menu">
+  <!-- following items are in reverse order to have the menu collapse nicely -->
+  <slot></slot>
+  {#if ($ofp) }
+    <OfpInfos/>
+    <TakeOffInput/>
+    {#if $route === '/map'}<GrametTrigger/>{/if}
+  {/if}
   <label class="navbar-toggler" for="menu"><span class="navbar-toggler-icon"></span></label>
+  <!-- end of items in reverse order -->
+
+  <!-- collapsable menu -->
   <ul class="navbar-nav collapse navbar-collapse" id="navbarToggler">
     <li class="nav-item" class:active={$route === '/'}>
-      <a class="nav-link" href="#/"><strong class="d-none">OFP2MAP </strong><svg><use xlink:href="#home-symbol"/></svg>{#if 'process.env.NODE_ENV' === '"development"'}<sup>dev</sup>{/if}</a>
+      <a class="nav-link" href="#/" on:click={collapse}><strong class="d-none">OFP2MAP </strong><svg><use xlink:href="#home-symbol"/></svg>{#if 'process.env.NODE_ENV' === '"development"'}<sup>dev</sup>{/if}</a>
     </li>
     {#if $ofp|| $aircraftType || $route === '/map'}
     <li class="nav-item" class:active={$route === '/map'}>
-      <a class="nav-link" href="#/map">
+      <a class="nav-link" href="#/map" on:click={collapse}>
       <span>CARTE</span></a>
     </li>
     {/if}
     {#if  ($ofp) || $route === '/export'}
     <li class="nav-item" class:active={$route === '/export'}>
-      <a class="nav-link" href="#/export">
+      <a class="nav-link" href="#/export" on:click={collapse}>
       <span>EXPORT</span></a>
     </li>
     {/if}
     <li class="nav-item" class:active={$route === '/help'}>
-      <a class="nav-link" href="#/help">
+      <a class="nav-link" href="#/help" on:click={collapse}>
       <span>AIDE</span></a>
     </li>
   </ul>
-  {#if ($ofp) }
-    {#if $route === '/map'}<GrametTrigger/>{/if}
-    <TakeOffInput/>
-    <OfpInfos/>
-  {/if}
-  <slot></slot>
 </nav>
 
 <style>
@@ -68,10 +74,12 @@
       position: static; /* for no ofp prompt on home page bottom */
       padding: 2px 10px 0px 10px;
       background-color: var(--light);
+      flex-direction: row-reverse;
     }
 
     li {
       margin-right: 0px;
+      padding-left: 10px;
     }
     @media (min-width: 630px){
         li {
@@ -81,9 +89,16 @@
     li span{
       display: inline-block;
     }
+    .nav-item.active {
+      border-left: 2px solid var(--pink);
+    }
     @media (min-width: 768px){
+      li {
+        padding-left: 0px;
+      }
       .nav-item.active {
         border-bottom: 2px solid var(--pink);
+        border-left: none;
       }
     }
     @media (min-width: 830px){

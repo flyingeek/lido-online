@@ -122,7 +122,7 @@
     min-height: 100%;
     position: relative;
   }
-  @media (max-width: 575px) { /* allow scrolling long pages */
+  @media (max-width: 575px), (max-height: 575px)  { /* allow scrolling long pages */
     :global(html, body) {
       position: relative;
     }
