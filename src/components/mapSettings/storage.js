@@ -28,7 +28,8 @@ class Storage {
 export const stores = Object.freeze({
     "optionsKML": "optionsKML",
     "shortcut": "shortcut",
-    "downloadType": "downloadType"
+    "downloadType": "downloadType",
+    "exportKML": "exportKML"
 });
 
 export const storage = new Storage();
@@ -60,7 +61,9 @@ export const validate = (options) => {
 
 export const setHistory = (kmlOptions, route, name="Mon OFP2MAP") => {
     const options = {};
+    const excludedStores = ["exportKML"];
     for (const [key, store] of Object.entries(stores)) {
+        if (excludedStores.includes(store)) continue;
         let value = storage.getItem(store);
         if (key === stores.optionsKML && kmlOptions) {
             const diff = {};

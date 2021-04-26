@@ -1,6 +1,5 @@
 <script context="module">
     import {runningOnIpad} from "./utils.js";
-    import { tick } from 'svelte';
     let copyPermission = false;
     if (navigator.permissions) {
         try {
@@ -15,18 +14,21 @@
     }
 </script>
 <script>
+    import { tick, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import {ofp} from '../stores';
     let valueCopy = null;
     let areaDom;
     const lidoRoute = (!!$ofp) ? $ofp.lidoRoute().join(' ') : '';
     let copied = false;
+    let timeOut;
     const click = (e) => {
         const success = copyText(lidoRoute);
         if (!runningOnIpad) {
             copied = success;
-            setTimeout(function () {
+            timeOut = setTimeout(function () {
                 copied = false;
+                if (timeOut) clearTimeout(timeOut);
             }, 3000);
             e.preventDefault();
         }
@@ -55,6 +57,9 @@
         }
         return success;
     }
+    onDestroy(() => {
+        if (timeOut) clearTimeout(timeOut);
+    });
 </script>
 {#if valueCopy != null}
     <textarea bind:this={areaDom}>{valueCopy}</textarea>
@@ -92,14 +97,9 @@
 
 <style>
     .card {
-        flex: 0 1 auto; /* pixel size use when not using full screen ipad mode */
-        overflow-y: scroll;
-        margin: 1rem;
-    }
-    @media (max-width: 767px), (max-height: 700px) {
-        .card {
-            flex-basis: auto;
-        }
+        flex: 0 1 auto;
+        min-height: 1px;
+        margin: 0.5rem 1rem;
     }
     span {
         padding: 2px 2px;
@@ -115,6 +115,8 @@
         position: relative;
         padding: 0.5em 1em 0.3em 1em;
         border: 1px dashed #ccc;
+        max-height: 150px;
+        overflow-y: auto;
     }
     textarea {
         position: fixed;

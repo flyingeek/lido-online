@@ -38,7 +38,7 @@
         {label: 'Aucun repère', color: '#FFFFFF'},
         {label: 'Bleu', color: '#6699FF'},
         {label: 'Jaune', color: '#FFFF00'},
-        {label: 'Marron* (Rouge pour Avenza)', color: '#CC9966'},
+        {label: 'Marron* (Rouge pour Avenza/Earth)', color: '#CC9966'},
         {label: 'Orange', color:'#FF9922'},
         {label: 'Rose* (Rouge pour Avenza)', color: '#DD5599'},
         {label: 'Rouge', color: '#FF0000'},

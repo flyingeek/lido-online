@@ -15,7 +15,6 @@
     import {createMap, token} from './mapboxgl/mapManagement';
     import {updateMapLayers} from './mapboxgl/layersManagement';
     import {online, showGramet, simulate, aircraftType} from "../stores.js";
-    import {updateKml} from './kml.js';
     import {promiseTimeout, fetchSimultaneously} from './utils';
     import { createEventDispatcher, onMount, onDestroy, tick} from 'svelte';
     import {get} from 'svelte/store';
@@ -102,7 +101,6 @@
             kmlOptions,
             aircraftType: $aircraftType
         });
-        updateKml(e.detail.name, e.detail.value);
         dispatch('save'); // set History
     };
 

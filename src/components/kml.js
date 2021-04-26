@@ -33,7 +33,7 @@ export const kmlDefaultOptions = {
 function skeleton (kmlGen, kmlOptions) {
   kmlGen.addFolders(
     {"name": "greatcircle", "enabled": kmlOptions.greatCircleDisplay, "color": kmlOptions.greatCircleColor},
-    {"name": "ogimet", "enabled": kmlOptions.ogimetDisplay, "color": kmlOptions.ogimetColor},
+    //{"name": "ogimet", "enabled": kmlOptions.ogimetDisplay, "color": kmlOptions.ogimetColor},
     {
         "name": "ralt",
         "enabled": kmlOptions.alternateDisplay,
@@ -48,7 +48,7 @@ function skeleton (kmlGen, kmlOptions) {
         "color": kmlOptions.natIncompleteColor,
         "pinId": kmlOptions.natPin
     }
-   );
+  );
 }
 
 /**
@@ -64,7 +64,13 @@ export const KmlGenerator = () => {
 
 
 export function updateKml(name, value) {
-  if (name.startsWith('etops-') || name.startsWith('airport-') || name.startsWith('fir-') || name.endsWith('-change')) return;
+  if (name.startsWith('etops-')
+    || name.startsWith('airport-')
+    || name.startsWith('fir-')
+    || name.endsWith('-change')
+    || name === 'nat-incomplete-color'
+    || name === 'nat-pin-position'
+    || name.startsWith('ogimet-')) return;
   const kmlGen = KmlGenerator();
   const folder = folderName(name);
   if (name.endsWith('-display')) {
@@ -112,44 +118,6 @@ export function generateKML(ofp, options) {
     kmlGen.addLine('rmain', route);
     kmlGen.addPoints('rmain', route, {'excluded': natmarks});
     kmlGen.addLine('ralt', alternateRoute);
-    kmlGen.addLine('ogimet', ofp.ogimetData.route);
+    //kmlGen.addLine('ogimet', ofp.ogimetData.route);
     kmlGen.addPoints('ralt', alternateRoute);
-    // const ogimetRoute2 = editolido.ogimetRoute(wmoGrid, ofp.route, {'algorithm': 'crs'});
-    // kmlGen.addFolder("ogimet2", {"enabled": true, "color": "4000F900", "pinId": 0});
-    // kmlGen.addLine('ogimet2', ogimetRoute2);
-    // const url = `https://editolido.alwaysdata.net/proxy_sigmet/?url=https://www.aviationweather.gov/gis/scripts/IsigmetJSON.php?type=all`;
-    // fetch(url).then((response) => {
-    //     var contentType = response.headers.get("content-type");
-    //     if(contentType && contentType.indexOf("application/json") !== -1) {
-    //         return response.json().then((json) => {
-    //             kmlSigmet(json);
-    //         });
-    //     }
-    // }, (error) => console.log(error));
-  }
-
-// export function kmlSigmet(json) {
-//   const kmlGen = KmlGenerator();
-//   for (const d of json['features']) {
-//     const props = d['properties'];
-//     const geom = d['geometry'];
-//     const name = `${props['firName']}: ${props['qualifier']} ${props['hazard']}`;
-//     const description = props['rawSigmet'];
-//     if (geom['type'] === 'LineString') {
-//       geom['coordinates'] = [geom['coordinates']]
-//     }
-//     if(geom['type'] === 'LineString' || geom['type'] === 'Polygon'){
-//       for (const area of geom['coordinates']) {
-//         const points = area.map(a => new editolido.GeoPoint([a[1], a[0]]));
-//         const route = new editolido.Route(points);
-//         kmlGen.addLine('sigmet', route);
-//         kmlGen.addPoint('sigmet', editolido.GeoPoint.getCenter(points, {name, description}));
-//       }
-//     } else if (geom['type'] === 'Point') {
-//       kmlGen.addPoint('sigmet', new editolido.GeoPoint([geom['coordinates'][1], geom['coordinates'][0]], {name, description}));
-//     } else {
-//       console.error(`unknown geometry type: ${geom['type']}`);
-//       console.log(d);
-//     }
-//   }
-// }
+}

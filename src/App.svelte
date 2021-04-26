@@ -56,7 +56,7 @@
         <Page><p class="ofpError">😱: {$ofpStatus}</p></Page>
       {:else if ($route === '/export') && $ofpStatus === 'success'}
         <Page>
-          <Export on:save={() => setHistory(kmlOptions, $route)} />
+          <Export {kmlOptions} on:save={() => setHistory(kmlOptions, $route)} />
           <LidoRoute />
         </Page>
       {:else if $route === '/'}

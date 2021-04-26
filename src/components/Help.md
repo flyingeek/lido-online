@@ -24,7 +24,8 @@ L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au pl
     - {cbName} 2020 est une carte VFR, elle couvre France/Belgique/Luxembourg/Suisse et {window.atob("VmluY2VudCBCb3NzeQ==")} a autorisé son utilisation. Sur cette carte, déjà très dense en informations, la route Gramet, l'orthodromie et les FIR sont désactivées. La dernière version est disponible sur <Link href="{`https://www.${cbName.toLowerCase()}.com`}">{cbName}.com</Link>.
 
 
-3. Navigation dans la carte: on peut avec un doigt déplacer la carte, zoomer ou orienter la carte avec deux doigts. __Il est aussi possible de modifier l'angle de vue en balayant de haut en bas avec deux doigts__.
+3. Navigation dans la carte: on peut avec un doigt déplacer la carte, zoomer ou orienter la carte avec deux doigts.  
+__<big>☞</big> Il est aussi possible de modifier l'angle de vue en balayant de bas en haut avec deux doigts__.
 
 ## Mémo visuel
 
@@ -77,11 +78,13 @@ Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, 
 
 ## Export / Plugins (Raccourcis)
 
-La page Export permet d'exporter la route et les tracks au format KML, elle permet également d'exporter le KML, la route Lido et le GRAMET vers un raccourci.
+La page Export permet d'exporter la route et les tracks au format KML, elle dispose de ses propres réglages pour générer le KML. Par défaut les réglages sont ceux de la carte. Si vous avez déjà sauvegardé un réglage d'export, alors le bouton « COMME CARTE » permet de récupérer les réglages choisis pour la carte.
 
 Sur iPad, l'export des fichiers KML affiche une page un peu particulière, utilisez le bouton <svg style="vertical-align: bottom;"><use xlink:href="#share-symbol" /></svg> pour choisir l'app qui recevra le fichier. Cliquez en haut à gauche sur OK pour revenir à OFP2MAP. Alternativement, vous pouvez utiliser « Options... » pour définir une app qui recevra les fichiers kml par défaut et utiliser Ouvrir dans « nom de l'app ».
 
-__Plugins&#8239;:__ Il est aussi possible de lancer des raccourcis ayant accès au contenu de l'OFP depuis le pavé d'informations du vol dans la barre de menu. Un exemple de plugin est le [cartouche&nbsp;ETOPS](https://www.icloud.com/shortcuts/85acce199353490c9f3a3db0618da19e) qu'il faut au préalable installer dans l'app Raccourcis. Si vous souhaitez créer un plugin, [OFP2MAP-PLUGIN](https://www.icloud.com/shortcuts/d484cdf5939b4cb2a54535ae94c371d1) permet de visualiser les données (format json) transmises par OFP2MAP.
+ Un raccourci peut être lancé depuis la page Export, il recevra les fichiers KML, la route Lido et le Gramet. Le nom du raccourci est modifiable, il faut que le raccourci soit installé avant de le lancer.
+
+__Plugins depuis la carte&#8239;:__ Il est aussi possible de lancer des raccourcis ayant accès au contenu de l'OFP depuis le pavé d'informations du vol dans la barre de menu. Un exemple de plugin est le [cartouche&nbsp;ETOPS](https://www.icloud.com/shortcuts/85acce199353490c9f3a3db0618da19e) qu'il faut au préalable installer dans l'app Raccourcis. Si vous souhaitez créer un plugin, [OFP2MAP-PLUGIN](https://www.icloud.com/shortcuts/d484cdf5939b4cb2a54535ae94c371d1) permet de visualiser les données (format json) transmises par OFP2MAP.
 
 ## Mise à jour
 

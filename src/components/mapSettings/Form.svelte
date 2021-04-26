@@ -1,10 +1,10 @@
 <script context="module">
-    function dashToCamelCase(str) {
+    export function dashToCamelCase(str) {
         return str.replace(/-([a-z])/g, function (g) {
             return g[1].toUpperCase();
         });
     }
-    function camelCaseToDash(str) {
+    export function camelCaseToDash(str) {
         return str.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase()
     }
 </script>
@@ -131,7 +131,7 @@
 </div>
 {/if}
 <style>
-    .settings :global(input[type="checkbox"]) {
+    :global(.settings input[type="checkbox"]) {
         margin-right: 0.5ch;
     }
     .btn:disabled {
@@ -141,7 +141,7 @@
         line-height: 1.1;
         margin-bottom: 0.25rem;
     }
-    .settings :global(legend, .checkbox-combo .input-group-text) {
+    :global(.settings legend, .checkbox-combo .input-group-text) {
         font-size: 1rem;
         font-weight: bold;
         font-variant-caps: all-small-caps;
@@ -189,7 +189,7 @@
         height: 20px;
         animation: none;
     }
-    .btn {
+    :global(.settings .btn) {
         font-variant: all-small-caps;
     }
 
