@@ -98,10 +98,12 @@ export function grametThumbAction(container, {ofp, pos, fl}){
             if(response.ok) {
                 grametResponseStatus.set({status: response.status, text: response.statusText || 'OK'});
                 response.blob().then((blob) => {
-                    objectURL = URL.createObjectURL(blob);
-                    img.addEventListener('load', loadListener);
-                    img.addEventListener('error', errorListener);
-                    img.src = objectURL;
+                    if (img) { // img could be empty if grametTrigger was destroyed before receiving Gramet (page change)
+                        objectURL = URL.createObjectURL(blob);
+                        img.addEventListener('load', loadListener);
+                        img.addEventListener('error', errorListener);
+                        img.src = objectURL;
+                    }
                 });
             } else {
                 errorListener();
