@@ -69,6 +69,7 @@ a, a:hover {
     border-color: #1b1e5b;
     background-color: #1b1e5b;
     color: white;
+    min-width: 122px;
 }
 input {
     border-color: #1b1e5b;

@@ -43,6 +43,7 @@
     form {
         width: 100%;
     }
+
     @media (max-width: 575px){
         .col-12 {
             padding-left: 0;
@@ -69,5 +70,6 @@
         padding: 3px 6px;
         width: auto;
         font-variant: all-petite-caps;
+        border-radius: 0.2rem;
     }
 </style>
