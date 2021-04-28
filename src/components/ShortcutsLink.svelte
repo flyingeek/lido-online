@@ -10,7 +10,7 @@
     let shortcutName = storage.getItem(store) || defaultValue;
 
     let url;
-    const lidoRoute = (!!$ofp) ? $ofp.lidoRoute().join(' ') : '';
+    const lidoRoute = (!!$ofp) ? $ofp.lidoRoute(false).join(' ') : '';
     function click(e) {
         const name = shortcutName.trim();
         if (name && runningOnIpad) {

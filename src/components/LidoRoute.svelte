@@ -19,7 +19,7 @@
     import {ofp} from '../stores';
     let valueCopy = null;
     let areaDom;
-    const lidoRoute = (!!$ofp) ? $ofp.lidoRoute().join(' ') : '';
+    const lidoRoute = (!!$ofp) ? $ofp.lidoRoute(false).join(' ') : '';
     let copied = false;
     let timeOut;
     const click = (e) => {
