@@ -69,7 +69,7 @@
         color: #fff;
         padding: 3px 6px;
         width: auto;
-        font-variant: all-petite-caps;
+        font-variant: none;
         border-radius: 0.2rem;
     }
 </style>
