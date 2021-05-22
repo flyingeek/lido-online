@@ -156,7 +156,8 @@
                 }, (err) => {
                     $ofpStatus = err;
                     $ofpStore = undefined;
-                    form.reset();
+                    form.reset(); 
+                    console.trace(err);
                 });
                 window.location.hash = '#/map';
             }
