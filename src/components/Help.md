@@ -68,6 +68,10 @@ En l'absence de GPS, l'avion dans la barre de menu (à gauche de l'heure de déc
 
 La capacité ETOPS est determinée depuis l'OFP et les cercles sont tracés. Un drapeau ETOPS apparait dans le pavé d'information de l'OFP si le carburant est limitatif (20mn, soit environ 2T de marge sur 777). Pour avoir plus d'informations vous pouvez utiliser un plugin (voir ci-dessous).
 
+## Lever / Coucher de soleil
+
+Un calcul astronomique de la position du soleil est effectué en tenant compte de la route de l'OFP, du FL de l'OFP, et de l'heure de décollage choisie dans l'application. La précision attendue de l'algorithme est de ±1mn sous 72° de latitude et de 10mn au delà. Le widget ne s'affiche que si un lever ou un coucher de soleil a lieu pendant le vol. 3 événements peuvent être affichés au maximum.
+
 ## Mode off-line / Cache
 
 Une fois un premier OFP chargé, il est possible même en mode déconnecté de charger un autre OFP pour l'exporter. Le cache de l'App vous permettra de naviguer sur les cartes déjà visualisées. Pour mettre en cache les cartes, il suffit de les consulter.
@@ -84,7 +88,16 @@ Sur iPad, l'export des fichiers KML affiche une page un peu particulière, utili
 
  Un raccourci peut être lancé depuis la page Export, il recevra les fichiers KML, la route Lido et le Gramet. Le nom du raccourci est modifiable, il faut que le raccourci soit installé avant de le lancer.
 
-__Plugins depuis la carte&#8239;:__ Il est aussi possible de lancer des raccourcis ayant accès au contenu de l'OFP depuis le pavé d'informations du vol dans la barre de menu. Un exemple de plugin est le [cartouche&nbsp;ETOPS](https://www.icloud.com/shortcuts/85acce199353490c9f3a3db0618da19e) qu'il faut au préalable installer dans l'app Raccourcis. Si vous souhaitez créer un plugin, [OFP2MAP-PLUGIN](https://www.icloud.com/shortcuts/d484cdf5939b4cb2a54535ae94c371d1) permet de visualiser les données (format json) transmises par OFP2MAP.
+__Plugins depuis la carte&#8239;:__ Il est aussi possible de lancer des raccourcis ayant accès au contenu de l'OFP depuis le pavé d'informations du vol dans la barre de menu. Il faut autoriser les raccourcis non fiables dans Réglages/Raccourcis, puis installer le(s) plugin(s).
+
+Liste des plugins:
+
+- <Link href="https://www.icloud.com/shortcuts/7a84be04b4f04607876d20a08c39c2ef">OFP2MAP-AURORA</Link> NOAA Aurora Forecast 30-90mn et prévisions à 3 jours.
+- <Link href="https://www.icloud.com/shortcuts/85acce199353490c9f3a3db0618da19e">OFP2MAP-ETOPS</Link> calcule un cartouche ETOPS actualisé
+- <Link href="https://www.icloud.com/shortcuts/ce764c49281643d4a63aec3d8bf848be">OFP2MAP-MENU</Link> menu affichant l'ensemble des plugins installés
+- <Link href="https://www.icloud.com/shortcuts/db21157c4fb441919eed9fa7e2cb644f">OFP2MAP-PLANE FINDER</Link> recherche l'avion avec flightaware.com
+- <Link href="https://www.icloud.com/shortcuts/1ef02bdaecb6406bb600429dccbdfac6">OFP2MAP-PLUGIN</Link> permet de visualiser les données (format json) si vous souhaitez développer un plugin.
+
 
 ## Mise à jour
 
