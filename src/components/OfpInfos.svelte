@@ -26,15 +26,17 @@
         }
     };
     const etopsFuelMargin = (ofp, takeOff) => {
-        const ralts = [];
-        for(const [, eto, , efob, fuelMargin] of etopsData(ofp, takeOff)) {
-            ralts.push([eto, efob, fuelMargin]);
-        }
-        if (ralts.length > 1) {
-            const consumption = (ralts[0][1] - ralts[ralts.length-1][1]) / (ralts[ralts.length-1][0] - ralts[0][0]) * 60000;
-            return Math.min(...ralts.map(a => a[2]/consumption));
-        }else if (ralts.length > 0) {
-            return (ralts[0][2]/8) * 60; //conso 777 but should never be used
+        if (takeOff) {
+            const ralts = [];
+            for(const [, eto, , efob, fuelMargin] of etopsData(ofp, takeOff)) {
+                ralts.push([eto, efob, fuelMargin]);
+            }
+            if (ralts.length > 1) {
+                const consumption = (ralts[0][1] - ralts[ralts.length-1][1]) / (ralts[ralts.length-1][0] - ralts[0][0]) * 60000;
+                return Math.min(...ralts.map(a => a[2]/consumption));
+            }else if (ralts.length > 0) {
+                return (ralts[0][2]/8) * 60; //conso 777 but should never be used
+            }
         }
         return 180; // a big enough number
     };
@@ -62,7 +64,6 @@
         }
         return results;
     };
-
     export const shareOFP = async () => {
         const shareData = {
             'title': 'OFP2MAP',

@@ -39,7 +39,7 @@
 </script>
 <script>
     import { createEventDispatcher } from 'svelte';
-    import {showGramet, ofp as ofpStore, ofpStatus, selectedAircraftType} from '../stores';
+    import {showGramet, ofp as ofpStore, ofpStatus, selectedAircraftType, takeOffTime} from '../stores';
     import {aircraftTypes, discontinuatedAircraftTypes} from '../constants';
     export let kmlOptions;
     let disabled = false;
@@ -144,6 +144,7 @@
             const form = e.target.closest('form');
             if (file) {
                 $ofpStatus = 'loading';
+                $takeOffTime = undefined;
                 label = e.target.value.split(/([\\/])/g).pop();
                 dispatch('change', label);
                 getOFP(file).then((ofp) => {

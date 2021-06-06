@@ -23,7 +23,7 @@ export const grametPosition = writable(100);
 export const simulate = writable(-1);
 export const ofp = writable();
 export const ofpStatus = writable();
-export const takeOffTime = writable(new Date());
+export const takeOffTime = writable();
 export const fl = writable();
 
 export const selectedAircraftType = writable();
