@@ -3,6 +3,7 @@
     import GrametTrigger from './GrametTrigger.svelte';
     import OfpInfos from './OfpInfos.svelte';
     import TakeOffInput from './TakeOffInput.svelte';
+    import Sun from './Sun.svelte';
     let menuCheckBox;
     const collapse = () => menuCheckBox.checked = false;
 </script>
@@ -13,7 +14,7 @@
   {#if ($ofp) }
     <OfpInfos/>
     <TakeOffInput/>
-    {#if $route === '/map'}<GrametTrigger/>{/if}
+    {#if $route === '/map'}<GrametTrigger/><Sun/>{/if}
   {/if}
   <label class="navbar-toggler" for="menu"><span class="navbar-toggler-icon"></span></label>
   <!-- end of items in reverse order -->
