@@ -70,7 +70,19 @@ La capacité ETOPS est determinée depuis l'OFP et les cercles sont tracés. Un 
 
 ## Lever / Coucher de soleil
 
-Un calcul astronomique de la position du soleil est effectué en tenant compte de la route de l'OFP, du FL de l'OFP, et de l'heure de décollage choisie dans l'application. La précision attendue de l'algorithme est de ±1mn sous 72° de latitude et de 10mn au delà. Le widget ne s'affiche que si un lever ou un coucher de soleil a lieu pendant le vol. 3 événements peuvent être affichés au maximum.
+Un calcul astronomique de la position du soleil est effectué en tenant compte de la route de l'OFP, du FL de l'OFP, et de l'heure de décollage choisie dans l'application. La précision attendue de l'algorithme est de ±1min sous 72° de latitude et de 10min au-delà. Si un vol est entièrement de nuit ou entièrement de jour, le widget ne s'affiche pas. Le widget affiche les heures de lever ou de coucher du soleil. Cliquer sur le widget affiche l'éphéméride du vol, elle contient en plus du lever et du coucher, les aubes et crépuscules civils, nautiques et astronomiques.
+
+Pour mémoire la chronologie des événements est:
+
+|      | ▲                 | ▼                       |
+|-----:|-------------------|-------------------------|
+|   0° | Lever du soleil   | Coucher du soleil       |
+|  -6° | début aube civile       | fin du crépuscule civil        |
+| -12° | début aube nautique     | fin du crépuscule nautique     |
+| -18° | début aube astronomique | fin du crépuscule astronomique |
+|      | Nuit              | Nuit                    |
+
+L'éphéméride utilise le terme de nuit au lieu de fin du crépuscule.
 
 ## Mode off-line / Cache
 

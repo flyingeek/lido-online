@@ -114,10 +114,49 @@ export const sunElevation = ({date, latitude, longitude}) => {
     return elevation;
 };
 
-export const isNight = (sunElevation, fl=0) => {
+export const nightEvents = {
+    'night': ['astronomicalDawn', 'nightStart'],
+    'astronomical twilight': ['nauticalDawn', 'astronomicalDusk'],
+    'nautical twilight': ['civilDawn', 'nauticalDusk'],
+    'civil twilight': ['sunrise', 'civilDusk'],
+    'day': ['dayEnd', 'sunset']
+};
+export const nightEventNames = {
+    'dayEnd': 'dayEnd',
+    'nightStart': 'nightStart',
+    'astronomicalDawn': 'Aube astronomique',
+    'astronomicalDusk': 'Nuit astronomique',
+    'nauticalDawn': 'Aube nautique',
+    'nauticalDusk': 'Nuit nautique',
+    'civilDawn': 'Aube civile',
+    'civilDusk': 'Nuit civile',
+    'sunrise': 'Lever du soleil',
+    'sunset': 'Coucher du soleil'
+}
+const risingStates = ['night', 'astronomical twilight', 'nautical twilight', 'civil twilight', 'day', 'day'];
+
+export const isRising = (prevState, newState) => {
+    return risingStates.indexOf(newState) >= risingStates.indexOf(prevState);
+}
+
+const nightStates = [ // order important
+    [   -18, 'night'],
+    [   -12, 'astronomical twilight'],
+    [    -6, 'nautical twilight'],
+    [-0.833, 'civil twilight'],
+];
+
+export const nightState = (sunElevation, fl=0) => {
     // -0.833 includes refraction at sea level
     // formula includes altitude and altitude refraction
     // https://en.wikipedia.org/wiki/Sunrise_equation
     const correction = 1.15 * Math.sqrt(fl * 100) / 60;
-    return sunElevation <= -0.833 - correction;
-};
+    for (const[value, name] of nightStates) {
+        if (sunElevation <= value - correction) {
+            return name;
+        }
+    }
+    return 'day';
+}
+//export const isNight = (sunElevation, fl=0) => nightState(sunElevation, fl) === 'night';
+//export const isDay = (sunElevation, fl=0) => nightState(sunElevation, fl) === 'day';

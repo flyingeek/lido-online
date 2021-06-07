@@ -24,6 +24,16 @@ export const simulate = writable(-1);
 export const ofp = writable();
 export const ofpStatus = writable();
 export const takeOffTime = writable();
+export const landingTime = derived([ofp, takeOffTime], ([$ofp, $takeOffTime]) => {
+    if ($ofp && $takeOffTime) {
+        const landing = new Date($takeOffTime);
+        const duration = $ofp.infos.duration;
+        landing.setUTCMinutes(landing.getUTCMinutes() + duration[1]);
+        landing.setUTCHours(landing.getUTCHours() + duration[0]);
+        return landing;
+    }
+    return undefined;
+});
 export const fl = writable();
 
 export const selectedAircraftType = writable();
