@@ -9,20 +9,24 @@
     const toggleGramet = () => {
         if ($grametStatus === 'success') $showGramet = !$showGramet;
     }
-    const grametSourceUpdate = async (event) => {
-        if (event.data.meta === 'workbox-broadcast-update' && event.data.type === 'CACHE_UPDATED') {
-                const {updatedURL} = event.data.payload;
-                if (updatedURL === $ofp.ogimetData.proxyImg) {
-                    grametUpdateAvailable = true;
-                }
-            }
-    };
     const reload = async () => {
         $grametStatus = 'reload';
         $showGramet = false;
         grametUpdateAvailable = false;
         await tick;
         $grametStatus = 'loading';
+    };
+    const grametSourceUpdate = async (event) => {
+        if (event.data.meta === 'workbox-broadcast-update' && event.data.type === 'CACHE_UPDATED') {
+                const {updatedURL} = event.data.payload;
+                if (updatedURL === $ofp.ogimetData.proxyImg) {
+                    if ($showGramet) {
+                        grametUpdateAvailable = true;
+                    }else{
+                        reload();
+                    }
+                }
+            }
     };
     if (navigator && navigator.serviceWorker){
             navigator.serviceWorker.addEventListener('message', grametSourceUpdate);
@@ -82,6 +86,8 @@
             </div>
         </div>
     </Overlay>
+{:else if ($grametStatus === 'reload')}
+    <div class="gramet-thumbnail updating"><p>↻</p><p>Mise à jour</p></div>
 {/if}
 
 
@@ -97,6 +103,11 @@
     border-radius: 3px;
     align-self: baseline;
     display: none;
+}
+.gramet-thumbnail.updating p {
+    margin: 0;
+    font-size: small;
+    text-align: center;
 }
 @media (min-width: 576px){
     .gramet-thumbnail {
