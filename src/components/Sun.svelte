@@ -127,13 +127,14 @@
             </div>
         </div>
         <div slot="content" style="width: 390px; max-width:390px; position:static;" class="popover" let:close in:slide={{ duration: 200 }}>
-            <h3 class="popover-header">Éphéméride du vol<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>    
+            <h3 class="popover-header">Éphémérides du vol<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>    
             <div class="popover-body">
                 <p>Décollage {departureState($ofp, $takeOffTime)} à {$takeOffTime.toJSON().slice(11, 16)}z</p>
                 <table class="table">
                     <thead>
                         <tr>
-                        <th scope="col">Type</th>
+                            <th scope="col">Type</th>
+                            <th scope="col" class="color day-color"></th><!-- color -->
                         <th scope="col">Heure</th>
                         <th scope="col">FL</th>
                         </tr>
@@ -142,6 +143,7 @@
                         {#each $solar as event}
                         <tr>
                             <td>{nightEventNames[event.type]}</td>
+                            <td class="color {event.type}-color"></td>
                             <td>{event.date.toJSON().slice(11, 16)}</td>
                             <td>FL{event.fl}</td>
                         </tr>
@@ -191,4 +193,49 @@
         position: relative;
         z-index: 2;
     }
+    .table .color {
+        width: 0.75rem;
+        padding: 0;
+    }
+    .table :global(.sunrise-color) {
+        background: linear-gradient(#2383C2 0% 50%, lightskyblue 50% 100%);
+        border-top-color: #2383C2;
+        border-bottom-color: lightskyblue;
+    }
+    .table :global(.civilDawn-color) {
+        background: linear-gradient( #0052A2 0% 50%, #2383C2 50% 100%);
+        border-top-color: #0052A2;
+        border-bottom-color: #2383C2;
+    }
+    .table :global(.nauticalDawn-color) {
+        background: linear-gradient(#02386E 0% 50%, #0052A2 50% 100%);
+        border-top-color: #02386E;
+        border-bottom-color: #0052A2;
+    }
+    .table :global(.astronomicalDawn-color) {
+        background: linear-gradient(#000B18 0% 50%, #02386E 50% 100%);
+        border-top-color: #000B18;
+        border-bottom-color: #02386E;
+    }
+    .table :global(.astronomicalDusk-color) {
+        background: linear-gradient(#02386E 0% 50%, #000B18 50% 100%);
+        border-top-color: #02386E;
+        border-bottom-color: #000B18;
+    }
+    .table :global(.nauticalDusk-color) {
+        background: linear-gradient(#0052A2 0% 50%, #02386E 50% 100%);
+        border-top-color: #0052A2;
+        border-bottom-color: darkskyblue;
+    }
+    .table :global(.civilDusk-color) {
+        background: linear-gradient(#2383C2 0% 50%, #0052A2 50% 100%);
+        border-top-color: #2383C2;
+        border-bottom-color: #0052A2;
+    }
+    .table :global(.sunset-color) {
+        background: linear-gradient(lightskyblue 0% 50%, #2383C2 50% 100%);
+        border-top-color: lightskyblue;
+        border-bottom-color: #2383C2;
+    }
+
 </style>
