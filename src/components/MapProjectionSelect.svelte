@@ -40,7 +40,7 @@
                 selected = northOption;
             }else if (dest.longitude < -80 && dep.longitude < -80) {
                 selected = options.find(o => o.id === 'jb_pacific');
-            }else if ((dest.latitude > 30 || dep.latitude > 30) && isInBounds(northOption, dep, dest)) {
+            }else if ((dest.latitude > 30 || dep.latitude > 30) && (dep.atFraction(dest, 0.5)).latitude >= 30 && isInBounds(northOption, dep, dest)) {
                 selected = northOption;
             }else{
                 selected = options.find(o => o.id === 'jb_south');
