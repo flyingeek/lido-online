@@ -1,6 +1,6 @@
 {
   "name": "lido-svelte",
-  "version": "1.12.2",
+  "version": "1.12.3",
   "config": {
     "AIRAC": "2105"
   },
