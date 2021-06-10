@@ -184,18 +184,28 @@
         return getMoonEmoji();
     };
 
-    $: events = ($solar.sun) ? $solar.sun.filter(e => ['sunrise', 'sunset'].includes(e.type)).slice(0, 3) : [];
+    $: sunEvents = ($solar.sun) ? $solar.sun.filter(e => ['sunrise', 'sunset'].includes(e.type)).slice(0, 3) : [];
+    $: moonEvents = ($solar.moon) ? $solar.moon.slice(0, 3) : [];
+    $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmoji($ofp, $takeOffTime);
     $: moonIllumination = ($takeOffTime) ? getMoonIllumination($takeOffTime) : {};
 </script>
 {#if $solar.sun && $solar.moon && $ofp && $ofp.timeMatrix.length > 0}
     <Overlay  position="bottom-center" isOpen={false}>
         <div slot="parent" class="sun" let:toggle on:click={toggle}>
-            <p class="icon">{(events.length > 0) ? '☀️': getWidgetEmoji($ofp, $takeOffTime)}</p>
-            <div class="details" class:two="{events.length === 2}" class:three="{events.length>= 3}">
-                {#each events as event}
-                    <p>{(event.type === 'sunrise') ? '↥' : '↧'} {format(event.date)}</p>
-                {/each}
-            </div>
+            <p class="icon">{widgetEmoji}</p>
+            {#if widgetEmoji === '☀️'}
+                <div class="details" class:two="{sunEvents.length === 2}" class:three="{sunEvents.length>= 3}">
+                    {#each sunEvents as event}
+                        <p>{(event.type === 'sunrise') ? '↥' : '↧'} {format(event.date)}</p>
+                    {/each}
+                </div>
+            {:else if widgetEmoji !== '🔭'}
+                <div class="details" class:two="{moonEvents.length === 2}" class:three="{moonEvents.length>= 3}">
+                    {#each moonEvents as event}
+                        <p>{(event.type === 'moonrise') ? '↥' : '↧'} {format(event.date)}</p>
+                    {/each}
+                </div>
+            {/if}
         </div>
         <div slot="content" style="width: 390px; max-width:390px; position:static;" class="popover" let:close in:slide={{ duration: 200 }}>
             <h3 class="popover-header">Éphémérides du vol<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>    
