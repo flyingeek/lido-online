@@ -176,14 +176,21 @@
             return '🌘';
         }
     };
+    const getWidgetEmoji = (ofp, takeOffTime) => {
+        if (!ofp || !takeOffTime) return '🔭';
+        const point = ofp.route.points[0];
+        const [state, elevation] = sun.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude});
+        if (state === 'day') return '☀️';
+        return getMoonEmoji();
+    };
 
     $: events = ($solar.sun) ? $solar.sun.filter(e => ['sunrise', 'sunset'].includes(e.type)).slice(0, 3) : [];
     $: moonIllumination = ($takeOffTime) ? getMoonIllumination($takeOffTime) : {};
 </script>
-{#if $solar.sun && $solar.moon && ($solar.sun.length > 0 || $solar.moon.length > 0) && $ofp && $ofp.timeMatrix.length > 0}
+{#if $solar.sun && $solar.moon && $ofp && $ofp.timeMatrix.length > 0}
     <Overlay  position="bottom-center" isOpen={false}>
         <div slot="parent" class="sun" let:toggle on:click={toggle}>
-            <p class="icon">☀️</p>
+            <p class="icon">{(events.length > 0) ? '☀️': getWidgetEmoji($ofp, $takeOffTime)}</p>
             <div class="details" class:two="{events.length === 2}" class:three="{events.length>= 3}">
                 {#each events as event}
                     <p>{(event.type === 'sunrise') ? '↥' : '↧'} {format(event.date)}</p>
@@ -217,25 +224,25 @@
                             {/each}
                         </tbody>
                     {/if}
-                    {#if ($solar.moon.length > 0)}
-                        <thead>
-                            <tr>
-                                <th scope="col" colspan="4">Lune {getMoonEmoji()} {getMoonName()} {getMoonIlluminationPercent()}%</th>
-                                <!--<th scope="col" class="kp"></th> minKp -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {#each $solar.moon as event}
-                            <tr>
-                                <td>{nightEventsFR[event.type] || event.type}</td>
-                                <td class="color"></td>
-                                <td>{format(event.date)}</td>
-                                <td>FL{event.fl}</td>
-                                <!-- <td class="kp" class:kp-ok={event.nightKp < 99}>{(event.nightKp < 99) ? Math.floor(event.nightKp) : ''}</td> -->
-                            </tr>
-                            {/each}
-                        </tbody>
-                    {/if}
+
+                    <thead>
+                        <tr>
+                            <th scope="col" colspan="4" class:border-bottom-0={$solar.moon.length === 0}>Lune {getMoonEmoji()} {getMoonName()} {getMoonIlluminationPercent()}%</th>
+                            <!--<th scope="col" class="kp"></th> minKp -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each $solar.moon as event}
+                        <tr>
+                            <td>{nightEventsFR[event.type] || event.type}</td>
+                            <td class="color"></td>
+                            <td>{format(event.date)}</td>
+                            <td>FL{event.fl}</td>
+                            <!-- <td class="kp" class:kp-ok={event.nightKp < 99}>{(event.nightKp < 99) ? Math.floor(event.nightKp) : ''}</td> -->
+                        </tr>
+                        {/each}
+                    </tbody>
+
                 </table>
                 <p>Atterrissage {arrivalText($ofp, $landingTime)} à {$landingTime.toJSON().slice(11, 16)}z</p>
             </div>
@@ -279,6 +286,9 @@
         top: -5px;
         position: relative;
         z-index: 2;
+    }
+    p ~ table {
+    margin-top: -0.75rem;
     }
     .table th {
         text-align: left;
