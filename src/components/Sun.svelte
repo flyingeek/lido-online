@@ -158,6 +158,7 @@
         //https://fr.wikipedia.org/wiki/Phase_de_la_Lune
         const phase = moonIllumination.phase;
         const fraction = moonIllumination.fraction;
+        if (!phase || !fraction) return "☽";
         if(fraction <= 0.02) {
             return '🌑';
         }else if (phase < 0.5 && fraction <= 0.34){
@@ -186,8 +187,9 @@
 
     $: sunEvents = ($solar.sun) ? $solar.sun.filter(e => ['sunrise', 'sunset'].includes(e.type)).slice(0, 3) : [];
     $: moonEvents = ($solar.moon) ? $solar.moon.slice(0, 3) : [];
-    $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmoji($ofp, $takeOffTime);
     $: moonIllumination = ($takeOffTime) ? getMoonIllumination($takeOffTime) : {};
+    $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmoji($ofp, $takeOffTime); //must be after moonIllumination
+
 </script>
 {#if $solar.sun && $solar.moon && $ofp && $ofp.timeMatrix.length > 0}
     <Overlay  position="bottom-center" isOpen={false}>
