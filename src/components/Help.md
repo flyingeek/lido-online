@@ -72,7 +72,13 @@ La capacité ETOPS est determinée depuis l'OFP et les cercles sont tracés. Un 
 
 Un calcul astronomique de la position du soleil est effectué en tenant compte de la route de l’OFP, du FL de l’OFP, et de l’heure de décollage choisie dans l’application. La précision attendue de l’algorithme est de ±1 min sous 72° de latitude et de 10 min au-delà. Comme les estimées sont à ±1 min, la précision finale devrait être de ±2 min si le FL de l'OFP est bien respecté.
 
-Le widget affiche éventuellement les heures de lever ou de coucher du soleil. Cliquer sur le widget affiche les éphémérides du vol, elles contiennent les aubes et crépuscules civils, nautiques et astronomiques, la phase de la lune et son illumination en pourcentage, les levers et couchers de lune.
+Le symbole du widget est dynamique:
+
+- ☀️ si le soleil est visible pendant le vol
+- 🌕🌖🌗🌘🌑🌒🌓🌔 si la lune est visible pendant le vol
+- 🔭 si vous restez dans le noir.
+
+Le widget affiche éventuellement les heures de lever ou de coucher. Cliquer sur le widget affiche les éphémérides du vol, elles contiennent les aubes et crépuscules civils, nautiques et astronomiques, la phase de la lune et son illumination, les levers et couchers de lune.
 
 Si OFP2MAP n'a pas pu récupérer les estimées de l'OFP (voir le paragraphe sur la position estimée), le widget ne s'affichera pas.
 

@@ -180,13 +180,22 @@
     const getWidgetEmoji = (ofp, takeOffTime) => {
         if (!ofp || !takeOffTime) return '🔭';
         const point = ofp.route.points[0];
-        const [state, elevation] = sun.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude});
+        let [state] = sun.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude});
         if (state === 'day') return '☀️';
-        return getMoonEmoji();
+        [state] = moon.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude});
+        if (state) return getMoonEmoji();
+        return '🔭';
+    };
+    const getDepartureMoonState = (ofp, takeOffTime) => {
+        if (!ofp || !takeOffTime) return '🔭';
+        const point = ofp.route.points[0];
+        const [state] = moon.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude});
+        return state;
     };
 
     $: sunEvents = ($solar.sun) ? $solar.sun.filter(e => ['sunrise', 'sunset'].includes(e.type)).slice(0, 3) : [];
     $: moonEvents = ($solar.moon) ? $solar.moon.slice(0, 3) : [];
+    $: isMoonVisibleDuringFlight = moonEvents.length > 0 || getDepartureMoonState($ofp, $takeOffTime);
     $: moonIllumination = ($takeOffTime) ? getMoonIllumination($takeOffTime) : {};
     $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmoji($ofp, $takeOffTime); //must be after moonIllumination
 
@@ -239,10 +248,11 @@
 
                     <thead>
                         <tr>
-                            <th scope="col" colspan="4" class:border-bottom-0={$solar.moon.length === 0}>Lune {getMoonEmoji()} {getMoonName()} {getMoonIlluminationPercent()}%</th>
+                            <th scope="col" colspan="4" class:border-bottom-0={$solar.moon.length === 0}>Lune {getMoonEmoji()} {getMoonName()} {getMoonIlluminationPercent()}% {(isMoonVisibleDuringFlight) ? '' : 'non visible'}</th>
                             <!--<th scope="col" class="kp"></th> minKp -->
                         </tr>
                     </thead>
+
                     <tbody>
                         {#each $solar.moon as event}
                         <tr>
