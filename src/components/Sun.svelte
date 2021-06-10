@@ -183,7 +183,7 @@
         let [state] = sun.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude});
         if (state === 'day') return '☀️';
         [state] = moon.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude});
-        if (state) return getMoonEmoji();
+        if (state||moonEvents.length>0) return getMoonEmoji();
         return '🔭';
     };
     const getDepartureMoonState = (ofp, takeOffTime) => {
@@ -197,7 +197,7 @@
     $: moonEvents = ($solar.moon) ? $solar.moon.slice(0, 3) : [];
     $: isMoonVisibleDuringFlight = moonEvents.length > 0 || getDepartureMoonState($ofp, $takeOffTime);
     $: moonIllumination = ($takeOffTime) ? getMoonIllumination($takeOffTime) : {};
-    $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmoji($ofp, $takeOffTime); //must be after moonIllumination
+    $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmoji($ofp, $takeOffTime); //must be after moonIllumination and moonEvents
 
 </script>
 {#if $solar.sun && $solar.moon && $ofp && $ofp.timeMatrix.length > 0}
