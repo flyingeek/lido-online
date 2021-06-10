@@ -1,3 +1,4 @@
+/* globals editolido */
 // shortcuts for easier to read formulas
 const PI   = Math.PI,
     sin  = Math.sin,
@@ -5,6 +6,7 @@ const PI   = Math.PI,
     tan  = Math.tan,
     asin = Math.asin,
     acos = Math.acos,
+    atan = Math.atan2,
     deg = 180 / PI,
     rad  = PI / 180;
 
@@ -15,9 +17,15 @@ const dayMs = 1000 * 60 * 60 * 24,
 
 const toJulian = (date) => date.valueOf() / dayMs - 0.5 + J1970;
 const toCenturies = (date) => (toJulian(date) - J2000) / 36525.0;
+
 // modulo is not always remainder
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Remainder
 const modulo = (a, n) => ((a % n ) + n ) % n;
+
+
+
+//const azimuth = (H, phi, dec) => atan(sin(H), cos(H) * sin(phi) - tan(dec) * cos(phi));
+const altitude = (H, phi, dec) => asin(sin(phi) * sin(dec) + cos(phi) * cos(dec) * cos(H));
 
 const geomMeanLongSun = (t) => {
     const L0 = 280.46646 + t * (36000.76983 + t*(0.0003032));
@@ -70,8 +78,15 @@ const sunDeclinationInRadians = (t) => {
     const sint = sin(e) * sin(lambda);
     const theta = asin(sint);
     return theta; // in radians
-}
-
+};
+const sunRtAscensionInRadians = (t) => {
+    var e = rad * obliquityCorrection(t);
+    var lambda = rad * sunApparentLong(t);
+    var tananum = cos(e) * sin(lambda);
+    var tanadenom = cos(lambda);
+    var alpha = atan(tananum, tanadenom);
+    return alpha; // in radians
+};
 
 //Equation of time in minutes
 const eqTime = (t) => {
@@ -87,7 +102,7 @@ const eqTime = (t) => {
 
 
 
-export const sunElevation = ({date, latitude, longitude}) => {
+export const sunAzEl = ({date, latitude, longitude}) => {
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
     const seconds = date.getUTCSeconds();
@@ -108,55 +123,166 @@ export const sunElevation = ({date, latitude, longitude}) => {
     } else if (csz < -1.0) { 
         csz = -1.0
     }
-    const zenith = deg * acos(csz)
-    const elevation = 90 - zenith;
+    const zenith = acos(csz);
+    // const azDenom = cos(phi) * sin(zenith);
+    // let azimuth;
+    // if (Math.abs(azDenom) > 0.001) {
+    //     var azRad = ((sin(phi) * cos(zenith)) - sin(theta)) / azDenom;
+    //     if (Math.abs(azRad) > 1.0) {
+    //         if (azRad < 0) {
+    //             azRad = -1.0
+    //         } else {
+    //             azRad = 1.0
+    //         }
+    //     }
+    //     azimuth = 180.0 - deg * acos(azRad);
+    //     if (ha > 0.0) {
+    //         azimuth = -azimuth;
+    //     }
+    // } else {
+    //     azimuth = (latitude > 0.0) ? 180 : 0;
+    // }
+    // if (azimuth < 0.0) {
+    //     azimuth += 360.0
+    // }
     // we do not need to calculate refraction for our usage (see isNight)
-    return elevation;
+    return {elevation: 90 - (deg * zenith)};
+};
+export const sunStateMap = new Map([
+    ['night', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'astronomicalDawn': 'nightStart'],
+    ['astronomical twilight', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'nauticalDawn': 'astronomicalDusk'],
+    ['nautical twilight', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'civilDawn': 'nauticalDusk'],
+    ['civil twilight', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'sunrise': 'civilDusk'],
+    ['day', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'dayStart' : 'sunset']
+]);
+
+const sunRisingStates = Array.from(sunStateMap.keys());
+export const isSunRising = (prevState, newState) => {
+    return sunRisingStates.indexOf(newState) >= sunRisingStates.indexOf(prevState);
+};
+export const sunStateAtPoint = (point, date, fl) => {
+    const [state, elevation] = sunState({date, latitude: point.latitude, longitude: point.longitude}, fl);
+    //compare sun elevation beetween date and date + 10mn
+    const isRising =  elevation < sunAzEl({date: new Date(date.getTime() + 600000), latitude: point.latitude, longitude:point.longitude}).elevation;
+    return [state, isRising];
 };
 
-export const nightEvents = {
-    'night': ['astronomicalDawn', 'nightStart'],
-    'astronomical twilight': ['nauticalDawn', 'astronomicalDusk'],
-    'nautical twilight': ['civilDawn', 'nauticalDusk'],
-    'civil twilight': ['sunrise', 'civilDusk'],
-    'day': ['dayEnd', 'sunset']
-};
-export const nightEventNames = {
-    'dayEnd': 'dayEnd',
-    'nightStart': 'nightStart',
-    'astronomicalDawn': 'Aube astronomique',
-    'astronomicalDusk': 'Nuit astronomique',
-    'nauticalDawn': 'Aube nautique',
-    'nauticalDusk': 'Nuit nautique',
-    'civilDawn': 'Aube civile',
-    'civilDusk': 'Nuit civile',
-    'sunrise': 'Lever du soleil',
-    'sunset': 'Coucher du soleil'
-}
-const risingStates = ['night', 'astronomical twilight', 'nautical twilight', 'civil twilight', 'day', 'day'];
-
-export const isRising = (prevState, newState) => {
-    return risingStates.indexOf(newState) >= risingStates.indexOf(prevState);
-}
-
-const nightStates = [ // order important
+const sunStates = [ // order important
     [   -18, 'night'],
     [   -12, 'astronomical twilight'],
     [    -6, 'nautical twilight'],
     [-0.833, 'civil twilight'],
 ];
 
-export const nightState = (sunElevation, fl=0) => {
+export const sunState = ({date, latitude, longitude}, fl=0) => {
+    const elevation = sunAzEl({date, latitude, longitude}).elevation;
     // -0.833 includes refraction at sea level
     // formula includes altitude and altitude refraction
     // https://en.wikipedia.org/wiki/Sunrise_equation
     const correction = 1.15 * Math.sqrt(fl * 100) / 60;
-    for (const[value, name] of nightStates) {
-        if (sunElevation <= value - correction) {
-            return name;
+    for (const[value, name] of sunStates) {
+        if (elevation <= value - correction) {
+            return [name, elevation];
         }
     }
-    return 'day';
+    return ['day', elevation];
+};
+
+/* Moon Equations from https://github.com/mourner/suncalc */
+const toDays = (date) => toJulian(date) - J2000;
+const e = rad * 23.4397; // obliquity of the Earth
+const rightAscension = (l, b) => atan(sin(l) * cos(e) - tan(b) * sin(e), cos(l));
+const declination = (l, b) => asin(sin(b) * cos(e) + cos(b) * sin(e) * sin(l));
+const siderealTime = (d, lw) => rad * (280.16 + 360.9856235 * d) - lw;
+const moonCoords = (d) => { // geocentric ecliptic coordinates of the moon
+    const L = rad * (218.316 + 13.176396 * d), // ecliptic longitude
+        M = rad * (134.963 + 13.064993 * d), // mean anomaly
+        F = rad * (93.272 + 13.229350 * d),  // mean distance
+
+        l  = L + rad * 6.289 * sin(M), // longitude
+        b  = rad * 5.128 * sin(F),     // latitude
+        dt = 385001 - 20905 * cos(M);  // distance to the moon in km
+    return {
+        ra: rightAscension(l, b),
+        dec: declination(l, b),
+        dist: dt
+    };
+};
+export const getMoonIllumination = (date) => {
+
+    const t = toCenturies(date),
+        s = {dec: sunDeclinationInRadians(t), ra: sunRtAscensionInRadians(t)},
+        m = moonCoords(toDays(date)),
+
+        sdist = 149598000, // distance from Earth to Sun in km
+
+        phi = acos(sin(s.dec) * sin(m.dec) + cos(s.dec) * cos(m.dec) * cos(s.ra - m.ra)),
+        inc = atan(sdist * sin(phi), m.dist - sdist * cos(phi)),
+        angle = atan(cos(s.dec) * sin(s.ra - m.ra), sin(s.dec) * cos(m.dec) -
+                cos(s.dec) * sin(m.dec) * cos(s.ra - m.ra));
+
+    return {
+        fraction: (1 + cos(inc)) / 2,
+        phase: 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI,
+        angle: angle
+    };
+};
+export const getMoonPosition = function (date, lat, lng) {
+
+    var lw  = rad * -lng,
+        phi = rad * lat,
+        d   = toDays(date),
+
+        c = moonCoords(d),
+        H = siderealTime(d, lw) - c.ra,
+        h = altitude(H, phi, c.dec);
+        // formula 14.1 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
+        //pa = atan(sin(H), tan(phi) * cos(c.dec) - sin(c.dec) * cos(H));
+
+    //h = h + astroRefraction(h); // altitude correction for refraction
+
+    return {
+        //azimuth: azimuth(H, phi, c.dec),
+        altitude: h,
+        //distance: c.dist,
+        //parallacticAngle: pa
+    };
+};
+export const moonState = ({date, latitude, longitude}, fl) => { // true => visible
+    // + altitude of moonrise is 8mn of arc (0.133*rad)
+    // - refraction correction at this altitude is 0.008116109187895005
+    // we apply the same altitude correction that the sun (really ?)
+    const correction = rad * 1.15 * Math.sqrt(fl * 100) / 60;
+    const altitude = getMoonPosition(date, latitude, longitude).altitude;
+    return  [altitude > -0.005794821282742547 - correction, deg * altitude];
 }
-//export const isNight = (sunElevation, fl=0) => nightState(sunElevation, fl) === 'night';
-//export const isDay = (sunElevation, fl=0) => nightState(sunElevation, fl) === 'day';
+export const moonStateMap = new Map([
+    [false, () => 'moonrise'],
+    [true, () => 'moonset']
+]);
+export const sun = {name: 'sun', getState: sunState, stateMap: sunStateMap};
+export const moon = {name: 'moon', getState: moonState, stateMap: moonStateMap};
+/* TODO GeoMagnetic latitudes */
+export const geomagneticLatitudeAndKp = (p, date) => {
+    let year = date.getUTCFullYear();
+    if (year < 2016) year = 2016;
+    if (year > 2025) year = 2025;
+    const poleLatLngByYear = {
+        '2016': [86.467, 192.206],
+        '2017': [86.562, 184.522],
+        '2018': [86.598, 176.901],
+        '2019': [86.568, 169.615],
+        '2020': [86.502, 164.036],
+        '2021': [86.415, 157.690],
+        '2022': [86.294, 151.948],
+        '2023': [86.146, 146.826],
+        '2024': [85.980, 142.293],
+        '2025': [85.801, 138.299]
+    };
+    const poleLatLng = poleLatLngByYear[year.toString()];
+    if (p.latitude <= 40) return [-90, 99]; // no need to compute
+    const mlat = 90 - p.distanceTo(new editolido.GeoPoint(poleLatLng)) * deg;
+    if (mlat < 45) return [-90, 99]; // no need to compute
+    const Kp = (mlat - 66.5) / 2 // https://www.swpc.noaa.gov/content/tips-viewing-aurora
+    return [mlat, (Kp > 0) ? 0 : Math.floor(-Kp)];
+};

@@ -68,9 +68,9 @@ En l'absence de GPS, l'avion dans la barre de menu (à gauche de l'heure de déc
 
 La capacité ETOPS est determinée depuis l'OFP et les cercles sont tracés. Un drapeau ETOPS apparait dans le pavé d'information de l'OFP si le carburant est limitatif (20mn, soit environ 2T de marge sur 777). Pour avoir plus d'informations vous pouvez utiliser un plugin (voir ci-dessous).
 
-## Lever / Coucher de soleil
+## Éphémérides
 
-Un calcul astronomique de la position du soleil est effectué en tenant compte de la route de l'OFP, du FL de l'OFP, et de l'heure de décollage choisie dans l'application. La précision attendue de l'algorithme est de ±1min sous 72° de latitude et de 10min au-delà. Si un vol est entièrement de nuit ou entièrement de jour, le widget ne s'affiche pas. Le widget affiche éventuellement les heures de lever ou de coucher du soleil. Cliquer sur le widget affiche les éphémérides du vol, elles contiennent les aubes et crépuscules civils, nautiques et astronomiques.
+Un calcul astronomique de la position du soleil est effectué en tenant compte de la route de l’OFP, du FL de l’OFP, et de l’heure de décollage choisie dans l’application. La précision attendue de l’algorithme est de ±1 min sous 72° de latitude et de 10 min au-delà. Si un vol est entièrement de nuit ou entièrement de jour, le widget ne s’affiche pas. Le widget affiche éventuellement les heures de lever ou de coucher du soleil. Cliquer sur le widget affiche les éphémérides du vol, elles contiennent les aubes et crépuscules civils, nautiques et astronomiques, la phase de la lune et son illumination en pourcentage, les levers et couchers de lune.
 
 En anglais le terme <q>twilight</q> est utilisé indifféremment pour l'aube ou le crépuscule. En français, la chronologie des événements est:
 

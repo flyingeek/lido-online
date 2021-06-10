@@ -2,155 +2,242 @@
     import {derived} from "svelte/store";
     import Overlay from "svelte-overlay";
     import {slide} from "svelte/transition";
-    import {sunElevation, nightState, nightEvents, nightEventNames, isRising} from "./suncalc";
+    import {sun, moon} from "./suncalc";
     import {ofp, takeOffTime, landingTime} from "../stores";
 
+    function* iterateSegment({prev, next, takeOffTime, segmentLength, getState, stateMap, increment=30000 /* 30sec */}){
+        let prevState = prev.state;
+        const min2ms = 60000;
+        const lowerLimit = prev.sum * min2ms;
+        const upperLimit = next.sum * min2ms; 
+        for(let m = lowerLimit + increment; m <= upperLimit; m= m + increment){
+            let fl = prev.fl;
+            if (m >= upperLimit) fl = next.fl;
+            const date = new Date(takeOffTime + m);
+            let pos;
+            const segmentTime = upperLimit - lowerLimit;
+            if (segmentTime === 0) {
+                pos = next.p;
+            }else{
+                const fraction = (m - lowerLimit) / segmentTime;
+                pos = prev.p.atFraction(next.p, fraction, segmentLength);
+            }
+            const [state] = getState({date, latitude:pos.latitude, longitude:pos.longitude}, fl);
+            if (state !== prevState) {
+                //const nightKp = (['night', 'astronomicalDusk', 'astronomicalDawn', 'nauticalDusk'].includes(type)) ? minKp : 100;
+                const type =  stateMap.get(prevState)([prevState, state]);
+                yield({position: pos, type, date, fl});
+                if (state === next.state) break;
+            }
+            prevState = state;
+        }
+    }
     export const solar = derived(
         [ofp, takeOffTime],
         ([$ofp, $takeOffTime]) => {
-            if (!$takeOffTime || !$ofp) return [];
-            const solarMatrix = [];
+            if (!$takeOffTime || !$ofp || $ofp.timeMatrix.length === 0) return [];
+            const takeOffTime = $takeOffTime.getTime();
+            const results = {};
             const timeMatrix = $ofp.timeMatrix;
-            if (timeMatrix.length === 0) return [];
             const distanceMatrix = $ofp.distanceMatrix;
             let last = timeMatrix.length - 1;
-            let previousState = null;
-            let previousEntry = null;
-            let maxLatitude = -90;
-            for (const [i, [p, sum, level]] of timeMatrix.entries()) {
-                let fl = level;
-                if (i === 0 || i === last) fl = 0;
-                const date = new Date($takeOffTime);
-                date.setUTCMinutes(date.getUTCMinutes() + sum);
-                const elevation = sunElevation({date, latitude:p.latitude, longitude:p.longitude});
-                const daylightState = nightState(elevation, fl);
-                const segmentLength = (i === last) ? null : distanceMatrix[i+1][1] - distanceMatrix[i][1];
-                if (p.latitude >= maxLatitude) maxLatitude = p.latitude
-                const entry = [p, sum, fl, daylightState, segmentLength, elevation, date, maxLatitude, editolido.rad_to_nm(segmentLength)];
-                if (daylightState !== previousState && previousState !== null) {
-                    if (previousEntry) solarMatrix.push(previousEntry);
-                    solarMatrix.push(entry);
-                    previousEntry = null; // do not push the same twice
-                    maxLatitude = -90;
-                }else{
-                    previousEntry = entry;
-                }
-                previousState = daylightState;
-            }
-            last = solarMatrix.length - 1;
-            //console.log(solarMatrix);
-            const data = [];
-            for (const [i, [p, sum, level, daylightState, segmentLength, elevation]] of solarMatrix.entries()) {
-                const increment = 1;
-                if (i < last) {
-                    if (solarMatrix[i+1][3] !== daylightState) {
-                        let prevState = daylightState;
-                        for(let m = sum + increment; m<=solarMatrix[i+1][1]; m= m + increment){
-                            const type = (isRising(prevState, solarMatrix[i+1][3])) ? nightEvents[prevState][0] : nightEvents[prevState][1];
-                            let fl = level;
-                            if (m >= solarMatrix[i+1][1]) fl = solarMatrix[i+1][2];
-                            const date = new Date($takeOffTime);
-                            date.setUTCMinutes(date.getUTCMinutes() + m);
-                            let pos;
-                            const segmentTime = solarMatrix[i+1][1] - sum;
-                            if (segmentTime === 0) {
-                                pos = solarMatrix[i+1][0];
-                            }else{
-                                const fraction = (m - sum) / segmentTime;
-                                pos = p.atFraction(solarMatrix[i+1][0], fraction, segmentLength)
-                            }
-                            const elev = sunElevation({date, latitude:pos.latitude, longitude:pos.longitude});
-                            const state = nightState(elev, fl);
-                            //console.log(elev, state);
-                            if (state !== prevState) {
-                                //console.log(1.15 * Math.sqrt(fl * 100) / 60);
-                                //console.log(p, elev);
-                                data.push({position: pos, type, date, elevation: elev, fl});
-                                prevState = state;
-                                if (state === solarMatrix[i+1][3]) break;
-                            }
+            for (const object of [sun, moon]) {
+                const matrix = [];
+                let prev = null;
+                for (const [i, [p, sum, level]] of timeMatrix.entries()) {
+                    let fl = level;
+                    if (i === 0 || i === last) fl = 0;
+                    const date = new Date(takeOffTime + sum * 60000);
+                    const [state] = object.getState({date, latitude:p.latitude, longitude:p.longitude}, fl);
+                    const next = {p, sum, fl, state};
+                    if (prev && state !== prev.state) {
+                        const segmentLength = distanceMatrix[i][1] - distanceMatrix[i-1][1];
+                        const params = {
+                            prev, 
+                            next, 
+                            takeOffTime, 
+                            segmentLength, 
+                            getState: object.getState, 
+                            stateMap: object.stateMap, 
+                            increment: (object.name === 'sun') ? 30000 : 60000
+                        };
+                        for (const data of iterateSegment(params)) {
+                            matrix.push(data);
                         }
                     }
-                } 
+                    prev = next;
+                }
+                results[object.name] = matrix;
             }
-            //console.log(data);
-            return data;
+            //console.log(results);
+            return results;
         },
-        [] // initial value
+        {} // initial value
     );
-    const stateNameWithPrefix = (date, point) => {
-        const elevation = sunElevation({date, latitude: point.latitude, longitude: point.longitude});
-        const state = nightState(sunElevation({date, latitude: point.latitude, longitude: point.longitude}));
-
+</script>
+<script>
+    import {sunAzEl, getMoonIllumination} from "./suncalc";
+    const stateAsText = (date, point, fl=0) => {
+        const [state, elevation] = sun.getState({date, latitude: point.latitude, longitude: point.longitude});
         if (state === 'day') {
             return  'de jour';
         } else if (state === 'night') {
             return 'de nuit';
         } else {
             // rising or descending ?
-            const later = new Date(date);
-            later.setUTCMinutes(later.getUTCMinutes() + 10);
-            const laterElevation = sunElevation({date: later, latitude: point.latitude, longitude: point.longitude});
+            const later = new Date(date.getTime() + 60000); // 1mn later
+            const laterElevation = sunAzEl({date: later, latitude: point.latitude, longitude: point.longitude}).elevation;
             const isRising = laterElevation > elevation;
             if (state === 'astronomical twilight') {
-                return (isRising) ? "à l'aube astronomique" : "durant le crépuscule astronomique";
+                return (isRising) ? "durant l'aube astronomique" : "durant le crépuscule astronomique";
             }else if (state === 'nautical twilight') {
-                return (isRising) ? "à l'aube nautique" : "durant le crépuscule nautique";
+                return (isRising) ? "durant l'aube nautique" : "durant le crépuscule nautique";
             }else if (state === 'civil twilight') {
-                return (isRising) ? "à l'aube civile" : "durant le crépuscule civil";
+                return (isRising) ? "durant l'aube civile" : "durant le crépuscule civil";
             }
         }
         return `#ERREUR ${state}#`;
-    }
-    const departureState = (ofp, takeOffTime) => {
+    };
+    const departureText = (ofp, takeOffTime) => {
         if (!ofp || !takeOffTime) return '';
         const departure = ofp.route.points[0];
-        return stateNameWithPrefix(takeOffTime, departure);
-    }
-    const arrivalState = (ofp, landingTime) => {
+        return stateAsText(takeOffTime, departure);
+    };
+    const arrivalText = (ofp, landingTime) => {
         if (!ofp || !takeOffTime) return '';
         const arrival = ofp.route.points[ofp.route.points.length - 1];
-        return stateNameWithPrefix(landingTime, arrival);
-    }
+        return stateAsText(landingTime, arrival);
+    };
+    const format = (date, withSeconds=false) => {
+        if (withSeconds) {
+            return date.toJSON().slice(11, 19);
+        } else if (date.getUTCSeconds(date) < 30) {
+            return date.toJSON().slice(11, 16);
+        }
+        return (new Date(date.getTime() + 60000)).toJSON().slice(11, 16);
+    };
+    const nightEventsFR = {
+        'astronomicalDawn': 'Aube astronomique',
+        'astronomicalDusk': 'Nuit astronomique',
+        'nauticalDawn': 'Aube nautique',
+        'nauticalDusk': 'Nuit nautique',
+        'civilDawn': 'Aube civile',
+        'civilDusk': 'Nuit civile',
+        'sunrise': 'Lever du soleil',
+        'sunset': 'Coucher du soleil',
+        'day': 'Jour',
+        'night': 'Nuit',
+        'moonrise': 'Lever de lune',
+        'moonset': 'Coucher de lune'
+    };
+    const getMoonIlluminationPercent = () => Math.round(moonIllumination.fraction * 100);
+    const getMoonName = () => {
+        //https://en.wikipedia.org/wiki/Lunar_phase
+        //rounded to the nearest % integer
+        const phase = moonIllumination.phase;
+        const fraction = getMoonIlluminationPercent();
+        if(fraction <= 0) {
+            return 'Nouvelle lune';
+        }else if (phase < 0.5 && fraction < 50) {
+            return 'Premier croissant';
+        }else if (phase < 0.5 && fraction === 50) {
+            return 'Premier quartier';
+        }else if ((phase < 0.5 && fraction < 100)){
+            return 'Gibbeuse croissante';
+        }else if (fraction === 100){
+            return 'Pleine Lune';
+        }else if (phase >= 0.5 && fraction > 50){
+            return 'Gibbeuse décroissante';
+        }else if (phase >= 0.5 && fraction === 50){
+            return 'Dernier quartier';
+        }else{
+            return 'Dernier croissant';
+        }
+    };
+    const getMoonEmoji = () => {
+        //https://fr.wikipedia.org/wiki/Phase_de_la_Lune
+        const phase = moonIllumination.phase;
+        const fraction = moonIllumination.fraction;
+        if(fraction <= 0.02) {
+            return '🌑';
+        }else if (phase < 0.5 && fraction <= 0.34){
+            return '🌒';
+        }else if (phase < 0.5 && fraction <= 0.65){
+            return '🌓';
+        }else if (phase < 0.5 && fraction < 0.97){
+            return '🌔';
+        }else if (fraction >= 0.97){
+            return '🌕';
+        }else if (phase >= 0.5 && fraction > 0.65){
+            return '🌖';
+        }else if (phase >= 0.5 && fraction > 0.34){
+            return '🌗';
+        }else{
+            return '🌘';
+        }
+    };
+
+    $: events = ($solar.sun) ? $solar.sun.filter(e => ['sunrise', 'sunset'].includes(e.type)).slice(0, 3) : [];
+    $: moonIllumination = ($takeOffTime) ? getMoonIllumination($takeOffTime) : {};
 </script>
-<script>
-    $: events = $solar.filter(e => ['sunrise', 'sunset'].includes(e.type)).slice(0, 3);
-</script>
-{#if $solar.length > 0 && $ofp && $ofp.timeMatrix.length > 0}
+{#if $solar.sun && $solar.moon && ($solar.sun.length > 0 || $solar.moon.length > 0) && $ofp && $ofp.timeMatrix.length > 0}
     <Overlay  position="bottom-center" isOpen={false}>
         <div slot="parent" class="sun" let:toggle on:click={toggle}>
-            <p class="icon">☀</p>
+            <p class="icon">☀️</p>
             <div class="details" class:two="{events.length === 2}" class:three="{events.length>= 3}">
                 {#each events as event}
-                    <p>{(event.type === 'sunrise') ? '↥' : '↧'} {event.date.toJSON().slice(11, 16)}</p>
+                    <p>{(event.type === 'sunrise') ? '↥' : '↧'} {format(event.date)}</p>
                 {/each}
             </div>
         </div>
         <div slot="content" style="width: 390px; max-width:390px; position:static;" class="popover" let:close in:slide={{ duration: 200 }}>
             <h3 class="popover-header">Éphémérides du vol<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>    
             <div class="popover-body">
-                <p>Décollage {departureState($ofp, $takeOffTime)} à {$takeOffTime.toJSON().slice(11, 16)}z</p>
+                <p>Décollage {departureText($ofp, $takeOffTime)} à {$takeOffTime.toJSON().slice(11, 16)}z</p>
                 <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Type</th>
-                            <th scope="col" class="color day-color"></th><!-- color -->
-                        <th scope="col">Heure</th>
-                        <th scope="col">FL</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each $solar as event}
-                        <tr>
-                            <td>{nightEventNames[event.type]}</td>
-                            <td class="color {event.type}-color"></td>
-                            <td>{event.date.toJSON().slice(11, 16)}</td>
-                            <td>FL{event.fl}</td>
-                        </tr>
-                        {/each}
-                    </tbody>
+                    {#if ($solar.sun.length > 0)}
+                        <thead>
+                            <tr>
+                                <th scope="col">Soleil</th>
+                                <th scope="col" class="color"></th><!-- color -->
+                                <th scope="col">Heure</th>
+                                <th scope="col">FL</th>
+                                <!--<th scope="col" class="kp"></th> minKp -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {#each $solar.sun as event}
+                            <tr>
+                                <td>{nightEventsFR[event.type] || event.type}</td>
+                                <td class="color {event.type}-color"></td>
+                                <td>{format(event.date)}</td>
+                                <td>FL{event.fl}</td>
+                                <!-- <td class="kp" class:kp-ok={event.nightKp < 99}>{(event.nightKp < 99) ? Math.floor(event.nightKp) : ''}</td> -->
+                            </tr>
+                            {/each}
+                        </tbody>
+                    {/if}
+                    {#if ($solar.moon.length > 0)}
+                        <thead>
+                            <tr>
+                                <th scope="col" colspan="4">Lune {getMoonEmoji()} {getMoonName()} {getMoonIlluminationPercent()}%</th>
+                                <!--<th scope="col" class="kp"></th> minKp -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {#each $solar.moon as event}
+                            <tr>
+                                <td>{nightEventsFR[event.type] || event.type}</td>
+                                <td class="color"></td>
+                                <td>{format(event.date)}</td>
+                                <td>FL{event.fl}</td>
+                                <!-- <td class="kp" class:kp-ok={event.nightKp < 99}>{(event.nightKp < 99) ? Math.floor(event.nightKp) : ''}</td> -->
+                            </tr>
+                            {/each}
+                        </tbody>
+                    {/if}
                 </table>
-                <p>Atterrissage {arrivalState($ofp, $landingTime)} à {$landingTime.toJSON().slice(11, 16)}z</p>
+                <p>Atterrissage {arrivalText($ofp, $landingTime)} à {$landingTime.toJSON().slice(11, 16)}z</p>
             </div>
         </div>
     </Overlay>
@@ -192,6 +279,9 @@
         top: -5px;
         position: relative;
         z-index: 2;
+    }
+    .table th {
+        text-align: left;
     }
     .table .color {
         width: 0.75rem;
@@ -237,5 +327,15 @@
         border-top-color: lightskyblue;
         border-bottom-color: #2383C2;
     }
-
+    /* .table .kp {
+        width: 1em;
+        padding-left: 0;
+        padding-right: 0;
+        text-align: center;
+    }
+    .kp-ok {
+        background-color: green;
+        color: white;
+        transform: translateY(-50%);
+    } */
 </style>
