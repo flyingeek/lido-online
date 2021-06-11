@@ -32,12 +32,15 @@
             prevState = state;
         }
     }
+    const getSolarDefault = () => {
+        return {[moon.name]: [], [sun.name]: []};
+    };
     export const solar = derived(
         [ofp, takeOffTime],
         ([$ofp, $takeOffTime]) => {
-            if (!$takeOffTime || !$ofp || $ofp.timeMatrix.length === 0) return [];
+            if (!$takeOffTime || !$ofp || $ofp.timeMatrix.length === 0) return getSolarDefault();
             const takeOffTime = $takeOffTime.getTime();
-            const results = {};
+            const results = getSolarDefault();
             const timeMatrix = $ofp.timeMatrix;
             const flightTime = timeMatrix[timeMatrix.length - 1][1] * 60000;
             const distanceMatrix = $ofp.distanceMatrix;
@@ -74,53 +77,25 @@
             //console.log(results);
             return results;
         },
-        {} // initial value
+        getSolarDefault() // initial value
     );
 </script>
 <script>
-    import {sunAzEl, getMoonIllumination} from "./suncalc";
-    const stateAsText = (date, point, fl=0) => {
-        const [state, elevation] = sun.getState({date, latitude: point.latitude, longitude: point.longitude});
-        if (state === 'day') {
-            return  'de jour';
-        } else if (state === 'night') {
-            return 'de nuit';
-        } else {
-            // rising or descending ?
-            const later = new Date(date.getTime() + 60000); // 1mn later
-            const laterElevation = sunAzEl({date: later, latitude: point.latitude, longitude: point.longitude}).elevation;
-            const isRising = laterElevation > elevation;
-            if (state === 'astronomical twilight') {
-                return (isRising) ? "durant l'aube astronomique" : "durant le crépuscule astronomique";
-            }else if (state === 'nautical twilight') {
-                return (isRising) ? "durant l'aube nautique" : "durant le crépuscule nautique";
-            }else if (state === 'civil twilight') {
-                return (isRising) ? "durant l'aube civile" : "durant le crépuscule civil";
-            }
-        }
-        return `#ERREUR ${state}#`;
+    import {getMoonIllumination} from "./suncalc";
+    const departureState = (ofp) => {
+        if (!ofp || !$takeOffTime) return '';
+        //TODO departure fl in timeMatrix
+        const [point, sum, fl] = ofp.timeMatrix[0];
+        return sun.getState({date: $takeOffTime, latitude: point.latitude, longitude: point.longitude}, 0)[0];
     };
-    const departureText = (ofp, takeOffTime) => {
-        if (!ofp || !takeOffTime) return '';
-        const departure = ofp.route.points[0];
-        return stateAsText(takeOffTime, departure);
-    };
-    const departureState = (ofp, takeOffTime) => {
-        if (!ofp || !takeOffTime) return '';
-        const point = ofp.route.points[0];
-        return sun.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude})[0];
-    };
-    const arrivalText = (ofp, landingTime) => {
-        if (!ofp || !takeOffTime) return '';
-        const arrival = ofp.route.points[ofp.route.points.length - 1];
-        return stateAsText(landingTime, arrival);
-    };
-    const arrivalState = (ofp, landingTime) => {
-        if (!ofp || !landingTime) return '';
-        const point = ofp.route.points[ofp.route.points.length - 1];
-        return sun.getState({date: landingTime, latitude: point.latitude, longitude: point.longitude})[0];
+    const arrivalState = (ofp) => {
+        if (!ofp || !$landingTime) return '';
+        //TODO arrival fl in timeMatrix
+        const [point, sum, fl] = ofp.timeMatrix[ofp.timeMatrix.length - 1];
+        return sun.getState({date: $landingTime, latitude: point.latitude, longitude: point.longitude}, 0)[0];
     };
     const format = (date, withSeconds=false) => {
+        if (!date) return (withSeconds) ? '--:--:--' : '--:--';
         if (withSeconds) {
             return date.toJSON().slice(11, 19);
         } else if (date.getUTCSeconds(date) < 30) {
@@ -195,7 +170,7 @@
         let [state] = sun.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude});
         if (state === 'day') return '☀️';
         [state] = moon.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude});
-        if (state||moonEvents.length>0) return getMoonEmoji();
+        if (state||$solar.moon.length>0) return getMoonEmoji();
         return '🔭';
     };
     const getDepartureMoonState = (ofp, takeOffTime) => {
@@ -206,43 +181,42 @@
     };
     const eventColor = (stateOrEvent) => {
         switch(stateOrEvent){
-            case 'astronomicalDawn':
-            case 'nauticalDusk':
+            
+            case 'day':
+            case 'dayStart':
+                return '#89d4ff';
+            case 'sunrise end':
+            case 'sunsetStart':
+            case 'sunriseEnd':
+                return 'lightskyblue'; 
+            case 'civil twilight':
+            case 'sunset':
+            case 'sunrise':
+                return '#2383C2'
+            case 'nautical twilight':
+            case 'civilDawn':
+            case 'civilDusk':
+                return '#0052A2';
             case 'astronomical twilight':
+            case 'nauticalDawn':
+            case 'nauticalDusk':
                 return '#02386E';
+            case 'night':
+            case 'astronomicalDawn':
             case 'astronomicalDusk':
                 return '#000B18';
-            case 'night':
-                return 'black';
-            case 'nauticalDawn':
-            case 'civilDusk':
-            case 'nautical twilight':
-                return '#0052A2';
-            case 'civilDawn':
-            case 'sunset':
-            case 'civil twilight':
-                return '#2383C2';
-            case 'sunrise':
-                return 'lightskyblue';
-            case 'day':
-                return '#89d4ff';
             default:
-                return `#ERREUR ${stateOrEvent}#`;
+                console.error(`#ERREUR ${stateOrEvent}#`);
+                return 'red';
         };
     };
-    const eventRelativePosition = (event) => {
-        if (!$takeOffTime || !$landingTime) return 0;
-        const ref = $takeOffTime.getTime();
-        return Math.round(1000 * (event.date.getTime() - ref) / ($landingTime.getTime() - ref)) / 10;
-    }
-    $: sunEvents = ($solar.sun) ? $solar.sun.filter(e => ['sunrise', 'sunset'].includes(e.type)).slice(0, 3) : [];
-    $: moonEvents = ($solar.moon) ? $solar.moon.slice(0, 3) : [];
-    $: isMoonVisibleDuringFlight = moonEvents.length > 0 || getDepartureMoonState($ofp, $takeOffTime);
+    $: sunEvents = $solar.sun.filter(e => ['sunrise', 'sunset'].includes(e.type)).slice(0, 3);
+    $: isMoonVisibleDuringFlight = $solar.moon.length > 0 || getDepartureMoonState($ofp, $takeOffTime);
     $: moonIllumination = ($takeOffTime) ? getMoonIllumination($takeOffTime) : {};
-    $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmoji($ofp, $takeOffTime); //must be after moonIllumination and moonEvents
+    $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmoji($ofp, $takeOffTime); //must be after moonIlluminations
 
 </script>
-{#if $solar.sun && $solar.moon && $ofp && $ofp.timeMatrix.length > 0}
+{#if $ofp && $ofp.timeMatrix.length > 0}
     <Overlay  position="bottom-center" isOpen={false}>
         <div slot="parent" class="sun" let:toggle on:click={toggle}>
             <p class="icon">{widgetEmoji}</p>
@@ -253,8 +227,8 @@
                     {/each}
                 </div>
             {:else if widgetEmoji !== '🔭'}
-                <div class="details" class:two="{moonEvents.length === 2}" class:three="{moonEvents.length>= 3}">
-                    {#each moonEvents as event}
+                <div class="details" class:two="{$solar.moon.length === 2}" class:three="{$solar.moon.length>= 3}">
+                    {#each $solar.moon.slice(0, 3) as event}
                         <p>{(event.type === 'moonrise') ? '↥' : '↧'} {format(event.date)}</p>
                     {/each}
                 </div>
@@ -266,66 +240,64 @@
                 <svg width="100%" height="60px" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="MyGradient">
-                            <stop offset="0%"  stop-color="{eventColor(departureState($ofp, $takeOffTime))}"/>
+                            <stop offset="0%"  stop-color="{eventColor(departureState($ofp))}"/>
                             {#each $solar.sun as event}
                                 <stop offset="{event.relpos}%"  stop-color="{eventColor(event.type)}"/>
                             {/each}
-                            <stop offset="100%"  stop-color="{eventColor(arrivalState($ofp, $landingTime))}"/>
+                            <stop offset="100%"  stop-color="{eventColor(arrivalState($ofp))}"/>
                         </linearGradient>
                     </defs>
                     {#each $solar.sun as event, i}
-                        <line x1="{ 5 + 0.9 * event.relpos}%" y1="30" x2="{5 + 0.9 * event.relpos}%" y2="32" stroke="gray" stroke-width="1"/>
+                        {#if event.type !== 'sunriseEnd' && event.type !== 'sunsetStart'}
+                            <line x1="{ 5 + 0.9 * event.relpos}%" y1="30" x2="{5 + 0.9 * event.relpos}%" y2="32" stroke="gray" stroke-width="1"/>
+                        {/if}
                         {#if event.type.startsWith('civil')}
-                            <circle fill="{(event.type.endsWith('Dawn')) ? '#FCBF49' : '#000B18'}" cx="{ 5 + 0.9 * event.relpos}%" cy="40" r="5">
-                            </circle>
+                            <circle fill="{(event.type.endsWith('Dawn')) ? '#FCBF49' : '#000B18'}" cx="{ 5 + 0.9 * event.relpos}%" cy="40" r="5"/>
                         {/if}
                     {/each}
                     {#each $solar.moon as event}
                         <line x1="{ 5 + 0.9 * event.relpos}%" y1="18" x2="{5 + 0.9 * event.relpos}%" y2="20" stroke="gray" stroke-width="1"/>
                         <text x="{ 5 + 0.9 * event.relpos}%" y="16" fill="{(event.type==='moonrise') ? '#FCBF49' : '#000B18'}"text-anchor="middle" >☽</text>
                     {/each}
-                    <rect fill="url(#MyGradient)"
-                          x="5%" y="20" width="90%" height="10px" rx="0"/>
+                    <rect fill="url(#MyGradient)" x="5%" y="20" width="90%" height="10px" rx="0"/>
                     <text x="5%" y="56" fill="black"text-anchor="middle" >{format($takeOffTime)}</text>
                     <text x="95%" y="56" fill="black" text-anchor="middle">{format($landingTime)}</text>
                 </svg>
                 <table class="table">
-                    {#if ($solar.sun.length > 0)}
-                        <thead>
-                            <tr>
-                                <th scope="col">Soleil</th>
-                                <th scope="col" class="color"></th><!-- color -->
-                                <th scope="col">Heure</th>
-                                <th scope="col">FL</th>
-                                <!--<th scope="col" class="kp"></th> minKp -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {#each $solar.sun as event}
-                            <tr>
-                                <td>{nightEventsFR[event.type] || event.type}
-                                {#if event.type === 'civilDawn'}
-                                    <span class="pin pin-day"></span>
-                                {:else if event.type === 'civilDusk'}
-                                    <span class="pin pin-night"></span>
-                                {/if}
-                                </td>
-                                <td class="color {event.type}-color"></td>
-                                <td>{format(event.date)}</td>
-                                <td>FL{event.fl}</td>
-                                <!-- <td class="kp" class:kp-ok={event.nightKp < 99}>{(event.nightKp < 99) ? Math.floor(event.nightKp) : ''}</td> -->
-                            </tr>
-                            {/each}
-                        </tbody>
-                    {/if}
-
+                    <thead>
+                        <tr>
+                            <th scope="col">Soleil</th>
+                            <th scope="col" class="color"></th><!-- color -->
+                            <th scope="col">Heure</th>
+                            <th scope="col">FL</th>
+                            <!--<th scope="col" class="kp"></th> minKp -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each $solar.sun.filter(e => e.type !== 'sunriseEnd' && e.type !== 'sunsetStart') as event}
+                        <tr>
+                            <td>{nightEventsFR[event.type] || event.type}
+                            {#if event.type === 'civilDawn'}
+                                <span class="pin pin-day"></span>
+                            {:else if event.type === 'civilDusk'}
+                                <span class="pin pin-night"></span>
+                            {/if}
+                            </td>
+                            <td class="color {event.type}-color"></td>
+                            <td>{format(event.date)}</td>
+                            <td>FL{event.fl}</td>
+                            <!-- <td class="kp" class:kp-ok={event.nightKp < 99}>{(event.nightKp < 99) ? Math.floor(event.nightKp) : ''}</td> -->
+                        </tr>
+                        {:else}
+                            <tr><td colspan="4">Aucun événement</td></tr>
+                        {/each}
+                    </tbody>
                     <thead>
                         <tr>
                             <th scope="col" colspan="4" class:border-bottom-0={$solar.moon.length === 0}>Lune {getMoonEmoji()} {getMoonName()} {getMoonIlluminationPercent()}% {(isMoonVisibleDuringFlight) ? '' : 'non visible'}</th>
                             <!--<th scope="col" class="kp"></th> minKp -->
                         </tr>
                     </thead>
-
                     <tbody>
                         {#each $solar.moon as event}
                         <tr>
@@ -335,9 +307,10 @@
                             <td>FL{event.fl}</td>
                             <!-- <td class="kp" class:kp-ok={event.nightKp < 99}>{(event.nightKp < 99) ? Math.floor(event.nightKp) : ''}</td> -->
                         </tr>
+                        {:else}
+                            <tr><td colspan="4">Aucun événement</td></tr>
                         {/each}
                     </tbody>
-
                 </table>
             </div>
         </div>

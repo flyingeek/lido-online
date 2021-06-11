@@ -153,7 +153,8 @@ export const sunStateMap = new Map([
     ['astronomical twilight', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'nauticalDawn': 'astronomicalDusk'],
     ['nautical twilight', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'civilDawn': 'nauticalDusk'],
     ['civil twilight', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'sunrise': 'civilDusk'],
-    ['day', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'dayStart' : 'sunset']
+    ['sunrise end', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'sunriseEnd' : 'sunset'],
+    ['day', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'dayStart': 'sunsetStart'],
 ]);
 
 const sunRisingStates = Array.from(sunStateMap.keys());
@@ -172,6 +173,7 @@ const sunStates = [ // order important
     [   -12, 'astronomical twilight'],
     [    -6, 'nautical twilight'],
     [-0.833, 'civil twilight'],
+    [     1, 'sunrise end']
 ];
 
 export const sunState = ({date, latitude, longitude}, fl=0) => {
