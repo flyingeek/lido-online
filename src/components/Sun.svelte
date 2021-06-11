@@ -39,6 +39,7 @@
             const takeOffTime = $takeOffTime.getTime();
             const results = {};
             const timeMatrix = $ofp.timeMatrix;
+            const flightTime = timeMatrix[timeMatrix.length - 1][1] * 60000;
             const distanceMatrix = $ofp.distanceMatrix;
             let last = timeMatrix.length - 1;
             for (const object of [sun, moon]) {
@@ -62,6 +63,7 @@
                             increment: (object.name === 'sun') ? 30000 : 60000
                         };
                         for (const data of iterateSegment(params)) {
+                            data['relpos'] = Math.round(10000 * (data.date.getTime() - takeOffTime) / flightTime) / 100;
                             matrix.push(data);
                         }
                     }
@@ -103,10 +105,20 @@
         const departure = ofp.route.points[0];
         return stateAsText(takeOffTime, departure);
     };
+    const departureState = (ofp, takeOffTime) => {
+        if (!ofp || !takeOffTime) return '';
+        const point = ofp.route.points[0];
+        return sun.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude})[0];
+    };
     const arrivalText = (ofp, landingTime) => {
         if (!ofp || !takeOffTime) return '';
         const arrival = ofp.route.points[ofp.route.points.length - 1];
         return stateAsText(landingTime, arrival);
+    };
+    const arrivalState = (ofp, landingTime) => {
+        if (!ofp || !landingTime) return '';
+        const point = ofp.route.points[ofp.route.points.length - 1];
+        return sun.getState({date: landingTime, latitude: point.latitude, longitude: point.longitude})[0];
     };
     const format = (date, withSeconds=false) => {
         if (withSeconds) {
@@ -192,7 +204,37 @@
         const [state] = moon.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude});
         return state;
     };
-
+    const eventColor = (stateOrEvent) => {
+        switch(stateOrEvent){
+            case 'astronomicalDawn':
+            case 'nauticalDusk':
+            case 'astronomical twilight':
+                return '#02386E';
+            case 'astronomicalDusk':
+                return '#000B18';
+            case 'night':
+                return 'black';
+            case 'nauticalDawn':
+            case 'civilDusk':
+            case 'nautical twilight':
+                return '#0052A2';
+            case 'civilDawn':
+            case 'sunset':
+            case 'civil twilight':
+                return '#2383C2';
+            case 'sunrise':
+                return 'lightskyblue';
+            case 'day':
+                return '#89d4ff';
+            default:
+                return `#ERREUR ${stateOrEvent}#`;
+        };
+    };
+    const eventRelativePosition = (event) => {
+        if (!$takeOffTime || !$landingTime) return 0;
+        const ref = $takeOffTime.getTime();
+        return Math.round(1000 * (event.date.getTime() - ref) / ($landingTime.getTime() - ref)) / 10;
+    }
     $: sunEvents = ($solar.sun) ? $solar.sun.filter(e => ['sunrise', 'sunset'].includes(e.type)).slice(0, 3) : [];
     $: moonEvents = ($solar.moon) ? $solar.moon.slice(0, 3) : [];
     $: isMoonVisibleDuringFlight = moonEvents.length > 0 || getDepartureMoonState($ofp, $takeOffTime);
@@ -221,7 +263,32 @@
         <div slot="content" style="width: 390px; max-width:390px; position:static;" class="popover" let:close in:slide={{ duration: 200 }}>
             <h3 class="popover-header">Éphémérides du vol<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>    
             <div class="popover-body">
-                <p>Décollage {departureText($ofp, $takeOffTime)} à {$takeOffTime.toJSON().slice(11, 16)}z</p>
+                <svg width="100%" height="60px" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="MyGradient">
+                            <stop offset="0%"  stop-color="{eventColor(departureState($ofp, $takeOffTime))}"/>
+                            {#each $solar.sun as event}
+                                <stop offset="{event.relpos}%"  stop-color="{eventColor(event.type)}"/>
+                            {/each}
+                            <stop offset="100%"  stop-color="{eventColor(arrivalState($ofp, $landingTime))}"/>
+                        </linearGradient>
+                    </defs>
+                    {#each $solar.sun as event, i}
+                        <line x1="{ 5 + 0.9 * event.relpos}%" y1="30" x2="{5 + 0.9 * event.relpos}%" y2="32" stroke="gray" stroke-width="1"/>
+                        {#if event.type.startsWith('civil')}
+                            <circle fill="{(event.type.endsWith('Dawn')) ? '#FCBF49' : '#000B18'}" cx="{ 5 + 0.9 * event.relpos}%" cy="40" r="5">
+                            </circle>
+                        {/if}
+                    {/each}
+                    {#each $solar.moon as event}
+                        <line x1="{ 5 + 0.9 * event.relpos}%" y1="18" x2="{5 + 0.9 * event.relpos}%" y2="20" stroke="gray" stroke-width="1"/>
+                        <text x="{ 5 + 0.9 * event.relpos}%" y="16" fill="{(event.type==='moonrise') ? '#FCBF49' : '#000B18'}"text-anchor="middle" >☽</text>
+                    {/each}
+                    <rect fill="url(#MyGradient)"
+                          x="5%" y="20" width="90%" height="10px" rx="0"/>
+                    <text x="5%" y="56" fill="black"text-anchor="middle" >{format($takeOffTime)}</text>
+                    <text x="95%" y="56" fill="black" text-anchor="middle">{format($landingTime)}</text>
+                </svg>
                 <table class="table">
                     {#if ($solar.sun.length > 0)}
                         <thead>
@@ -236,7 +303,13 @@
                         <tbody>
                             {#each $solar.sun as event}
                             <tr>
-                                <td>{nightEventsFR[event.type] || event.type}</td>
+                                <td>{nightEventsFR[event.type] || event.type}
+                                {#if event.type === 'civilDawn'}
+                                    <span class="pin pin-day"></span>
+                                {:else if event.type === 'civilDusk'}
+                                    <span class="pin pin-night"></span>
+                                {/if}
+                                </td>
                                 <td class="color {event.type}-color"></td>
                                 <td>{format(event.date)}</td>
                                 <td>FL{event.fl}</td>
@@ -256,7 +329,7 @@
                     <tbody>
                         {#each $solar.moon as event}
                         <tr>
-                            <td>{nightEventsFR[event.type] || event.type}</td>
+                            <td>{nightEventsFR[event.type] || event.type} <span class:moonrise={event.type==='moonrise'}>☽</span></td>
                             <td class="color"></td>
                             <td>{format(event.date)}</td>
                             <td>FL{event.fl}</td>
@@ -266,7 +339,6 @@
                     </tbody>
 
                 </table>
-                <p>Atterrissage {arrivalText($ofp, $landingTime)} à {$landingTime.toJSON().slice(11, 16)}z</p>
             </div>
         </div>
     </Overlay>
@@ -308,9 +380,6 @@
         top: -5px;
         position: relative;
         z-index: 2;
-    }
-    p ~ table {
-    margin-top: -0.75rem;
     }
     .table th {
         text-align: left;
@@ -358,6 +427,19 @@
         background: linear-gradient(lightskyblue 0% 50%, #2383C2 50% 100%);
         border-top-color: lightskyblue;
         border-bottom-color: #2383C2;
+    }
+    .pin {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 5px;
+        background-color: #000B18;
+    }
+    .pin-day {
+        background-color: #FCBF49;
+    }
+    .moonrise {
+        color: #FCBF49;
     }
     /* .table .kp {
         width: 1em;
