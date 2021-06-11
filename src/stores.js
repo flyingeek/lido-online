@@ -26,6 +26,9 @@ export const ofpStatus = writable();
 export const takeOffTime = writable();
 export const landingTime = derived([ofp, takeOffTime], ([$ofp, $takeOffTime]) => {
     if ($ofp && $takeOffTime) {
+        if ($ofp.timeMatrix.length > 0) {
+            return new Date($takeOffTime.getTime() + (60000 * $ofp.timeMatrix[$ofp.timeMatrix.length - 1][1]));
+        }
         const landing = new Date($takeOffTime);
         const duration = $ofp.infos.duration;
         landing.setUTCMinutes(landing.getUTCMinutes() + duration[1]);
