@@ -82,6 +82,7 @@
 </script>
 <script>
     import {getMoonIllumination} from "./suncalc";
+    import {flightProgress} from "../stores";
     const departureState = (ofp) => {
         if (!ofp || !$takeOffTime) return '';
         //TODO departure fl in timeMatrix
@@ -252,7 +253,7 @@
                             <line x1="{ 5 + 0.9 * event.relpos}%" y1="30" x2="{5 + 0.9 * event.relpos}%" y2="32" stroke="gray" stroke-width="1"/>
                         {/if}
                         {#if event.type.startsWith('civil')}
-                            <circle fill="{(event.type.endsWith('Dawn')) ? '#FCBF49' : '#000B18'}" cx="{ 5 + 0.9 * event.relpos}%" cy="40" r="5"/>
+                            <text x="{ 5 + 0.9 * event.relpos}%" y="44" fill="{(event.type.endsWith('Dawn')) ? '#FCBF49' : '#000B18'}" text-anchor="middle" >✹</text>
                         {/if}
                     {/each}
                     {#each $solar.moon as event}
@@ -260,6 +261,7 @@
                         <text x="{ 5 + 0.9 * event.relpos}%" y="16" fill="{(event.type==='moonrise') ? '#FCBF49' : '#000B18'}"text-anchor="middle" >☽</text>
                     {/each}
                     <rect fill="url(#MyGradient)" x="5%" y="20" width="90%" height="10px" rx="0"/>
+                    <circle fill="#FCBF49" cx="{ 5 + 0.9 * $flightProgress}%" stroke="#FCBF49" cy="25" r="2" />
                     <text x="5%" y="56" fill="black"text-anchor="middle" >{format($takeOffTime)}</text>
                     <text x="95%" y="56" fill="black" text-anchor="middle">{format($landingTime)}</text>
                 </svg>
@@ -277,11 +279,9 @@
                         {#each $solar.sun.filter(e => e.type !== 'sunriseEnd' && e.type !== 'sunsetStart') as event}
                         <tr>
                             <td>{nightEventsFR[event.type] || event.type}
-                            {#if event.type === 'civilDawn'}
-                                <span class="pin pin-day"></span>
-                            {:else if event.type === 'civilDusk'}
-                                <span class="pin pin-night"></span>
-                            {/if}
+                                {#if event.type.startsWith('civil')}
+                                    <span class:rise={event.type==='civilDawn'}>✹</span>
+                                {/if}
                             </td>
                             <td class="color {event.type}-color"></td>
                             <td>{format(event.date)}</td>
@@ -301,7 +301,7 @@
                     <tbody>
                         {#each $solar.moon as event}
                         <tr>
-                            <td>{nightEventsFR[event.type] || event.type} <span class:moonrise={event.type==='moonrise'}>☽</span></td>
+                            <td>{nightEventsFR[event.type] || event.type} <span class:moonrise={event.type==='rise'}>☽</span></td>
                             <td class="color"></td>
                             <td>{format(event.date)}</td>
                             <td>FL{event.fl}</td>
@@ -411,7 +411,7 @@
     .pin-day {
         background-color: #FCBF49;
     }
-    .moonrise {
+    .rise {
         color: #FCBF49;
     }
     /* .table .kp {
