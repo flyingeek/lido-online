@@ -301,7 +301,7 @@
                     <tbody>
                         {#each $solar.moon as event}
                         <tr>
-                            <td>{nightEventsFR[event.type] || event.type} <span class:rise={event.type==='rise'}>☽</span></td>
+                            <td>{nightEventsFR[event.type] || event.type} <span class:rise={event.type==='moonrise'}>☽</span></td>
                             <td class="color"></td>
                             <td>{format(event.date)}</td>
                             <td>FL{event.fl}</td>
