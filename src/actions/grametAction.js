@@ -173,7 +173,7 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
     }
     const placePlane = (plane, planePosition, planeLevel) => {
         // before and after flight, displays the full gramet
-        plane.style.left = (x + (position2pixel(planePosition) - (plane.clientWidth) + 2)) + 'px';
+        plane.style.left = (x + (position2pixel(planePosition) - (plane.clientWidth/2) + 2)) + 'px';
         plane.style.top = (((gInnerHeight  + grametTop - 2 - Math.round((-0.0006 * planeLevel * planeLevel) + (0.8985 * planeLevel) + 46.264)) * scale) - (plane.clientHeight / 2)) + y + 'px';//TODO
     }
     const imageOffsetForPosition = (position) => {
