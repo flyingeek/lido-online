@@ -84,7 +84,7 @@
 
 </script>
 
-<div class="infos" on:click={(navigator && navigator.share) ? shareOFP : null}>
+<div class="infos" class:cursor-pointer={(navigator && navigator.share)} on:click={(navigator && navigator.share) ? shareOFP : null}>
     {#if (fuelMarginTime < 20)}<p class="etops">ETOPS</p>{/if}
     <div class="details">
     <p><b>{$ofp.infos.flight}</b> {$ofp.infos.departure}-{$ofp.infos.destination}</p>
@@ -113,6 +113,9 @@
     }
     p{
         margin:0
+    }
+    .cursor-pointer{
+        cursor: pointer;
     }
     .etops{
         writing-mode: vertical-rl;

@@ -322,6 +322,7 @@
     }
     .sun {
         margin-right: 2em;
+        cursor: pointer;
     }
     @media (min-width: 1024px){
         .sun, .details {

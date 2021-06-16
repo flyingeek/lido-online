@@ -103,6 +103,7 @@
     border-radius: 3px;
     align-self: baseline;
     display: none;
+    cursor: pointer;
 }
 .gramet-thumbnail.updating p {
     margin: 0;
