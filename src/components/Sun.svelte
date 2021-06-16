@@ -81,8 +81,28 @@
     );
 </script>
 <script>
-    import {getMoonIllumination} from "./suncalc";
+    import {sunAzEl, getMoonIllumination} from "./suncalc";
     import {flightProgress} from "../stores";
+
+    const stateAsText = (date, point, fl=0) => {
+        const [state, elevation] = sun.getState({date, latitude: point.latitude, longitude: point.longitude});
+        if (state === 'day' || state === 'sunrise end') {
+            return  'de jour';
+        } else if (state === 'night' || state === 'astronomical twilight') {
+            return 'de nuit';
+        } else {
+            // rising or descending ?
+            const later = new Date(date.getTime() + 60000); // 1mn later
+            const laterElevation = sunAzEl({date: later, latitude: point.latitude, longitude: point.longitude}).elevation;
+            const isRising = laterElevation > elevation;
+            if (state === 'nautical twilight') {
+                return (isRising) ? "durant l'aube nautique" : "durant le crépuscule nautique";
+            }else if (state === 'civil twilight') {
+                return (isRising) ? "durant l'aube civile" : "durant le crépuscule civil";
+            }
+        }
+        return `#ERREUR ${state}#`;
+    };
     const departureState = (ofp) => {
         if (!ofp || !$takeOffTime) return '';
         //TODO departure fl in timeMatrix
@@ -94,6 +114,12 @@
         //TODO arrival fl in timeMatrix
         const [point, sum, fl] = ofp.timeMatrix[ofp.timeMatrix.length - 1];
         return sun.getState({date: $landingTime, latitude: point.latitude, longitude: point.longitude}, 0)[0];
+    };
+    const arrivalStateText = (ofp) => {
+        if (!ofp || !$landingTime) return '';
+        //TODO arrival fl in timeMatrix
+        const [point, sum, fl] = ofp.timeMatrix[ofp.timeMatrix.length - 1];
+        return stateAsText($landingTime, point, 0);
     };
     const format = (date, withSeconds=false) => {
         if (!date) return (withSeconds) ? '--:--:--' : '--:--';
@@ -249,7 +275,7 @@
                         </linearGradient>
                     </defs>
                     {#each $solar.sun as event, i}
-                        {#if event.type !== 'sunriseEnd' && event.type !== 'sunsetStart'}
+                        {#if !['sunriseEnd', 'sunsetStart', 'astronomicalDawn', 'astronomicalDusk'].includes(event.type)}
                             <line x1="{ 5 + 0.9 * event.relpos}%" y1="30" x2="{5 + 0.9 * event.relpos}%" y2="32" stroke="gray" stroke-width="1"/>
                         {/if}
                         {#if event.type.startsWith('civil')}
@@ -276,8 +302,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {#each $solar.sun.filter(e => e.type !== 'sunriseEnd' && e.type !== 'sunsetStart') as event}
+                        {#each $solar.sun.filter(e => !['sunriseEnd', 'sunsetStart', 'astronomicalDawn', 'astronomicalDusk'].includes(e.type)) as event}
                         <tr>
+                            {#if event.fl !== 0}
                             <td>{nightEventsFR[event.type] || event.type}
                                 {#if event.type.startsWith('civil')}
                                     <span class:rise={event.type==='civilDawn'}>✹</span>
@@ -287,6 +314,9 @@
                             <td>{format(event.date)}</td>
                             <td>FL{event.fl}</td>
                             <!-- <td class="kp" class:kp-ok={event.nightKp < 99}>{(event.nightKp < 99) ? Math.floor(event.nightKp) : ''}</td> -->
+                            {:else}
+                            <td colspan="4">Atterrissage {arrivalStateText($ofp)}</td>
+                            {/if}
                         </tr>
                         {:else}
                             <tr><td colspan="4">Aucun événement</td></tr>
