@@ -71,7 +71,8 @@
                 ...$ofp.infos,
                 text: $ofp.text,
                 'ofp2map-takeoff': $takeOffTime,
-                'etopsOutput': etopsMarkdown($ofp, $takeOffTime)
+                'etopsOutput': etopsMarkdown($ofp, $takeOffTime),
+                'route': $ofp.route.points.map(p => ({"name": p.name, "latitude":  Number.parseFloat(p.latitude.toFixed(6)), "longitude":  Number.parseFloat(p.longitude.toFixed(6))}))
             })
         };
         try {
