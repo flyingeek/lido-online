@@ -70,7 +70,7 @@ La capacité ETOPS est determinée depuis l'OFP et les cercles sont tracés. Un 
 
 ## Éphémérides
 
-Un calcul astronomique de la position du soleil est effectué en tenant compte de la route de l’OFP, du FL de l’OFP, et de l’heure de décollage choisie dans l’application. La précision attendue de l’algorithme est de ±1 min sous 72° de latitude et de 10 min au-delà. Comme les estimées sont à ±1 min, la précision finale devrait être de ±2 min si le FL de l'OFP est bien respecté.
+Un calcul astronomique de la position du soleil est effectué en tenant compte de la route de l’OFP, du FL de l’OFP, et de l’heure de décollage choisie dans l’application. La précision attendue de l’algorithme est de ±1 min sous 72° de latitude et de 10 min au-delà. Si vous êtes sur la route, que le FL est respecté et que l'heure de décollage a été ajustée en fonction de la position réelle, alors la précision attendue sous N72 est de +- 2min. Si votre FL est différent, la correction d'altitude est en gros de 15s/1000ft. Exemple: FL OFP 400, FL réel 360, alors ajouter 1min pour le lever, soustraire 1min pour le coucher.
 
 Le symbole du widget est dynamique:
 
@@ -78,11 +78,11 @@ Le symbole du widget est dynamique:
 - 🌕🌖🌗🌘🌑🌒🌓🌔 si la lune est visible pendant le vol
 - 🔭 si vous restez dans le noir.
 
-Le widget affiche éventuellement les heures de lever ou de coucher. Cliquer sur le widget affiche les éphémérides du vol, elles contiennent les aubes et crépuscules civils, nautiques et astronomiques, la phase de la lune et son illumination, les levers et couchers de lune.
+Le widget affiche éventuellement les heures de lever ou de coucher. Cliquer sur le widget affiche les éphémérides du vol, elles contiennent les aubes et crépuscules civils, nautiques, la phase de la lune et son illumination, les levers et couchers de lune. Le calcul du lever/coucher de lune est moins précis. Le calcul n'est valable que pour la croisière, se reporter à EWAS pour le calcul précis au départ ou à destination.
 
 Si OFP2MAP n'a pas pu récupérer les estimées de l'OFP (voir le paragraphe sur la position estimée), le widget ne s'affichera pas.
 
-En anglais le terme <q>twilight</q> est utilisé indifféremment pour l'aube ou le crépuscule. En français, la chronologie des événements est:
+Pour rappel, la chronologie des événements est:
 
 <table class="table">
     <thead><tr><th>Angle</th><th>▲ Soleil levant</th><th>▼ Soleil couchant</th></tr></thead>
@@ -95,6 +95,8 @@ En anglais le terme <q>twilight</q> est utilisé indifféremment pour l'aube ou 
         <tr><td></td><td>↑ Nuit</td><td>↓ Nuit</td></tr>
     </tbody>
 </table>
+
+Durant l'aube/crépuscule nautique, en vol l'horizon est discernable, au sol on distingue encore le relief.
 
 ## Mode off-line / Cache
 
