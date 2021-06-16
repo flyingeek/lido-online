@@ -241,25 +241,18 @@
     $: isMoonVisibleDuringFlight = $solar.moon.length > 0 || getDepartureMoonState($ofp, $takeOffTime);
     $: moonIllumination = ($takeOffTime) ? getMoonIllumination($takeOffTime) : {};
     $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmoji($ofp, $takeOffTime); //must be after moonIlluminations
+    $: widgetEvents = (widgetEmoji === '☀️') ? sunEvents : (widgetEmoji === '🔭') ? [] : $solar.moon;
 
 </script>
 {#if $ofp && $ofp.timeMatrix.length > 0}
     <Overlay  position="bottom-center" isOpen={false}>
         <div slot="parent" class="sun" let:toggle on:click={toggle}>
             <p class="icon">{widgetEmoji}</p>
-            {#if widgetEmoji === '☀️'}
-                <div class="details" class:two="{sunEvents.length === 2}" class:three="{sunEvents.length>= 3}">
-                    {#each sunEvents as event}
-                        <p>{(event.type === 'sunrise') ? '↥' : '↧'} {format(event.date)}</p>
-                    {/each}
-                </div>
-            {:else if widgetEmoji !== '🔭'}
-                <div class="details" class:two="{$solar.moon.length === 2}" class:three="{$solar.moon.length>= 3}">
-                    {#each $solar.moon.slice(0, 3) as event}
-                        <p>{(event.type === 'moonrise') ? '↥' : '↧'} {format(event.date)}</p>
-                    {/each}
-                </div>
-            {/if}
+            <div class="details" class:two="{widgetEvents.length === 2}" class:three="{widgetEvents.length>= 3}">
+                {#each widgetEvents as event}
+                    <p>{(event.type.includes('rise')) ? '↥' : '↧'} {format(event.date)}</p>
+                {/each}
+            </div>
         </div>
         <div slot="content" style="width: 390px; max-width:390px; position:static;" class="popover" let:close in:slide={{ duration: 200 }}>
             <h3 class="popover-header">Éphémérides du vol<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>    
@@ -444,6 +437,11 @@
     }
     .rise {
         color: #FCBF49;
+    }
+    :global(.overlay .content.bottom-bottom) { /*fix overlay misplacement*/
+        left: 50%;
+        transform: translateX(-50%);
+        top: 100%;
     }
     /* .table .kp {
         width: 1em;
