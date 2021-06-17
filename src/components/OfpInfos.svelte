@@ -64,6 +64,20 @@
         }
         return results;
     };
+    const getOfpRouteExport = (ofp) => {
+        if (ofp.timeMatrix.length > 0) {
+            return ofp.timeMatrix.map(([p, sum, fl]) => ({
+                "name": p.name,
+                "tte": sum,
+                fl,
+                "latitude":  p.latitude.toFixed(6),
+                "longitude":  p.longitude.toFixed(6)}));
+        }
+        return ofp.route.points.map(p => ({
+            "name": p.name,
+            "latitude":  p.latitude.toFixed(6),
+            "longitude":  p.longitude.toFixed(6)}));
+    };
     export const shareOFP = async () => {
         const shareData = {
             'title': 'OFP2MAP',
@@ -72,8 +86,8 @@
                 text: $ofp.text,
                 'ofp2map-takeoff': $takeOffTime,
                 'etopsOutput': etopsMarkdown($ofp, $takeOffTime),
-                'route': $ofp.route.points.map(p => ({"name": p.name, "latitude":  Number.parseFloat(p.latitude.toFixed(6)), "longitude":  Number.parseFloat(p.longitude.toFixed(6))}))
-            })
+                'route': getOfpRouteExport($ofp)
+            }).replace(/"([0-9.]+)"/gu, (_, p1) => p1)
         };
         try {
             await navigator.share(shareData)
