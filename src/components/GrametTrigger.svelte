@@ -49,7 +49,7 @@
             <svg class="gramet-close"><use xlink:href="#close-symbol"/></svg>
         {/if}
     </div>
-    <Overlay  position="bottom-center" isOpen={grametUpdateAvailable}>
+    <Overlay  position="bottom-center" style="margin-right: 0 !important;" isOpen={grametUpdateAvailable}>
         <div slot="parent" class="d-none"></div>
         <div slot="content" let:close style="width: 290px;">
             <div class="popover" role="tooltip" style="left: calc(-1rem - 35px); max-width: 290px; top: 20px;">
@@ -141,7 +141,8 @@ button.close svg{
     z-index: 2;
 }
 button[slot=parent]{
-    vertical-align: text-bottom;
+    display: flex;
+    padding: 0;
 }
 .gramet-thumbnail :global(img){
     transition: opacity 0.5s ease-in;

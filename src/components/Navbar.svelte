@@ -86,6 +86,9 @@
         li {
           margin-right: 10px;
         }
+        :global(nav > div) {
+          margin-right: 0.8rem;
+        }
     }
     li span{
       display: inline-block;
@@ -104,10 +107,7 @@
     }
     @media (min-width: 830px){
       :global(nav > div) {
-        margin-right: 2rem !important;
-      }
-      :global(nav > div.overlay) {
-        margin-right: 0 !important;
+        margin-right: 1.6rem !important;
       }
     }
     input:checked ~ .collapse{

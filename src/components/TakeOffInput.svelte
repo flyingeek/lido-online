@@ -56,7 +56,6 @@
         /* top: -50px; */
     }
     div {
-        margin-right: 1rem;
         display: flex;
         align-items: flex-start;
         /* outline: 1px solid rgba(0,0,0,0.2); */

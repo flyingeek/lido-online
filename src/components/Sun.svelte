@@ -340,20 +340,23 @@
     </Overlay>
 {/if}
 <style>
-    .sun, .details {
+    .sun {
+        cursor: pointer;
         display: none;
     }
-    .sun {
-        margin-right: 2em;
-        cursor: pointer;
-    }
-    @media (min-width: 1024px){
-        .sun, .details {
+    @media (min-width: 320px){
+        .sun {
             display: flex;
         }
     }
     .details{
         flex-direction: column;
+        display: none;
+    }
+    @media (min-width: 1024px){
+        .details {
+            display: flex;
+        }
     }
     .sun p {
         margin: 0;
