@@ -169,11 +169,11 @@ export const sunStateAtPoint = (point, date, fl) => {
 };
 
 const sunStates = [ // order important
-    [   -18, 'night'],
+    [   -15, 'night'], // used for color in timeline and for aurora prediction real astronomical night starts at -18
     [   -12, 'astronomical twilight'],
     [    -6, 'nautical twilight'],
     [-0.833, 'civil twilight'],
-    [     1, 'sunrise end']
+    [     1, 'sunrise end'] // not related to sunrise end (-0.3) only for timeline color
 ];
 
 export const sunState = ({date, latitude, longitude}, fl=0) => {
@@ -264,22 +264,23 @@ export const moonStateMap = new Map([
 ]);
 export const sun = {name: 'sun', getState: sunState, stateMap: sunStateMap};
 export const moon = {name: 'moon', getState: moonState, stateMap: moonStateMap};
-/* TODO GeoMagnetic latitudes */
+
 export const geomagneticLatitudeAndKp = (p, date) => {
     let year = date.getUTCFullYear();
     if (year < 2016) year = 2016;
     if (year > 2025) year = 2025;
+    // from http://wdc.kugi.kyoto-u.ac.jp/poles/polesexp.html
     const poleLatLngByYear = {
-        '2016': [86.467, 192.206],
-        '2017': [86.562, 184.522],
-        '2018': [86.598, 176.901],
-        '2019': [86.568, 169.615],
-        '2020': [86.502, 164.036],
-        '2021': [86.415, 157.690],
-        '2022': [86.294, 151.948],
-        '2023': [86.146, 146.826],
-        '2024': [85.980, 142.293],
-        '2025': [85.801, 138.299]
+        '2016': [80.4, -72.6],
+        '2017': [80.5, -72.6],
+        '2018': [80.5, -72.7],
+        '2019': [80.6, -72.7],
+        '2020': [80.7, -72.7],
+        '2021': [80.7, -72.7],
+        '2022': [80.7, -72.7],
+        '2023': [80.8, -72.7],
+        '2024': [80.8, -72.6],
+        '2025': [80.9, -72.6]
     };
     const poleLatLng = poleLatLngByYear[year.toString()];
     if (p.latitude <= 40) return [-90, 99]; // no need to compute

@@ -60,7 +60,8 @@ const U = {
   'CONF_PACIFIC_TILES_BASE_URL': `https://ofp2map-${pacificId}.netlify.app/${pacificId}`,
   'CONF_THEWORLD_TILES_BASE_URL': `https://ofp2map-${theworldId}.netlify.app/${theworldId}`,
   'CONF_EQE_PHYSICAL_FR_TILES_BASE_URL': `https://ofp2map-${eqePhysicalFrId}.netlify.app/${eqePhysicalFrId}`,
-  'CONF_CB_TILES_BASE_URL': `https://ofp2map-${cbId}.netlify.app/${cbId}`
+  'CONF_CB_TILES_BASE_URL': `https://ofp2map-${cbId}.netlify.app/${cbId}`,
+  'CONF_NOOA_KP_JSON': 'https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json'
 };
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
 
@@ -254,6 +255,7 @@ export default [{
         "images/ofp2map-icons/icon-128x128.png",
         "images/map-help.webp",
         "images/layers-settings.webp",
+        "images/65x70_northern-lights.webp",
         "css/bundle.css",
         "js/bundle.js",
         "svg/*.svg",

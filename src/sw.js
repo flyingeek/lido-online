@@ -30,6 +30,7 @@ const validCaches ={
   'mapbox': 'lido-mapbox',
   'airports': 'lido-data',
   'fir-reg': 'lido-fir',
+  'noaa': 'lido-noaa',
   'gramet': 'lido-gramet2', // if you change here, you must also change in GrametTrigger.svelte 
   //'north': 'lido-' + hostId('CONF_NORTH_TILES_BASE_URL') + maps['north'],
   //'south': 'lido-' + hostId('CONF_SOUTH_TILES_BASE_URL') + maps['south'],
@@ -99,6 +100,23 @@ registerRoute(
     plugins: [
       new ExpirationPlugin({
         maxEntries: 2
+      })
+    ]
+  })
+);
+
+registerRoute(
+  ({url}) => url.origin === 'https://services.swpc.noaa.gov' && url.pathname==="/products/noaa-planetary-k-index-forecast.json",
+  new StaleWhileRevalidate({
+    cacheName: validCaches['noaa'],
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [200],
+      }),
+      new BroadcastUpdatePlugin(),
+      new ExpirationPlugin({
+        maxEntries: 1,
+        maxAgeSeconds: 24 * 3600
       })
     ]
   })

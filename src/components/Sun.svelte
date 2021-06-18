@@ -1,88 +1,11 @@
-<script context="module">
-    import {derived} from "svelte/store";
+<script>
+    import {sun, moon, sunAzEl, getMoonIllumination} from "./suncalc";
+    import {ofp, takeOffTime, landingTime, flightProgress} from "../stores";
+    import {solar} from "./solarstore";
     import Overlay from "svelte-overlay";
     import {slide} from "svelte/transition";
-    import {sun, moon} from "./suncalc";
-    import {ofp, takeOffTime, landingTime} from "../stores";
-
-    function* iterateSegment({prev, next, takeOffTime, segmentLength, getState, stateMap, increment=30000 /* 30sec */}){
-        let prevState = prev.state;
-        const min2ms = 60000;
-        const lowerLimit = prev.sum * min2ms;
-        const upperLimit = next.sum * min2ms; 
-        for(let m = lowerLimit + increment; m <= upperLimit; m= m + increment){
-            let fl = prev.fl;
-            if (m >= upperLimit) fl = next.fl;
-            const date = new Date(takeOffTime + m);
-            let pos;
-            const segmentTime = upperLimit - lowerLimit;
-            if (segmentTime === 0) {
-                pos = next.p;
-            }else{
-                const fraction = (m - lowerLimit) / segmentTime;
-                pos = prev.p.atFraction(next.p, fraction, segmentLength);
-            }
-            const [state] = getState({date, latitude:pos.latitude, longitude:pos.longitude}, fl);
-            if (state !== prevState) {
-                //const nightKp = (['night', 'astronomicalDusk', 'astronomicalDawn', 'nauticalDusk'].includes(type)) ? minKp : 100;
-                const type =  stateMap.get(prevState)([prevState, state]);
-                yield({position: pos, type, date, fl});
-                if (state === next.state) break;
-            }
-            prevState = state;
-        }
-    }
-    const getSolarDefault = () => {
-        return {[moon.name]: [], [sun.name]: []};
-    };
-    export const solar = derived(
-        [ofp, takeOffTime],
-        ([$ofp, $takeOffTime]) => {
-            if (!$takeOffTime || !$ofp || $ofp.timeMatrix.length === 0) return getSolarDefault();
-            const takeOffTime = $takeOffTime.getTime();
-            const results = getSolarDefault();
-            const timeMatrix = $ofp.timeMatrix;
-            const flightTime = timeMatrix[timeMatrix.length - 1][1] * 60000;
-            const distanceMatrix = $ofp.distanceMatrix;
-            let last = timeMatrix.length - 1;
-            for (const object of [sun, moon]) {
-                const matrix = [];
-                let prev = null;
-                for (const [i, [p, sum, level]] of timeMatrix.entries()) {
-                    let fl = level;
-                    if (i === 0 || i === last) fl = 0;
-                    const date = new Date(takeOffTime + sum * 60000);
-                    const [state] = object.getState({date, latitude:p.latitude, longitude:p.longitude}, fl);
-                    const next = {p, sum, fl, state};
-                    if (prev && state !== prev.state) {
-                        const segmentLength = distanceMatrix[i][1] - distanceMatrix[i-1][1];
-                        const params = {
-                            prev, 
-                            next, 
-                            takeOffTime, 
-                            segmentLength, 
-                            getState: object.getState, 
-                            stateMap: object.stateMap, 
-                            increment: (object.name === 'sun') ? 30000 : 60000
-                        };
-                        for (const data of iterateSegment(params)) {
-                            data['relpos'] = Math.round(10000 * (data.date.getTime() - takeOffTime) / flightTime) / 100;
-                            matrix.push(data);
-                        }
-                    }
-                    prev = next;
-                }
-                results[object.name] = matrix;
-            }
-            //console.log(results);
-            return results;
-        },
-        getSolarDefault() // initial value
-    );
-</script>
-<script>
-    import {sunAzEl, getMoonIllumination} from "./suncalc";
-    import {flightProgress} from "../stores";
+    import {aurora} from "./Aurora.svelte";
+    import Aurora from "./Aurora.svelte";
 
     const stateAsText = (date, point, fl=0) => {
         const [state, elevation] = sun.getState({date, latitude: point.latitude, longitude: point.longitude});
@@ -121,6 +44,12 @@
         const [point, sum, fl] = ofp.timeMatrix[ofp.timeMatrix.length - 1];
         return stateAsText($landingTime, point, 0);
     };
+    const relpos = (date) => {
+        if (!$takeOffTime || !$landingTime) return 0;
+        const tots = $takeOffTime.getTime()
+        const flightTime = $landingTime.getTime() - tots;
+        return Math.round(10000 * (date.getTime() - tots) / flightTime) / 100;
+    }
     const format = (date, withSeconds=false) => {
         if (!date) return (withSeconds) ? '--:--:--' : '--:--';
         if (withSeconds) {
@@ -237,16 +166,19 @@
                 return 'red';
         };
     };
+
     $: sunEvents = $solar.sun.filter(e => ['sunrise', 'sunset'].includes(e.type)).slice(0, 3);
     $: isMoonVisibleDuringFlight = $solar.moon.length > 0 || getDepartureMoonState($ofp, $takeOffTime);
     $: moonIllumination = ($takeOffTime) ? getMoonIllumination($takeOffTime) : {};
     $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmoji($ofp, $takeOffTime); //must be after moonIlluminations
     $: widgetEvents = (widgetEmoji === '☀️') ? sunEvents : (widgetEmoji === '🔭') ? [] : $solar.moon;
+    //$: console.log($Kp);
 
 </script>
 {#if $ofp && $ofp.timeMatrix.length > 0}
+    <Aurora/>
     <Overlay  position="bottom-center" isOpen={false}>
-        <div slot="parent" class="sun" let:toggle on:click={toggle}>
+        <div slot="parent" class="sun" class:aurora={$aurora.length > 0} let:toggle on:click={toggle}>
             <p class="icon">{widgetEmoji}</p>
             <div class="details" class:two="{widgetEvents.length === 2}" class:three="{widgetEvents.length>= 3}">
                 {#each widgetEvents as event}
@@ -257,27 +189,35 @@
         <div slot="content" style="width: 390px; max-width:390px; position:static;" class="popover" let:close in:slide={{ duration: 200 }}>
             <h3 class="popover-header">Éphémérides du vol<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>    
             <div class="popover-body">
+                {#if $aurora.length > 0}
+                    <div class="aurora-legend">zone favorable aux aurores boréales (Kp={Math.max(...$aurora.map(s => s.predictedKp))})</div>
+                {/if}
                 <svg width="100%" height="60px" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="MyGradient">
                             <stop offset="0%"  stop-color="{eventColor(departureState($ofp))}"/>
                             {#each $solar.sun as event}
-                                <stop offset="{event.relpos}%"  stop-color="{eventColor(event.type)}"/>
+                                <stop offset="{relpos(event.date)}%"  stop-color="{eventColor(event.type)}"/>
                             {/each}
                             <stop offset="100%"  stop-color="{eventColor(arrivalState($ofp))}"/>
                         </linearGradient>
                     </defs>
                     {#each $solar.sun as event, i}
                         {#if !['sunriseEnd', 'sunsetStart', 'astronomicalDawn', 'astronomicalDusk'].includes(event.type)}
-                            <line x1="{ 5 + 0.9 * event.relpos}%" y1="30" x2="{5 + 0.9 * event.relpos}%" y2="32" stroke="gray" stroke-width="1"/>
+                            <line x1="{ 5 + 0.9 * relpos(event.date)}%" y1="30" x2="{5 + 0.9 * relpos(event.date)}%" y2="32" stroke="gray" stroke-width="1"/>
                         {/if}
                         {#if event.type.startsWith('civil')}
-                            <text x="{ 5 + 0.9 * event.relpos}%" y="44" fill="{(event.type.endsWith('Dawn')) ? '#FCBF49' : '#000B18'}" text-anchor="middle" >✹</text>
+                            <text x="{ 5 + 0.9 * relpos(event.date)}%" y="44" fill="{(event.type.endsWith('Dawn')) ? '#FCBF49' : '#000B18'}" text-anchor="middle" >✹</text>
                         {/if}
                     {/each}
                     {#each $solar.moon as event}
-                        <line x1="{ 5 + 0.9 * event.relpos}%" y1="18" x2="{5 + 0.9 * event.relpos}%" y2="20" stroke="gray" stroke-width="1"/>
-                        <text x="{ 5 + 0.9 * event.relpos}%" y="16" fill="{(event.type==='moonrise') ? '#FCBF49' : '#000B18'}"text-anchor="middle" >☽</text>
+                        <line x1="{ 5 + 0.9 * relpos(event.date)}%" y1="18" x2="{5 + 0.9 * relpos(event.date)}%" y2="20" stroke="gray" stroke-width="1"/>
+                        <text x="{ 5 + 0.9 * relpos(event.date)}%" y="16" fill="{(event.type==='moonrise') ? '#FCBF49' : '#000B18'}"text-anchor="middle" >☽</text>
+                    {/each}
+                    {#each $aurora as period}
+                        <rect x="{ 5 + 0.9 * relpos(period.period[0])}%" y="18" width="{0.9 * (relpos(period.period[1]) - relpos(period.period[0]))}%" height="14" stroke="lime" stroke-opacity="60%" fill="transparent" stroke-width="3"/>
+                        <text x="{5 + (0.9 * (relpos(period.period[0]) + (relpos(period.period[1]) - relpos(period.period[0])) / 2))}%" y="15" fill="green"text-anchor="middle" font-size="0.7em">{format(period.period[0])}</text>
+                        <text x="{5 + (0.9 * (relpos(period.period[0]) + (relpos(period.period[1]) - relpos(period.period[0])) / 2))}%" y="42" fill="green"text-anchor="middle" font-size="0.7em">{format(period.period[1])}</text>
                     {/each}
                     <rect fill="url(#MyGradient)" x="5%" y="20" width="90%" height="10px" rx="0"/>
                     <circle fill="#FCBF49" cx="{ 5 + 0.9 * $flightProgress}%" stroke="#FCBF49" cy="25" r="2" />
@@ -343,6 +283,7 @@
     .sun {
         cursor: pointer;
         display: none;
+        position: relative;
     }
     @media (min-width: 320px){
         .sun {
@@ -360,6 +301,20 @@
     }
     .sun p {
         margin: 0;
+    }
+    .sun.aurora::before{
+        content: "";
+        position: absolute;
+        top: -8px;
+        left: -15px;
+        width: 50px;
+        height: 38px;
+        background-image: url(/images/65x70_northern-lights.webp);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        filter: blur(3px) opacity(40%);
+        z-index: -1;
     }
     .details.two p {
         font-size: small;
@@ -446,15 +401,17 @@
         transform: translateX(-50%);
         top: 100%;
     }
-    /* .table .kp {
-        width: 1em;
-        padding-left: 0;
-        padding-right: 0;
-        text-align: center;
+    .aurora-legend {
+        margin-left: 5%;
     }
-    .kp-ok {
-        background-color: green;
-        color: white;
-        transform: translateY(-50%);
-    } */
+    .aurora-legend::before {
+        content: "";
+        height: 1em;
+        width: 1em;
+        display: inline-block;
+        border: 3px solid lime;
+        opacity: 50%;
+        margin-right: 0.5em;
+        vertical-align: text-bottom;
+    }
 </style>
