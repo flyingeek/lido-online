@@ -2,7 +2,8 @@
     import {derived, writable} from "svelte/store";
     import {solar} from "./solarstore";
 
-    const fetchPredictedKpFn = async () => {    
+    export const Kp = writable();
+    const setKp = async () => {    
         return fetch('CONF_NOOA_KP_JSON')
             .then(response => response.json())
             .then(data => {
@@ -30,13 +31,14 @@
                     return -1;
                 }
                 //console.log(timetable.map(a => [new Date(a[0]), a[1]]))
-                return fn;
+                console.log(`setting Kp stores, timetable as ${timetable.length} entries${(timetable.length > 0) ? ' start:' + timetable[timetable.length - 1][0]: ''}`);
+                Kp.set(fn);
             })
             .catch(function(error) {
                 console.log('Could not update Kp store', error);
             });
     }
-    export const Kp = writable();
+
     export const aurora = derived(
         [solar, Kp],
         ([$solar, $Kp]) => {
@@ -87,16 +89,15 @@
 
     const predictedKpUpdated = async (event) => {
         if (event.data.meta === 'workbox-broadcast-update' && event.data.type === 'CACHE_UPDATED') {
-                const {updatedURL} = event.data.payload;
-                if (updatedURL === 'CONF_NOOA_KP_JSON') {
-                    console.log('loading noaa kp store (sw cache updated)');
-                    const fn = await fetchPredictedKpFn();
-                    Kp.set(fn);
-                }
+            const {updatedURL} = event.data.payload;
+            if (updatedURL === 'CONF_NOOA_KP_JSON') {
+                console.log('loading noaa kp store (sw cache updated)');
+                setKp();
             }
+        }
     };
 
-    onMount(async () => {
+    onMount(() => {
         if (navigator && navigator.serviceWorker){
             navigator.serviceWorker.addEventListener('message', predictedKpUpdated);
         }
@@ -121,8 +122,7 @@
                 fetch('CONF_NOOA_KP_JSON').catch(() => {return;});
             }else{
                 console.log('loading noaa kp store (ofp change)');
-                const fn = await fetchPredictedKpFn();
-                Kp.set(fn);
+                setKp();
             }
         });
         return () => {

@@ -1,11 +1,11 @@
 <script>
-    import {sun, moon, getMoonIllumination, sunStateAndRising} from "./suncalc";
-    import {ofp, takeOffTime, landingTime, flightProgress} from "../stores";
-    import {solar} from "./solarstore";
-    import Overlay from "svelte-overlay";
     import {slide} from "svelte/transition";
-    import {aurora, Kp} from "./Aurora.svelte";
-    import Aurora from "./Aurora.svelte";
+    import Overlay from "svelte-overlay";
+    import KpUpdater, {aurora} from "./KpUpdater.svelte";
+    import SunTimeLine, {format} from "./SunTimeLine.svelte";
+    import {sun, moon, getMoonIllumination, sunStateAndRising} from "./suncalc";
+    import {ofp, takeOffTime, landingTime} from "../stores";
+    import {solar} from "./solarstore";
 
     const stateAsText = (point, date, {state, isRising}) => {
         if (!point || !date) return '';
@@ -20,21 +20,7 @@
         }
         return `#ERREUR ${state}#`;
     };
-    const relpos = (date) => {
-        if (!$takeOffTime || !$landingTime) return 0;
-        const tots = $takeOffTime.getTime()
-        const flightTime = $landingTime.getTime() - tots;
-        return Math.round(10000 * (date.getTime() - tots) / flightTime) / 100;
-    }
-    const format = (date, withSeconds=false) => {
-        if (!date) return (withSeconds) ? '--:--:--' : '--:--';
-        if (withSeconds) {
-            return date.toJSON().slice(11, 19);
-        } else if (date.getUTCSeconds(date) < 30) {
-            return date.toJSON().slice(11, 16);
-        }
-        return (new Date(date.getTime() + 60000)).toJSON().slice(11, 16);
-    };
+
     const nightEventsFR = {
         'astronomicalDawn': 'Aube astronomique',
         'astronomicalDusk': 'Nuit astronomique',
@@ -101,37 +87,7 @@
         if (departureMoon.state||$solar.moon.length>0) return getMoonEmoji(moonIllumination);
         return '🔭';
     };
-    const eventColor = (stateOrEvent) => {
-        switch(stateOrEvent){
-            
-            case 'day':
-            case 'dayStart':
-                return '#89d4ff';
-            case 'sunrise end':
-            case 'sunsetStart':
-            case 'sunriseEnd':
-                return 'lightskyblue'; 
-            case 'civil twilight':
-            case 'sunset':
-            case 'sunrise':
-                return '#2383C2'
-            case 'nautical twilight':
-            case 'civilDawn':
-            case 'civilDusk':
-                return '#0052A2';
-            case 'astronomical twilight':
-            case 'nauticalDawn':
-            case 'nauticalDusk':
-                return '#02386E';
-            case 'night':
-            case 'astronomicalDawn':
-            case 'astronomicalDusk':
-                return '#000B18';
-            default:
-                if (stateOrEvent) console.error(`#ERREUR ${stateOrEvent}#`);
-                return 'red';
-        };
-    };
+
     $: departureSun = ($ofp && $takeOffTime) ? sun.getState($takeOffTime, $ofp.departure, 0) : '';
     $: departureMoon = ($ofp && $takeOffTime) ? moon.getState($takeOffTime, $ofp.departure) : '';
     $: arrivalSun = ($ofp && $landingTime) ? sunStateAndRising($landingTime, $ofp.arrival, 0) : '';
@@ -142,8 +98,8 @@
     $: widgetEvents = (widgetEmoji === '☀️') ? sunEvents : (widgetEmoji === '🔭') ? [] : $solar.moon;
 
 </script>
+<KpUpdater/>
 {#if $ofp && $ofp.timeMatrix.length > 0}
-    <Aurora/>
     <Overlay  position="bottom-center" isOpen={false}>
         <div slot="parent" class="sun" class:aurora={$aurora.length > 0} let:toggle on:click={toggle}>
             <p class="icon">{widgetEmoji}</p>
@@ -156,52 +112,14 @@
         <div slot="content" style="width: 390px; max-width:390px; position:static;" class="popover" let:close in:slide={{ duration: 200 }}>
             <h3 class="popover-header">Éphémérides du vol<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>    
             <div class="popover-body">
-                {#if !$Kp}
-                    <p>Les prédictions de Kp sont indisponibles.</p>
-                {/if}
-                {#if $aurora.length > 0}
-                    <div class="aurora-legend">zone favorable aux aurores boréales (Kp={Math.max(...$aurora.map(s => s.predictedKp))})</div>
-                {/if}
-                <svg width="100%" height="60px" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="MyGradient">
-                            <stop offset="0%"  stop-color="{eventColor(departureSun.state)}"/>
-                            {#each $solar.sun as event}
-                                <stop offset="{relpos(event.date)}%"  stop-color="{eventColor(event.type)}"/>
-                            {/each}
-                            <stop offset="100%"  stop-color="{eventColor(arrivalSun.state)}"/>
-                        </linearGradient>
-                    </defs>
-                    {#each $solar.sun as event, i}
-                        {#if !['sunriseEnd', 'sunsetStart', 'astronomicalDawn', 'astronomicalDusk'].includes(event.type)}
-                            <line x1="{ 5 + 0.9 * relpos(event.date)}%" y1="30" x2="{5 + 0.9 * relpos(event.date)}%" y2="32" stroke="gray" stroke-width="1"/>
-                        {/if}
-                        {#if event.type.startsWith('civil')}
-                            <text x="{ 5 + 0.9 * relpos(event.date)}%" y="44" fill="{(event.type.endsWith('Dawn')) ? '#FCBF49' : '#000B18'}" text-anchor="middle" >✹</text>
-                        {/if}
-                    {/each}
-                    {#each $solar.moon as event}
-                        <line x1="{ 5 + 0.9 * relpos(event.date)}%" y1="18" x2="{5 + 0.9 * relpos(event.date)}%" y2="20" stroke="gray" stroke-width="1"/>
-                        <text x="{ 5 + 0.9 * relpos(event.date)}%" y="16" fill="{(event.type==='moonrise') ? '#FCBF49' : '#000B18'}"text-anchor="middle" >☽</text>
-                    {/each}
-                    {#each $aurora as period}
-                        <rect x="{ 5 + 0.9 * relpos(period.period[0])}%" y="18" width="{0.9 * (relpos(period.period[1]) - relpos(period.period[0]))}%" height="14" stroke="lime" stroke-opacity="60%" fill="transparent" stroke-width="3"/>
-                        <text x="{5 + (0.9 * (relpos(period.period[0]) + (relpos(period.period[1]) - relpos(period.period[0])) / 2))}%" y="15" fill="green"text-anchor="middle" font-size="0.7em">{format(period.period[0])}</text>
-                        <text x="{5 + (0.9 * (relpos(period.period[0]) + (relpos(period.period[1]) - relpos(period.period[0])) / 2))}%" y="42" fill="green"text-anchor="middle" font-size="0.7em">{format(period.period[1])}</text>
-                    {/each}
-                    <rect fill="url(#MyGradient)" x="5%" y="20" width="90%" height="10px" rx="0"/>
-                    <circle fill="#FCBF49" cx="{ 5 + 0.9 * $flightProgress}%" stroke="#FCBF49" cy="25" r="2" />
-                    <text x="5%" y="56" fill="black"text-anchor="middle" >{format($takeOffTime)}</text>
-                    <text x="95%" y="56" fill="black" text-anchor="middle">{format($landingTime)}</text>
-                </svg>
+                <SunTimeLine {arrivalSun} {departureSun}/>
                 <table class="table">
                     <thead>
                         <tr>
                             <th scope="col">Soleil</th>
-                            <th scope="col" class="color"></th><!-- color -->
+                            <th scope="col" class="color"></th>
                             <th scope="col">Heure</th>
                             <th scope="col">FL</th>
-                            <!--<th scope="col" class="kp"></th> minKp -->
                         </tr>
                     </thead>
                     <tbody>
@@ -226,8 +144,9 @@
                     </tbody>
                     <thead>
                         <tr>
-                            <th scope="col" colspan="4" class:border-bottom-0={$solar.moon.length === 0}>Lune {getMoonEmoji(moonIllumination)} {getMoonName(moonIllumination)} {getMoonIlluminationPercent(moonIllumination)}% {(isMoonVisibleDuringFlight) ? '' : 'non visible'}</th>
-                            <!--<th scope="col" class="kp"></th> minKp -->
+                            <th scope="col" colspan="4" class:border-bottom-0={$solar.moon.length === 0}>
+                                Lune {getMoonEmoji(moonIllumination)} {getMoonName(moonIllumination)} {getMoonIlluminationPercent(moonIllumination)}% {(isMoonVisibleDuringFlight) ? '' : 'non visible'}
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -370,17 +289,5 @@
         transform: translateX(-50%);
         top: 100%;
     }
-    .aurora-legend {
-        margin-left: 5%;
-    }
-    .aurora-legend::before {
-        content: "";
-        height: 1em;
-        width: 1em;
-        display: inline-block;
-        border: 3px solid lime;
-        opacity: 50%;
-        margin-right: 0.5em;
-        vertical-align: text-bottom;
-    }
+
 </style>
