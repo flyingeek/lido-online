@@ -19,7 +19,6 @@
                 } catch (error) {
                     console.error('kp store update error', error);
                 }
-                console.log(timetable.map(a=>[new Date(a[0]), a[1]]));
                 
                 const fn = (date) => {
                     const ts = date.getTime();
@@ -117,12 +116,12 @@
 
         const unsubscribe = ofp.subscribe(async () => {
             const inCache = await isInCache();
-            if (inCache) {
-                fetch('CONF_NOOA_KP_JSON').catch(() => {return;});
+            if (inCache && $Kp !== undefined) { // if offline we still need to load the predictions if not loaded yet
                 console.log('ping noaa (ofp change)'); //predictedKpUpdate will do the real load if needed
+                fetch('CONF_NOOA_KP_JSON').catch(() => {return;});
             }else{
-                const fn = await fetchPredictedKpFn();
                 console.log('loading noaa kp store (ofp change)');
+                const fn = await fetchPredictedKpFn();
                 Kp.set(fn);
             }
         });

@@ -4,7 +4,7 @@
     import {solar} from "./solarstore";
     import Overlay from "svelte-overlay";
     import {slide} from "svelte/transition";
-    import {aurora} from "./Aurora.svelte";
+    import {aurora, Kp} from "./Aurora.svelte";
     import Aurora from "./Aurora.svelte";
 
     const stateAsText = (date, point, fl=0) => {
@@ -26,23 +26,23 @@
         }
         return `#ERREUR ${state}#`;
     };
-    const departureState = (ofp) => {
-        if (!ofp || !$takeOffTime) return '';
+    const departureState = (ofp, takeOffTime) => {
+        if (!ofp || !takeOffTime) return '';
         //TODO departure fl in timeMatrix
         const [point, sum, fl] = ofp.timeMatrix[0];
-        return sun.getState({date: $takeOffTime, latitude: point.latitude, longitude: point.longitude}, 0)[0];
+        return sun.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude}, 0)[0];
     };
-    const arrivalState = (ofp) => {
-        if (!ofp || !$landingTime) return '';
+    const arrivalState = (ofp, landingTime) => {
+        if (!ofp || !landingTime) return '';
         //TODO arrival fl in timeMatrix
         const [point, sum, fl] = ofp.timeMatrix[ofp.timeMatrix.length - 1];
-        return sun.getState({date: $landingTime, latitude: point.latitude, longitude: point.longitude}, 0)[0];
+        return sun.getState({date: landingTime, latitude: point.latitude, longitude: point.longitude}, 0)[0];
     };
-    const arrivalStateText = (ofp) => {
-        if (!ofp || !$landingTime) return '';
+    const arrivalStateText = (ofp, landingTime) => {
+        if (!ofp || !landingTime) return '';
         //TODO arrival fl in timeMatrix
         const [point, sum, fl] = ofp.timeMatrix[ofp.timeMatrix.length - 1];
-        return stateAsText($landingTime, point, 0);
+        return stateAsText(landingTime, point, 0);
     };
     const relpos = (date) => {
         if (!$takeOffTime || !$landingTime) return 0;
@@ -162,7 +162,7 @@
             case 'astronomicalDusk':
                 return '#000B18';
             default:
-                console.error(`#ERREUR ${stateOrEvent}#`);
+                if (stateOrEvent) console.error(`#ERREUR ${stateOrEvent}#`);
                 return 'red';
         };
     };
@@ -172,7 +172,6 @@
     $: moonIllumination = ($takeOffTime) ? getMoonIllumination($takeOffTime) : {};
     $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmoji($ofp, $takeOffTime); //must be after moonIlluminations
     $: widgetEvents = (widgetEmoji === '☀️') ? sunEvents : (widgetEmoji === '🔭') ? [] : $solar.moon;
-    //$: console.log($Kp);
 
 </script>
 {#if $ofp && $ofp.timeMatrix.length > 0}
@@ -189,17 +188,20 @@
         <div slot="content" style="width: 390px; max-width:390px; position:static;" class="popover" let:close in:slide={{ duration: 200 }}>
             <h3 class="popover-header">Éphémérides du vol<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>    
             <div class="popover-body">
+                {#if !$Kp}
+                    <p>Les prédictions de Kp sont indisponibles.</p>
+                {/if}
                 {#if $aurora.length > 0}
                     <div class="aurora-legend">zone favorable aux aurores boréales (Kp={Math.max(...$aurora.map(s => s.predictedKp))})</div>
                 {/if}
                 <svg width="100%" height="60px" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="MyGradient">
-                            <stop offset="0%"  stop-color="{eventColor(departureState($ofp))}"/>
+                            <stop offset="0%"  stop-color="{eventColor(departureState($ofp, $takeOffTime))}"/>
                             {#each $solar.sun as event}
                                 <stop offset="{relpos(event.date)}%"  stop-color="{eventColor(event.type)}"/>
                             {/each}
-                            <stop offset="100%"  stop-color="{eventColor(arrivalState($ofp))}"/>
+                            <stop offset="100%"  stop-color="{eventColor(arrivalState($ofp, $landingTime))}"/>
                         </linearGradient>
                     </defs>
                     {#each $solar.sun as event, i}
@@ -248,7 +250,7 @@
                             <td>FL{event.fl}</td>
                             <!-- <td class="kp" class:kp-ok={event.nightKp < 99}>{(event.nightKp < 99) ? Math.floor(event.nightKp) : ''}</td> -->
                             {:else}
-                            <td colspan="4">Atterrissage {arrivalStateText($ofp)}</td>
+                            <td colspan="4">Atterrissage {arrivalStateText($ofp, $landingTime)}</td>
                             {/if}
                         </tr>
                         {:else}
