@@ -1,5 +1,5 @@
 <script>
-    import {sun, moon, sunAzEl, getMoonIllumination} from "./suncalc";
+    import {sun, moon, getMoonIllumination, sunStateAndRising} from "./suncalc";
     import {ofp, takeOffTime, landingTime, flightProgress} from "../stores";
     import {solar} from "./solarstore";
     import Overlay from "svelte-overlay";
@@ -7,42 +7,18 @@
     import {aurora, Kp} from "./Aurora.svelte";
     import Aurora from "./Aurora.svelte";
 
-    const stateAsText = (date, point, fl=0) => {
-        const [state, elevation] = sun.getState({date, latitude: point.latitude, longitude: point.longitude});
+    const stateAsText = (point, date, {state, isRising}) => {
+        if (!point || !date) return '';
         if (state === 'day' || state === 'sunrise end') {
             return  'de jour';
         } else if (state === 'night' || state === 'astronomical twilight') {
             return 'de nuit';
-        } else {
-            // rising or descending ?
-            const later = new Date(date.getTime() + 60000); // 1mn later
-            const laterElevation = sunAzEl({date: later, latitude: point.latitude, longitude: point.longitude}).elevation;
-            const isRising = laterElevation > elevation;
-            if (state === 'nautical twilight') {
-                return (isRising) ? "durant l'aube nautique" : "durant le crépuscule nautique";
-            }else if (state === 'civil twilight') {
-                return (isRising) ? "durant l'aube civile" : "durant le crépuscule civil";
-            }
+        } else if (state === 'nautical twilight') {
+            return (isRising) ? "durant l'aube nautique" : "durant le crépuscule nautique";
+        }else if (state === 'civil twilight') {
+            return (isRising) ? "durant l'aube civile" : "durant le crépuscule civil";
         }
         return `#ERREUR ${state}#`;
-    };
-    const departureState = (ofp, takeOffTime) => {
-        if (!ofp || !takeOffTime) return '';
-        //TODO departure fl in timeMatrix
-        const [point, sum, fl] = ofp.timeMatrix[0];
-        return sun.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude}, 0)[0];
-    };
-    const arrivalState = (ofp, landingTime) => {
-        if (!ofp || !landingTime) return '';
-        //TODO arrival fl in timeMatrix
-        const [point, sum, fl] = ofp.timeMatrix[ofp.timeMatrix.length - 1];
-        return sun.getState({date: landingTime, latitude: point.latitude, longitude: point.longitude}, 0)[0];
-    };
-    const arrivalStateText = (ofp, landingTime) => {
-        if (!ofp || !landingTime) return '';
-        //TODO arrival fl in timeMatrix
-        const [point, sum, fl] = ofp.timeMatrix[ofp.timeMatrix.length - 1];
-        return stateAsText(landingTime, point, 0);
     };
     const relpos = (date) => {
         if (!$takeOffTime || !$landingTime) return 0;
@@ -73,12 +49,12 @@
         'moonrise': 'Lever de lune',
         'moonset': 'Coucher de lune'
     };
-    const getMoonIlluminationPercent = () => Math.round(moonIllumination.fraction * 100);
-    const getMoonName = () => {
+    const getMoonIlluminationPercent = (moonIllumination) => Math.round(moonIllumination.fraction * 100);
+    const getMoonName = (moonIllumination) => {
         //https://en.wikipedia.org/wiki/Lunar_phase
         //rounded to the nearest % integer
         const phase = moonIllumination.phase;
-        const fraction = getMoonIlluminationPercent();
+        const fraction = getMoonIlluminationPercent(moonIllumination);
         if(fraction <= 0) {
             return 'Nouvelle lune';
         }else if (phase < 0.5 && fraction < 50) {
@@ -97,7 +73,7 @@
             return 'Dernier croissant';
         }
     };
-    const getMoonEmoji = () => {
+    const getMoonEmoji = (moonIllumination) => {
         //https://fr.wikipedia.org/wiki/Phase_de_la_Lune
         const phase = moonIllumination.phase;
         const fraction = moonIllumination.fraction;
@@ -120,20 +96,10 @@
             return '🌘';
         }
     };
-    const getWidgetEmoji = (ofp, takeOffTime) => {
-        if (!ofp || !takeOffTime) return '🔭';
-        const point = ofp.route.points[0];
-        let [state] = sun.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude});
-        if (state === 'day') return '☀️';
-        [state] = moon.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude});
-        if (state||$solar.moon.length>0) return getMoonEmoji();
+    const getWidgetEmojiWhenNoSunEvent = (departureSun, departureMoon, moonIllumination) => {
+        if (departureSun.state === 'day') return '☀️';
+        if (departureMoon.state||$solar.moon.length>0) return getMoonEmoji(moonIllumination);
         return '🔭';
-    };
-    const getDepartureMoonState = (ofp, takeOffTime) => {
-        if (!ofp || !takeOffTime) return '🔭';
-        const point = ofp.route.points[0];
-        const [state] = moon.getState({date: takeOffTime, latitude: point.latitude, longitude: point.longitude});
-        return state;
     };
     const eventColor = (stateOrEvent) => {
         switch(stateOrEvent){
@@ -166,11 +132,13 @@
                 return 'red';
         };
     };
-
-    $: sunEvents = $solar.sun.filter(e => ['sunrise', 'sunset'].includes(e.type)).slice(0, 3);
-    $: isMoonVisibleDuringFlight = $solar.moon.length > 0 || getDepartureMoonState($ofp, $takeOffTime);
+    $: departureSun = ($ofp && $takeOffTime) ? sun.getState($takeOffTime, $ofp.departure, 0) : '';
+    $: departureMoon = ($ofp && $takeOffTime) ? moon.getState($takeOffTime, $ofp.departure) : '';
+    $: arrivalSun = ($ofp && $landingTime) ? sunStateAndRising($landingTime, $ofp.arrival, 0) : '';
+    $: sunEvents = $solar.sun.filter(e => ['sunrise', 'sunset'].includes(e.type));
+    $: isMoonVisibleDuringFlight = $solar.moon.length > 0 || departureMoon;
     $: moonIllumination = ($takeOffTime) ? getMoonIllumination($takeOffTime) : {};
-    $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmoji($ofp, $takeOffTime); //must be after moonIlluminations
+    $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmojiWhenNoSunEvent(departureSun, departureMoon, moonIllumination); //after moonIllumination
     $: widgetEvents = (widgetEmoji === '☀️') ? sunEvents : (widgetEmoji === '🔭') ? [] : $solar.moon;
 
 </script>
@@ -180,7 +148,7 @@
         <div slot="parent" class="sun" class:aurora={$aurora.length > 0} let:toggle on:click={toggle}>
             <p class="icon">{widgetEmoji}</p>
             <div class="details" class:two="{widgetEvents.length === 2}" class:three="{widgetEvents.length>= 3}">
-                {#each widgetEvents as event}
+                {#each widgetEvents.slice(0, 3) as event}
                     <p>{(event.type.includes('rise')) ? '↥' : '↧'} {format(event.date)}</p>
                 {/each}
             </div>
@@ -197,11 +165,11 @@
                 <svg width="100%" height="60px" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="MyGradient">
-                            <stop offset="0%"  stop-color="{eventColor(departureState($ofp, $takeOffTime))}"/>
+                            <stop offset="0%"  stop-color="{eventColor(departureSun.state)}"/>
                             {#each $solar.sun as event}
                                 <stop offset="{relpos(event.date)}%"  stop-color="{eventColor(event.type)}"/>
                             {/each}
-                            <stop offset="100%"  stop-color="{eventColor(arrivalState($ofp, $landingTime))}"/>
+                            <stop offset="100%"  stop-color="{eventColor(arrivalSun.state)}"/>
                         </linearGradient>
                     </defs>
                     {#each $solar.sun as event, i}
@@ -240,17 +208,16 @@
                         {#each $solar.sun.filter(e => !['sunriseEnd', 'sunsetStart', 'astronomicalDawn', 'astronomicalDusk'].includes(e.type)) as event}
                         <tr>
                             {#if event.fl !== 0}
-                            <td>{nightEventsFR[event.type] || event.type}
-                                {#if event.type.startsWith('civil')}
-                                    <span class:rise={event.type==='civilDawn'}>✹</span>
-                                {/if}
-                            </td>
-                            <td class="color {event.type}-color"></td>
-                            <td>{format(event.date)}</td>
-                            <td>FL{event.fl}</td>
-                            <!-- <td class="kp" class:kp-ok={event.nightKp < 99}>{(event.nightKp < 99) ? Math.floor(event.nightKp) : ''}</td> -->
+                                <td>{nightEventsFR[event.type] || event.type}
+                                    {#if event.type.startsWith('civil')}
+                                        <span class:rise={event.type==='civilDawn'}>✹</span>
+                                    {/if}
+                                </td>
+                                <td class="color {event.type}-color"></td>
+                                <td>{format(event.date)}</td>
+                                <td>FL{event.fl}</td>
                             {:else}
-                            <td colspan="4">Atterrissage {arrivalStateText($ofp, $landingTime)}</td>
+                                <td colspan="4">Atterrissage {stateAsText($ofp.arrival, $landingTime, arrivalSun)}</td>
                             {/if}
                         </tr>
                         {:else}
@@ -259,7 +226,7 @@
                     </tbody>
                     <thead>
                         <tr>
-                            <th scope="col" colspan="4" class:border-bottom-0={$solar.moon.length === 0}>Lune {getMoonEmoji()} {getMoonName()} {getMoonIlluminationPercent()}% {(isMoonVisibleDuringFlight) ? '' : 'non visible'}</th>
+                            <th scope="col" colspan="4" class:border-bottom-0={$solar.moon.length === 0}>Lune {getMoonEmoji(moonIllumination)} {getMoonName(moonIllumination)} {getMoonIlluminationPercent(moonIllumination)}% {(isMoonVisibleDuringFlight) ? '' : 'non visible'}</th>
                             <!--<th scope="col" class="kp"></th> minKp -->
                         </tr>
                     </thead>

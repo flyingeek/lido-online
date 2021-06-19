@@ -103,6 +103,8 @@
                                     document.body.style.setProperty('--plane-halo-color', 'var(--plane-color)');
                                 }
                                 ofp.timeMatrix = timeMatrix;
+                                ofp.departure =  ofp.route.points[0];
+                                ofp.arrival = ofp.route.points[ofp.route.points.length - 1];
                                 //console.log(timeMatrix)
                                 //console.timeLog('start');
                                 try {

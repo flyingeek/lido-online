@@ -19,7 +19,7 @@ function* iterateSegment({prev, next, takeOffTime, segmentLength, getState, stat
             const fraction = (m - lowerLimit) / segmentTime;
             pos = prev.p.atFraction(next.p, fraction, segmentLength);
         }
-        const [state] = getState({date, latitude:pos.latitude, longitude:pos.longitude}, fl);
+        const {state} = getState(date, pos, fl);
         if (state !== prevState) {
             const type =  stateMap.get(prevState)([prevState, state]);
             yield({position: pos, type, date, fl});
@@ -49,7 +49,7 @@ export const solar = derived(
                 let fl = level;
                 if (i === 0 || i === last) fl = 0;
                 const date = new Date(takeOffTime + sum * 60000);
-                const [state] = object.getState({date, latitude:p.latitude, longitude:p.longitude}, fl);
+                const state = object.getState(date, p, fl).state;
                 const next = {p, sum, fl, state};
                 if (prev && state !== prev.state) {
                     const segmentLength = distanceMatrix[i][1] - distanceMatrix[i-1][1];

@@ -102,7 +102,8 @@ const eqTime = (t) => {
 
 
 
-export const sunAzEl = ({date, latitude, longitude}) => {
+export const sunAzEl = (date, point) => {
+    const {latitude, longitude} = point;
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
     const seconds = date.getUTCSeconds();
@@ -161,11 +162,11 @@ const sunRisingStates = Array.from(sunStateMap.keys());
 export const isSunRising = (prevState, newState) => {
     return sunRisingStates.indexOf(newState) >= sunRisingStates.indexOf(prevState);
 };
-export const sunStateAtPoint = (point, date, fl) => {
-    const [state, elevation] = sunState({date, latitude: point.latitude, longitude: point.longitude}, fl);
+export const sunStateAndRising = (date, point, fl) => {
+    const {state, elevation} = sunState(date, point, fl);
     //compare sun elevation beetween date and date + 10mn
-    const isRising =  elevation < sunAzEl({date: new Date(date.getTime() + 600000), latitude: point.latitude, longitude:point.longitude}).elevation;
-    return [state, isRising];
+    const isRising =  elevation < sunAzEl(new Date(date.getTime() + 600000), point).elevation;
+    return {state, isRising};
 };
 
 const sunStates = [ // order important
@@ -176,18 +177,18 @@ const sunStates = [ // order important
     [     1, 'sunrise end'] // not related to sunrise end (-0.3) only for timeline color
 ];
 
-export const sunState = ({date, latitude, longitude}, fl=0) => {
-    const elevation = sunAzEl({date, latitude, longitude}).elevation;
+export const sunState = (date, point, fl=0) => {
+    const elevation = sunAzEl(date, point).elevation;
     // -0.833 includes refraction at sea level
     // formula includes altitude and altitude refraction
     // https://en.wikipedia.org/wiki/Sunrise_equation
     const correction = 1.15 * Math.sqrt(fl * 100) / 60;
-    for (const[value, name] of sunStates) {
+    for (const[value, state] of sunStates) {
         if (elevation <= value - correction) {
-            return [name, elevation];
+            return {state, elevation};
         }
     }
-    return ['day', elevation];
+    return {state: 'day', elevation};
 };
 
 /* Moon Equations from https://github.com/mourner/suncalc */
@@ -229,10 +230,10 @@ export const getMoonIllumination = (date) => {
         angle: angle
     };
 };
-export const getMoonPosition = function (date, lat, lng) {
+export const getMoonPosition = function (date, point) {
 
-    var lw  = rad * -lng,
-        phi = rad * lat,
+    var lw  = rad * -point.longitude,
+        phi = rad * point.latitude,
         d   = toDays(date),
 
         c = moonCoords(d),
@@ -250,13 +251,13 @@ export const getMoonPosition = function (date, lat, lng) {
         //parallacticAngle: pa
     };
 };
-export const moonState = ({date, latitude, longitude}, fl) => { // true => visible
+export const moonState = (date, point, fl) => { // true => visible
     // + altitude of moonrise is 8mn of arc (0.133*rad)
     // - refraction correction at this altitude is 0.008116109187895005
     // we apply the same altitude correction that the sun (really ?)
     const correction = rad * 1.15 * Math.sqrt(fl * 100) / 60;
-    const altitude = getMoonPosition(date, latitude, longitude).altitude;
-    return  [altitude > -0.005794821282742547 - correction, deg * altitude];
+    const altitude = getMoonPosition(date, point).altitude;
+    return  {state: altitude > -0.005794821282742547 - correction, elevation: deg * altitude};
 }
 export const moonStateMap = new Map([
     [false, () => 'moonrise'],
