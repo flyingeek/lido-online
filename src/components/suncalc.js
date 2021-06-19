@@ -103,7 +103,7 @@ const eqTime = (t) => {
 
 
 export const sunAzEl = (date, point) => {
-    const {latitude, longitude} = point;
+    const {longitude} = point;
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
     const seconds = date.getUTCSeconds();
@@ -117,7 +117,7 @@ export const sunAzEl = (date, point) => {
     if (ha < -180) {
         ha += 360;
     }
-    const phi = rad * latitude;
+    const phi = point.philam.phi;
     let csz = (sin(phi) * sin(theta)) + (cos(phi) * cos(theta) * cos(rad * ha));
     if (csz > 1.0) {
         csz = 1.0
@@ -232,8 +232,8 @@ export const getMoonIllumination = (date) => {
 };
 export const getMoonPosition = function (date, point) {
 
-    var lw  = rad * -point.longitude,
-        phi = rad * point.latitude,
+    var lw  = -point.philam.lam,
+        phi = point.philam.phi,
         d   = toDays(date),
 
         c = moonCoords(d),
