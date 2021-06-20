@@ -1,4 +1,3 @@
-/* globals editolido */
 // shortcuts for easier to read formulas
 const PI   = Math.PI,
     sin  = Math.sin,
@@ -265,28 +264,3 @@ export const moonStateMap = new Map([
 ]);
 export const sun = {name: 'sun', getState: sunState, stateMap: sunStateMap};
 export const moon = {name: 'moon', getState: moonState, stateMap: moonStateMap};
-
-export const geomagneticLatitudeAndKp = (p, date) => {
-    let year = date.getUTCFullYear();
-    if (year < 2016) year = 2016;
-    if (year > 2025) year = 2025;
-    // from http://wdc.kugi.kyoto-u.ac.jp/poles/polesexp.html
-    const poleLatLngByYear = {
-        '2016': [80.4, -72.6],
-        '2017': [80.5, -72.6],
-        '2018': [80.5, -72.7],
-        '2019': [80.6, -72.7],
-        '2020': [80.7, -72.7],
-        '2021': [80.7, -72.7],
-        '2022': [80.7, -72.7],
-        '2023': [80.8, -72.7],
-        '2024': [80.8, -72.6],
-        '2025': [80.9, -72.6]
-    };
-    const poleLatLng = poleLatLngByYear[year.toString()];
-    if (p.latitude <= 40) return [-90, 99]; // no need to compute
-    const mlat = 90 - p.distanceTo(new editolido.GeoPoint(poleLatLng)) * deg;
-    if (mlat < 45) return [-90, 99]; // no need to compute
-    const Kp = (mlat - 66.5) / 2 // https://www.swpc.noaa.gov/content/tips-viewing-aurora
-    return [mlat, (Kp > 0) ? 0 : Math.floor(-Kp)];
-};

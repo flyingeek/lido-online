@@ -1,5 +1,5 @@
 import {derived} from "svelte/store";
-import {sun, moon, geomagneticLatitudeAndKp} from "./suncalc";
+import {sun, moon} from "./suncalc";
 import {ofp, takeOffTime} from "../stores";
 
 function* iterateSegment({prev, next, takeOffTime, segmentLength, getState, stateMap, increment=30000 /* 30sec */}){
@@ -65,22 +65,18 @@ export const solar = derived(
                     for (const data of iterateSegment(params)) {
                         matrix.push(data);
                         if (object === sun) {
-                            const [,minKp] = geomagneticLatitudeAndKp(data.position, data.date);
-                            routeMatrix.push({/*'p': data.position, */'date': data.date, minKp, 'state': data.type});
+                            routeMatrix.push({'p': data.position, 'date': data.date, 'state': data.type});
                         }
                     }
                 }
                 prev = next;
                 if (object === sun) {
-                    const [, minKp] = geomagneticLatitudeAndKp(p, date);
-                    routeMatrix.push({/*p, */date, minKp, state});
+                    routeMatrix.push({p, date, state});
                 }
             }
             results[object.name] = matrix;
         }
-
         results['route'] = routeMatrix;
-        results['takeOffTs'] = takeOffTime;
         return results;
     },
     getSolarDefault() // initial value
