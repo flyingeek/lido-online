@@ -8,6 +8,7 @@
         }
         return (new Date(date.getTime() + 60000)).toJSON().slice(11, 16);
     };
+    export const xpos = (rel) => 5 + (0.9 * rel);
 </script>
 <script>
     import {aurora, Kp} from "./KpUpdater.svelte";
@@ -17,13 +18,6 @@
     export let departureSun;
     export let arrivalSun;
 
-    const relpos = (date) => {
-        if (!$takeOffTime || !$landingTime) return 0;
-        const tots = $takeOffTime.getTime()
-        const flightTime = $landingTime.getTime() - tots;
-        return Math.round(10000 * (date.getTime() - tots) / flightTime) / 100;
-    };
-    const xpos = (rel) => 5 + (0.9 * rel);
     const eventColor = (stateOrEvent) => {
         switch(stateOrEvent){
             
@@ -60,55 +54,53 @@
     {#if !$Kp}
         <p>Les prédictions de Kp sont indisponibles.</p>
     {/if}
-    {#if $aurora.length > 0}
-        <div class="aurora-legend">zone favorable aux aurores boréales (Kp={Math.max(...$aurora.map(s => s.predictedKp))})</div>
-    {/if}
     <svg width="100%" height="60px" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <linearGradient id="SunTimeLine">
                 <stop offset="0%"  stop-color="{eventColor(departureSun.state)}"/>
-                {#each $solar.sun as event}
-                    <stop offset="{relpos(event.date)}%"  stop-color="{eventColor(event.type)}"/>
+                {#each $solar.sun as {type, relpos}}
+                    <stop offset="{relpos}%"  stop-color="{eventColor(type)}"/>
                 {/each}
                 <stop offset="100%"  stop-color="{eventColor(arrivalSun.state)}"/>
             </linearGradient>
         </defs>
-        {#each $solar.sun as event}
-            {#if !['sunriseEnd', 'sunsetStart', 'astronomicalDawn', 'astronomicalDusk'].includes(event.type)}
+        {#each $solar.sun as {type, relpos}}
+            {#if !['sunriseEnd', 'sunsetStart', 'astronomicalDawn', 'astronomicalDusk'].includes(type)}
                 <line stroke="gray" stroke-width="1"
-                    x1="{xpos(relpos(event.date))}%"
+                    x1="{xpos(relpos)}%"
                     y1="30"
-                    x2="{xpos(relpos(event.date))}%"
+                    x2="{xpos(relpos)}%"
                     y2="32" />
             {/if}
-            {#if event.type.startsWith('civil')}
-                <text fill="{(event.type === 'civilDawn') ? '#FCBF49' : '#000B18'}" text-anchor="middle"
-                    x="{xpos(relpos(event.date))}%"
+            {#if type.startsWith('civil')}
+                <text fill="{(type === 'civilDawn') ? '#FCBF49' : '#000B18'}" text-anchor="middle"
+                    x="{xpos(relpos)}%"
                     y="44">✹</text>
             {/if}
         {/each}
-        {#each $solar.moon as event}
+        {#each $solar.moon as {type, relpos}}
             <line stroke="gray" stroke-width="1"
-                x1="{xpos(relpos(event.date))}%"
+                x1="{xpos(relpos)}%"
                 y1="18"
-                x2="{xpos(relpos(event.date))}%"
+                x2="{xpos(relpos)}%"
                 y2="20" />
-            <text fill="{(event.type==='moonrise') ? '#FCBF49' : '#000B18'}"text-anchor="middle" 
-                x="{xpos(relpos(event.date))}%"
-                y="16">☽</text>
+            <text fill="{(type==='moonrise') ? '#FCBF49' : '#000B18'}" text-anchor="middle" 
+                x="{xpos(relpos)}%"
+                y="16" 
+                >☾</text>
         {/each}
-        {#each $aurora as period}
-            <rect stroke="lime" stroke-opacity="60%" fill="transparent" stroke-width="3"
-                x="{xpos(relpos(period.period[0]))}%"
+        {#each $aurora as {period, relpos}}
+            <rect stroke="lime" stroke-opacity="60%" fill="transparent" stroke-width="2"
+                x="{xpos(relpos[0])}%"
                 y="18"
-                width="{0.9 * (relpos(period.period[1]) - relpos(period.period[0]))}%"
+                width="{0.9 * (relpos[1] - relpos[0])}%"
                 height="14"/>
             <text fill="green"text-anchor="middle" font-size="0.7em"
-                x="{xpos(relpos(period.period[0]) + (relpos(period.period[1]) - relpos(period.period[0])) / 2)}%"
-                y="15">{format(period.period[0])}</text>
+                x="{xpos(relpos[0] + (relpos[1] - relpos[0]) / 2)}%"
+                y="15">{format(period[0])}</text>
             <text fill="green"text-anchor="middle" font-size="0.7em"
-                x="{xpos(relpos(period.period[0]) + (relpos(period.period[1]) - relpos(period.period[0])) / 2)}%"
-                y="42">{format(period.period[1])}</text>
+                x="{xpos(relpos[0] + (relpos[1] - relpos[0]) / 2)}%"
+                y="42">{format(period[1])}</text>
         {/each}
         <rect fill="url(#SunTimeLine)"
             x="5%"
@@ -116,9 +108,9 @@
             width="90%"
             height="10px"
             rx="0"/>
-        <circle fill="#FCBF49" stroke="#FCBF49"
-            cx="{ 5 + 0.9 * $flightProgress}%" 
-            cy="25" r="2" />
+        <circle fill="#FCBF49" stroke="black" stroke-width="0.5"
+            cx="{ xpos($flightProgress)}%" 
+            cy="25" r="2.5" />
         <text fill="black"text-anchor="middle"
             x="5%"
             y="56">{format($takeOffTime)}</text>
@@ -126,19 +118,20 @@
             x="95%" 
             y="56">{format($landingTime)}</text>
     </svg>
+    {#if $aurora.length > 0}
+        <div class="aurora-legend"><span>zone favorable aux aurores boréales</span></div>
+    {/if}
 </div>
 <style>
     .aurora-legend {
-        margin-left: 5%;
+        margin: 0 auto;
+        width: 75%;
+        margin-top: -0.9em;
+        font-size: 0.7rem;
+        color: gray;
+        text-align: center;
     }
-    .aurora-legend::before {
-        content: "";
-        height: 1em;
-        width: 1em;
-        display: inline-block;
-        border: 3px solid lime;
-        opacity: 50%;
-        margin-right: 0.5em;
-        vertical-align: text-bottom;
+    .aurora-legend span{
+        border-bottom: 2px solid #00FF007F;
     }
 </style>

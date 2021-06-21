@@ -1,8 +1,9 @@
 <script>
     import {slide} from "svelte/transition";
     import Overlay from "svelte-overlay";
-    import KpUpdater, {aurora} from "./KpUpdater.svelte";
+    import KpUpdater, {aurora, kpColor} from "./KpUpdater.svelte";
     import SunTimeLine, {format} from "./SunTimeLine.svelte";
+    import KpTimeLine from "./KpTimeLine.svelte";
     import {sun, moon, getMoonIllumination, sunStateAndRising} from "./suncalc";
     import {ofp, takeOffTime, landingTime} from "../stores";
     import {solar} from "./solarstore";
@@ -123,7 +124,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {#each $solar.sun.filter(e => !['sunriseEnd', 'sunsetStart', 'astronomicalDawn', 'astronomicalDusk'].includes(e.type)) as event}
+                        {#each $solar.sun.filter(e => ['sunrise', 'sunset', 'civilDawn', 'civilDusk', 'nauticalDawn', 'nauticalDusk'].includes(e.type)) as event, i}
                         <tr>
                             {#if event.fl !== 0}
                                 <td>{nightEventsFR[event.type] || event.type}
@@ -134,6 +135,12 @@
                                 <td class="color {event.type}-color"></td>
                                 <td>{format(event.date)}</td>
                                 <td>FL{event.fl}</td>
+                            {:else if i===0}
+                                <td colspan="4">{nightEventsFR[event.type] || event.type} en montée
+                                    {#if event.type.startsWith('civil')}
+                                        <span class:rise={event.type==='civilDawn'}>✹</span>
+                                    {/if}
+                                </td>
                             {:else}
                                 <td colspan="4">Atterrissage {stateAsText($ofp.arrival, $landingTime, arrivalSun)}</td>
                             {/if}
@@ -144,25 +151,49 @@
                     </tbody>
                     <thead>
                         <tr>
-                            <th scope="col" colspan="4" class:border-bottom-0={$solar.moon.length === 0}>
+                            <th scope="col" colspan="4">
                                 Lune {getMoonEmoji(moonIllumination)} {getMoonName(moonIllumination)} {getMoonIlluminationPercent(moonIllumination)}% {(isMoonVisibleDuringFlight) ? '' : 'non visible'}
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {#each $solar.moon as event}
+                        {#each $solar.moon as event, i}
                         <tr>
-                            <td>{nightEventsFR[event.type] || event.type} <span class:rise={event.type==='moonrise'}>☽</span></td>
-                            <td class="color"></td>
-                            <td>{format(event.date)}</td>
-                            <td>FL{event.fl}</td>
-                            <!-- <td class="kp" class:kp-ok={event.nightKp < 99}>{(event.nightKp < 99) ? Math.floor(event.nightKp) : ''}</td> -->
+                            {#if event.fl !== 0}
+                                <td>{nightEventsFR[event.type] || event.type} <span class:rise={event.type==='moonrise'}>☾</span></td>
+                                <td class="color"></td>
+                                <td>{format(event.date)}</td>
+                                <td>FL{event.fl}</td>
+                            {:else if i===0}
+                                <td colspan="4">{nightEventsFR[event.type] || event.type} en montée <span class:rise={event.type==='moonrise'}>☾</span></td>
+                            {:else}
+                                <td colspan="4">{nightEventsFR[event.type] || event.type}  en descente <span class:rise={event.type==='moonrise'}>☾</span></td>
+                            {/if}
                         </tr>
                         {:else}
                             <tr><td colspan="4">Aucun événement</td></tr>
                         {/each}
                     </tbody>
+                    <thead>
+                        <tr>
+                            <th scope="col" colspan="4" class="kp">Prévisions de Kp
+                                <svg width="150px" height="13px" xmlns="http://www.w3.org/2000/svg">
+                                    {#each [0, 1, 2 ,3, 4, 5, 6, 7, 8, 9] as data}
+                                    <rect stroke="{kpColor(data)}" stroke-width="1" fill="transparent"
+                                        x="{2 + data * 15}"
+                                        y="2"
+                                        width="12"
+                                        height="12"/>
+                                        <text fill="gray"text-anchor="middle" font-size="0.7em"
+                                            x="{8 + data * 15}"
+                                            y="11.5">{data}</text>
+                                {/each}
+                                </svg>
+                            </th>
+                        </tr>
+                    </thead>
                 </table>
+                <KpTimeLine/>
             </div>
         </div>
     </Overlay>
@@ -283,6 +314,17 @@
     }
     .rise {
         color: #FCBF49;
+    }
+    th[scope=col]{
+        padding-bottom: 5px;
+    }
+    th.kp {
+        position: relative;
+    }
+    th.kp svg{
+        right: 5%;
+        position: absolute;
+        bottom: 0;
     }
     :global(.overlay .content.bottom-bottom) { /*fix overlay misplacement*/
         left: 50%;
