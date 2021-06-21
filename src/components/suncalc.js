@@ -250,7 +250,7 @@ export const getMoonPosition = function (date, point) {
         parallacticAngle: pa
     };
 };
-export const moonState = (date, point, fl) => { // true => visible
+export const moonState = (date, point, fl=0) => { // true => visible
     // + altitude of moonrise is 8mn of arc (0.133*rad)
     // - refraction correction at this altitude is 0.008116109187895005
     // we apply the same altitude correction that the sun (really ?)
