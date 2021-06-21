@@ -62,7 +62,7 @@
         return `transform: rotate(${ -oa + emojiOrientationCorrection}rad);`
     };
 </script>
-<span class="moon" class:rise={type==='moonrise'} style="{moonEmojiStyle()}"><slot></slot></span>
+<div class="moon" class:rise={type==='moonrise'} style="{moonEmojiStyle()}"><slot></slot></div>
 
 <style>
     .moon {
