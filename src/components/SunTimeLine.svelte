@@ -14,6 +14,7 @@
     import {aurora, Kp} from "./KpUpdater.svelte";
     import {flightProgress, landingTime, takeOffTime} from "../stores";
     import {solar} from "./solarstore";
+    import {getMoonIllumination, getMoonPosition} from "./suncalc.js";
 
     export let departureSun;
     export let arrivalSun;
@@ -49,6 +50,13 @@
                 return 'red';
         };
     };
+    const moonIconStyle =  (date, point) => {
+        const mi = getMoonIllumination(date);
+        const iconOrientationCorrection = 132 * Math.PI / 180;
+        const oa = mi.angle - getMoonPosition(date, point).parallacticAngle; // observer angle
+        //return `transform: rotate(${ -oa + iconOrientationCorrection}rad);`;
+        return ''; //not yet supported in safari
+    }
 </script>
 <div>
     {#if !$Kp}
@@ -78,7 +86,7 @@
                     y="44">✹</text>
             {/if}
         {/each}
-        {#each $solar.moon as {type, relpos}}
+        {#each $solar.moon as {type, relpos, date, position}}
             <line stroke="gray" stroke-width="1"
                 x1="{xpos(relpos)}%"
                 y1="18"
@@ -86,7 +94,8 @@
                 y2="20" />
             <text fill="{(type==='moonrise') ? '#FCBF49' : '#000B18'}" text-anchor="middle" 
                 x="{xpos(relpos)}%"
-                y="16" 
+                y="16"
+                style="{moonIconStyle(date,position)}transform-origin: {xpos(relpos)}% 9px;"
                 >☾</text>
         {/each}
         {#each $aurora as {period, relpos}}

@@ -219,7 +219,7 @@ export const flightProgress = derived(
     0 // initial value
 );
 export const position = derived([ofp, flightProgress], ([$ofp, $flightProgress]) => {
-    if (!$ofp) return { map: {latitude: 0, longitude: 0}, gramet: $flightProgress, fl: 300};
+    if (!$ofp) return { map: {latitude: 0, longitude: 0}, gramet: $flightProgress, fl: 300, reltime: 0};
     const timeMatrix = $ofp.timeMatrix;
     const distanceMatrix = $ofp.distanceMatrix;
     const firstPoint = distanceMatrix[0][0];
@@ -227,18 +227,18 @@ export const position = derived([ofp, flightProgress], ([$ofp, $flightProgress])
     const routeDistance = distanceMatrix[distanceMatrix.length - 1][1];
     const firstFL = (timeMatrix.length !== 0) ? timeMatrix[0][2] : distanceMatrix[0][2];
     const lastFL = (timeMatrix.length !== 0) ? timeMatrix[timeMatrix.length - 1][2] : distanceMatrix[distanceMatrix.length - 1][2];
-    if ($flightProgress <= 0) return {map: firstPoint, gramet: 0, fl: firstFL};
-    if ($flightProgress >= 100) return {map: lastPoint, gramet: 100, fl: lastFL};
+    const routeTime = (timeMatrix.length !== 0) ? timeMatrix[timeMatrix.length - 1][1] : $ofp.infos.duration[1] + $ofp.infos.duration[0] * 60;
+    const posTime = ($flightProgress * routeTime) / 100;
+    if ($flightProgress <= 0) return {map: firstPoint, gramet: 0, fl: firstFL, reltime: posTime};
+    if ($flightProgress >= 100) return {map: lastPoint, gramet: 100, fl: lastFL, reltime: posTime};
 
     if (timeMatrix.length !== 0) {
-        const routeTime = timeMatrix[timeMatrix.length - 1][1];
-        const posTime = ($flightProgress * routeTime) / 100;
-
         for (const [i, [p, sum, fl]] of timeMatrix.entries()) {
             // console.log(i, p, d)
             if (sum >= posTime) {
                 if (posTime - sum === 0) {
                     return {
+                        reltime: posTime,
                         map: p,
                         gramet: 100 * distanceMatrix[i][1] / routeDistance,
                         fl
@@ -249,12 +249,14 @@ export const position = derived([ofp, flightProgress], ([$ofp, $flightProgress])
                     const segmentLength = distanceMatrix[i][1] - distanceMatrix[i - 1][1];
                     const fraction = (sum - posTime) / (sum - previous[1]);
                     return {
+                        reltime: posTime,
                         map: p.atFraction(previous[0], fraction, segmentLength),
                         gramet: 100 * ((distanceMatrix[i][1] - (fraction * segmentLength))) / routeDistance,
                         fl: previous[2]
                     }
                 }
                 return {
+                    reltime: posTime,
                     map: firstPoint,
                     gramet: 0,
                     fl: firstFL
@@ -270,7 +272,8 @@ export const position = derived([ofp, flightProgress], ([$ofp, $flightProgress])
                 if (posDistance - sum === 0) return {
                     map: p,
                     gramet: $flightProgress,
-                    fl
+                    fl,
+                    reltime: posTime
                 };
                 const previous = distanceMatrix[i - 1];
                 if (previous) {
@@ -278,13 +281,15 @@ export const position = derived([ofp, flightProgress], ([$ofp, $flightProgress])
                     return {
                         map: p.atFraction(previous[0], (sum - posDistance) / segmentLength, segmentLength),
                         gramet: $flightProgress,
-                        fl: previous[2]
+                        fl: previous[2],
+                        reltime: posTime
                     }
                 }
                 return {
                     map: firstPoint,
                     gramet: 0,
-                    fl: firstFL
+                    fl: firstFL,
+                    reltime: posTime
                 };
             }
         }
@@ -292,7 +297,8 @@ export const position = derived([ofp, flightProgress], ([$ofp, $flightProgress])
     return {
         map: lastPoint,
         gramet: 100,
-        fl: lastFL
+        fl: lastFL,
+        reltime: posTime
     };
 
-}, { map: {latitude: 0, longitude: 0}, gramet: 0, fl: 300});
+}, { map: {latitude: 0, longitude: 0}, gramet: 0, fl: 300, reltime: 0});

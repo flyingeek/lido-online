@@ -116,7 +116,7 @@ export const sunAzEl = (date, point) => {
     if (ha < -180) {
         ha += 360;
     }
-    const phi = point.philam.phi;
+    const phi = point.latitude * rad;
     let csz = (sin(phi) * sin(theta)) + (cos(phi) * cos(theta) * cos(rad * ha));
     if (csz > 1.0) {
         csz = 1.0
@@ -231,15 +231,15 @@ export const getMoonIllumination = (date) => {
 };
 export const getMoonPosition = function (date, point) {
 
-    var lw  = -point.philam.lam,
-        phi = point.philam.phi,
+    var lw  = -point.longitude * rad,
+        phi = point.latitude * rad,
         d   = toDays(date),
 
         c = moonCoords(d),
         H = siderealTime(d, lw) - c.ra,
-        h = altitude(H, phi, c.dec);
+        h = altitude(H, phi, c.dec),
         // formula 14.1 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-        //pa = atan(sin(H), tan(phi) * cos(c.dec) - sin(c.dec) * cos(H));
+        pa = atan(sin(H), tan(phi) * cos(c.dec) - sin(c.dec) * cos(H));
 
     //h = h + astroRefraction(h); // altitude correction for refraction
 
@@ -247,7 +247,7 @@ export const getMoonPosition = function (date, point) {
         //azimuth: azimuth(H, phi, c.dec),
         altitude: h,
         //distance: c.dist,
-        //parallacticAngle: pa
+        parallacticAngle: pa
     };
 };
 export const moonState = (date, point, fl) => { // true => visible
