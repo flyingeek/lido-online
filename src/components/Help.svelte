@@ -214,4 +214,7 @@ onMount(() => {
             position: -webkit-sticky;
         }
     }
+    .markdown :global(.table th),.markdown :global(.table td){
+        padding: 0.25rem 0.75rem;
+    }
 </style>

@@ -62,7 +62,7 @@ Pour mieux comprendre le GRAMET, je vous conseille son <Link href="http://www.og
 
 Il est possible d'afficher la position avion sur la carte (bouton en forme de mire). Si vous l'autorisez, la position GPS sera prise en compte. Si la localisation GPS semble ne pas fonctionner (au sol ou en vol avec un gps externe), vérifiez que vous n'avez pas désactivé la localisation dans iPad / Réglages / Confidentialité / Service de localisation / Sites Safari. Vous devez choisir «Lorsque l'app est active» ou «Demander la prochaine fois». Le Bouton a deux ou trois positions: OFF, ON centré, ON non centré. Si, dans la position ON centré, vous déplacez la carte, il passe en ON non centré. L'appui suivant le repassera en ON centré. Un dernier appui le mettra sur OFF.
 
-En l'absence de GPS, l'avion dans la barre de menu (à gauche de l'heure de décollage) permet d'afficher la position estimée. Si la reconnaissance des waypoints s'est bien effectuée, les estimées de l'OFP seront prises en compte. Sinon, ce sera un simple ratio horaire, merci de me transmettre l'OFP dans ce cas (ce sera signalé par un avion rouge dans la barre de menu). L'heure de décollage est modifiable et permet toujours d'ajuster la position estimée.
+En l'absence de GPS, l'avion dans la barre de menu (à gauche de l'heure de décollage) permet d'afficher la position estimée. Si la reconnaissance des waypoints s'est bien effectuée, les estimées de l'OFP seront prises en compte. Sinon, ce sera un simple ratio horaire, merci de me transmettre l'OFP dans ce cas (ce sera signalé par un avion rouge dans la barre de menu et par l'absence des éphémérides). L'heure de décollage est modifiable et permet toujours d'ajuster la position estimée.
 
 ## ETOPS
 
@@ -70,35 +70,43 @@ La capacité ETOPS est determinée depuis l'OFP et les cercles sont tracés. Un 
 
 ## Éphémérides / Aurore Boréale
 
-Un calcul astronomique de la position du soleil est effectué en tenant compte de la route de l’OFP, du FL de l’OFP, et de l’heure de décollage choisie dans l’application. La précision attendue de l’algorithme est de ±1 min sous 72° de latitude et de 10 min au-delà. Si vous êtes sur la route, que le FL est respecté et que l'heure de décollage a été ajustée en fonction de la position réelle, alors la précision attendue sous N72 est de +- 2min. Si votre FL est différent, la correction d'altitude est en gros de 15s/1000ft. Exemple: FL OFP 400, FL réel 360, alors ajouter 1min pour le lever, soustraire 1min pour le coucher. Le calcul n'est valable que pour la croisière, se reporter à EWAS pour le calcul précis au départ ou à destination.
-
-Le calcul du lever/coucher de lune est moins précis +- 5min.
-
 Le symbole du widget est dynamique:
 
 - ☀️ si le soleil est visible pendant le vol
 - 🌕🌖🌗🌘🌑🌒🌓🌔 si la lune est visible pendant le vol
 - 🔭 si vous restez dans le noir
-- un halo vert se superpose si conditions sont favorables à l'observation d'aurores boréales
+- un halo vert se superpose si les conditions sont favorables à l'observation d'aurores boréales
 
-Le widget affiche éventuellement les heures de lever ou de coucher. Cliquer sur le widget affiche les éphémérides du vol, elles contiennent les aubes et crépuscules civils, nautiques, la phase de la lune et son illumination, les levers et couchers de lune, les prévisions de Kp et les éventuelles zones propices à l'observation des aurores boréales associées. Durant l'aube/crépuscule nautique, en vol l'horizon est discernable, au sol on distingue encore le relief, l'aube/crépuscule astronomique ne sont pas affichés car ils ont peu d'intérêt pour un pilote.
+Le widget affiche également les heures de lever ou de coucher. Un clic révèle des éphémérides avec 2 timelines. La première synthétise le jour et la nuit le long du vol ainsi que les zones favorables à l'observation des aurores boréales. La seconde montre les prévisions de Kp. Le Kp permet de prédire les aurores boréales. Entre ces deux timelines, la Lune est aussi un objet dynamique: l'angle des cornes va se modifier en fonction de la position estimée et cet angle est indiqué pour les levers et les couchers. Pour le soleil, l'aube nautique est indiquée, car ce n'est pas tout à fait la nuit: en vol l'horizon est partiellement discernable, et au sol on distingue encore le relief.
 
+__Précision des calculs&#8239;:__ si vous avez bien recalé la position estimée d'OFP2MAP sur la carte (en modifiant l'heure de décollage), la précision attendue est de ±2 min sous 72° de latitude et de 10 min au-delà. Pour la lune, on est plutôt sur une précision de ±5 min. Le calcul n'est valable que pour la croisière, reportez vous à EWAS pour un calcul précis au départ ou à destination.
 
-Pour la détermination des aurores boréales, OFP2MAP récupère les prédictions de Kp auprès de la NOAA. Ensuite, à partir des latitudes géomagnétiques de la route et de l'obscurité du ciel, un recoupement est effectué pour délimiter les zones favorables. Les zones ne sont affichées que pour les vols dont la date est comprise en H-48 et H+24. Utiliser le plugin OFP2MAP-AURORA donnera des informations complémentaires.
-
-Si OFP2MAP n'a pas pu récupérer les estimées de l'OFP (voir le paragraphe sur la position estimée), le widget ne s'affichera pas.
+__Correction d'altitude&#8239;:__ Si votre niveau de vol est différent de l'OFP, appliquez une correction de 15s/1000ft pour le soleil. Exemple: FL OFP 400, FL réel 360, il faut ajouter 1min pour le lever, et soustraire 1min pour le coucher.
 
 Pour rappel, la chronologie des événements pour le soleil est:
 
 <table class="table">
     <thead><tr><th>Angle</th><th>▲ Soleil levant</th><th>▼ Soleil couchant</th></tr></thead>
     <tbody>
-        <tr><td></td><td>Jour</td><td>Jour</td></tr>
         <tr><td>-0.83°</td><td>↑ Lever du soleil (fin aube civile)</td><td>↓ Coucher du soleil (début crépuscule civil)</td></tr>
         <tr><td>-6°</td><td>↑ début aube civile (jour civil)</td><td>↓ fin du crépuscule civil (début nuit civile)</td></tr>
         <tr><td>-12°</td><td>↑ début aube nautique (jour nautique)</td><td>↓ fin du crépuscule nautique (début nuit nautique)</td></tr>
-        <tr><td>-18°</td><td>↑ début aube astronomique (jour astronomique)</td><td>↓ fin du crépuscule astronomique (début nuit astronomique)</td></tr>
-        <tr><td></td><td>↑ Nuit</td><td>↓ Nuit</td></tr>
+    </tbody>
+</table>
+
+Et pour la lune:
+
+<table class="table moon">
+    <thead><tr><th>Jour</th><th>Nom</th><th>Hémisphère nord</th><th>Hémisphère sud</th></tr></thead>
+    <tbody>
+        <tr><td>1</td><td>Nouvelle lune</td><td>🌑</td><td>🌑</td></tr>
+        <tr><td></td><td>Premier croissant</td><td>🌒</td><td>🌘</td></tr>
+        <tr><td>7</td><td>Premier quartier</td><td>🌓</td><td>🌗</td></tr>
+        <tr><td></td><td>Lune gibbeuse croissante</td><td>🌔</td><td>🌖</td></tr>
+        <tr><td>14</td><td>Pleine lune</td><td>🌕</td><td>🌕</td></tr>
+        <tr><td></td><td>Lune gibbeuse décroissante</td><td>🌖</td><td>🌔</td></tr>
+        <tr><td>21</td><td>Dernier quartier</td><td>🌗</td><td>🌓</td></tr>
+        <tr><td></td><td>Dernier croissant</td><td>🌘</td><td>🌒</td></tr>
     </tbody>
 </table>
 
@@ -154,3 +162,4 @@ L'hébergement des images est normalement fourni par alwaysdata.com (pack gratui
 ## Liens
 
 - <Link href="https://flyingeek.github.io/flytax/" rel="noopener"><span class="flytax">Fly<span>Tax</span></span></Link> une aide aux calculs des frais professionnels (même auteur).
+
