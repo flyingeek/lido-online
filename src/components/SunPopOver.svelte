@@ -2,18 +2,19 @@
     import {kpColor} from "./KpUpdater.svelte";
     import SunTimeLine, {format} from "./SunTimeLine.svelte";
     import KpTimeLine from "./KpTimeLine.svelte";
-    import Moon, {getMoonEmoji, getMoonName, getMoonIlluminationPercent} from "./Moon.svelte";
-    import {moonState, getMoonIllumination, sunStateAndRising} from "./suncalc";
-    import {ofp, takeOffTime, landingTime, position} from "../stores";
+    import Moon, {getMoonName, getMoonIlluminationPercent} from "./Moon.svelte";
+    import {moonState, sunStateAndRising} from "./suncalc";
+    import {ofp, landingTime, position} from "../stores";
     import {solar} from "./solarstore";
 
     export let departureSun;
+    export let moonEmoji;
+    export let moonIllumination;
+    export let estimatedDate;
 
     $: arrivalSun = ($ofp && $landingTime) ? sunStateAndRising($landingTime, $ofp.arrival, 0) : '';
     $: isMoonVisible = ($position && estimatedDate) ? moonState(estimatedDate, $position.map, $position.fl).state : '';
-    $: estimatedDate = ($takeOffTime && $position) ? new Date($takeOffTime.getTime() + $position.reltime * 60000) : $takeOffTime;
-    $: moonIllumination = (estimatedDate) ? getMoonIllumination(estimatedDate) : {};
-    $: moonEmoji = getMoonEmoji(moonIllumination);
+
 
     const stateAsText = (point, date, {state, isRising}) => {
         if (!point || !date) return '';

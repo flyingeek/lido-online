@@ -4,9 +4,9 @@
     import KpUpdater, {aurora} from "./KpUpdater.svelte";
     import {format} from "./SunTimeLine.svelte";
     import SunPopOver from "./SunPopOver.svelte";
-    import {getMoonEmoji} from "./Moon.svelte";
+    import Moon, {getMoonEmoji} from "./Moon.svelte";
     import {sun, moon, getMoonIllumination} from "./suncalc";
-    import {ofp, takeOffTime} from "../stores";
+    import {ofp, takeOffTime, position} from "../stores";
     import {solar} from "./solarstore";
 
     
@@ -18,17 +18,26 @@
 
     $: departureSun = ($ofp && $takeOffTime) ? sun.getState($takeOffTime, $ofp.departure, 0) : '';
     $: departureMoon = ($ofp && $takeOffTime) ? moon.getState($takeOffTime, $ofp.departure) : '';
+    $: estimatedDate = ($takeOffTime && $position) ? new Date($takeOffTime.getTime() + $position.reltime * 60000) : $takeOffTime  || $ofp.infos.takeoff;
     $: sunEvents = $solar.sun.filter(e => ['sunrise', 'sunset'].includes(e.type));
     $: isMoonVisibleDuringFlight = $solar.moon.length > 0 || departureMoon.state;
     $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmojiWhenNoSunEvent(departureSun, isMoonVisibleDuringFlight); //after isMoonVisibleDuringFlight
     $: widgetEvents = (widgetEmoji === '☀️') ? sunEvents : (widgetEmoji === 'moon') ? $solar.moon : [];
+    $: moonIllumination = (estimatedDate) ? getMoonIllumination(estimatedDate) : {};
+    $: moonEmoji = getMoonEmoji(moonIllumination);
 
 </script>
 <KpUpdater/>
 {#if $ofp && $ofp.timeMatrix.length > 0}
     <Overlay  position="bottom-center" isOpen={false}>
         <div slot="parent" class="sun" class:aurora={$aurora.length > 0} let:toggle on:click={toggle}>
-            <p class="icon">{(widgetEmoji === 'moon') ? getMoonEmoji(getMoonIllumination($takeOffTime || $ofp.infos.takeoff)) : widgetEmoji}</p>
+            <p class="icon">
+                {#if (widgetEmoji === 'moon')}
+                    <Moon position="{$position.map}" date={estimatedDate}>{moonEmoji}</Moon>
+                {:else}
+                    {widgetEmoji}
+                {/if}
+            </p>
             <div class="details" class:two="{widgetEvents.length === 2}" class:three="{widgetEvents.length>= 3}">
                 {#each widgetEvents.slice(0, 3) as event}
                     <p>{(event.type.includes('rise')) ? '↥' : '↧'} {format(event.date)}</p>
@@ -37,7 +46,7 @@
         </div>
         <div slot="content" style="width: 390px; max-width:390px; position:static;" class="popover" let:close in:slide={{ duration: 200 }}>
             <h3 class="popover-header">Éphémérides du vol<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>
-            <SunPopOver {departureSun}/>
+            <SunPopOver {departureSun} {moonEmoji} {estimatedDate} {moonIllumination}/>
         </div>
     </Overlay>
 {/if}

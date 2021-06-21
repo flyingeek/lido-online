@@ -150,5 +150,8 @@
     flex-grow: 1;
     background-color: var(--snow);
   }
+  :global(.table td){
+        padding: 0.5rem 0.75rem;
+  }
 
 </style>
