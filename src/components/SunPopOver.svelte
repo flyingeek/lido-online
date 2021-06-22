@@ -1,6 +1,6 @@
 <script>
     import {kpColor} from "./KpUpdater.svelte";
-    import SunTimeLine, {format} from "./SunTimeLine.svelte";
+    import SunTimeLine, {format, civilIcon} from "./SunTimeLine.svelte";
     import KpTimeLine from "./KpTimeLine.svelte";
     import Moon, {getMoonName, getMoonIlluminationPercent} from "./Moon.svelte";
     import {moonState, sunStateAndRising} from "./suncalc";
@@ -63,7 +63,7 @@
                 {#if event.fl !== 0}
                     <td>{_(event.type)}
                         {#if event.type.startsWith('civil')}
-                            <span class:rise={event.type==='civilDawn'}>✹</span>
+                            <span class:rise={event.type==='civilDawn'}>{civilIcon}</span>
                         {/if}
                     </td>
                     <td class="color {event.type}-color"></td>
@@ -72,7 +72,7 @@
                 {:else if i===0}
                     <td colspan="4">{_(event.type)} en montée
                         {#if event.type.startsWith('civil')}
-                            <span class:rise={event.type==='civilDawn'}>✹</span>
+                            <span class:rise={event.type==='civilDawn'}>{civilIcon}</span>
                         {/if}
                     </td>
                 {:else}

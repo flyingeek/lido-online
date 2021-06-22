@@ -25,7 +25,6 @@
     $: widgetEvents = (widgetEmoji === '☀️') ? sunEvents : (widgetEmoji === 'moon') ? $solar.moon : [];
     $: moonIllumination = (estimatedDate) ? getMoonIllumination(estimatedDate) : {};
     $: moonEmoji = getMoonEmoji(moonIllumination);
-    $: console.log(departureMoon)
 
 </script>
 <KpUpdater/>

@@ -8,7 +8,9 @@
         }
         return (new Date(date.getTime() + 60000)).toJSON().slice(11, 16);
     };
-    export const xpos = (rel) => 5 + (0.9 * rel);
+    //xpos computes svg x coordinnate using relative position, if a fixed width is given, returns abolute position, else percent
+    export const xpos = (rel, fixed) => (fixed) ? `${fixed * (5 + (0.9 * rel)) / 100}` : `${5 + (0.9 * rel)}%`;
+    export const civilIcon = "✽";
 </script>
 <script>
     import {aurora, Kp} from "./KpUpdater.svelte";
@@ -50,19 +52,28 @@
                 return 'red';
         };
     };
-    const moonIconStyle =  (date, point) => {
+    //Safari does not accept transform-origin in inline svg style
+    //SVG do not allow transform origin using % unit
+    //alternative => bind clientWidth  of the div wrapping the svg
+    let svgClientWidth;
+    // const moonIconStyle =  (date, point) => { //not yet supported in safari
+    //     const mi = getMoonIllumination(date);
+    //     const iconOrientationCorrection = 132 * Math.PI / 180;
+    //     const oa = mi.angle - getMoonPosition(date, point).parallacticAngle; // observer angle
+    //     return `transform: rotate(${ -oa + iconOrientationCorrection}rad);`;
+    // }
+    const moonIconTransform =  (date, point, x0, y0) => {
         const mi = getMoonIllumination(date);
-        const iconOrientationCorrection = 132 * Math.PI / 180;
+        const iconOrientationCorrection = 132;
         const oa = mi.angle - getMoonPosition(date, point).parallacticAngle; // observer angle
-        //return `transform: rotate(${ -oa + iconOrientationCorrection}rad);`;
-        return ''; //not yet supported in safari
+        return `rotate(${ (-oa * 180 / Math.PI) + iconOrientationCorrection}, ${x0}, ${y0})`;
     }
 </script>
 <div>
     {#if !$Kp}
         <p>Les prédictions de Kp sont indisponibles.</p>
     {/if}
-    <svg width="100%" height="60px" xmlns="http://www.w3.org/2000/svg">
+    <div bind:clientWidth={svgClientWidth}><svg width="100%" height="60px" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <linearGradient id="SunTimeLine">
                 <stop offset="0%"  stop-color="{eventColor(departureSun.state)}"/>
@@ -75,40 +86,40 @@
         {#each $solar.sun as {type, relpos}}
             {#if !['sunriseEnd', 'sunsetStart', 'astronomicalDawn', 'astronomicalDusk'].includes(type)}
                 <line stroke="gray" stroke-width="1"
-                    x1="{xpos(relpos)}%"
+                    x1="{xpos(relpos)}"
                     y1="30"
-                    x2="{xpos(relpos)}%"
+                    x2="{xpos(relpos)}"
                     y2="32" />
             {/if}
             {#if type.startsWith('civil')}
                 <text fill="{(type === 'civilDawn') ? '#FCBF49' : '#000B18'}" text-anchor="middle"
-                    x="{xpos(relpos)}%"
-                    y="44">✹</text>
+                    x="{xpos(relpos)}"
+                    y="44">{civilIcon}</text>
             {/if}
         {/each}
         {#each $solar.moon as {type, relpos, date, position}}
             <line stroke="gray" stroke-width="1"
-                x1="{xpos(relpos)}%"
+                x1="{xpos(relpos)}"
                 y1="18"
-                x2="{xpos(relpos)}%"
+                x2="{xpos(relpos)}"
                 y2="20" />
-            <text fill="{(type==='moonrise') ? '#FCBF49' : '#000B18'}" text-anchor="middle" 
-                x="{xpos(relpos)}%"
+            <text fill="{(type==='moonrise') ? '#FCBF49' : 'gray'}" text-anchor="middle" 
+                x="{xpos(relpos)}"
                 y="16"
-                style="{moonIconStyle(date,position)}transform-origin: {xpos(relpos)}% 9px;"
+                transform="{moonIconTransform(date, position, xpos(relpos, svgClientWidth), 9)}"
                 >☾</text>
         {/each}
         {#each $aurora as {period, relpos}}
             <rect stroke="lime" stroke-opacity="60%" fill="transparent" stroke-width="2"
-                x="{xpos(relpos[0])}%"
+                x="{xpos(relpos[0])}"
                 y="18"
                 width="{0.9 * (relpos[1] - relpos[0])}%"
                 height="14"/>
             <text fill="green"text-anchor="middle" font-size="0.7em"
-                x="{xpos(relpos[0] + (relpos[1] - relpos[0]) / 2)}%"
+                x="{xpos(relpos[0] + (relpos[1] - relpos[0]) / 2)}"
                 y="15">{format(period[0])}</text>
             <text fill="green"text-anchor="middle" font-size="0.7em"
-                x="{xpos(relpos[0] + (relpos[1] - relpos[0]) / 2)}%"
+                x="{xpos(relpos[0] + (relpos[1] - relpos[0]) / 2)}"
                 y="42">{format(period[1])}</text>
         {/each}
         <rect fill="url(#SunTimeLine)"
@@ -118,7 +129,7 @@
             height="10px"
             rx="0"/>
         <circle fill="#FCBF49" stroke="black" stroke-width="0.5"
-            cx="{ xpos($flightProgress)}%" 
+            cx="{ xpos($flightProgress)}" 
             cy="25" r="2.5" />
         <text fill="black"text-anchor="middle"
             x="5%"
@@ -126,7 +137,7 @@
         <text fill="black" text-anchor="middle"
             x="95%" 
             y="56">{format($landingTime)}</text>
-    </svg>
+    </svg></div>
     {#if $aurora.length > 0}
         <div class="aurora-legend"><span>zone favorable aux aurores boréales</span></div>
     {/if}
