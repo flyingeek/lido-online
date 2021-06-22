@@ -9,7 +9,8 @@
         return (new Date(date.getTime() + 60000)).toJSON().slice(11, 16);
     };
     //xpos computes svg x coordinnate using relative position, if a fixed width is given, returns abolute position, else percent
-    export const xpos = (rel, fixed) => (fixed) ? `${fixed * (5 + (0.9 * rel)) / 100}` : `${5 + (0.9 * rel)}%`;
+    const timelineSize = 0.9;
+    export const xpos = (rel, fixed) => (fixed) ? `${fixed * (5 + (timelineSize * rel)) / 100}` : `${5 + (timelineSize * rel)}%`;
     export const civilIcon = "✽";
 </script>
 <script>
@@ -18,33 +19,32 @@
     import {solar} from "./solarstore";
     import {getMoonIllumination, getMoonPosition} from "./suncalc.js";
 
-    export let departureSun;
-    export let arrivalSun;
+
 
     const eventColor = (stateOrEvent) => {
         switch(stateOrEvent){
             
             case 'day':
             case 'dayStart':
+            case 'sunriseEnd':
                 return '#89d4ff';
             case 'sunrise end':
             case 'sunsetStart':
-            case 'sunriseEnd':
+            case 'sunrise':
                 return 'lightskyblue'; 
             case 'civil twilight':
             case 'sunset':
-            case 'sunrise':
+            case 'civilDawn':
                 return '#2383C2'
             case 'nautical twilight':
-            case 'civilDawn':
+            case 'nauticalDawn':
             case 'civilDusk':
                 return '#0052A2';
             case 'astronomical twilight':
-            case 'nauticalDawn':
+            case 'astronomicalDawn':
             case 'nauticalDusk':
                 return '#02386E';
             case 'night':
-            case 'astronomicalDawn':
             case 'astronomicalDusk':
                 return '#000B18';
             default:
@@ -55,7 +55,7 @@
     //Safari does not accept transform-origin in inline svg style
     //SVG do not allow transform origin using % unit
     //alternative => bind clientWidth  of the div wrapping the svg
-    let svgClientWidth;
+    let svgClientWidth = 364;
     // const moonIconStyle =  (date, point) => { //not yet supported in safari
     //     const mi = getMoonIllumination(date);
     //     const iconOrientationCorrection = 132 * Math.PI / 180;
@@ -68,13 +68,15 @@
         const oa = mi.angle - getMoonPosition(date, point).parallacticAngle; // observer angle
         return `rotate(${ (-oa * 180 / Math.PI) + iconOrientationCorrection}, ${x0}, ${y0})`;
     }
+    export let departureSun;
+    export let arrivalSun;
 </script>
 <div>
     {#if !$Kp}
         <p>Les prédictions de Kp sont indisponibles.</p>
     {/if}
     <div bind:clientWidth={svgClientWidth}><svg width="100%" height="60px" xmlns="http://www.w3.org/2000/svg">
-        <defs>
+        <!-- <defs>
             <linearGradient id="SunTimeLine">
                 <stop offset="0%"  stop-color="{eventColor(departureSun.state)}"/>
                 {#each $solar.sun as {type, relpos}}
@@ -82,19 +84,37 @@
                 {/each}
                 <stop offset="100%"  stop-color="{eventColor(arrivalSun.state)}"/>
             </linearGradient>
-        </defs>
-        {#each $solar.sun as {type, relpos}}
-            {#if !['sunriseEnd', 'sunsetStart', 'astronomicalDawn', 'astronomicalDusk'].includes(type)}
+        </defs> -->
+        <rect
+            x="{xpos(0)}"
+            width="{timelineSize * 100}%"
+            fill="{eventColor(arrivalSun.state)}"
+            y="20" height="10px"/>
+        {#each $solar.sun as event, i}
+            {#if ['sunrise', 'sunset', 'civilDawn', 'civilDusk', 'nauticalDawn', 'nauticalDusk'].includes(event.type)}
                 <line stroke="gray" stroke-width="1"
-                    x1="{xpos(relpos)}"
+                    x1="{xpos(event.relpos)}"
                     y1="30"
-                    x2="{xpos(relpos)}"
+                    x2="{xpos(event.relpos)}"
                     y2="32" />
+                {#if (event.type === 'civilDawn' || event.type === 'civilDusk')}
+                    <text fill="{(event.type === 'civilDawn') ? '#FCBF49' : '#000B18'}" text-anchor="middle"
+                        x="{xpos(event.relpos)}"
+                        y="44">{civilIcon}</text>
+                {/if}
             {/if}
-            {#if type.startsWith('civil')}
-                <text fill="{(type === 'civilDawn') ? '#FCBF49' : '#000B18'}" text-anchor="middle"
-                    x="{xpos(relpos)}"
-                    y="44">{civilIcon}</text>
+            {#if (i === 0)}
+                <rect 
+                    x="{xpos(0)}"
+                    width="{timelineSize * (event.relpos)}%"
+                    fill="{eventColor(departureSun.state)}"
+                    y="20" height="10px"/>
+            {:else}
+                <rect 
+                    x="{xpos($solar.sun[i-1].relpos)}" 
+                    width="{timelineSize * (event.relpos - $solar.sun[i-1].relpos)}%"
+                    fill="{eventColor($solar.sun[i-1].type)}"
+                    y="20" height="10px"/>
             {/if}
         {/each}
         {#each $solar.moon as {type, relpos, date, position}}
@@ -122,12 +142,6 @@
                 x="{xpos(relpos[0] + (relpos[1] - relpos[0]) / 2)}"
                 y="42">{format(period[1])}</text>
         {/each}
-        <rect fill="url(#SunTimeLine)"
-            x="5%"
-            y="20"
-            width="90%"
-            height="10px"
-            rx="0"/>
         <circle fill="#FCBF49" stroke="black" stroke-width="0.5"
             cx="{ xpos($flightProgress)}" 
             cy="25" r="2.5" />
