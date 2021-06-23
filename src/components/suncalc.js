@@ -148,33 +148,30 @@ export const sunAzEl = (date, point) => {
     // we do not need to calculate refraction for our usage (see isNight)
     return {elevation: 90 - (deg * zenith)};
 };
+const sunStates = [ // order important
+    [   -15, 'night'], // used for aurora prediction real astronomical night starts at -18
+    [   -12, 'astronomical twilight'],
+    [    -6, 'nautical twilight'],
+    [-0.833, 'civil twilight']
+];
 export const sunStateMap = new Map([
     ['night', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'astronomicalDawn': 'nightStart'],
     ['astronomical twilight', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'nauticalDawn': 'astronomicalDusk'],
     ['nautical twilight', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'civilDawn': 'nauticalDusk'],
     ['civil twilight', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'sunrise': 'civilDusk'],
-    ['sunrise end', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'sunriseEnd' : 'sunset'],
-    ['day', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'dayStart': 'sunsetStart'],
+    ['day', ([prevState, newState]) => (isSunRising(prevState, newState)) ? 'dayStart': 'sunset']
 ]);
-
-const sunRisingStates = Array.from(sunStateMap.keys());
+export const sunRisingStates = Array.from(sunStateMap.keys());
 export const isSunRising = (prevState, newState) => {
     return sunRisingStates.indexOf(newState) >= sunRisingStates.indexOf(prevState);
 };
+
 export const sunStateAndRising = (date, point, fl) => {
     const {state, elevation} = sunState(date, point, fl);
     //compare sun elevation beetween date and date + 10mn
     const isRising =  elevation < sunAzEl(new Date(date.getTime() + 600000), point).elevation;
     return {state, isRising};
 };
-
-const sunStates = [ // order important
-    [   -15, 'night'], // used for color in timeline and for aurora prediction real astronomical night starts at -18
-    [   -12, 'astronomical twilight'],
-    [    -6, 'nautical twilight'],
-    [-0.833, 'civil twilight'],
-    [     1, 'sunrise end'] // not related to sunrise end (-0.3) only for timeline color
-];
 
 export const sunState = (date, point, fl=0) => {
     const elevation = sunAzEl(date, point).elevation;

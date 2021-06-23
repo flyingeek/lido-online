@@ -12,6 +12,33 @@
     export const timelineSize = 0.9;
     export const xpos = (rel, fixed) => (fixed) ? `${fixed * (5 + (timelineSize * rel)) / 100}` : `${5 + (timelineSize * rel)}%`;
     export const civilIcon = "✽";
+    export const eventColor = (stateOrEvent) => {
+        switch(stateOrEvent){
+            case 'dayStart'://↑
+            case 'day':
+            case 'sunrise': //↑
+                return '#89d4ff';
+            case 'sunset': //↓
+            case 'civil twilight':
+            case 'civilDawn': //↑
+                return '#2383C2'
+            case 'civilDusk': //↓ 
+            case 'nautical twilight':
+            case 'nauticalDawn': //↑
+                return '#0052A2';
+            case 'nauticalDusk': //↓
+            case 'astronomical twilight':
+            case 'astronomicalDawn': //↑
+                //return '#02386E';
+            case 'astronomicalDusk': //↓
+            case 'night':
+            case 'nighStart': //↓
+                return '#000B18';
+            default:
+                if (stateOrEvent) console.error(`#ERREUR ${stateOrEvent}#`);
+                return 'red';
+        };
+    };
 </script>
 <script>
     import {aurora, Kp} from "./KpUpdater.svelte";
@@ -20,38 +47,6 @@
     import {getMoonIllumination, getMoonPosition} from "./suncalc.js";
 
 
-
-    const eventColor = (stateOrEvent) => {
-        switch(stateOrEvent){
-            
-            case 'day':
-            case 'dayStart':
-            case 'sunriseEnd':
-                return '#89d4ff';
-            case 'sunrise end':
-            case 'sunsetStart':
-            case 'sunrise':
-                return 'lightskyblue'; 
-            case 'civil twilight':
-            case 'sunset':
-            case 'civilDawn':
-                return '#2383C2'
-            case 'nautical twilight':
-            case 'nauticalDawn':
-            case 'civilDusk':
-                return '#0052A2';
-            case 'astronomical twilight':
-            case 'astronomicalDawn':
-            case 'nauticalDusk':
-                return '#02386E';
-            case 'night':
-            case 'astronomicalDusk':
-                return '#000B18';
-            default:
-                if (stateOrEvent) console.error(`#ERREUR ${stateOrEvent}#`);
-                return 'red';
-        };
-    };
     //Safari does not accept transform-origin in inline svg style
     //SVG do not allow transform origin using % unit
     //alternative => bind clientWidth  of the div wrapping the svg

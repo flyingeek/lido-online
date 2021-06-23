@@ -1,9 +1,9 @@
 <script>
     import {kpColor} from "./KpUpdater.svelte";
-    import SunTimeLine, {format, civilIcon} from "./SunTimeLine.svelte";
+    import SunTimeLine, {format, civilIcon, eventColor} from "./SunTimeLine.svelte";
     import KpTimeLine from "./KpTimeLine.svelte";
     import Moon, {getMoonName, getMoonIlluminationPercent} from "./Moon.svelte";
-    import {moonState, sunStateAndRising} from "./suncalc";
+    import {moonState, sunStateAndRising, sunRisingStates} from "./suncalc";
     import {ofp, landingTime, position} from "../stores";
     import {solar} from "./solarstore";
 
@@ -18,7 +18,7 @@
 
     const stateAsText = (point, date, {state, isRising}) => {
         if (!point || !date) return '';
-        if (state === 'day' || state === 'sunrise end') {
+        if (state === 'day') {
             return  'de jour';
         } else if (state === 'night' || state === 'astronomical twilight') {
             return 'de nuit';
@@ -45,6 +45,7 @@
         'moonset': 'Coucher de lune'
     };
     const _ = (t) =>  nightEventsFR[t] || t;
+    const states = sunRisingStates.slice(1); // night and astronomical twilight are the same color now
 </script>   
 <div class="popover-body">
     <SunTimeLine {arrivalSun} {departureSun}/>
@@ -52,7 +53,22 @@
         <thead>
             <tr>
                 <th scope="col">Soleil</th>
-                <th scope="col" class="color"></th>
+                <th scope="col" class="color">
+                    <svg width="100%" height="27px" xmlns="http://www.w3.org/2000/svg">
+                        {#each states as event, i}
+                        <rect fill="{eventColor(event)}"
+                            y="{0 + i * 6}"
+                            x="0"
+                            width="45%"
+                            height="5"/>
+                        <rect fill="{eventColor(states[states.length -1 -i])}"
+                            y="{0 + i * 6}"
+                            x="55%"
+                            width="45%"
+                            height="5"/>
+                        {/each}
+                    </svg>
+                </th>
                 <th scope="col">Heure</th>
                 <th scope="col">FL</th>
             </tr>
@@ -147,11 +163,11 @@
         border-bottom-color: #2383C2;
     }
     .table :global(.nauticalDawn-color) {
-        background: linear-gradient(#02386E 0% 50%, #0052A2 50% 100%);
-        border-top-color: #02386E;
+        background: linear-gradient(/*#02386E*/#000B18 0% 50%, #0052A2 50% 100%);
+        border-top-color: /*#02386E*/#000B18;
         border-bottom-color: #0052A2;
     }
-    .table :global(.astronomicalDawn-color) {
+    /* .table :global(.astronomicalDawn-color) {
         background: linear-gradient(#000B18 0% 50%, #02386E 50% 100%);
         border-top-color: #000B18;
         border-bottom-color: #02386E;
@@ -160,11 +176,11 @@
         background: linear-gradient(#02386E 0% 50%, #000B18 50% 100%);
         border-top-color: #02386E;
         border-bottom-color: #000B18;
-    }
+    } */
     .table :global(.nauticalDusk-color) {
-        background: linear-gradient(#0052A2 0% 50%, #02386E 50% 100%);
+        background: linear-gradient(#0052A2 0% 50%, /*#02386E*/#000B18 50% 100%);
         border-top-color: #0052A2;
-        border-bottom-color: darkskyblue;
+        border-bottom-color: /*#02386E*/#000B18;
     }
     .table :global(.civilDusk-color) {
         background: linear-gradient(#2383C2 0% 50%, #0052A2 50% 100%);
