@@ -1,7 +1,8 @@
 <script context="module">
-    import {derived, writable, get} from "svelte/store";
-    import {takeOffTime} from "../stores";
+    import {derived, writable} from "svelte/store";
+    import {landingTime, takeOffTime} from "../stores";
     import {solar} from "./solarstore";
+    import { binarysearch } from "./utils";
 
     const devTimeDelta = (tsref) => Math.round((Date.now() - tsref)/86400000) * 86400000;
     export const kpColor = (kp) => {
@@ -26,110 +27,97 @@
                 return 'lightgray';
         };
     };
-
-    export const Kp = writable();
-    const setKp = async () => {    
+    export const noaaKp = writable();
+    const fetchNoaaKpAndSet = async () => {    
         return fetch('CONF_NOAA_KP_JSON')
-            .then(response => response.json())
-            .then(data => {
-                const now = Date.now();
-                let timetable = [];
-                try {
-                    for (let i=data.length - 1; i>=1; i--){
-                        const [d, k] = data[i];
-                        const t = Date.parse(d.replace(' ', 'T') + 'Z'); // Safari needs the T
-                        if (t >= now - 172800000 && t <= now + 86400000) { // -48h / +24h
-                            timetable.push([t, parseFloat(k)])
-                        }
-                    }
-                } catch (error) {
-                    console.error('kp store update error', error);
+        .then(response => response.json())
+        .then(data => {
+            try {
+                const timetable = [];
+                for (let i=data.length - 1; i>=1; i--){
+                    const [d, k] = data[i];
+                    const t = Date.parse(d.replace(' ', 'T') + 'Z'); // Safari needs the T
+                    timetable.push([t, parseFloat(k)])
                 }
-                const getTimeTableIndex = (ts) => {
-                    for (let i=0; i<timetable.length; i++){
-                        if (ts >= timetable[i][0]) {
-                            return i;
-                        }
-                    }
-                    return -1;
-                };
-                const fn = (date, endDate) => {
-                    if (endDate) {
-                        let res = [];
-                        const takeOffTime = date.getTime();
-                        const landingTime = endDate.getTime();
-                        const flightTime = landingTime - takeOffTime;
-                        let timeDelta = 0;
-                        if ('process.env.NODE_ENV' === '"development"') {
-                            timeDelta = devTimeDelta(date);
-                        }
-                        //timetable in reverse order so end -> takeOff, start -> landing
-                        const end = getTimeTableIndex(takeOffTime + timeDelta);
-                        const start = getTimeTableIndex(landingTime + timeDelta);
-                        if (end === -1 || start === -1) {
-                            res = [];
-                        }else{
-                            res = timetable.slice(start, end + 1);
-                        }
-                        return res.map(a => ({
-                            date: new Date(a[0] - timeDelta),
-                            kp: a[1],
-                            relpos: Math.round(10000 * (a[0] - timeDelta - takeOffTime) / flightTime) / 100 //relpos might be < 0 or > 100
-                        }));
-                    }else{
-                        const ts = (date) ? date.getTime() : 0;
-                        for (let i=0; i<timetable.length; i++){
-                            if (ts >= timetable[i][0]) {
-                                return timetable[i][1];
-                            }
-                        }
-                        return -1;
+                noaaKp.set(timetable);
+            } catch (error) {
+                console.error('kp store update error', error);
+            }
+        })
+        .catch(function(error) {
+            console.log('Could not update Kp store', error);
+        });
+    };
+    export const Kp = derived([landingTime, takeOffTime, noaaKp], ([$landingTime, $takeOffTime, $noaaKp]) => {
+        if (!$landingTime || !$takeOffTime || !$noaaKp) return undefined;
+        let res = [];
+        const tots = $takeOffTime.getTime();
+        const flightTime = $landingTime - $takeOffTime;
+        let timeDelta = 0;
+        if ('process.env.NODE_ENV' === '"development"') {
+            timeDelta = devTimeDelta($takeOffTime);
+        }
+        //$noaaKp timetable in reverse order so end -> takeOff, start -> landing
+        const startTs = $landingTime.getTime() + timeDelta;
+        const start = binarysearch($noaaKp, a => a[0] <= startTs)
+        const endTs = tots + timeDelta;
+        const end = binarysearch($noaaKp, a => a[0] <= endTs)
+        if (end >= 0 && start >= 0) {
+            res = $noaaKp.slice(start, end + 1);
+        }
+        const timetable = res.map(a => ({
+            date: new Date(a[0] - timeDelta),
+            kp: a[1],
+            relpos: Math.round(10000 * (a[0] - timeDelta - tots) / flightTime) / 100 //relpos might be < 0 or > 100
+        }));
+        const fn = (date) => {
+            if (date) { // a linear search is fine here (0-5 entries)
+                for (let i=0; i<timetable.length; i++){
+                    if (date >= timetable[i].date) {
+                        return timetable[i].kp;
                     }
                 }
-                //console.log(timetable.map(a => [new Date(a[0]), a[1]]))
-                //console.log(`setting Kp stores, timetable as ${timetable.length} entries${(timetable.length > 0) ? ' start:' + timetable[timetable.length - 1][0]: ''}`);
-                Kp.set(fn);
-            })
-            .catch(function(error) {
-                console.log('Could not update Kp store', error);
-            });
-    }
-
+            }
+            return -1;
+        }
+        return {
+            timetable,
+            get: fn
+        };
+    });
+    
     export const aurora = derived(
         [solar, Kp],
         ([$solar, $Kp]) => {
             if ($solar.route.length === 0 || !$Kp) return [];
             const segments = [];
-            let segment = [];
-            const timeDelta = ('process.env.NODE_ENV' === '"development"') ? devTimeDelta(get(takeOffTime).getTime()) : 0;
+            let points = [];
             for (const {position, date, type, relpos} of $solar.route) {
-                const predictedDate = (timeDelta !== 0) ? new Date( timeDelta + date.getTime()) : date;
-                const predictedKp = $Kp(predictedDate);
+                const predictedKp = $Kp.get(date);
                 if (['night', 'astronomicalDusk', 'astronomicalDawn'].includes(type) && Math.round(minKpAtPoint(position)) <= predictedKp){ //TODO Math.floor/ceil/round ?
-                    segment.push({position, date, predictedKp, relpos});
-                }else{
-                    if (segment.length > 0) segments.push(segment);
-                    segment = [];
+                    points.push({position, date, relpos, predictedKp});
+                }else if (points.length > 0) {
+                    segments.push(points);
+                    points = [];
                 }
             }
-            if (segment.length > 0) segments.push(segment);
+            if (points.length > 0) segments.push(points);
             const periods = [];
-            const rounding = 1000 * 60 * 5; // 5min
-            for (const list of segments) {
-                const last = list.length - 1;
-                const start = list[0].date.getTime();
-                const end = list[last].date.getTime();
-                const offset = (list.length === 1) ? 300000 : 0; //5mn or 0
-                const roundedStart = Math.floor((start - offset) / rounding) * rounding; // -5mn
-                const roundedEnd = Math.ceil((end + offset) / rounding) * rounding; // +5mn
-                const relpos1 = (list.length === 1) ? (roundedStart / start) * list[0].relpos : list[0].relpos;
-                const relpos2 = (list.length === 1) ? (roundedEnd / end) * list[last].relpos: list[last].relpos;
+            const rounding = 1000 * 60 * 5; // all times rounded to 5min
+            for (const points of segments) {
+                const last = points.length - 1;
+                const start = points[0].date.getTime();
+                const end = points[last].date.getTime();
+                const offset = (points.length === 1) ? 300000 : 0; //5mn or 0
+                const roundedStart = Math.floor((start - offset) / rounding) * rounding;
+                const roundedEnd = Math.ceil((end + offset) / rounding) * rounding;
+                const relpos1 = (roundedStart / start) * points[0].relpos;
+                const relpos2 = (roundedEnd / end) * points[last].relpos;
 
                 periods.push({
                     period: [new Date(roundedStart), new Date(roundedEnd)],
                     relpos: [relpos1, relpos2],
-                    points: [list[0].position, list[last].position],
-                    predictedKp: Math.max(...list.map(s => s.predictedKp))
+                    //points: [points[0].position, points[last].position]
                 });
             }
             return periods;
@@ -170,8 +158,8 @@
         if (event.data.meta === 'workbox-broadcast-update' && event.data.type === 'CACHE_UPDATED') {
             const {updatedURL} = event.data.payload;
             if (updatedURL === 'CONF_NOAA_KP_JSON') {
-                console.log('loading noaa kp store (sw cache updated)');
-                setKp();
+                //console.log('loading noaa kp store (sw cache updated)');
+                fetchNoaaKpAndSet();
             }
         }
     };
@@ -197,11 +185,11 @@
         const unsubscribe = ofp.subscribe(async () => {
             const inCache = await isInCache();
             if (inCache && $Kp !== undefined) { // if offline we still need to load the predictions if not loaded yet
-                console.log('ping noaa (ofp change)'); //predictedKpUpdate will do the real load if needed
+                //console.log('ping noaa (ofp change)'); //predictedKpUpdate will do the real load if needed
                 fetch('CONF_NOAA_KP_JSON').catch(() => {return;});
             }else{
-                console.log('loading noaa kp store (ofp change)');
-                setKp();
+                //console.log('loading noaa kp store (ofp change)');
+                fetchNoaaKpAndSet();
             }
         });
         return () => {

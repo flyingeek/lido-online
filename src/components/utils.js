@@ -238,6 +238,7 @@ export const shareAppLink = async () => {
 };
 
 // search for condition in array, returns the index, -1 if no match (-1 also for empty array)
+// condition might be > or >= for ascending order array, < or < = for descending order array
 export const binarysearch = (sortedArray, condition) => {
     let start = 0, end = sortedArray.length - 1;
     let ans = -1;
@@ -254,5 +255,5 @@ export const binarysearch = (sortedArray, condition) => {
             end = mid - 1;
         }
     }
-    return (condition(sortedArray[ans])) ? ans : -1;
+    return (ans === -1 || !condition(sortedArray[ans])) ? -1 : ans;
 };

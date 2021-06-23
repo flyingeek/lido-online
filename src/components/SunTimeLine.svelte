@@ -9,7 +9,7 @@
         return (new Date(date.getTime() + 60000)).toJSON().slice(11, 16);
     };
     //xpos computes svg x coordinnate using relative position, if a fixed width is given, returns abolute position, else percent
-    const timelineSize = 0.9;
+    export const timelineSize = 0.9;
     export const xpos = (rel, fixed) => (fixed) ? `${fixed * (5 + (timelineSize * rel)) / 100}` : `${5 + (timelineSize * rel)}%`;
     export const civilIcon = "✽";
 </script>
@@ -133,7 +133,7 @@
             <rect stroke="lime" stroke-opacity="60%" fill="transparent" stroke-width="2"
                 x="{xpos(relpos[0])}"
                 y="18"
-                width="{0.9 * (relpos[1] - relpos[0])}%"
+                width="{timelineSize * (relpos[1] - relpos[0])}%"
                 height="14"/>
             <text fill="green"text-anchor="middle" font-size="0.7em"
                 x="{xpos(relpos[0] + (relpos[1] - relpos[0]) / 2)}"
