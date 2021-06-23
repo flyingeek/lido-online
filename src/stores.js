@@ -1,5 +1,6 @@
 import { writable, readable, derived } from 'svelte/store';
 import {aircraftTypes} from "./constants";
+import {binarysearch} from "./components/utils";
 
 export function resetable(resetValue) {
     const { subscribe, set, update } = writable(resetValue);
@@ -233,66 +234,60 @@ export const position = derived([ofp, flightProgress], ([$ofp, $flightProgress])
     if ($flightProgress >= 100) return {map: lastPoint, gramet: 100, fl: lastFL, reltime: posTime};
 
     if (timeMatrix.length !== 0) {
-        for (const [i, [p, sum, fl]] of timeMatrix.entries()) {
-            // console.log(i, p, d)
-            if (sum >= posTime) {
-                if (posTime - sum === 0) {
-                    return {
-                        reltime: posTime,
-                        map: p,
-                        gramet: 100 * distanceMatrix[i][1] / routeDistance,
-                        fl
-                    };
-                }
-                const previous = timeMatrix[i - 1];
-                if (previous) {
-                    const segmentLength = distanceMatrix[i][1] - distanceMatrix[i - 1][1];
-                    const fraction = (sum - posTime) / (sum - previous[1]);
-                    return {
-                        reltime: posTime,
-                        map: p.atFraction(previous[0], fraction, segmentLength),
-                        gramet: 100 * ((distanceMatrix[i][1] - (fraction * segmentLength))) / routeDistance,
-                        fl: previous[2]
-                    }
-                }
-                return {
-                    reltime: posTime,
-                    map: firstPoint,
-                    gramet: 0,
-                    fl: firstFL
-                };
+        const i = binarysearch(timeMatrix, a => a[1] >= posTime);
+        const [p, sum, fl] = timeMatrix[i];
+        if (posTime - sum === 0) {
+            return {
+                reltime: posTime,
+                map: p,
+                gramet: 100 * distanceMatrix[i][1] / routeDistance,
+                fl
+            };
+        }
+        const previous = timeMatrix[i - 1];
+        if (previous) {
+            const segmentLength = distanceMatrix[i][1] - distanceMatrix[i - 1][1];
+            const fraction = (sum - posTime) / (sum - previous[1]);
+            return {
+                reltime: posTime,
+                map: p.atFraction(previous[0], fraction, segmentLength),
+                gramet: 100 * ((distanceMatrix[i][1] - (fraction * segmentLength))) / routeDistance,
+                fl: previous[2]
             }
         }
-    } else {
+        return {
+            reltime: posTime,
+            map: firstPoint,
+            gramet: 0,
+            fl: firstFL
+        };
+    } else if(distanceMatrix.length !== 0){
         const routeDistance = distanceMatrix[distanceMatrix.length - 1][1];
         const posDistance = ($flightProgress * routeDistance) / 100;
-        for (const [i, [p, sum, fl]] of distanceMatrix.entries()) {
-            // console.log(i, p, d)
-            if (sum >= posDistance) {
-                if (posDistance - sum === 0) return {
-                    map: p,
-                    gramet: $flightProgress,
-                    fl,
-                    reltime: posTime
-                };
-                const previous = distanceMatrix[i - 1];
-                if (previous) {
-                    const segmentLength = sum - previous[1];
-                    return {
-                        map: p.atFraction(previous[0], (sum - posDistance) / segmentLength, segmentLength),
-                        gramet: $flightProgress,
-                        fl: previous[2],
-                        reltime: posTime
-                    }
-                }
-                return {
-                    map: firstPoint,
-                    gramet: 0,
-                    fl: firstFL,
-                    reltime: posTime
-                };
+        const i = binarysearch(distanceMatrix, a => a[1] >= posDistance);
+        const [p, sum, fl] = distanceMatrix[i];
+        if (posDistance - sum === 0) return {
+            map: p,
+            gramet: $flightProgress,
+            fl,
+            reltime: posTime
+        };
+        const previous = distanceMatrix[i - 1];
+        if (previous) {
+            const segmentLength = sum - previous[1];
+            return {
+                map: p.atFraction(previous[0], (sum - posDistance) / segmentLength, segmentLength),
+                gramet: $flightProgress,
+                fl: previous[2],
+                reltime: posTime
             }
         }
+        return {
+            map: firstPoint,
+            gramet: 0,
+            fl: firstFL,
+            reltime: posTime
+        };
     }
     return {
         map: lastPoint,

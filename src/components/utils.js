@@ -209,7 +209,7 @@ export async function fetchSimultaneously(urls, fetchCallback) {
             try {
                 await fetch(url);
                 if (fetchCallback) fetchCallback();
-            } catch {}
+            } catch(err) {console.error(err)}
             currentRequests--;
 
             // Set value of index to empty (undefined)
@@ -235,4 +235,24 @@ export const shareAppLink = async () => {
         console.log(err);
     }
     return false;
-}
+};
+
+// search for condition in array, returns the index, -1 if no match (-1 also for empty array)
+export const binarysearch = (sortedArray, condition) => {
+    let start = 0, end = sortedArray.length - 1;
+    let ans = -1;
+    while (start <= end)
+    {
+        let mid = Math.trunc((start + end) / 2);
+        if (!condition(sortedArray[mid]))
+        {
+            start = mid + 1;
+        }
+        else
+        {
+            ans = mid;
+            end = mid - 1;
+        }
+    }
+    return (condition(sortedArray[ans])) ? ans : -1;
+};
