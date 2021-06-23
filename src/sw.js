@@ -106,7 +106,7 @@ registerRoute(
 );
 
 registerRoute(
-  ({url}) => url.origin === 'https://services.swpc.noaa.gov' && url.pathname==="/products/noaa-planetary-k-index-forecast.json",
+  ({url}) => (url.href) === 'CONF_NOAA_KP_JSON',
   new StaleWhileRevalidate({
     cacheName: validCaches['noaa'],
     plugins: [

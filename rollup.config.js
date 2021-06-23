@@ -61,7 +61,7 @@ const U = {
   'CONF_THEWORLD_TILES_BASE_URL': `https://ofp2map-${theworldId}.netlify.app/${theworldId}`,
   'CONF_EQE_PHYSICAL_FR_TILES_BASE_URL': `https://ofp2map-${eqePhysicalFrId}.netlify.app/${eqePhysicalFrId}`,
   'CONF_CB_TILES_BASE_URL': `https://ofp2map-${cbId}.netlify.app/${cbId}`,
-  'CONF_NOOA_KP_JSON': 'https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json'
+  'CONF_NOAA_KP_JSON': 'https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json'
 };
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
 

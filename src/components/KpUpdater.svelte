@@ -29,7 +29,7 @@
 
     export const Kp = writable();
     const setKp = async () => {    
-        return fetch('CONF_NOOA_KP_JSON')
+        return fetch('CONF_NOAA_KP_JSON')
             .then(response => response.json())
             .then(data => {
                 const now = Date.now();
@@ -159,8 +159,7 @@
     export const minKpAtPoint = (p) => {
         if (p.latitude <= 40) return [-90, 99]; // no need to compute
         const mlat = 90 - p.distanceTo(new editolido.GeoPoint(geoMagneticPoleLatLng), editolido.rad_to_deg);
-        const Kp = (mlat - 66.5) / 2 // https://www.swpc.noaa.gov/content/tips-viewing-aurora
-        return (Kp > 0) ? 0 : -Kp;
+        return (mlat > 66.5) ? 0 : (66.5 - mlat) / 2; // https://www.swpc.noaa.gov/content/tips-viewing-aurora
     };
 </script>
 <script>
@@ -170,7 +169,7 @@
     const predictedKpUpdated = async (event) => {
         if (event.data.meta === 'workbox-broadcast-update' && event.data.type === 'CACHE_UPDATED') {
             const {updatedURL} = event.data.payload;
-            if (updatedURL === 'CONF_NOOA_KP_JSON') {
+            if (updatedURL === 'CONF_NOAA_KP_JSON') {
                 console.log('loading noaa kp store (sw cache updated)');
                 setKp();
             }
@@ -186,7 +185,7 @@
             if (window.caches) {
                 const keys = await window.caches.open('lido-noaa').then(cache => cache.keys());
                 for (const req of keys) {
-                    if (req.url === 'CONF_NOOA_KP_JSON') {
+                    if (req.url === 'CONF_NOAA_KP_JSON') {
                         inCache = true;
                         break;
                     }
@@ -199,7 +198,7 @@
             const inCache = await isInCache();
             if (inCache && $Kp !== undefined) { // if offline we still need to load the predictions if not loaded yet
                 console.log('ping noaa (ofp change)'); //predictedKpUpdate will do the real load if needed
-                fetch('CONF_NOOA_KP_JSON').catch(() => {return;});
+                fetch('CONF_NOAA_KP_JSON').catch(() => {return;});
             }else{
                 console.log('loading noaa kp store (ofp change)');
                 setKp();
