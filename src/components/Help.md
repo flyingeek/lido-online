@@ -134,7 +134,7 @@ Liste des plugins:
 - <Link href="https://www.icloud.com/shortcuts/85acce199353490c9f3a3db0618da19e">OFP2MAP-ETOPS</Link> calcule un cartouche ETOPS actualisé
 - <Link href="https://www.icloud.com/shortcuts/ce764c49281643d4a63aec3d8bf848be">OFP2MAP-MENU</Link> menu affichant l'ensemble des plugins installés
 - <Link href="https://www.icloud.com/shortcuts/db21157c4fb441919eed9fa7e2cb644f">OFP2MAP-PLANE FINDER</Link> recherche l'avion avec flightaware.com
-- <Link href="https://www.icloud.com/shortcuts/1ef02bdaecb6406bb600429dccbdfac6">OFP2MAP-PLUGIN</Link> permet de visualiser les données (format json) si vous souhaitez développer un plugin.
+- <Link href="https://www.icloud.com/shortcuts/a8066a8f574b45278dfb711a58e562ed">OFP2MAP-PLUGIN</Link> permet de visualiser les données (format json) si vous souhaitez développer un plugin.
 
 
 ## Mise à jour
