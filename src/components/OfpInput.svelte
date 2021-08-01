@@ -149,20 +149,20 @@
                 $takeOffTime = undefined;
                 label = e.target.value.split(/([\\/])/g).pop();
                 dispatch('change', label);
+                window.location.hash = '#/map'; //TODO must be here and not in the then promise below to avoid map centering issues. Why ?
                 getOFP(file).then((ofp) => {
                     $ofpStore = ofp;
                     $selectedAircraftType = undefined;
                     $ofpStatus = 'success';
                     form.blur();
                     e.target.blur();
-                    form.reset();
-                }, (err) => {
+                }).catch((err) => {
                     $ofpStatus = err;
                     $ofpStore = undefined;
-                    form.reset(); 
                     console.trace(err);
+                }).finally(() => {
+                    form.reset(); 
                 });
-                window.location.hash = '#/map';
             }
         });
         disabled = false;
