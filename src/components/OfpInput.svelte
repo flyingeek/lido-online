@@ -12,6 +12,7 @@
         { type: 'script', url: 'CONF_PINCHZOOM_JS'},
         { type: 'link', url: 'CONF_MAPBOXGL_CSS'}
     ];
+    const tsvPattern = /TSV\s+-\s+(\d{2}):(\d{2})/u;
     const getPageText = async (pdf, pageNo) => {
         const page = await pdf.getPage(pageNo);
         const tokenizedText = await page.getTextContent();
@@ -32,6 +33,13 @@
                 break;
             } else if (pageText.includes('FPL SUMMARY')) {
                 ofpPages.push(pageText); // for ETOPS
+            } else if (pageText.includes('CREW PAIRING')) {
+                const match = tsvPattern.exec(pageText);
+                if (match) {
+                    ofpPages.push(match[0]); // for TSV;
+                }else{
+                    console.error('TSV not found');
+                }
             }
         }
         return ofpPages.join("\n");
@@ -105,6 +113,12 @@
                                 ofp.timeMatrix = timeMatrix;
                                 ofp.departure =  ofp.route.points[0];
                                 ofp.arrival = ofp.route.points[ofp.route.points.length - 1];
+                                const match = tsvPattern.exec(text.slice(0, 20));
+                                if (match) {
+                                    ofp.infos.TSV = parseInt(match[2], 10) + parseInt(match[1], 10) * 60; //in minutes
+                                } else {
+                                    ofp.infos.TSV = 0;
+                                }
                                 //console.log(timeMatrix)
                                 //console.timeLog('start');
                                 try {
