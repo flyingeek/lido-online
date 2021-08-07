@@ -12,11 +12,11 @@
         { type: 'script', url: 'CONF_PINCHZOOM_JS'},
         { type: 'link', url: 'CONF_MAPBOXGL_CSS'}
     ];
-    const tsvPattern = /TSV\s+-\s+(\d{2}):(\d{2})/u;
+
     const getPageText = async (pdf, pageNo) => {
         const page = await pdf.getPage(pageNo);
         const tokenizedText = await page.getTextContent();
-        return tokenizedText.items.map(token => token.str).join("");
+        return tokenizedText.items.map(token => token.str).join((pageNo === 1) ? " ": "");
     };
     const getOFPText = async (source) => {
         const pdfjsLib = window['pdfjs-dist/build/pdf'];
@@ -34,12 +34,7 @@
             } else if (pageText.includes('FPL SUMMARY')) {
                 ofpPages.push(pageText); // for ETOPS
             } else if (pageText.includes('CREW PAIRING')) {
-                const match = tsvPattern.exec(pageText);
-                if (match) {
-                    ofpPages.push(match[0]); // for TSV;
-                }else{
-                    console.error('TSV not found');
-                }
+                ofpPages.push(pageText); // for ROSTERING and TSV
             }
         }
         return ofpPages.join("\n");
@@ -92,10 +87,10 @@
                                 data.route.description = data.wmo.join(' ');
                                 ofp.ogimetData = data;
                                 let sum = 0;
-                                let fl = ofp.infos['fl'];
+                                let averageFL = ofp.infos.averageFL;
                                 const distanceMatrix = ofp.route.segments.map(([p1, p2]) => {
                                     sum += p1.distanceTo(p2);
-                                    return [p2, sum, fl];
+                                    return [p2, sum, averageFL];
                                 });
                                 distanceMatrix.unshift([ofp.route.points[0], 0]);
                                 ofp.distanceMatrix = distanceMatrix;
@@ -113,12 +108,29 @@
                                 ofp.timeMatrix = timeMatrix;
                                 ofp.departure =  ofp.route.points[0];
                                 ofp.arrival = ofp.route.points[ofp.route.points.length - 1];
-                                const match = tsvPattern.exec(text.slice(0, 20));
-                                if (match) {
-                                    ofp.infos.TSV = parseInt(match[2], 10) + parseInt(match[1], 10) * 60; //in minutes
-                                } else {
-                                    ofp.infos.TSV = 0;
-                                }
+                                //add extras informations
+                                let pattern = /TSV\s+-\s+(\d{2}):(\d{2})/u;
+                                let match = pattern.exec(text);
+                                ofp.infos.scheduledTSV = (match) ? parseInt(match[2], 10) + parseInt(match[1], 10) * 60 : 0; //in minutes
+                                pattern = new RegExp(String.raw`>\s${ofp.infos.depIATA}\s\(([-+.0-9]+)\)`, "u");
+                                match = pattern.exec(text);
+                                ofp.infos.depTZ = (match) ? match[1] : '';
+                                pattern = new RegExp(String.raw`>\s${ofp.infos.destIATA}\s\(([-+.0-9]+)\)`, "u");
+                                match = pattern.exec(text);
+                                ofp.infos.destTZ = (match) ? match[1] : '';
+                                pattern = /OPERATION VERSION\s(.+?)\s\d+\sNB PAX/u;
+                                match = pattern.exec(text);
+                                ofp.infos.aircraftOpsVersion = (match) ? match[1] : '';
+                                pattern = new RegExp(String.raw`GND DIST\s\d+${ofp.infos.ofpTextDate.toUpperCase()}`, "u");
+                                match = pattern.exec(text);
+                                ofp.infos.groundDistance = (match) ? parseInt(match[1], 10) : Math.round(ofp.departure.distanceTo(ofp.arrival, editolido.rad_to_nm));
+                                // pattern = /TSV\s+-\s+(\d{2}):(\d{2})/u;
+                                // match = pattern.exec(text);
+                                // if (match) {
+                                //     ofp.infos.scheduledTSV = parseInt(match[2], 10) + parseInt(match[1], 10) * 60; //in minutes
+                                // } else {
+                                //     ofp.infos.scheduledTSV = 0;
+                                // }
                                 //console.log(timeMatrix)
                                 //console.timeLog('start');
                                 try {

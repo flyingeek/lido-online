@@ -18,7 +18,7 @@
 
     $: departureSun = ($ofp && $takeOffTime) ? sun.getState($takeOffTime, $ofp.departure, 0) : '';
     $: departureMoon = ($ofp && $takeOffTime) ? moon.getState($takeOffTime, $ofp.departure, 0) : '';
-    $: estimatedDate = ($takeOffTime && $position) ? new Date($takeOffTime.getTime() + $position.reltime * 60000) : $takeOffTime  || $ofp.infos.takeoff;
+    $: estimatedDate = ($takeOffTime && $position) ? new Date($takeOffTime.getTime() + $position.reltime * 60000) : $takeOffTime  || $ofp.infos.ofpOFF;
     $: sunEvents = $solar.sun.filter(e => ['sunrise', 'sunset'].includes(e.type));
     $: isMoonVisibleDuringFlight = $solar.moon.length > 0 || departureMoon.state;
     $: widgetEmoji = (sunEvents.length > 0) ? '☀️': getWidgetEmojiWhenNoSunEvent(departureSun, isMoonVisibleDuringFlight); //after isMoonVisibleDuringFlight

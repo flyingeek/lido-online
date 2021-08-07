@@ -1,0 +1,27 @@
+{
+    "OFP2MAP-AURORA": {
+        "version": 2,
+        "url": "https://www.icloud.com/shortcuts/53d0afcb3f11463fac59974e64236e21",
+        "description": "NOAA Aurora Forecast 30-90mn et prévisions à 3 jours."
+    },
+    "OFP2MAP-ETOPS": {
+        "version": 2,
+        "url": "https://www.icloud.com/shortcuts/ca95c6f5ccc440689260a5910d50ef93",
+        "description": "Affiche un cartouche ETOPS actualisé."
+    },
+    "OFP2MAP-MENU": {
+        "version": 2,
+        "url": "https://www.icloud.com/shortcuts/2db576c98d8d48d095bf751f56b54f56",
+        "description": "Menu affichant l'ensemble des plugins installés."
+    },
+    "OFP2MAP-PLANE FINDER": {
+        "version": 2,
+        "url": "https://www.icloud.com/shortcuts/3f67e5d6f47d42d0b16fd620a4170407",
+        "description": "Recherche l'avion avec flightaware.com."
+    },
+    "OFP2MAP-PLUGIN": {
+        "version": 2,
+        "url": "https://www.icloud.com/shortcuts/28d507b414fb45979be635cc87b2d70d",
+        "description": "Modèle pour démarrer un plugin,  permet de visualiser les données disponibles."
+    }
+}

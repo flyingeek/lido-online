@@ -30,10 +30,7 @@ export const landingTime = derived([ofp, takeOffTime], ([$ofp, $takeOffTime]) =>
         if ($ofp.timeMatrix.length > 0) {
             return new Date($takeOffTime.getTime() + (60000 * $ofp.timeMatrix[$ofp.timeMatrix.length - 1][1]));
         }
-        const landing = new Date($takeOffTime);
-        const duration = $ofp.infos.duration;
-        landing.setUTCMinutes(landing.getUTCMinutes() + duration[1]);
-        landing.setUTCHours(landing.getUTCHours() + duration[0]);
+        const landing = new Date($takeOffTime.getTime() + $ofp.infos.flightTime * 60000);
         return landing;
     }
     return undefined;
@@ -46,7 +43,7 @@ export const aircraftType = derived([ofp, selectedAircraftType], ([$ofp, $select
     if ($selectedAircraftType) {
         aircraft = $selectedAircraftType;
     }else if ($ofp){
-        aircraft = $ofp.infos.aircraft;
+        aircraft = $ofp.infos.aircraftType;
     }
     if (!aircraft || aircraftTypes.indexOf(aircraft) === -1) return undefined;
     return aircraft;
@@ -158,7 +155,7 @@ export const flightProgress = derived(
         let interval;
         const frequency = ($showPlaneOnMap) ? 10 * 1000 : 60 * 1000;
         const simulatorFrequency = 100;
-        if($ofp){
+        if($ofp && $takeOffTime){
             const setValue = (value) => {
                 if (value < 100) {
                     set(value);
@@ -179,19 +176,16 @@ export const flightProgress = derived(
                     value++;
                 }, simulatorFrequency);
             } else {
-                const ofpTakeOff = $takeOffTime;
-                const landing = new Date(ofpTakeOff);
-                const duration = $ofp.infos.duration;
-                landing.setUTCMinutes(landing.getUTCMinutes() + duration[1]);
-                landing.setUTCHours(landing.getUTCHours() + duration[0]);
+                const takeOff = $takeOffTime;
+                const landing = new Date(takeOff.getTime() + $ofp.infos.flightTime * 60000);
                 const computePosition = () => {
                     let now = new Date();
-                    if (now <= ofpTakeOff) {
+                    if (now <= takeOff) {
                         return 0;
                     } else if (now >= landing) {
                         return  100;
                     } else {
-                        return (now - ofpTakeOff) / (duration[0] * 3600 + duration[1] * 60) / 10;
+                        return (now - takeOff) / ($ofp.infos.flightTime * 60) / 10;
                     }
                 };
                 const pos = computePosition();
@@ -228,7 +222,7 @@ export const position = derived([ofp, flightProgress], ([$ofp, $flightProgress])
     const routeDistance = distanceMatrix[distanceMatrix.length - 1][1];
     const firstFL = (timeMatrix.length !== 0) ? timeMatrix[0][2] : distanceMatrix[0][2];
     const lastFL = (timeMatrix.length !== 0) ? timeMatrix[timeMatrix.length - 1][2] : distanceMatrix[distanceMatrix.length - 1][2];
-    const routeTime = (timeMatrix.length !== 0) ? timeMatrix[timeMatrix.length - 1][1] : $ofp.infos.duration[1] + $ofp.infos.duration[0] * 60;
+    const routeTime = (timeMatrix.length !== 0) ? timeMatrix[timeMatrix.length - 1][1] : $ofp.infos.flightTime;
     const posTime = ($flightProgress * routeTime) / 100;
     if ($flightProgress <= 0) return {map: firstPoint, gramet: 0, fl: firstFL, reltime: posTime};
     if ($flightProgress >= 100) return {map: lastPoint, gramet: 100, fl: lastFL, reltime: posTime};

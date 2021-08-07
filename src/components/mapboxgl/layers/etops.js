@@ -11,7 +11,7 @@ function addEtops(data) {
     const lineWidth = computeLineWidthSize(kmlOptions['lineWidthChange'], lineWidthDefault);
     if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
         const {affineAndClip} = mapData;
-        const etopsTime = ofp.infos['ETOPS'];
+        const etopsTime = ofp.infos.maxETOPS;
         const visibility = kmlOptions.etopsDisplay;
         addLines(map, `${folder}-ep-circle`, [ofp.infos['EEP'].circle(420, 48), ofp.infos['EXP'].circle(420, 48)] , affineAndClip, kmlOptions.routeColor, visibility, lineWidth, true);
         addLines(map, `${folder}-etops-circle`, ofp.infos['raltPoints'].map(d => d.circle(7 * etopsTime)), affineAndClip, kmlOptions.etopsColor, visibility, lineWidth, true);

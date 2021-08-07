@@ -8,7 +8,7 @@ const addRmain = (data) => {
     if (!ofp) return;
     const {affineAndClip, affineOrDrop} = mapData;
     const route = ofp.route;
-    route.name = `${ofp.infos.departure}-${ofp.infos.destination}`;
+    route.name = `${ofp.infos.depICAO}-${ofp.infos.destICAO}`;
     route.description = ofp.description;
     addLine(map, folder, route.points, affineAndClip, kmlOptions.routeColor, true);
     addPoints(map, folder, route.points, affineOrDrop, kmlOptions);

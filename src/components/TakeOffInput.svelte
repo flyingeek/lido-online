@@ -4,7 +4,7 @@
     export let name="take-off";
 
     const getOfpTakeOffTime =  (currentOfp) => {
-        const value = new Date(currentOfp.infos.datetime.getTime() + ($ofp.infos.taxitime * 60000));
+        const value = new Date(currentOfp.infos.ofpOFF.getTime());
         $takeOffTime = value;
         return value;
     };

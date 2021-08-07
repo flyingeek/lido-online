@@ -124,7 +124,7 @@ export const addAirports = (data) => {
                 'text-anchor': 'top',
                 'text-allow-overlap': false,
                 'text-ignore-placement': false
-                //'symbol-sort-key': ["get", `${ofp.infos.aircraft}`]
+                //'symbol-sort-key': ["get", `${ofp.infos.aircraftType}`]
             },
             'paint': {
                 'icon-color': ["case",["==", 1, ["get", "level"]], '#D70', '#B02'],

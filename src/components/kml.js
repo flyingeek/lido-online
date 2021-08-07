@@ -97,7 +97,7 @@ export function generateKML(ofp, options) {
     const description = ofp.description;
     kmlGen.setName(description);
     if (!ofp) return;
-    const routeName = `${ofp.infos.departure}-${ofp.infos.destination}`;
+    const routeName = `${ofp.infos.depICAO}-${ofp.infos.destICAO}`;
     const route = new editolido.Route(ofp.wptCoordinates(), {"name": routeName, "description": description});
     const alternateRoute = new editolido.Route(ofp.wptCoordinatesAlternate(), {"name": "Route Dégagement"});
     const greatCircle = new editolido.Route([route.points[0], route.points[route.points.length - 1]]).split(300, {"name": `Ortho ${routeName}`});

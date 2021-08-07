@@ -1,6 +1,7 @@
 <script>
     import Link from '../components/Link.svelte';
     import {ofp} from '../stores.js';
+    import plugins from "../plugins.json";
     $: ogimetURL = ($ofp) ? $ofp.ogimetData.url: 'http://www.ogimet.com';
     const cbName = window.atob("Q2FydGFCb3NzeQ==");
 </script>
@@ -130,12 +131,9 @@ __Plugins depuis la carte&#8239;:__ Il est aussi possible de lancer des raccourc
 
 Liste des plugins:
 
-- <Link href="https://www.icloud.com/shortcuts/7a84be04b4f04607876d20a08c39c2ef">OFP2MAP-AURORA</Link> NOAA Aurora Forecast 30-90mn et prévisions à 3 jours.
-- <Link href="https://www.icloud.com/shortcuts/85acce199353490c9f3a3db0618da19e">OFP2MAP-ETOPS</Link> calcule un cartouche ETOPS actualisé
-- <Link href="https://www.icloud.com/shortcuts/ce764c49281643d4a63aec3d8bf848be">OFP2MAP-MENU</Link> menu affichant l'ensemble des plugins installés
-- <Link href="https://www.icloud.com/shortcuts/db21157c4fb441919eed9fa7e2cb644f">OFP2MAP-PLANE FINDER</Link> recherche l'avion avec flightaware.com
-- <Link href="https://www.icloud.com/shortcuts/a8066a8f574b45278dfb711a58e562ed">OFP2MAP-PLUGIN</Link> permet de visualiser les données (format json) si vous souhaitez développer un plugin.
-
+{#each Object.entries(plugins) as [name, {url, description}]}
+    - <Link href="{url}">{name}</Link> {description}
+{/each}
 
 ## Mise à jour
 
