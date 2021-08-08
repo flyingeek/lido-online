@@ -29,23 +29,8 @@
             yield([name, eto, parseFloat(fuelRequired), parseFloat(efob), fuelMargin, ralt, rwy, startWindow, endWindow, latlng, eet])
         }
     };
-    const etopsFuelMargin = (ofp) => {
-        const takeOff = (ofp && ofp.infos) ? ofp.infos.ofpOFF : null;
-        if (takeOff) {
-            const ralts = [];
-            for(const [, eto, , efob, fuelMargin] of etopsData(ofp, takeOff)) {
-                ralts.push([eto, efob, fuelMargin]);
-            }
-            if (ralts.length > 1) {
-                const consumption = (ralts[0][1] - ralts[ralts.length-1][1]) / (ralts[ralts.length-1][0] - ralts[0][0]) * 60000;
-                return Math.min(...ralts.map(a => a[2]/consumption));
-            }else if (ralts.length > 0) {
-                return (ralts[0][2]/8) * 60; //conso 777 but should never be used
-            }
-        }
-        return 180; // a big enough number
-    };
-    $: fuelMarginTime = etopsFuelMargin($ofp)
+    // note that if $ofp.infos.tripFuel = 0 (bad ofp parsing), fuelMarginTime will be infinity => no alert
+    $: fuelMarginTime = $ofp.infos.minFuelMarginETOPS / ($ofp.infos.tripFuel/$ofp.infos.flightTime);
 
     const etopsMarkdown = (altnETOPSPoints) => {
         const results = [];
@@ -127,7 +112,6 @@
         const filteredInfos = Object.fromEntries(
             Object.entries(ofp.infos).filter(([key, val])=> !excluded.includes(key))
         );
-        const altnETOPSPoints = etopsList(ofp, takeOffTime);
         const shareData = {
             'title': 'OFP2MAP',
             'text': JSON.stringify({
@@ -139,12 +123,12 @@
                 //deprecated from 07/08/21
                 'registration': ofp.infos.aircraftRegistration,
                 'ralts': ofp.infos.ralts,
-                'etopsOutput': etopsMarkdown(altnETOPSPoints),
+                'etopsOutput': etopsMarkdown(etopsList(ofp, takeOffTime)), //TODO when removing, delete ref to etopsMarkdown, etopsList, etopsData
                 'ofp2map-takeoff': takeOffTime,
                 //end of deprecated
                 plugins,
                 rawText: ofp.text
-            })//.replace(/"([0-9.]+)"/gu, (_, p1) => p1)
+            })//.replace(/"(?:lati|longi)tude":"([0-9.]+)"/gu, (_, p1) => p1)
         }
         try {
             await navigator.share(shareData)
