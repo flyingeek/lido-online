@@ -55,16 +55,16 @@
       {:else if $ofpStatus && $ofpStatus !== 'success' && $route === '/map'}
         <Page><p class="ofpError">😱: {$ofpStatus}</p></Page>
       {:else if ($route === '/export') && $ofpStatus === 'success'}
-        <Page>
+        <Page maxWidth="1366px">
           <Export {kmlOptions} on:save={() => setHistory(kmlOptions, $route)} />
           <LidoRoute />
         </Page>
       {:else if $route === '/'}
-        <Page>
+        <Page maxWidth="1366px">
           <Home />
         </Page>
       {:else if $route === '/help'}
-        <Page><Help /></Page>
+        <Page  maxWidth="1366px"><Help /></Page>
       {:else if !(($ofp || $aircraftType) && $route === '/map')}
         <!-- redirect -->
         { redirect($route) }
@@ -118,7 +118,7 @@
     padding-left: 0;
     padding-right: 0;
     overflow-x: hidden;
-    max-width: 1366px;
+    max-width: 100%;
     min-height: 100%;
     position: relative;
   }
