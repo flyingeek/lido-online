@@ -6,15 +6,18 @@ if (typeof airac !== 'string' || airac.length !== 4) throw new Error(`invalid AI
 console.log("AIRAC:", airac);
 const dataPath = `data/Global${airac}.csv`;
 const output = "../lidojs/src/modules/airports.json";
+const iataOutput = "../lidojs/src/modules/iata2icao.json";
 const geojson = "data/airports.geojson";
 
 const file = fs.createReadStream(dataPath);
 let counter = 0;
 const results = {};
+let iataResults = "";
 const geojsonResults = [];
+//const icaoCountries = {};
 Papa.parse(file, {
     step: function(result) {
-        // 0:icao 1:name 3:lat 4:lon 318:18 319:19 320:20 321:21 330:22 340:23 350:24 380:25 787:26 772:27 773:28 77F:29 sur:47
+        // 0:icao 1:name 2:iata 3:lat 4:lon 318:18 319:19 320:20 321:21 330:22 340:23 350:24 380:25 787:26 772:27 773:28 77F:29 sur:47
         //console.log(result);
         const data = result.data;
         if (data.length < 48) {
@@ -68,7 +71,14 @@ Papa.parse(file, {
                 console.log(`unkwnown airport level ${data[47]}`, data);
         }
         //if (level>0) console.log(data[0], level);
-        results[data[0].trim()] = [parseFloat(data[3]),parseFloat(data[4])];
+        const latitude = parseFloat(data[3]);
+        const longitude = parseFloat(data[4]);
+        const icao = data[0].trim()
+        results[icao] = [latitude, longitude];
+        // if (longitude >= -30 && longitude <= 40 && latitude >=25) {
+        //     icaoCountries[icao.substring(0, 2)] = true;
+        // }
+        iataResults +=  data[2] + ":" + data[0].trim();
         const feature = {
             'type': 'Feature',
             'geometry': {
@@ -91,11 +101,19 @@ Papa.parse(file, {
     },
     complete: function() {
         // this one is for lidojs (etops & eep & exp)
+        //console.log(Object.keys(icaoCountries));
         fs.writeFile(output, JSON.stringify(results), (err) => {
             if (err) {
-              throw err;
+                throw err;
             } else {
-              console.log(`Saved ${counter} airports!`);
+                console.log(`Saved ${counter} airports in ${output}`);
+            }
+        });
+        fs.writeFile(iataOutput, JSON.stringify(iataResults), (err) => {
+            if (err) {
+                throw err;
+            } else {
+                console.log(`Saved ${counter} airports in ${iataOutput}`);
             }
         });
         const collection = {
@@ -104,9 +122,9 @@ Papa.parse(file, {
         };
         fs.writeFile(geojson, JSON.stringify(collection), (err) => {
             if (err) {
-              throw err;
+                throw err;
             } else {
-              console.log(`Saved ${counter} airports!`);
+                console.log(`Saved ${counter} airports in ${geojson}`);
             }
         });
     }
