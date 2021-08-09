@@ -108,29 +108,7 @@
                                 ofp.timeMatrix = timeMatrix;
                                 ofp.departure =  ofp.route.points[0];
                                 ofp.arrival = ofp.route.points[ofp.route.points.length - 1];
-                                //add extras informations
-                                let pattern = /TSV\s+-\s+(\d{2}):(\d{2})/u;
-                                let match = pattern.exec(text);
-                                ofp.infos.scheduledTSV = (match) ? parseInt(match[2], 10) + parseInt(match[1], 10) * 60 : 0; //in minutes
-                                pattern = new RegExp(String.raw`>\s${ofp.infos.depIATA}\s\(([-+.0-9]+)\)`, "u");
-                                match = pattern.exec(text);
-                                ofp.infos.depTZ = (match) ? match[1] : '';
-                                pattern = new RegExp(String.raw`>\s${ofp.infos.destIATA}\s\(([-+.0-9]+)\)`, "u");
-                                match = pattern.exec(text);
-                                ofp.infos.destTZ = (match) ? match[1] : '';
-                                pattern = /OPERATION VERSION\s(.+?)\s\d+\sNB PAX/u;
-                                match = pattern.exec(text);
-                                ofp.infos.aircraftOpsVersion = (match) ? match[1] : '';
-                                pattern = new RegExp(String.raw`GND DIST\s\d+${ofp.infos.ofpTextDate.toUpperCase()}`, "u");
-                                match = pattern.exec(text);
-                                ofp.infos.groundDistance = (match) ? parseInt(match[1], 10) : Math.round(ofp.departure.distanceTo(ofp.arrival, editolido.rad_to_nm));
-                                // pattern = /TSV\s+-\s+(\d{2}):(\d{2})/u;
-                                // match = pattern.exec(text);
-                                // if (match) {
-                                //     ofp.infos.scheduledTSV = parseInt(match[2], 10) + parseInt(match[1], 10) * 60; //in minutes
-                                // } else {
-                                //     ofp.infos.scheduledTSV = 0;
-                                // }
+
                                 //console.log(timeMatrix)
                                 //console.timeLog('start');
                                 try {

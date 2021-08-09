@@ -1,6 +1,7 @@
 <script>
     import {ofp, takeOffTime} from '../stores';
     import plugins from "../plugins.json";
+    import {pairingData} from "./pairingParser";
 
     function* etopsData(ofp, takeOff){
         if (!ofp || !takeOff) return [];
@@ -120,6 +121,7 @@
                 'realOFF': takeOffTime,
                 "altnETOPS": ofp.infos.ralts,
                 'route': getOfpRouteExport(ofp),
+                ...pairingData(ofp),
                 //deprecated from 07/08/21
                 'registration': ofp.infos.aircraftRegistration,
                 'ralts': ofp.infos.ralts,
