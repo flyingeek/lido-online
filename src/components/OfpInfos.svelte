@@ -109,7 +109,7 @@
     export const shareOFP = async () => {
         const ofp = $ofp;
         const takeOffTime = $takeOffTime;
-        const excluded = ['EEP', 'EXP', 'raltPoints', 'rawFPL'];
+        const excluded = ['EEP', 'EXP', 'raltPoints', 'rawFPL', 'inFlightStart', 'inFlightReleased'];
         const filteredInfos = Object.fromEntries(
             Object.entries(ofp.infos).filter(([key, val])=> !excluded.includes(key))
         );
