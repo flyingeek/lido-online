@@ -260,9 +260,15 @@
     :global(.mapboxgl-popup-content .airport){
         text-align: center;
     }
-    :global(.mapboxgl-popup-content .airport h1){
+    :global(.mapboxgl-popup-content .airport h2){
         font-size: small;
         font-weight: normal;
+    }
+    :global(.mapboxgl-popup-content .airport h1){
+        font-size: small;
+        font-weight: bold;
+        margin-left: 1rem;
+        margin-right: 1rem;
     }
     :global(.mapboxgl-popup-content p.security-1){
         color:black;

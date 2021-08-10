@@ -1,4 +1,4 @@
-/* global mapboxgl */
+/* global mapboxgl editolido */
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
 import {computeIconTextSize, computeIconSize} from '../utils';
 import {supportsHover} from "../../utils";
@@ -171,7 +171,7 @@ export const addAirports = (data) => {
             'filter': filterByAircraftType(aircraftType)
         });
         const popup = new mapboxgl.Popup({
-            closeButton: false,
+            closeButton: true,
             // on touchscreen, this allows to show popup on each airport click
             // whitout having to click on the map first to cancel the popup
             // this setting has no effect on hover mode
@@ -183,13 +183,15 @@ export const addAirports = (data) => {
         const addAirportPopup = function (e) {
             const coordinates = e.features[0].geometry.coordinates.slice();
             const title = e.features[0].properties.title;
+            const icao = e.features[0].properties.name;
+            const iata = editolido.icao2iata(icao);
             // Ensure that if the map is zoomed out such that multiple
             // copies of the feature are visible, the popup appears
             // over the copy being pointed to.
             while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
             }
-            let html = `<div class="airport"><h1>${title}</h1>`;
+            let html = `<div class="airport"><h1>${icao} / ${iata}</h1><h2>${title}</h2>`;
             const security = e.features[0].properties.level;
             const status = e.features[0].properties[aircraftType];
             //console.log(status, typeof status)
