@@ -10,6 +10,7 @@ import css from 'rollup-plugin-css-only';
 import watchAssets from 'rollup-plugin-watch-assets'; // also requires globby
 import {version, config} from './package.json';
 import lidojsPkg from './node_modules/@flyingeek/lidojs/package.json';
+import md2json from 'md-2-json';
 import fs from 'fs';
 const workbox = require('rollup-plugin-workbox-inject');
 const {markdown} = require('svelte-preprocess-markdown');
@@ -181,6 +182,16 @@ export default [{
       }],
       verbose: true
     }),
+    {
+      name: 'generate-changelog-json',
+      writeBundle() {
+        const changelog = fs.readFileSync('./CHANGELOG.md', 'utf8');
+        fs.writeFileSync(
+          './public/CHANGELOG.json',
+          JSON.stringify(md2json.parse(changelog))
+        );
+      },
+    },
     // injectManifest({
     //   swSrc: 'src/sw.js',
     //   swDest: 'src/sw-injectManifest.js',
@@ -259,7 +270,8 @@ export default [{
         "css/bundle.css",
         "js/bundle.js",
         "svg/*.svg",
-        "sdf/*.png"
+        "sdf/*.png",
+        "CHANGELOG.json"
       ]
     }),
     production && terser()
