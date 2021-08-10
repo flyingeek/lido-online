@@ -24,7 +24,8 @@ const statusAirportIconColor = (aircraftType) => ["case",
     ["==", 1, ["get", `${aircraftType}`]], '#00b0f1',
     '#000'];
 
-const getIconColor = (style, aircraftType, raltNames, hexColor) => {
+const getIconColor = (style, aircraftType, raltNames, hexColor, ofpLoaded) => {
+    if (!ofpLoaded) return '#095';
     if (style === 0) {
         return statusAirportIconColor(aircraftType);
     }
@@ -45,11 +46,11 @@ const symbolSortKey = (aircraftType, etopsNames) => {
     ["get", `${aircraftType}`]]
 }
 
-const getIconHaloWidth = style => (style === 0) ? 3 : 0;
-const getTextColor = (raltNames, hexColor) => ["case",
+const getIconHaloWidth = (style, ofpLoaded) => (style === 0 && ofpLoaded) ? 3 : 0;
+const getTextColor = (raltNames, hexColor, ofpLoaded) => (ofpLoaded) ? ["case",
     ["in", ["get", "name"], ["literal", raltNames]], hexColor,
     ["==", 0, ["get", "level"]], '#000',
-    '#C60'];
+    '#C60'] : "#000";
 
 const adequateTextSize = (etopsNames, textRatio) => {
     return ["case",
@@ -64,10 +65,10 @@ const adequateIconSize = (etopsNames, iconRatio) => {
     ["in", ["get", "name"], ["literal", etopsNames]], computeIconSize(iconRatio, 1),
     computeIconSize(iconRatio, 0.6)]
 }
-const emergencyIconSize = (iconRatio) => {
-    return ["case",
+const emergencyIconSize = (iconRatio, ofpLoaded) => {
+    return (ofpLoaded) ? ["case",
     ["==", 2, ["get", "level"]], computeIconSize(iconRatio, 0.5, 1.2),
-    computeIconSize(iconRatio, 0.4, 1.2)]
+    computeIconSize(iconRatio, 0.4, 1.2)] : computeIconSize(iconRatio, 0.4, 1.2);
 }
 export const addAirports = (data) => {
     const {map, mapData, ofp, kmlOptions} = data;
@@ -107,10 +108,10 @@ export const addAirports = (data) => {
             'type': 'symbol',
             'source': source,
             'layout': {
-                'icon-image': ["case",
+                'icon-image': (ofp) ? ["case",
                     ["==", 2, ["get", "level"]], 'sdf-star',
-                    'sdf-airport'],
-                'icon-size': emergencyIconSize(kmlOptions['iconSizeChange']),
+                    'sdf-airport'] : 'sdf-airport',
+                'icon-size': emergencyIconSize(kmlOptions['iconSizeChange'], !!ofp),
                 'icon-anchor': 'center',
                 'icon-offset': [0, 0],
                 //'icon-rotate': ['get', 'orientation'],
@@ -127,7 +128,7 @@ export const addAirports = (data) => {
                 //'symbol-sort-key': ["get", `${ofp.infos.aircraftType}`]
             },
             'paint': {
-                'icon-color': ["case",["==", 1, ["get", "level"]], '#D70', '#B02'],
+                'icon-color': (ofp) ? ["case",["==", 1, ["get", "level"]], '#D70', '#B02'] : '#B02', // no ofp => all red
                 'icon-halo-width': 0,
                 'icon-halo-color': '#000',
                 'text-color': "#000",
@@ -160,10 +161,10 @@ export const addAirports = (data) => {
                 'symbol-sort-key':symbolSortKey(aircraftType, etopsNames)
             },
             'paint': {
-                'icon-halo-color':["case", ["==", 0, ["get", "level"]], '#095','#D70'], // normal airports
-                'icon-halo-width': getIconHaloWidth(style),
-                'icon-color': getIconColor(style, aircraftType, raltNames, hexcolorEtops),
-                'text-color': getTextColor(raltNames, hexcolorEtops),
+                'icon-halo-color':(ofp) ? ["case", ["==", 0, ["get", "level"]], '#095','#D70'] : '#444',
+                'icon-halo-width': getIconHaloWidth(style, !!ofp),
+                'icon-color': getIconColor(style, aircraftType, raltNames, hexcolorEtops, !!ofp),
+                'text-color': getTextColor(raltNames, hexcolorEtops, !!ofp),
                 'text-halo-color': "#000",
                 'text-halo-width': ["case", ["==", 0, ["get", "level"]], 0, 0],
                 'text-opacity': 0.8
@@ -272,9 +273,9 @@ export function changeAirportStyle(data) {
     const [hexcolorEtops,] = kml2mapColor(kmlOptions.etopsColor);
     const style = kmlOptions.airportPin;
     if (map.getLayer(adequateLayer)) {
-        map.setPaintProperty(adequateLayer, 'icon-color', getIconColor(style, aircraftType, raltNames, hexcolorEtops));
-        map.setPaintProperty(adequateLayer, 'text-color',getTextColor(raltNames, hexcolorEtops));
-        map.setPaintProperty(adequateLayer, 'icon-halo-width', getIconHaloWidth(style));
+        map.setPaintProperty(adequateLayer, 'icon-color', getIconColor(style, aircraftType, raltNames, hexcolorEtops, !!ofp));
+        map.setPaintProperty(adequateLayer, 'text-color', getTextColor(raltNames, hexcolorEtops, !!ofp));
+        map.setPaintProperty(adequateLayer, 'icon-halo-width', getIconHaloWidth(style, !!ofp));
     }
 }
 const getEtopsNames = (ofp) => {
