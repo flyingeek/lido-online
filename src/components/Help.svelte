@@ -1,5 +1,6 @@
 <script>
 import Helpmarkup from './Help.md';
+import ChangeLog from './ChangeLog.svelte';
 import {wb} from '../stores';
 import {shareAppLink} from './utils';
 import {onMount} from "svelte";
@@ -15,25 +16,6 @@ const reload = () => {
     console.log('reload page');
     window.location.reload();
 };
-const changelog = async () => {
-    showChangelog = true;
-    changelogPromise = fetch('./CHANGELOG.json').then(response => {
-        if(response.ok) {
-            return response.json();
-        } else {
-            throw new Error('CHANGELOG.json not available');
-        }
-    });
-};
-const translation = {
-    "ADDED": "Ajouté",
-    "FIXED": "Corrigé",
-    "DEPRECATED": "Obsolète",
-    "CHANGED": "Modifié",
-    "REMOVED": "Supprimé",
-    "SECURITY": "Sécurité"
-};
-const _ = text => translation[text.toUpperCase()] || text;
 
 $: updateVersion($wb);
 let scrollingRoot, scrollingElement;
@@ -41,8 +23,8 @@ const toc = [];
 let tocNodeList;
 let selected;
 let observer;
-let showChangelog = false;
-let changelogPromise = null;
+let changelog;
+
 $: style = (selected === undefined || selected === toc[0].id) ? "padding-top: 1rem;" : "padding-top: 0.25rem;";
 
 function scrollTo(offset, callback) {
@@ -106,39 +88,7 @@ onMount(() => {
 </script>
 
 <div class="markdown" {style}>
-    {#if showChangelog}
-        <div class="modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">CHANGELOG</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" on:click={() => showChangelog = false}>
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        {#await changelogPromise}
-                            <p>chargement...</p>
-                        {:then json}
-                            <ul>
-                            {#each Object.entries(json.CHANGELOG) as [title, section]}
-                                <li>
-                                    <h2>{title}</h2>
-                                    {#each Object.entries(section) as [category, content]}
-                                        <h3>{_(category)}</h3>
-                                        {#each content.raw.split('- ').filter(item => !item.match(/^\s*$/g)) as item}
-                                        <div class="changelog">- {item}</div>
-                                        {/each}
-                                    {/each}
-                                </li>
-                            {/each}
-                            </ul> 
-                        {/await}
-                    </div>
-                </div>
-            </div>
-        </div>
-    {/if}
+    <ChangeLog bind:this={changelog} />
     <div bind:this={scrollingElement} class="scrollContainer">
         <div><!--prevents safari sticky bug-->
             <h1 bind:this={scrollingRoot}>
@@ -148,7 +98,7 @@ onMount(() => {
                     {#if (navigator.share || 'process.env.NODE_ENV' === '"development"')}<button class="btn btn-outline-secondary btn-sm" on:click={shareAppLink}>Partager l'App</button>{/if}
                     <button class="btn btn-outline-secondary btn-sm" on:click={reload}>Recharger l'App</button>
                 {/if}
-                <button class="btn btn-outline-secondary btn-sm" on:click={changelog}>CHANGELOG</button>
+                <button class="btn btn-outline-secondary btn-sm" on:click={changelog.show}>CHANGELOG</button>
                 <!-- svelte-ignore a11y-no-onchange -->
                 <select class="custom-select custom-select-sm" bind:value="{selected}" on:change={jumpTo} use:blurAction>
                     {#each toc as {id, label}}
@@ -261,9 +211,6 @@ onMount(() => {
         .app {
             display: inline-block;
         }
-        .modal-dialog {
-            max-width: 80vw;
-        }
     }
     @media (min-width: 576px) and (min-height: 576px) {
         h1 {
@@ -273,27 +220,5 @@ onMount(() => {
     }
     .markdown :global(.table th),.markdown :global(.table td){
         padding: 0.25rem 0.75rem;
-    }
-    .modal {
-        display: block;
-    }
-
-    .modal-body {
-        overflow-y: auto;
-        max-height: 80vh;
-    }
-    .modal-body li{
-        list-style: none;
-    }
-    .modal-body h3{
-        font-size: 1.1rem;
-        font-variant: all-petite-caps;
-        text-decoration: underline;
-    }
-    .modal-body h2{
-        font-size: 1.5rem;
-    }
-    .changelog {
-        margin-bottom: 0.5rem;
     }
 </style>
