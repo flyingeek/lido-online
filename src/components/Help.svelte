@@ -1,6 +1,6 @@
 <script>
 import Helpmarkup from './Help.md';
-import ChangeLog from './ChangeLog.svelte';
+import ChangeLogModal from './ChangeLogModal.svelte';
 import {wb} from '../stores';
 import {shareAppLink} from './utils';
 import {onMount} from "svelte";
@@ -23,7 +23,7 @@ const toc = [];
 let tocNodeList;
 let selected;
 let observer;
-let changelog;
+let modal;
 
 $: style = (selected === undefined || selected === toc[0].id) ? "padding-top: 1rem;" : "padding-top: 0.25rem;";
 
@@ -86,9 +86,8 @@ onMount(() => {
 });
 
 </script>
-
-<div class="markdown" {style}>
-    <ChangeLog bind:this={changelog} />
+<ChangeLogModal bind:this={modal} />
+<div class="help markdown" {style}>
     <div bind:this={scrollingElement} class="scrollContainer">
         <div><!--prevents safari sticky bug-->
             <h1 bind:this={scrollingRoot}>
@@ -98,7 +97,7 @@ onMount(() => {
                     {#if (navigator.share || 'process.env.NODE_ENV' === '"development"')}<button class="btn btn-outline-secondary btn-sm" on:click={shareAppLink}>Partager l'App</button>{/if}
                     <button class="btn btn-outline-secondary btn-sm" on:click={reload}>Recharger l'App</button>
                 {/if}
-                <button class="btn btn-outline-secondary btn-sm" on:click={changelog.show}>CHANGELOG</button>
+                <button class="btn btn-outline-secondary btn-sm" on:click={modal.show}>CHANGELOG</button>
                 <!-- svelte-ignore a11y-no-onchange -->
                 <select class="custom-select custom-select-sm" bind:value="{selected}" on:change={jumpTo} use:blurAction>
                     {#each toc as {id, label}}
@@ -139,7 +138,7 @@ onMount(() => {
         z-index: 1;
         padding-right: 1rem;
     }
-    .markdown {
+    .help {
         margin:0;
         padding:1rem 0 0.5rem 1rem;
         flex: 1 1 auto;
@@ -218,7 +217,7 @@ onMount(() => {
             position: -webkit-sticky;
         }
     }
-    .markdown :global(.table th),.markdown :global(.table td){
+    :global(.markdown .table th), :global(.markdown .table td){
         padding: 0.25rem 0.75rem;
     }
 </style>

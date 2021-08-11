@@ -3,11 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.13.4]- 2021-08-XX
+## [1.13.4] - 2021-08-11
 
 ### Changed
 
-- prise en compte du markdown dans le CHANGELOG
+- relooking du CHANGELOG
 
 ## [1.13.3] - 2021-08-10
 
@@ -49,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 
-- **Il faut mettre à jour tous les plugins** (liens dans l'aide):
+- **Il faut mettre à jour tous les plugins** (liens dans l'aide)
 
 ## [1.12.15] - 2021-07-15
 

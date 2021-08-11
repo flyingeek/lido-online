@@ -223,6 +223,20 @@ export const isPatchUpdate = (current, next) => {
     const nParts = next.split('.');
     return cParts.slice(0, -1).join('.') === nParts.slice(0, -1).join('.');
 }
+//semver-compare
+export const semverCompare = (a, b) => {
+    let pa = a.split('.');
+    let pb = b.split('.');
+    for (var i = 0; i < 3; i++) {
+        let na = Number(pa[i]);
+        let nb = Number(pb[i]);
+        if (na > nb) return 1;
+        if (nb > na) return -1;
+        if (!isNaN(na) && isNaN(nb)) return 1;
+        if (isNaN(na) && !isNaN(nb)) return -1;
+    }
+    return 0;
+};
 
 export const shareAppLink = async () => {
     const shareData = {
