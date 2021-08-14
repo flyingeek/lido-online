@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.5] - 2021-08-14
+
+### Changed
+
+- AIRAC 2108
+- plugin [OFP2MAP-ETOPS](https://www.icloud.com/shortcuts/c8216ddf7e7446edab5577632d501232): v3 meilleure présentation
+
 ## [1.13.4] - 2021-08-11
 
 ### Changed
