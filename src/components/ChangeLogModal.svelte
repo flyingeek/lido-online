@@ -4,6 +4,7 @@
 <script>
     import { fade } from 'svelte/transition';
     import ChangeLog from "./ChangeLog.svelte";
+    import clickOutside from '../actions/clickOutsideAction';
     let visible = false;
     let promise;
     export const show = async () => {
@@ -16,15 +17,16 @@
             }
         });
     };
+    export const close = () => visible = false;
 </script>
 
 {#if visible}
     <div class="modal" tabindex="-1" role="dialog" in:fade>
-        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document" use:clickOutside  on:click_outside={close}>
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">CHANGELOG</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" on:click={() => visible = false}>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" on:click={close}>
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
