@@ -15,9 +15,19 @@
     };
 </script>
 <script>
-    import {wb} from '../stores';
+    import {wb, route} from '../stores';
     import { fade } from 'svelte/transition';
+    import ChangeLogModal, {previousAppVersionKey} from './ChangeLogModal.svelte';
+    import {semverCompare} from './utils'; 
     let installLabel = 'Installer';
+
+    const getPreviousAppVersion = () => (sessionStorage)  ? sessionStorage.getItem(previousAppVersionKey) : undefined;
+    const isAppUpdated = () => {
+        const previous = getPreviousAppVersion();
+        if (!previous) return false;
+        return semverCompare('APP_VERSION', previous) > 0;
+    }
+
     $swDismiss = false;
     export let prompt = false;
     const install = (delay=0) => {
@@ -42,6 +52,7 @@
             //     (delay) ? setTimeout(() => window.location.reload(), delay) : window.location.reload();
             // });
             installLabel = "En cours...";
+            sessionStorage.setItem(previousAppVersionKey, 'APP_VERSION');
             $swRegistration.waiting.postMessage({type: 'SKIP_WAITING'});
         }else{ /* update probably done in another tab */
             console.log($wb, $swRegistration, $swRegistration.waiting);
@@ -75,6 +86,8 @@
             <button class="btn btn-primary" type="button" on:click|once={() => install()}><span class:blinking={installLabel.endsWith('...')}>{installLabel}</span></button>
         </div>
     </div>
+{:else if !$swUpdated && isAppUpdated() && $route !== "/install"}
+    <ChangeLogModal version={getPreviousAppVersion()} title="NOUVEAUTÉS" />
 {/if}
 
 <style>
