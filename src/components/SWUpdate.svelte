@@ -17,11 +17,14 @@
 <script>
     import {wb, route} from '../stores';
     import { fade } from 'svelte/transition';
-    import ChangeLogModal, {previousAppVersionKey} from './ChangeLogModal.svelte';
+    import ChangeLogModal from './ChangeLogModal.svelte';
     import {semverCompare} from './utils'; 
     let installLabel = 'Installer';
-
+    const previousAppVersionKey = 'previousAppVersion';
     const getPreviousAppVersion = () => (sessionStorage)  ? sessionStorage.getItem(previousAppVersionKey) : undefined;
+    const resetPreviousAppVersion = () => {
+        if (sessionStorage) sessionStorage.removeItem(previousAppVersionKey);
+    };    
     const isAppUpdated = () => {
         const previous = getPreviousAppVersion();
         if (!previous) return false;
@@ -87,7 +90,7 @@
         </div>
     </div>
 {:else if !$swUpdated && isAppUpdated() && $route !== "/install"}
-    <ChangeLogModal version={getPreviousAppVersion()} title="NOUVEAUTÉS" />
+    <ChangeLogModal version={getPreviousAppVersion()} title="NOUVEAUTÉS" on:close={resetPreviousAppVersion}/>
 {/if}
 
 <style>

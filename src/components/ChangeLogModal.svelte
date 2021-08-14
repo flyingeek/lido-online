@@ -1,13 +1,12 @@
-<script context="module">
-    export const previousAppVersionKey = 'previousAppVersion';
-</script>
 <script>
     import { fade } from 'svelte/transition';
     import ChangeLog from "./ChangeLog.svelte";
     import clickOutside from '../actions/clickOutsideAction';
+    import { createEventDispatcher } from 'svelte';
     export let visible = false;
     export let title = 'CHANGELOG';
-    export let version;
+    export let version = undefined;
+    const dispatch = createEventDispatcher();
     let promise;
     export const show = async () => {
         visible = true;
@@ -20,7 +19,7 @@
         });
     };
     export const close = () => {
-        if (sessionStorage) sessionStorage.removeItem(previousAppVersionKey);
+        dispatch("close");
         visible = false;
     }
     if (version) show();
