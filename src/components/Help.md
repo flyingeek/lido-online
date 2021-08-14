@@ -140,7 +140,7 @@ Liste des plugins:
 L'app détecte les mises à jour automatiquement, normalement vous n'avez rien à faire. Eventuellement un prompt peut
 apparaitre vous demandant d'autoriser cette mise à jour. La version AIRAC et le type avion détecté dans l'OFP sont affichés en bas à droite de la carte dans le champ d'attribution.
 
-Pour connaître les dernières nouveautés d'OFP2MAP, utilisez le bouton CHANGELOG en haut de cette page, vous pouvez aussi consulter la <Link href="https://github.com/flyingeek/lido-online/commits/master">liste des commits</Link> sur GitHub. Je poste les nouveautés importantes dans Yammer/Mapsme et Teams/MyConcorde.
+Après une mise à jour, les dernières nouveautés d'OFP2MAP s'affichent. Le bouton CHANGELOG en haut de cette page permet de consulter l'historique, et vous pouvez aussi consulter la <Link href="https://github.com/flyingeek/lido-online/commits/master">liste des commits</Link> sur GitHub. Je poste les nouveautés importantes dans Yammer/Mapsme et Teams/MyConcorde.
 
 ## Crédits
 
