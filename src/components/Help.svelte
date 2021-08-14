@@ -94,8 +94,8 @@ onMount(() => {
                 <div class="app"><img src="images/ofp2map-icons/icon-128x128.png" alt="logo"></div>
                 <div class="infos"><div>OFP2MAP v{version}</div><small on:click|once={() => $wb && $wb.update() && console.log('updating SW')}>ServiceWorker&#8239;: {swVersion}</small></div>
                 {#if navigator.standalone === true || 'process.env.NODE_ENV' === '"development"'}
-                    {#if (navigator.share || 'process.env.NODE_ENV' === '"development"')}<button class="btn btn-outline-secondary btn-sm" on:click={shareAppLink}>Partager l'App</button>{/if}
-                    <button class="btn btn-outline-secondary btn-sm" on:click={reload}>Recharger l'App</button>
+                    {#if (navigator.share || 'process.env.NODE_ENV' === '"development"')}<button class="btn btn-outline-secondary btn-sm" on:click={shareAppLink}>Partager</button>{/if}
+                    <button class="btn btn-outline-secondary btn-sm" on:click={reload}>Recharger</button>
                 {/if}
                 <button class="btn btn-outline-secondary btn-sm" on:click={modal.show}>CHANGELOG</button>
                 <!-- svelte-ignore a11y-no-onchange -->
