@@ -22,9 +22,8 @@
     let installLabel = 'Installer';
     const previousAppVersionKey = 'previousAppVersion';
     const getPreviousAppVersion = () => (sessionStorage)  ? sessionStorage.getItem(previousAppVersionKey) : undefined;
-    const resetPreviousAppVersion = () => {
-        if (sessionStorage) sessionStorage.removeItem(previousAppVersionKey);
-    };    
+    const setPreviousAppVersion = () => (sessionStorage) ? sessionStorage.setItem(previousAppVersionKey, 'APP_VERSION') : undefined;
+    const resetPreviousAppVersion = () => (sessionStorage) ? sessionStorage.removeItem(previousAppVersionKey) : undefined;
     const isAppUpdated = () => {
         const previous = getPreviousAppVersion();
         if (!previous) return false;
@@ -55,7 +54,7 @@
             //     (delay) ? setTimeout(() => window.location.reload(), delay) : window.location.reload();
             // });
             installLabel = "En cours...";
-            sessionStorage.setItem(previousAppVersionKey, 'APP_VERSION');
+            if (!getPreviousAppVersion()) setPreviousAppVersion(); // only set if not already set (cover multiple updates loop)
             $swRegistration.waiting.postMessage({type: 'SKIP_WAITING'});
         }else{ /* update probably done in another tab */
             console.log($wb, $swRegistration, $swRegistration.waiting);
