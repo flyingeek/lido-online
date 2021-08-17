@@ -43,6 +43,25 @@ export const iconSizeDefault = 1;
 export const iconSizeDefaultNoPin = 0.2;
 export const getIconSizeExpression = (selectedPin, iconSize) => ["case", ["==", 1, ["get", "noPin"]], iconSizeDefaultNoPin, (selectedPin !== 0) ? iconSize : iconSizeDefaultNoPin];
 export const getIconImageExpression = (selectedPin) => ["case", ["==", 1, ["get", "noPin"]], 'sdf-triangle', (selectedPin !== 0) ? 'sdf-marker-15' : 'sdf-triangle'];
+export const getIconColorExpression = (color, overrideColor) => (overrideColor) ? ["case", ["==", 1, ["get", "overrideIconColor"]], overrideColor, color] : color;
+export const getTextColorExpression = (color, overrideColor) => (overrideColor) ? ["case", ["==", 1, ["get", "overrideTextColor"]], overrideColor, color] : color;
+export const getOpacityColorExpression = (color, overrideColor) => (overrideColor) ? ["case", ["==", 1, ["get", "overrideTextColor"]], Math.max(overrideColor, 0.7), Math.max(color, 0.7)] : Math.max(color, 0.7);
+export const getTextKmlColorExpression = (kmlcolor, overrideKmlColor) => {
+    const [color,] = kml2mapColor(kmlcolor);
+    if (overrideKmlColor) {
+        const [overrideColor,] = kml2mapColor(overrideKmlColor);
+        return ["case", ["==", 1, ["get", "overrideTextColor"]], overrideColor, color];
+    }
+    return color;
+};
+export const getOpacityKmlColorExpression= (kmlcolor, overrideKmlColor) => {
+    const [,opacity] = kml2mapColor(kmlcolor);
+    if (overrideKmlColor) {
+        const [,overrideOpacity] = kml2mapColor(overrideKmlColor);
+        return ["case", ["==", 1, ["get", "overrideTextColor"]], Math.max(overrideOpacity, 0.7), Math.max(opacity, 0.7)];
+    }
+    return Math.max(opacity, 0.7);
+};
 export const computeIconSize = (ratio, size=iconSizeDefault, extraFactor=1) => {
     const result = ratio * size * ((ratio > 1) ? extraFactor : 1);
     if (isNaN(result)) return 1;
@@ -54,10 +73,11 @@ export function addPoints(map, id, data, affine, kmlOptions) {
     const visibility = kmlOptions[`${prefix}Display`];
     const kmlcolor = kmlOptions[`${prefix}Color`];
     const textSize = computeIconTextSize(kmlOptions[`iconTextChange`]);
+    const iconSize = computeIconSize(kmlOptions[`iconSizeChange`], iconSizeDefault);
     map.addSource(`${id}-marker-source`, featureCollection(
         geoPoints2LngLats(data, affine, (lngLat, geoPoint) => jsonPoint(lngLat, geoPoint.name.replace(/00\.0/g,'')))
     ));
-    map.addLayer(markerLayer(id, selectedPin, kmlcolor, visibility, textSize));
+    map.addLayer(markerLayer(id, selectedPin, kmlcolor, visibility, textSize, iconSize));
 }
 
 export function addLine(map, id, data, affineLine, kmlcolor, visibility, lineWidth, dashes) {
@@ -91,7 +111,7 @@ export function addLines(map, id, data, affineLine, kmlcolor, visibility, lineWi
 }
 export function markerLayer (folder, selectedPin, kmlcolor, visibility, textSize, iconSize) {
     const [hexcolor, opacity] = kml2mapColor(kmlcolor);
-    return {
+    const layer = {
         'id': `${folder}-marker-layer`,
         'type': 'symbol',
         'source': `${folder}-marker-source`,
@@ -110,17 +130,18 @@ export function markerLayer (folder, selectedPin, kmlcolor, visibility, textSize
             'text-anchor': 'top'
         },
         'paint': {
-            'icon-color': (selectedPin !== 0) ? pinColors[selectedPin] : hexcolor,
+            'icon-color': getIconColorExpression((selectedPin !== 0) ? pinColors[selectedPin] : hexcolor),
             'icon-halo-width': 1,
             'icon-halo-color': '#000',
-            'text-color': hexcolor,
-            'text-opacity': Math.max(opacity, 0.7)
+            'text-color': getTextColorExpression(hexcolor),
+            'text-opacity': getOpacityColorExpression(opacity)
         }
     };
+    return layer;
 }
 export function lineLayer(folder, kmlcolor, visibility, lineWidth=lineWidthDefault, dashes=false) {
     const [hexcolor, opacity] = kml2mapColor(kmlcolor);
-    return {
+    const layer = {
         'id': `${folder}-line-layer`,
         'type': 'line',
         'source': `${folder}-line-source`,
@@ -136,6 +157,7 @@ export function lineLayer(folder, kmlcolor, visibility, lineWidth=lineWidthDefau
             'line-dasharray': (dashes) ? [10, 10] : [1]
         }
     }
+    return layer;
 }
 export function changeIconSizeGeneric(folder, data, iconSize=iconSizeDefault){
     const {map, value, kmlOptions} = data;
@@ -170,8 +192,8 @@ export function changeMarkerGeneric(folder, data){
         const selectedPin = value;
         const hexcolor = pinColors[selectedPin];
         const lineColor = map.getPaintProperty(lineLayer, 'line-color');
-        map.setPaintProperty(markerLayer, 'icon-color', (selectedPin !== 0) ? hexcolor : lineColor);
-        map.setPaintProperty(markerLayer, 'text-color', lineColor);
+        map.setPaintProperty(markerLayer, 'icon-color', getIconColorExpression((selectedPin !== 0) ? hexcolor : lineColor));
+        map.setPaintProperty(markerLayer, 'text-color', getTextColorExpression(lineColor));
         map.setLayoutProperty(markerLayer, 'icon-size', getIconSizeExpression(selectedPin, computeIconSize(kmlOptions['iconSizeChange'], iconSizeDefault)));
         map.setLayoutProperty(markerLayer, 'icon-image', getIconImageExpression(selectedPin));
         map.setLayoutProperty(markerLayer, 'icon-anchor', (selectedPin !== 0) ? 'bottom' : 'center');
@@ -190,8 +212,9 @@ export function changeLineGeneric(folder, data){
     if (map.getLayer(markerLayer)) {
         const iconImageExpression = map.getLayoutProperty(markerLayer, 'icon-image');
         const iconImage = Array.isArray(iconImageExpression) ? iconImageExpression.slice(-1).pop() : iconImageExpression;
-        map.setPaintProperty(markerLayer, 'text-color', hexcolor);
-        if (iconImage === 'sdf-triangle') map.setPaintProperty(markerLayer, 'icon-color', hexcolor);
+        map.setPaintProperty(markerLayer, 'text-color', getTextColorExpression(hexcolor));
+        map.setPaintProperty(markerLayer, 'text-opacity', getOpacityColorExpression(opacity));
+        if (iconImage === 'sdf-triangle') map.setPaintProperty(markerLayer, 'icon-color', getIconColorExpression(hexcolor));
     }
     return true; // allows chaining
 }

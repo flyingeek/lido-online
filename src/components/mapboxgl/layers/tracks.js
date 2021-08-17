@@ -1,6 +1,6 @@
 /* global mapboxgl, editolido */
 import {jsonPoint, jsonLine, featureCollection} from '../json.js';
-import {lineLayer, markerLayer, changeMarkerGeneric, changeLineGeneric, changeDisplayGeneric, computeIconTextSize, computeLineWidthSize, computeIconSize, iconTextSizeDefault, iconSizeDefault, getIconSizeExpression} from '../utils';
+import {lineLayer, markerLayer, changeMarkerGeneric, changeLineGeneric, changeDisplayGeneric, computeIconTextSize, computeLineWidthSize, computeIconSize, iconTextSizeDefault, iconSizeDefault, getIconSizeExpression, getTextKmlColorExpression, getOpacityKmlColorExpression} from '../utils';
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
 import {takeOffTime} from "../../../stores";
 
@@ -64,10 +64,10 @@ export function addTracks(data) {
         }
         const firstPoint = track.points[0];
         let lngLat = (affine) ? affine([firstPoint.longitude, firstPoint.latitude]) : [firstPoint.longitude, firstPoint.latitude];
-        if (lngLat) markers[folder].push(jsonPoint(lngLat, `${(track.isMine) ? track.name + '\n' : ''}${firstPoint.name}`, track.description, {track: track.name, point: firstPoint.name, isMine: track.isMine}));
+        if (lngLat) markers[folder].push(jsonPoint(lngLat, `${(track.isMine) ? track.name + '\n' : ''}${firstPoint.name}`, track.description, {track: track.name, point: firstPoint.name, isMine: track.isMine, overrideTextColor: (track.isMine) ? 1 : 0}));
         const lastPoint = track.points[track.points.length - 1];
         lngLat = (affine) ? affine([lastPoint.longitude, lastPoint.latitude]) : [lastPoint.longitude, lastPoint.latitude];
-        if (lngLat) markers[folder].push(jsonPoint(lngLat, `${(track.isMine) ? track.name + '\n' : ''}${lastPoint.name}`, track.description, {track: track.name, point: lastPoint.name, isMine: track.isMine, noPin: 1}));
+        if (lngLat) markers[folder].push(jsonPoint(lngLat, `${(track.isMine) ? track.name + '\n' : ''}${lastPoint.name}`, track.description, {track: track.name, point: lastPoint.name, isMine: track.isMine, noPin: 1, overrideTextColor: (track.isMine) ? 1 : 0}));
     }
     map.addSource(`rnat-marker-source`, featureCollection(markers['rnat']));
     map.addSource(`rnat-incomplete-marker-source`, featureCollection(markers['rnat-incomplete']));
@@ -78,7 +78,10 @@ export function addTracks(data) {
     const iconSize = computeIconSize(kmlOptions[`iconSizeChange`], iconSizeDefault);
     map.addLayer(lineLayer('rnat', kmlcolor, visibility, lineWidth));
     map.addLayer(lineLayer('rnat-incomplete', kmlOptions.natIncompleteColor, visibility, lineWidth));
-    map.addLayer(markerLayer("rnat", selectedPin, kmlcolor, visibility, textSize, iconSize));
+    const rnatMarkerLayer = markerLayer("rnat", selectedPin, kmlcolor, visibility, textSize, iconSize);
+    rnatMarkerLayer.paint['text-color'] = getTextKmlColorExpression(kmlcolor, kmlOptions['routeColor']);
+    rnatMarkerLayer.paint['text-opacity'] = getOpacityKmlColorExpression(kmlcolor, kmlOptions['routeColor'])
+    map.addLayer(rnatMarkerLayer);
     map.addLayer(markerLayer("rnat-incomplete", selectedPin, kmlcolor, visibility, textSize, iconSize));
     map.addLayer(rnatLabelLayer('rnat-labels', kmlcolor, visibility, textSize));
     map.addLayer(rnatLabelLayer('rnat-incomplete-labels', kmlOptions.natIncompleteColor, visibility, textSize));
@@ -194,13 +197,32 @@ function changeIconSize(data){
     }
     return true; // allows chaining
 }
-
+function changeLine(data){
+    const {map, value, kmlOptions} = data;
+    changeLineGeneric(folder, data) && changeLineGeneric('rnat-labels', data);
+    const markerLayer = `rnat-marker-layer`;
+    if (map.getLayer(markerLayer)) {
+        map.setPaintProperty(markerLayer, 'text-color', getTextKmlColorExpression(value, kmlOptions["routeColor"]));
+        map.setPaintProperty(markerLayer, 'text-opacity', getOpacityKmlColorExpression(value, kmlOptions["routeColor"]));
+    }
+    return true; // allows chaining
+}
+function changeMarker(data){
+    const {map, kmlOptions} = data;
+    changeMarkerGeneric(folder, data);
+    const markerLayer = `rnat-marker-layer`;
+    if (map.getLayer(markerLayer)) {
+        map.setPaintProperty(markerLayer, 'text-color', getTextKmlColorExpression(kmlOptions["natColor"], kmlOptions["routeColor"]));
+        map.setPaintProperty(markerLayer, 'text-opacity', getOpacityKmlColorExpression(kmlOptions["natColor"], kmlOptions["routeColor"]));
+    }
+    return true; // allows chaining
+}
 export default {
     show: (data) => changeDisplayGeneric(folder, true, data) && changeDisplayGeneric('rnat-incomplete', true, data) && changeDisplayGeneric('rnat-labels', true, data) && changeDisplayGeneric('rnat-incomplete-labels', true, data),
     hide: (data) => changeDisplayGeneric(folder, false, data) && changeDisplayGeneric('rnat-incomplete', false, data) && changeDisplayGeneric('rnat-labels', false, data) && changeDisplayGeneric('rnat-incomplete-labels', false, data),
     add: addTracks,
-    changeLine: (data) => changeLineGeneric(folder, data) && changeLineGeneric('rnat-labels', data),
-    changeMarker: changeMarkerGeneric.bind(null, folder),
+    changeLine,
+    changeMarker,
     changeIconText,
     changeLineWidth,
     changeIconSize
