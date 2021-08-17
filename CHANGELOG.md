@@ -3,11 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.14.2] - 2021-08-18
+## [1.14.2] - 2021-08-17
+
+### Changed
+
+- point d'entrée du track du vol est de la couleur de la route
 
 ### Fixed
 
 - popup track: l'ETO n'était pas affichée pour les points d'entrées utilisant un format arinc
+- changement de couleurs et de repères était buggué dans la 1.14.0
 
 ## [1.14.1] - 2021-08-17
 
