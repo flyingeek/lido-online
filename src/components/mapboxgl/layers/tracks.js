@@ -101,7 +101,7 @@ export function addTracks(data) {
             if (props.isMine) entry = ofp.timeMatrix.filter(([p,]) => p.name === props.point).pop() || entry;
             const [, eet, fl] = entry;
             if (fl) description = description.replace(` ${fl} `, ` <b>${fl}</b> `);
-            const eto = (eet && takeOffTime) ? ' - ETO: ' + (new Date($takeOffTime.getTime() + 60000 * eet)).toISOString().substring(11,16) + 'z' : '';
+            const eto = (eet && $takeOffTime) ? ' - ETO: ' + (new Date($takeOffTime.getTime() + 60000 * eet)).toISOString().substring(11,16) + 'z' : '';
             let html = `<div class="track"><h1>${props.track}${eto}${(fl) ? ' FL' + fl: ''}</h1><p>${description}</p>`;
             trackPopup.setHTML(html);
         })
