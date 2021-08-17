@@ -1,4 +1,4 @@
-/* global mapboxgl */
+/* global mapboxgl, editolido */
 import {jsonPoint, jsonLine, featureCollection} from '../json.js';
 import {lineLayer, markerLayer, changeMarkerGeneric, changeLineGeneric, changeDisplayGeneric, computeIconTextSize, computeLineWidthSize, computeIconSize, iconTextSizeDefault, iconSizeDefault, getIconSizeExpression} from '../utils';
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
@@ -98,7 +98,7 @@ export function addTracks(data) {
         const unsubscribe = takeOffTime.subscribe($takeOffTime => {
             let description = props.description.replace(props.point, `<b>${props.point}</b>`);
             let entry = [undefined, undefined, undefined];
-            if (props.isMine) entry = ofp.timeMatrix.filter(([p,]) => p.name === props.point).pop() || entry;
+            if (props.isMine) entry = ofp.timeMatrix.filter(([p,]) => editolido.isARINC(props.point) ? editolido.arinc_normalizer(props.point).asDM === p.name: props.point === p.name).pop() || entry;
             const [, eet, fl] = entry;
             if (fl) description = description.replace(` ${fl} `, ` <b>${fl}</b> `);
             const eto = (eet && $takeOffTime) ? ' - ETO: ' + (new Date($takeOffTime.getTime() + 60000 * eet)).toISOString().substring(11,16) + 'z' : '';
