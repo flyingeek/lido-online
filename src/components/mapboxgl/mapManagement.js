@@ -10,7 +10,7 @@ export const token = 'MAPBOX_TOKEN';
 
 export const key = {};
 
-export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
+export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadCb, initialLoad=false) {
     if (!window.proj4.Proj.projections.get('times')) window.proj4.Proj.projections.add(times);
     if (!window.proj4.Proj.projections.get('eqearth')) window.proj4.Proj.projections.add(eqearth);
     const customAttribution = () => {
@@ -149,7 +149,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
         }
     }
 
-    const mapData = {map, affine, affineAndClamp, affineAndClip, affineOrDrop, bbox, mapOptions, geolocate};
+    const mapData = {map, affine, affineAndClamp, affineAndClip, affineOrDrop, bbox, mapOptions, geolocate, initialLoad};
 
     class LayersControl {
         onAdd(map) {
@@ -218,7 +218,8 @@ export function createMap(id, mapOptions, ofp, kmlOptions, onLoadCb) {
             kmlOptions,
             mapData,
             map,
-            mapOptions
+            mapOptions,
+            aircraftType
         });
 
         // if (ofp) addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');

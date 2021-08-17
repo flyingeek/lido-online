@@ -1,18 +1,23 @@
 {
     "OFP2MAP-AURORA": {
-        "version": 2,
-        "url": "https://www.icloud.com/shortcuts/53d0afcb3f11463fac59974e64236e21",
+        "version": 3,
+        "url": "https://www.icloud.com/shortcuts/0da61ab87f40469db1842622b4d951ff",
         "description": "NOAA Aurora Forecast 30-90mn et prévisions à 3 jours."
     },
     "OFP2MAP-ETOPS": {
-        "version": 3,
-        "url": "https://www.icloud.com/shortcuts/c8216ddf7e7446edab5577632d501232",
+        "version": 4,
+        "url": "https://www.icloud.com/shortcuts/271499bbcfea414eaa7d2d6ec96ae235",
         "description": "Affiche un cartouche ETOPS actualisé."
+    },
+    "OFP2MAP-FAA WIPs": {
+        "version": 1,
+        "url": "https://www.icloud.com/shortcuts/6f341a7550d149a4be6c9ddacd6345bd",
+        "description": "Affiche la carte des travaux sol sur les terrains US"
     },
     "OFP2MAP-MENU": {
         "version": 2,
         "url": "https://www.icloud.com/shortcuts/2db576c98d8d48d095bf751f56b54f56",
-        "description": "Menu affichant l'ensemble des plugins installés."
+        "description": "Menu affichant l'ensemble des plugins installés, utile pour un accès rapide."
     },
     "OFP2MAP-PLANE FINDER": {
         "version": 2,
@@ -22,6 +27,6 @@
     "OFP2MAP-PLUGIN": {
         "version": 2,
         "url": "https://www.icloud.com/shortcuts/28d507b414fb45979be635cc87b2d70d",
-        "description": "Modèle pour démarrer un plugin,  permet de visualiser les données disponibles."
+        "description": "Modèle à dupliquer pour coder un plugin, permet de visualiser les données disponibles."
     }
 }

@@ -1,13 +1,12 @@
 
-export function jsonPoint(lngLat, title, description) {
+export function jsonPoint(lngLat, title, description, properties={}) {
     const json = {
         'type': 'Feature',
         'geometry': {
             'type': 'Point',
             'coordinates': [lngLat[0], lngLat[1]]
         },
-        'properties': {
-        }
+        properties
     };
     if (title) json['properties']['title'] = title;
     if (description) json['properties']['description'] = description;

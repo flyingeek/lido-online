@@ -2,7 +2,10 @@
     const options = [
         {label: 'statuts'},
         {label: 'vert/rouge'},
+        {label: 'médical'},
     ];
+    export const isStatusStyle = (style) => style === 0;
+    export const isMedicalStyle = (style) => style === 2;
 </script>
 <script>
     import { createEventDispatcher } from 'svelte';

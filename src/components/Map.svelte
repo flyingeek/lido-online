@@ -25,7 +25,7 @@
     import MapProjectionSelect from "./MapProjectionSelect.svelte";
     import Gramet from './Gramet.svelte';
     import mapResizeAction from '../actions/mapResizeAction';
-    
+
     const dispatch = createEventDispatcher();
     export let kmlOptions;
     export let ofp;
@@ -76,7 +76,7 @@
         }
         const showPlaneState = get(showPlaneOnMap);
         hidePlane(); // dom element will be removed by createMap
-        mapData = createMap(id, selectedProjection, ofp, kmlOptions, afterMapLoad);
+        mapData = createMap(id, selectedProjection, ofp, kmlOptions, $aircraftType, afterMapLoad);
         map = mapData.map;
         mapData.geolocate.on('trackuserlocationstart', hidePlane);
         //mapData.geolocate.on('trackuserlocationend', showPlane);
@@ -145,7 +145,7 @@
 
     onMount(() => {
         mapboxgl.accessToken = token;
-        mapData = createMap(id, selectedProjection, ofp, kmlOptions, afterMapLoad);
+        mapData = createMap(id, selectedProjection, ofp, kmlOptions, $aircraftType, afterMapLoad, true); //initialLoad = true
         hidePlane(); // dom element was removed by createMap
         showPlaneOnMap.reset();
         map = mapData.map;
@@ -257,18 +257,27 @@
         padding: 0.2em 0.4em;
         border-radius: 2px;
     }
-    :global(.mapboxgl-popup-content .airport){
+    :global(.mapboxgl-popup-content){
         text-align: center;
     }
-    :global(.mapboxgl-popup-content .airport h2){
+    :global(.mapboxgl-popup-content h2){
         font-size: small;
         font-weight: normal;
     }
-    :global(.mapboxgl-popup-content .airport h1){
+    :global(.mapboxgl-popup-content h2 b){
+        color: #062DF8;
+        font-weight: 900;
+        margin-left: 0.25rem;
+    }
+    :global(.mapboxgl-popup-content h1){
         font-size: small;
         font-weight: bold;
         margin-left: 1rem;
         margin-right: 1rem;
+    }
+    :global(.mapboxgl-popup-content .track p){
+        text-align: left;
+        margin-bottom: 0;
     }
     :global(.mapboxgl-popup-content p.security-1){
         color:black;

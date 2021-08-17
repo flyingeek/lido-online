@@ -41,6 +41,8 @@ export const computeLineWidthSize = (ratio, size=lineWidthDefault) => {
 }
 export const iconSizeDefault = 1;
 export const iconSizeDefaultNoPin = 0.2;
+export const getIconSizeExpression = (selectedPin, iconSize) => ["case", ["==", 1, ["get", "noPin"]], iconSizeDefaultNoPin, (selectedPin !== 0) ? iconSize : iconSizeDefaultNoPin];
+export const getIconImageExpression = (selectedPin) => ["case", ["==", 1, ["get", "noPin"]], 'sdf-triangle', (selectedPin !== 0) ? 'sdf-marker-15' : 'sdf-triangle'];
 export const computeIconSize = (ratio, size=iconSizeDefault, extraFactor=1) => {
     const result = ratio * size * ((ratio > 1) ? extraFactor : 1);
     if (isNaN(result)) return 1;
@@ -87,15 +89,15 @@ export function addLines(map, id, data, affineLine, kmlcolor, visibility, lineWi
     }
     map.addLayer(lineLayer(id, kmlcolor, visibility, lineWidth, dashes));
 }
-export function markerLayer (folder, selectedPin, kmlcolor, visibility, textSize) {
+export function markerLayer (folder, selectedPin, kmlcolor, visibility, textSize, iconSize) {
     const [hexcolor, opacity] = kml2mapColor(kmlcolor);
     return {
         'id': `${folder}-marker-layer`,
         'type': 'symbol',
         'source': `${folder}-marker-source`,
         'layout': {
-            'icon-image': (selectedPin !== 0) ? 'sdf-marker-15' : 'sdf-triangle',
-            'icon-size': (selectedPin !== 0) ? iconSizeDefault : iconSizeDefaultNoPin,
+            'icon-image': getIconImageExpression(selectedPin),
+            'icon-size': getIconSizeExpression(selectedPin, iconSize),
             'icon-anchor': (selectedPin !== 0) ? 'bottom' : 'center',
             'icon-offset': [0, 0],
             //'icon-rotate': ['get', 'orientation'],
@@ -140,7 +142,7 @@ export function changeIconSizeGeneric(folder, data, iconSize=iconSizeDefault){
     const markerLayer = `${folder}-marker-layer`;
     const selectedPin = kmlOptions[`${folder2prefix(folder)}Pin`];
     if (map.getLayer(markerLayer)) {
-        map.setLayoutProperty(markerLayer, 'icon-size', (selectedPin) ? computeIconSize(value, iconSize) : iconSizeDefaultNoPin);
+        map.setLayoutProperty(markerLayer, 'icon-size', getIconSizeExpression(selectedPin, computeIconSize(value, iconSize)));
     }
     return true; // allows chaining
 }
@@ -161,7 +163,7 @@ export function changeLineWidthGeneric(folder, data, lineWidth=lineWidthDefault)
     return true; // allows chaining
 }
 export function changeMarkerGeneric(folder, data){
-    const {map, value} = data;
+    const {map, value, kmlOptions} = data;
     const lineLayer = `${folder}-line-layer`;
     const markerLayer = `${folder}-marker-layer`;
     if (map.getLayer(markerLayer) && map.getLayer(lineLayer)) {
@@ -170,8 +172,8 @@ export function changeMarkerGeneric(folder, data){
         const lineColor = map.getPaintProperty(lineLayer, 'line-color');
         map.setPaintProperty(markerLayer, 'icon-color', (selectedPin !== 0) ? hexcolor : lineColor);
         map.setPaintProperty(markerLayer, 'text-color', lineColor);
-        map.setLayoutProperty(markerLayer, 'icon-size', (selectedPin !== 0) ? 1 : 0.2);
-        map.setLayoutProperty(markerLayer, 'icon-image', (selectedPin !== 0) ? 'sdf-marker-15' : 'sdf-triangle');
+        map.setLayoutProperty(markerLayer, 'icon-size', getIconSizeExpression(selectedPin, computeIconSize(kmlOptions['iconSizeChange'], iconSizeDefault)));
+        map.setLayoutProperty(markerLayer, 'icon-image', getIconImageExpression(selectedPin));
         map.setLayoutProperty(markerLayer, 'icon-anchor', (selectedPin !== 0) ? 'bottom' : 'center');
     }
     return true; // allows chaining
@@ -186,7 +188,10 @@ export function changeLineGeneric(folder, data){
         map.setPaintProperty(lineLayer, 'line-opacity', opacity);
     }
     if (map.getLayer(markerLayer)) {
+        const iconImageExpression = map.getLayoutProperty(markerLayer, 'icon-image');
+        const iconImage = Array.isArray(iconImageExpression) ? iconImageExpression.slice(-1).pop() : iconImageExpression;
         map.setPaintProperty(markerLayer, 'text-color', hexcolor);
+        if (iconImage === 'sdf-triangle') map.setPaintProperty(markerLayer, 'icon-color', hexcolor);
     }
     return true; // allows chaining
 }

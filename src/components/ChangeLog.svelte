@@ -23,6 +23,7 @@
             //.replace(/^# (.*$)/gim, '<h1>$1</h1>')
             //.replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
             .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
+            .replace(/_(.*)\_/gim, '<i>$1</i>')
             //.replace(/\*(.*)\*/gim, '<i>$1</i>')
             //.replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' />")
             .replace(/\[(.*?)\]\((#.*?)\)/gim, "<a href='$2'>$1</a>")

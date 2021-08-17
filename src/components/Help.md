@@ -127,12 +127,12 @@ Sur iPad, l'export des fichiers KML affiche une page un peu particulière, utili
 
  Un raccourci peut être lancé depuis la page Export, il recevra les fichiers KML, la route Lido et le Gramet. Le nom du raccourci est modifiable, il faut que le raccourci soit installé avant de le lancer.
 
-__Plugins depuis la carte&#8239;:__ Il est aussi possible de lancer des raccourcis ayant accès au contenu de l'OFP depuis le pavé d'informations du vol dans la barre de menu. Il faut autoriser les raccourcis non fiables dans Réglages/Raccourcis (après avoir lancé au moins un raccourci "fiable"), puis installer le(s) plugin(s).
+__Plugins depuis la carte&#8239;:__ Il est aussi possible de lancer des raccourcis ayant accès au contenu de l'OFP depuis le pavé d'informations du vol dans la barre de menu. Il faut autoriser les raccourcis non fiables dans Réglages/Raccourcis (après avoir lancé au moins un raccourci "fiable" depuis la Galerie), puis installer le(s) plugin(s).
 
 Liste des plugins:
 
-{#each Object.entries(plugins) as [name, {url, description}]}
-    - <Link href="{url}">{name}</Link> {description}
+{#each Object.entries(plugins) as [name, {url, description, version}]}
+    - <Link href="{url}">{name} v{version}</Link> {description}
 {/each}
 
 ## Mise à jour

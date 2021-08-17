@@ -9,9 +9,9 @@ export const kmlDefaultOptions = {
     "alternatePin": 0,
     "alternateColor": "FFFF00FF", /* #FF00FFFF */
     "natDisplay": true,
-    "natPin": 8,
+    "natPin": 0,
     "natPinPosition": 0,
-    "natColor": "80DA25A8",
+    "natColor": "80858585", /* "80DA25A8" */
     "natIncompleteColor": "FF0000FF", /* #FF0000FF */
     "greatCircleDisplay": true,
     "greatCircleColor": "5F1478FF", /* #FF78145F */

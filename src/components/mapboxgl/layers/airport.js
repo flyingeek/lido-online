@@ -1,5 +1,6 @@
 /* global mapboxgl editolido */
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
+import {isMedicalStyle, isStatusStyle} from "../../mapSettings/AirportSelector.svelte";
 import {computeIconTextSize, computeIconSize} from '../utils';
 import {supportsHover} from "../../utils";
 import {get} from "svelte/store";
@@ -9,49 +10,76 @@ const folder = 'airport';
 const adequateLayer = `${folder}-layer`;
 const emergencyLayer = `${folder}-emer-layer`;
 const source = `${folder}-source`;
+const medicalColor = '#062DF8';
+const medicalCondition = ["==", 1, ["get", "h"]];
+
 
 const basicAirportIconColor = (raltNames, hexColor) => ["case",
     ["in", ["get", "name"], ["literal", raltNames]], hexColor,
     ["==", 0, ["get", "level"]], '#095','#C71'];
+const medicalAirportIconColor = (raltNames, hexColor) => ["case",
+    ["in", ["get", "name"], ["literal", raltNames]], hexColor,
+    ["==", 0, ["get", "level"]], medicalColor,'#C71'];
 const statusAirportIconColor = (aircraftType) => ["case",
+    ["==", 9, ["get", `${aircraftType}`]], '#ea80d8',
     ["==", 8, ["get", `${aircraftType}`]], '#ea80d8',
-    ["==", 7, ["get", `${aircraftType}`]], '#ea80d8',
+    ["==", 7, ["get", `${aircraftType}`]], '#dddddd',
     ["==", 6, ["get", `${aircraftType}`]], '#dddddd',
-    ["==", 5, ["get", `${aircraftType}`]], '#dddddd',
+    ["==", 5, ["get", `${aircraftType}`]], '#fbfe98',
     ["==", 4, ["get", `${aircraftType}`]], '#fbfe98',
-    ["==", 3, ["get", `${aircraftType}`]], '#fbfe98',
+    ["==", 3, ["get", `${aircraftType}`]], '#00b0f1',
     ["==", 2, ["get", `${aircraftType}`]], '#00b0f1',
-    ["==", 1, ["get", `${aircraftType}`]], '#00b0f1',
     '#000'];
 
 const getIconColor = (style, aircraftType, raltNames, hexColor, ofpLoaded) => {
     if (!ofpLoaded) return '#095';
-    if (style === 0) {
+    if (isStatusStyle(style)) {
         return statusAirportIconColor(aircraftType);
+    } else if (isMedicalStyle(style)) {
+        return medicalAirportIconColor(raltNames, hexColor);
     }
     return basicAirportIconColor(raltNames, hexColor);
 }
 
-const filterByAircraftType = (aircraftType, is=true) => {
-    if (is) {
-        return ["in", `${aircraftType}`, ["get", "type"]];
+const filterByAircraftType = (aircraftType, is=true, medicalOnly=false) => {
+    const typeCondition = ["in", `${aircraftType}`, ["get", "type"]];
+    if (medicalOnly) {
+        if (is) {
+            return ["all", medicalCondition, typeCondition];
+        }else{
+            return ["to-boolean", false]; //none
+        }
     }else{
-        return ["!", ["in", `${aircraftType}`, ["get", "type"]]];
+        if (is) {
+            return typeCondition;
+        }else{
+            return ["!", typeCondition];
+        }
     }
 }
 
-const symbolSortKey = (aircraftType, etopsNames) => {
+const symbolSortKey = (aircraftType, maxPriorityNames) => {
+    // maxPriority = 0
+    // medical = 1
+    // then by order field
     return ["case",
-    ["in", ["get", "name"], ["literal", etopsNames]], 0,
-    ["get", `${aircraftType}`]]
+    ["in", ["get", "name"], ["literal", maxPriorityNames]], 0,
+    ["case", medicalCondition, 1, ["get", `${aircraftType}`]]]
 }
 
 const getIconHaloWidth = (style, ofpLoaded) => (style === 0 && ofpLoaded) ? 3 : 0;
-const getTextColor = (raltNames, hexColor, ofpLoaded) => (ofpLoaded) ? ["case",
+const getTextColor = (style, raltNames, hexColor, ofpLoaded) => {
+    const styleBasedColor = (!isMedicalStyle(style)) ? ["case", medicalCondition, medicalColor, '#000'] : '#000';
+    if (!ofpLoaded) return styleBasedColor;
+    return ["case",
     ["in", ["get", "name"], ["literal", raltNames]], hexColor,
-    ["==", 0, ["get", "level"]], '#000',
-    '#C60'] : "#000";
-
+    ["==", 0, ["get", "level"]], styleBasedColor,
+    '#C60'];
+};
+const getTextField = (style) => {
+    if (!isMedicalStyle(style)) return ["case", ["==", 1, ["get", "h"]], ["concat", ['get', 'name'], '\u200A✚'], ['get', 'name']];  //https://jkorpela.fi/chars/spaces.html
+    return ['get', 'name'];
+};
 const adequateTextSize = (etopsNames, textRatio) => {
     return ["case",
     ["in", ["get", "name"], ["literal", etopsNames]], computeIconTextSize(textRatio, 10),
@@ -71,14 +99,13 @@ const emergencyIconSize = (iconRatio, ofpLoaded) => {
     computeIconSize(iconRatio, 0.4, 1.2)] : computeIconSize(iconRatio, 0.4, 1.2);
 }
 export const addAirports = (data) => {
-    const {map, mapData, ofp, kmlOptions} = data;
+    const {map, mapData, ofp, kmlOptions, aircraftType} = data;
     const {affineOrDrop} = mapData;
     const affine = affineOrDrop;
     let epPoints = [];
     if (ofp && ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
         epPoints = [ofp.infos['EEP'], ofp.infos['EXP']];
     }
-    const aircraftType = get(aircraftTypeStore);
     const raltPoints = (ofp) ? ofp.infos['raltPoints'] : [];
     const etopsKmlColor = kmlOptions.etopsColor;
     const style = kmlOptions.airportPin;
@@ -87,6 +114,7 @@ export const addAirports = (data) => {
     const epNames = epPoints.map(g => g.name);
     const raltNames = raltPoints.map(g => g.name);
     const etopsNames = epNames.concat(raltNames);
+    const maxPriorityNames = (ofp) ? [ofp.departure.name, ofp.arrival.name].concat(etopsNames) : etopsNames;
     fetch('data/airports.CONF_AIRAC.geojson')
     .then(response => response.json())
     .then(data => {
@@ -134,7 +162,7 @@ export const addAirports = (data) => {
                 'text-color': "#000",
                 'text-opacity': 0.8
             },
-            'filter': filterByAircraftType(aircraftType, false)
+            'filter': filterByAircraftType(aircraftType, false, style===2)
         });
         map.addLayer({
             'id': adequateLayer,
@@ -151,25 +179,25 @@ export const addAirports = (data) => {
                 'icon-allow-overlap': true,
                 'icon-ignore-placement': true,
                 'visibility': (visibility) ? 'visible' : 'none',
-                'text-field': ['get', 'name'],
+                'text-field': getTextField(style),
                 //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
                 'text-size': adequateTextSize(etopsNames, kmlOptions['iconTextChange']),
                 'text-offset': [0, 0.7],
                 'text-anchor': 'top',
                 'text-allow-overlap': false,
                 'text-ignore-placement': false,
-                'symbol-sort-key':symbolSortKey(aircraftType, etopsNames)
+                'symbol-sort-key':symbolSortKey(aircraftType, maxPriorityNames)
             },
             'paint': {
                 'icon-halo-color':(ofp) ? ["case", ["==", 0, ["get", "level"]], '#095','#D70'] : '#444',
                 'icon-halo-width': getIconHaloWidth(style, !!ofp),
                 'icon-color': getIconColor(style, aircraftType, raltNames, hexcolorEtops, !!ofp),
-                'text-color': getTextColor(raltNames, hexcolorEtops, !!ofp),
+                'text-color': getTextColor(style, raltNames, hexcolorEtops, !!ofp),
                 'text-halo-color': "#000",
                 'text-halo-width': ["case", ["==", 0, ["get", "level"]], 0, 0],
                 'text-opacity': 0.8
             },
-            'filter': filterByAircraftType(aircraftType)
+            'filter': filterByAircraftType(aircraftType, true, style===2)
         });
         const popup = new mapboxgl.Popup({
             closeButton: true,
@@ -186,40 +214,43 @@ export const addAirports = (data) => {
             const title = e.features[0].properties.title;
             const icao = e.features[0].properties.name;
             const iata = editolido.icao2iata(icao);
+            const aircraftType = get(aircraftTypeStore); // important to re-read store value when adding popup
             // Ensure that if the map is zoomed out such that multiple
             // copies of the feature are visible, the popup appears
             // over the copy being pointed to.
             while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
             }
-            let html = `<div class="airport"><h1>${icao} / ${iata}</h1><h2>${title}</h2>`;
+
             const security = e.features[0].properties.level;
-            const status = e.features[0].properties[aircraftType];
+            const order = e.features[0].properties[aircraftType];
             //console.log(status, typeof status)
             let statusText = "";
             let statusNum = "0";
-            switch(status) {
-                case 1:
+            switch(order) {
                 case 2:
+                case 3:
                     statusText = "Destination & RCF";
                     statusNum = "3";
                     break;
-                case 3:
                 case 4:
+                case 5:
                     statusText = "Dégagement à destination";
                     statusNum = "2";
                     break;
-                case 5:
                 case 6:
+                case 7:
                     statusText = "Dégagement en route";
                     statusNum = "2 ERA";
                     break;
-                case 7:
                 case 8:
+                case 9:
                     statusText = "Appui ou adéquat en route";
                     statusNum = "1";
                     break;
             }
+            const isMedical = e.features[0].properties.h === 1 && statusNum !== "0";
+            let html = `<div class="airport"><h1>${icao} / ${iata}</h1><h2>${title}${(isMedical) ? ' <b>🄷</b>' : ''}</h2>`;
             if (ofp) {
                 html +=  `<p class="status status-${statusNum.charAt(0)}">STATUT ${statusNum}</p>`;
                 if(security > 0) html += `<p class="security-${security}">${(security==1) ? 'ORANGE' : 'RED'}</p>`;
@@ -274,9 +305,12 @@ export function changeAirportStyle(data) {
     const style = kmlOptions.airportPin;
     if (map.getLayer(adequateLayer)) {
         map.setPaintProperty(adequateLayer, 'icon-color', getIconColor(style, aircraftType, raltNames, hexcolorEtops, !!ofp));
-        map.setPaintProperty(adequateLayer, 'text-color', getTextColor(raltNames, hexcolorEtops, !!ofp));
+        map.setPaintProperty(adequateLayer, 'text-color', getTextColor(style, raltNames, hexcolorEtops, !!ofp));
         map.setPaintProperty(adequateLayer, 'icon-halo-width', getIconHaloWidth(style, !!ofp));
+        map.setLayoutProperty(adequateLayer, 'text-field', getTextField(style));
+        map.setFilter(adequateLayer, filterByAircraftType(aircraftType, true, style===2));
     }
+    if (map.getLayer(emergencyLayer)) map.setFilter(emergencyLayer, filterByAircraftType(aircraftType, false, style===2));
 }
 const getEtopsNames = (ofp) => {
     const raltNames = (ofp) ? ofp.infos.ralts : [];
@@ -291,10 +325,11 @@ export function changeAircraftType(data) {
     const [raltNames, etopsNames] = getEtopsNames(ofp);
     const [hexcolorEtops,] = kml2mapColor(kmlOptions.etopsColor);
     const style = kmlOptions.airportPin;
-    map.setFilter(adequateLayer, filterByAircraftType(aircraftType));
-    map.setPaintProperty(adequateLayer, 'icon-color', getIconColor(style, aircraftType, raltNames, hexcolorEtops));
-    map.setLayoutProperty(adequateLayer, 'symbol-sort-key', symbolSortKey(aircraftType, etopsNames));
-    map.setFilter(emergencyLayer, filterByAircraftType(aircraftType, false));
+    const maxPriorityNames = (ofp) ? [ofp.departure.name, ofp.arrival.name].concat(etopsNames) : etopsNames;
+    map.setFilter(adequateLayer, filterByAircraftType(aircraftType, true, style===2));
+    map.setPaintProperty(adequateLayer, 'icon-color', getIconColor(style, aircraftType, raltNames, hexcolorEtops, !!ofp));
+    map.setLayoutProperty(adequateLayer, 'symbol-sort-key', symbolSortKey(aircraftType, maxPriorityNames));
+    map.setFilter(emergencyLayer, filterByAircraftType(aircraftType, false, style===2));
 }
 const changeIconText = (data) => {
     const {map, kmlOptions, ofp} = data;
