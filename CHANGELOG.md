@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.14.3] - 2021-08-xx
+## [1.14.3] - 2021-08-18
 
 ### Added
 
@@ -11,11 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Priorité d'affiche des points d'entrée et de sortie de track modifiée, avec une mise en évidence de ces points. Il est recommandé de ne plus sélectionner de repère pour les tracks dans OFP2MAP. Pour le réglage d'export, il vaut mieux toujours en choisir un.
+- Priorité d'affichage des points d'entrée et de sortie de track modifiée, avec une mise en évidence de ces points. Il est recommandé de ne plus sélectionner de repère pour les tracks dans OFP2MAP. Pour le réglage d'export, il vaut mieux toujours en choisir un.
+- épaisseur de l'ortho et de la route Gramet légérement réduite pour que l'aspect général en zoomant/dézoomant les lignes soit plus agréable
 
 ### Fixed
 
 - Le changement de couleur ETOPS n'était pas "réactif" pour la couleur des terrains ETOPS.
+- Le paramètre d'épaisseur des lignes n'était pris en compte au chargement de l'OFP
+- Safari ne sélectionne plus le texte des boutons de zoom  lors de clics répétitifs (dans aspect général)
 
 ## [1.14.2] - 2021-08-17
 
