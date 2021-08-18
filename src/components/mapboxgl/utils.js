@@ -7,6 +7,11 @@ export const pinColors = [
     '#CC9966', '#FF9922', '#DD5599',
     '#FF0000', '#22DD44', '#BB11EE', '#F56'
 ];
+export const iconTextSizeDefault = 10;
+export const lineWidthDefault = 2;
+export const iconSizeDefault = 1;
+export const iconSizeDefaultNoPin = 0.2;
+export const minTextOpacityDefault= 0.8;
 
 export const geoPoints2LngLats = (data, affine, cb) => {
     let lngLats = [];
@@ -18,62 +23,48 @@ export const geoPoints2LngLats = (data, affine, cb) => {
     return lngLats;
 }
 
-// const geoPoints2LngLats2 = (data, affine, cb) => {
-//     const lngLats = data.reduce(function(result, g) {
-//         const newPair = (affine) ? affine([g.longitude, g.latitude]) : [g.longitude, g.latitude];
-//         if (newPair) result.push((cb) ? cb(newPair, g) : newPair);
-//         return result;
-//     }, []);
-//     return lngLats;
-// }
-
-export const iconTextSizeDefault = 10;
-export const computeIconTextSize = (ratio, size=iconTextSizeDefault, extraFactor=1) => {
-    const result = ratio * size * ((ratio > 1) ? extraFactor : 1);
-    if (isNaN(result)) return iconTextSizeDefault;
-    return result;
-}
-export const lineWidthDefault = 2;
-export const computeLineWidthSize = (ratio, size=lineWidthDefault) => {
-    const result = ratio * size;
-    if (isNaN(result)) return 1;
-    return result;
-}
-export const iconSizeDefault = 1;
-export const iconSizeDefaultNoPin = 0.2;
-export const getIconSizeExpression = (selectedPin, iconSize) => ["case", ["==", 1, ["get", "noPin"]], iconSizeDefaultNoPin, (selectedPin !== 0) ? iconSize : iconSizeDefaultNoPin];
-export const getIconImageExpression = (selectedPin) => ["case", ["==", 1, ["get", "noPin"]], 'sdf-triangle', (selectedPin !== 0) ? 'sdf-marker-15' : 'sdf-triangle'];
-export const getIconColorExpression = (color, overrideColor) => (overrideColor) ? ["case", ["==", 1, ["get", "overrideIconColor"]], overrideColor, color] : color;
-export const getTextColorExpression = (color, overrideColor) => (overrideColor) ? ["case", ["==", 1, ["get", "overrideTextColor"]], overrideColor, color] : color;
-export const getOpacityColorExpression = (color, overrideColor) => (overrideColor) ? ["case", ["==", 1, ["get", "overrideTextColor"]], Math.max(overrideColor, 0.7), Math.max(color, 0.7)] : Math.max(color, 0.7);
-export const getTextKmlColorExpression = (kmlcolor, overrideKmlColor) => {
-    const [color,] = kml2mapColor(kmlcolor);
-    if (overrideKmlColor) {
-        const [overrideColor,] = kml2mapColor(overrideKmlColor);
-        return ["case", ["==", 1, ["get", "overrideTextColor"]], overrideColor, color];
-    }
-    return color;
-};
-export const getOpacityKmlColorExpression= (kmlcolor, overrideKmlColor) => {
-    const [,opacity] = kml2mapColor(kmlcolor);
-    if (overrideKmlColor) {
-        const [,overrideOpacity] = kml2mapColor(overrideKmlColor);
-        return ["case", ["==", 1, ["get", "overrideTextColor"]], Math.max(overrideOpacity, 0.7), Math.max(opacity, 0.7)];
-    }
-    return Math.max(opacity, 0.7);
-};
 export const computeIconSize = (ratio, size=iconSizeDefault, extraFactor=1) => {
     const result = ratio * size * ((ratio > 1) ? extraFactor : 1);
     if (isNaN(result)) return 1;
     return result;
 }
+export const computeIconTextSize = (ratio, size=iconTextSizeDefault, extraFactor=1) => {
+    const result = ratio * size * ((ratio > 1) ? extraFactor : 1);
+    if (isNaN(result)) return iconTextSizeDefault;
+    return result;
+}
+export const computeLineWidthSize = (ratio, size=lineWidthDefault) => {
+    const result = ratio * size;
+    if (isNaN(result)) return 1;
+    return result;
+}
+export const getIconSizeExpression = (selectedPin, iconSize) => ["case", ["==", 1, ["get", "noPin"]], iconSizeDefaultNoPin, (selectedPin !== 0) ? iconSize : iconSizeDefaultNoPin];
+export const getIconImageExpression = (selectedPin) => ["case", ["==", 1, ["get", "noPin"]], 'sdf-triangle', (selectedPin !== 0) ? 'sdf-marker-15' : 'sdf-triangle'];
+export const getIconColorExpression = (color, overrideColor) => (overrideColor) ? ["case", ["==", 1, ["get", "overrideIconColor"]], overrideColor, color] : color;
+export const getTextColorExpression = (color, overrideColor) => (overrideColor) ? ["case", ["==", 1, ["get", "overrideTextColor"]], overrideColor, color] : color;
+export const getOpacityColorExpression = (opacity, overrideOpacity, minOpacity=minTextOpacityDefault) => {
+    if (overrideOpacity) {
+        return ["case", ["==", 1, ["get", "overrideTextColor"]], Math.max(overrideOpacity, minOpacity), Math.max(opacity, minOpacity)];
+    }
+    return Math.max(opacity, minOpacity);
+}
+export const getTextKmlColorExpression = (kmlcolor, overrideKmlColor) => {
+    const [color,] = kml2mapColor(kmlcolor);
+    const [overrideColor,] = (overrideKmlColor) ? kml2mapColor(overrideKmlColor) : [null, null];
+    return getTextColorExpression(color, overrideColor);
+};
+export const getOpacityKmlColorExpression= (kmlcolor, overrideKmlColor, minOpacity=minTextOpacityDefault) => {
+    const [, opacity] = kml2mapColor(kmlcolor);
+    const [,overrideOpacity] = (overrideKmlColor) ? kml2mapColor(overrideKmlColor) : [null, null];
+    return getOpacityColorExpression(opacity, overrideOpacity, minOpacity)
+};
 export function addPoints(map, id, data, affine, kmlOptions) {
     const prefix = folder2prefix(id);
     const selectedPin = kmlOptions[`${prefix}Pin`];
     const visibility = kmlOptions[`${prefix}Display`];
     const kmlcolor = kmlOptions[`${prefix}Color`];
     const textSize = computeIconTextSize(kmlOptions[`iconTextChange`]);
-    const iconSize = computeIconSize(kmlOptions[`iconSizeChange`], iconSizeDefault);
+    const iconSize = computeIconSize(kmlOptions[`iconSizeChange`]);
     map.addSource(`${id}-marker-source`, featureCollection(
         geoPoints2LngLats(data, affine, (lngLat, geoPoint) => jsonPoint(lngLat, {title: geoPoint.name.replace(/00\.0/g,'')}))
     ));
