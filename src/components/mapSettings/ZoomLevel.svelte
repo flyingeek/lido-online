@@ -1,5 +1,5 @@
 <script context="module">
-    //import {debounce} from '../utils.js';
+    import {debounce} from '../utils.js';
 </script>
 <script>
     import { createEventDispatcher} from 'svelte';
@@ -7,21 +7,25 @@
     export let name;
     export let label;
     export let value;
-    export let min = 0.9;
-    export let max = 1.4;
+    export let min = 0.6;
+    export let max = 2.0;
     export let step = 0.1;
+    export let decimals = 1;
+
+    const debounceDispatch = debounce(dispatch, 100);
+
     const increment = () => {
         const previousValue = value;
-        value = Math.min(Math.max(parseFloat(value) + step, min), max).toFixed(1);
+        value = Math.min(Math.max(parseFloat(value) + step, min), max).toFixed(decimals);
         if (value !== previousValue) {
-            dispatch('change', {name, value});
+            debounceDispatch('change', {name, value});
         }
     };
     const decrement = () => {
         const previousValue = value;
-        value = Math.min(Math.max(parseFloat(value) - step, min), max).toFixed(1);
+        value = Math.min(Math.max(parseFloat(value) - step, min), max).toFixed(decimals);
         if (value !== previousValue) {
-            dispatch('change', {name, value});
+            debounceDispatch('change', {name, value});
         }
     };
 
@@ -44,9 +48,6 @@
     }
     button.form-control{
         flex: 0 0 3em;
-        user-select: none; /* supported by Chrome and Opera */
-        -webkit-user-select: none; /* Safari */
-        -moz-user-select: none; /* Firefox */
     }
     label {
         width: 5em;

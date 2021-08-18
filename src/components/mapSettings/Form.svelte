@@ -119,11 +119,11 @@
         {/if}
         <fieldset class="form-group">
             <legend>Aspect général</legend>
-            <ZoomLevel name="icon-text-change" label="Label" value={kmlOptions['iconTextChange']} on:change={update}/>
+            <ZoomLevel name="icon-text-change" label="Label" value={kmlOptions['iconTextChange']} min={0.9} max={1.4} on:change={update}/>
             {#if $ofp}
-            <ZoomLevel name="line-width-change" label="Ligne" value={kmlOptions['lineWidthChange']} min={0.6} max={2} step={0.1} on:change={update}/>
+            <ZoomLevel name="line-width-change" label="Ligne" value={kmlOptions['lineWidthChange']} on:change={update}/>
             {/if}
-            <ZoomLevel name="icon-size-change" label="Icône" value={kmlOptions['iconSizeChange']} min={0.6} max={2} step={0.1} on:change={update}/>
+            <ZoomLevel name="icon-size-change" label="Icône" value={kmlOptions['iconSizeChange']} on:change={update}/>
         </fieldset>
 
         <div class="last">
@@ -154,6 +154,9 @@
     form {
         width: 250px;
         margin-top: 13px;
+        user-select: none; /* supported by Chrome and Opera */
+        -webkit-user-select: none; /* Safari */
+        -moz-user-select: none; /* Firefox */
     }
     .form-group{
         margin-bottom: 0.8em;
