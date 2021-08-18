@@ -94,8 +94,12 @@ export function addTracks(data) {
     map.addLayer(lineLayer('rnat-incomplete', kmlOptions.natIncompleteColor, visibility, lineWidth));
     map.addLayer(markerLayer("rnat", selectedPin, kmlcolor, visibility, textSize, iconSize));
     changeMyTrackLabels(data); // text-color & text-opacity for entry/exit point
+    map.setLayoutProperty("rnat-marker-layer", 'text-allow-overlap', ["case", ["==", 1, ["get", "overrideIconColor"]], true, false]);
+    map.setLayoutProperty("rnat-marker-layer", 'text-ignore-placement', true);
     map.addLayer(markerLayer("rnat-incomplete", selectedPin, kmlcolor, visibility, textSize, iconSize));
     map.addLayer(rnatLabelLayer('rnat-labels', kmlcolor, visibility, textSize));
+    map.setLayoutProperty('rnat-labels-marker-layer', 'text-allow-overlap', true);
+    map.setLayoutProperty('rnat-labels-marker-layer', 'text-ignore-placement', true);
     map.addLayer(rnatLabelLayer('rnat-incomplete-labels', kmlOptions.natIncompleteColor, visibility, textSize));
 
     const popup = (e) => {
