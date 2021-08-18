@@ -38,7 +38,10 @@ export const computeLineWidthSize = (ratio, size=lineWidthDefault) => {
     if (isNaN(result)) return 1;
     return result;
 }
-export const getIconSizeExpression = (selectedPin, iconSize) => ["case", ["==", 1, ["get", "noPin"]], iconSizeDefaultNoPin, (selectedPin !== 0) ? iconSize : iconSizeDefaultNoPin];
+//to increase size of track entry/exit points
+const sizeBasedOnOverride = (selectedPin, iconSize) =>  ["case", ["==", 1, ["get", "overrideTextColor"]], (selectedPin !== 0) ? iconSize :iconSizeDefaultNoPin * 3, (selectedPin !== 0) ? iconSize : iconSizeDefaultNoPin];
+export const getIconSizeExpression = (selectedPin, iconSize) => ["case", ["==", 1, ["get", "noPin"]], sizeBasedOnOverride(0, iconSize), sizeBasedOnOverride(selectedPin, iconSize)];
+export const getIconAnchorExpression = (selectedPin) => ["case", ["==", 1, ["get", "noPin"]], 'center', (selectedPin !== 0) ? 'bottom' : 'center'];
 export const getIconImageExpression = (selectedPin) => ["case", ["==", 1, ["get", "noPin"]], 'sdf-triangle', (selectedPin !== 0) ? 'sdf-marker-15' : 'sdf-triangle'];
 export const getIconColorExpression = (color, overrideColor) => (overrideColor) ? ["case", ["==", 1, ["get", "overrideIconColor"]], overrideColor, color] : color;
 export const getTextColorExpression = (color, overrideColor) => (overrideColor) ? ["case", ["==", 1, ["get", "overrideTextColor"]], overrideColor, color] : color;
@@ -109,7 +112,7 @@ export function markerLayer (folder, selectedPin, kmlcolor, visibility, textSize
         'layout': {
             'icon-image': getIconImageExpression(selectedPin),
             'icon-size': getIconSizeExpression(selectedPin, iconSize),
-            'icon-anchor': (selectedPin !== 0) ? 'bottom' : 'center',
+            'icon-anchor': getIconAnchorExpression(selectedPin),
             'icon-offset': [0, 0],
             //'icon-rotate': ['get', 'orientation'],
             'icon-allow-overlap': false,
@@ -187,7 +190,7 @@ export function changeMarkerGeneric(folder, data){
         map.setPaintProperty(markerLayer, 'text-color', getTextColorExpression(lineColor));
         map.setLayoutProperty(markerLayer, 'icon-size', getIconSizeExpression(selectedPin, computeIconSize(kmlOptions['iconSizeChange'], iconSizeDefault)));
         map.setLayoutProperty(markerLayer, 'icon-image', getIconImageExpression(selectedPin));
-        map.setLayoutProperty(markerLayer, 'icon-anchor', (selectedPin !== 0) ? 'bottom' : 'center');
+        map.setLayoutProperty(markerLayer, 'icon-anchor', getIconAnchorExpression(selectedPin));
     }
     return true; // allows chaining
 }
