@@ -1,4 +1,5 @@
 import {addLines, computeLineWidthSize} from '../utils';
+import {changeAdequatesColor} from './airport';
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
 
 const folder = 'etops';
@@ -34,6 +35,7 @@ function changeETOPSCircleColor(data) {
         map.setPaintProperty(etopsCircleLayer, 'line-color', hexcolor);
         map.setPaintProperty(etopsCircleLayer, 'line-opacity', opacity);
     }
+    changeAdequatesColor(data);
 }
 
 function changeETOPSDisplay(data, visible) {

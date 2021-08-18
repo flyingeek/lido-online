@@ -300,12 +300,9 @@ export function changeAirportDisplay(data, visible) {
 
 export function changeAirportStyle(data) {
     const {map, kmlOptions, ofp, aircraftType} = data;
-    const raltNames = (ofp) ? ofp.infos.ralts : [];
-    const [hexcolorEtops,] = kml2mapColor(kmlOptions.etopsColor);
     const style = kmlOptions.airportPin;
     if (map.getLayer(adequateLayer)) {
-        map.setPaintProperty(adequateLayer, 'icon-color', getIconColor(style, aircraftType, raltNames, hexcolorEtops, !!ofp));
-        map.setPaintProperty(adequateLayer, 'text-color', getTextColor(style, raltNames, hexcolorEtops, !!ofp));
+        changeAdequatesColor(data);
         map.setPaintProperty(adequateLayer, 'icon-halo-width', getIconHaloWidth(style, !!ofp));
         map.setLayoutProperty(adequateLayer, 'text-field', getTextField(style));
         map.setFilter(adequateLayer, filterByAircraftType(aircraftType, true, style===2));
@@ -322,12 +319,11 @@ const getEtopsNames = (ofp) => {
 }
 export function changeAircraftType(data) {
     const {map, kmlOptions, aircraftType, ofp} = data;
-    const [raltNames, etopsNames] = getEtopsNames(ofp);
-    const [hexcolorEtops,] = kml2mapColor(kmlOptions.etopsColor);
+    const [, etopsNames] = getEtopsNames(ofp);
     const style = kmlOptions.airportPin;
     const maxPriorityNames = (ofp) ? [ofp.departure.name, ofp.arrival.name].concat(etopsNames) : etopsNames;
     map.setFilter(adequateLayer, filterByAircraftType(aircraftType, true, style===2));
-    map.setPaintProperty(adequateLayer, 'icon-color', getIconColor(style, aircraftType, raltNames, hexcolorEtops, !!ofp));
+    changeAdequatesColor(data);
     map.setLayoutProperty(adequateLayer, 'symbol-sort-key', symbolSortKey(aircraftType, maxPriorityNames));
     map.setFilter(emergencyLayer, filterByAircraftType(aircraftType, false, style===2));
 }
@@ -349,6 +345,16 @@ const changeIconSize = (data) => {
     }
     if (map.getLayer(emergencyLayer)) {
         map.setLayoutProperty(emergencyLayer, 'icon-size', emergencyIconSize(kmlOptions['iconSizeChange']));
+    }
+}
+export const changeAdequatesColor = (data) => {
+    const {map, kmlOptions, ofp, aircraftType} = data;
+    const style = kmlOptions.airportPin;
+    const [hexcolorEtops,] = kml2mapColor(kmlOptions.etopsColor);
+    const [raltNames,] = getEtopsNames(ofp);
+    if (map.getLayer(adequateLayer)) {
+        map.setPaintProperty(adequateLayer, 'icon-color', getIconColor(style, aircraftType, raltNames, hexcolorEtops, !!ofp));
+        map.setPaintProperty(adequateLayer, 'text-color', getTextColor(style, raltNames, hexcolorEtops, !!ofp));
     }
 }
 export default {
