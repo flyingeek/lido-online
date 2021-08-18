@@ -249,6 +249,13 @@
         display: inline-block;
         line-height: 1em;
     }
+    :global(.mapboxgl-popup-content .track p strong){ /* LVLS EB highlight */
+        font-weight: normal;
+        background-color: #EEFAE3; /*very light green */
+    }
+    :global(.mapboxgl-popup-content .track p strong.error){ /* LVLS EB highlight if FL not found*/
+        background-color: #FAE3EE; /*very light pink */
+    }
     :global(.mapboxgl-popup-content .security-1,
             .mapboxgl-popup-content .security-2,
             .mapboxgl-popup-content p.status) {

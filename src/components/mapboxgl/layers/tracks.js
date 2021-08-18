@@ -115,9 +115,21 @@ export function addTracks(data) {
             let entry = [undefined, undefined, undefined];
             if (props.isMine) entry = ofp.timeMatrix.filter(([p,]) => editolido.isARINC(props.point) ? editolido.arinc_normalizer(props.point).asDM === p.name: props.point === p.name).pop() || entry;
             const [, eet, fl] = entry;
-            if (fl) description = description.replace(` ${fl} `, ` <b>${fl}</b> `);
+            let flInTitle = (fl) ? ` - FL${fl}` : '';
+            const direction = (props.description.includes('RTS WEST')) ? 'WB' : (props.direction.includes('RTS EAST')) ? 'EB' : '';
+            if (fl) {
+                if (direction) {
+                    const pattern = new RegExp(String.raw`(LVLS ${direction})([\d\s]*)( ${fl} )`, "u");
+                    const highlighted = description.replace(pattern, "<strong>$1</strong>$2<strong><b>$3</b></strong>");
+                    if (description != highlighted) {
+                        description = highlighted;
+                    }else{
+                        description = description.replace(`LVLS ${direction}`, `<strong class="error">LVLS ${direction}</strong>`);
+                    }
+                }
+            }
             const eto = (eet && $takeOffTime) ? ' - ETO: ' + (new Date($takeOffTime.getTime() + 60000 * eet)).toISOString().substring(11,16) + 'z' : '';
-            let html = `<div class="track"><h1>${props.track}${eto}${(fl) ? ' FL' + fl: ''}</h1><p>${description}</p>`;
+            let html = `<div class="track"><h1>${props.track}${eto}${flInTitle}</h1><p>${description}</p>`;
             trackPopup.setHTML(html);
         })
         trackPopup.on('close', () => {
