@@ -39,7 +39,7 @@ export const computeLineWidthSize = (ratio, size=lineWidthDefault) => {
     return result;
 }
 //to increase size of track entry/exit points
-const sizeBasedOnOverride = (selectedPin, iconSize) =>  ["case", ["==", 1, ["get", "overrideTextColor"]], (selectedPin !== 0) ? iconSize :iconSizeDefaultNoPin * 3, (selectedPin !== 0) ? iconSize : iconSizeDefaultNoPin];
+const sizeBasedOnOverride = (selectedPin, iconSize) =>  ["case", ["==", 1, ["get", "overrideTextColor"]], (selectedPin !== 0) ? iconSize :computeIconSize(iconSize/iconSizeDefault, iconSizeDefaultNoPin * 3), (selectedPin !== 0) ? iconSize : iconSizeDefaultNoPin];
 export const getIconSizeExpression = (selectedPin, iconSize) => ["case", ["==", 1, ["get", "noPin"]], sizeBasedOnOverride(0, iconSize), sizeBasedOnOverride(selectedPin, iconSize)];
 export const getIconAnchorExpression = (selectedPin) => ["case", ["==", 1, ["get", "noPin"]], 'center', (selectedPin !== 0) ? 'bottom' : 'center'];
 export const getIconImageExpression = (selectedPin) => ["case", ["==", 1, ["get", "noPin"]], 'sdf-triangle', (selectedPin !== 0) ? 'sdf-marker-15' : 'sdf-triangle'];
