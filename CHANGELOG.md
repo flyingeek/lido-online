@@ -3,6 +3,20 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.3] - 2021-08-xx
+
+### Added
+
+- La popup des tracks valide que le FL de l'OFP correspond au message TRACKSNAT. (surlignage discret vert ou rose du message)
+
+### Changed
+
+- Priorité d'affiche des points d'entrée et de sortie de track modifiée, avec une mise en évidence de ces points. Il est recommandé de ne plus sélectionner de repère pour les tracks dans OFP2MAP. Pour le réglage d'export, il vaut mieux toujours en choisir un.
+
+### Fixed
+
+- Le changement de couleur ETOPS n'était pas "réactif" pour la couleur des terrains ETOPS.
+
 ## [1.14.2] - 2021-08-17
 
 ### Changed

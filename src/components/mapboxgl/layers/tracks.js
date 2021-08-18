@@ -69,6 +69,7 @@ export function addTracks(data) {
             track: track.name,
             point: firstPoint.name,
             isMine: track.isMine,
+            direction: natDirection,
             overrideTextColor: (track.isMine) ? 1 : 0
         }));
         const lastPoint = track.points[track.points.length - 1];
@@ -79,6 +80,7 @@ export function addTracks(data) {
             track: track.name,
             point: lastPoint.name,
             isMine: track.isMine,
+            direction: natDirection,
             noPin: 1,
             overrideTextColor: (track.isMine) ? 1 : 0
         }));
@@ -94,13 +96,9 @@ export function addTracks(data) {
     map.addLayer(lineLayer('rnat-incomplete', kmlOptions.natIncompleteColor, visibility, lineWidth));
     map.addLayer(markerLayer("rnat", selectedPin, kmlcolor, visibility, textSize, iconSize));
     changeMyTrackLabels(data); // text-color & text-opacity for entry/exit point
-    map.setLayoutProperty("rnat-marker-layer", 'text-allow-overlap', ["case", ["==", 1, ["get", "overrideTextColor"]], false, true]);
-    map.setLayoutProperty("rnat-marker-layer", 'text-ignore-placement', ["case", ["==", 1, ["get", "overrideTextColor"]], true, false]);
     map.setLayoutProperty("rnat-marker-layer", 'symbol-sort-key', ["case", ["==", 1, ["get", "overrideTextColor"]], 0, 1]);
     map.addLayer(markerLayer("rnat-incomplete", selectedPin, kmlcolor, visibility, textSize, iconSize));
     map.addLayer(rnatLabelLayer('rnat-labels', kmlcolor, visibility, textSize));
-    map.setLayoutProperty('rnat-labels-marker-layer', 'text-allow-overlap', true);
-    map.setLayoutProperty('rnat-labels-marker-layer', 'text-ignore-placement', true);
     map.addLayer(rnatLabelLayer('rnat-incomplete-labels', kmlOptions.natIncompleteColor, visibility, textSize));
 
     const popup = (e) => {
@@ -111,7 +109,8 @@ export function addTracks(data) {
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
         }
-        const props = e.features[0].properties;
+        const props = e.features[0].properties; // WARNING properties created above or in addEntryPointPopup below
+        //console.log(props);
         const trackPopup = new mapboxgl.Popup()
             .setLngLat(coordinates)
             .addTo(map);
@@ -121,7 +120,7 @@ export function addTracks(data) {
             if (props.isMine) entry = ofp.timeMatrix.filter(([p,]) => editolido.isARINC(props.point) ? editolido.arinc_normalizer(props.point).asDM === p.name: props.point === p.name).pop() || entry;
             const [, eet, fl] = entry;
             let flInTitle = (fl) ? ` - FL${fl}` : '';
-            const direction = (props.description.includes('RTS WEST')) ? 'WB' : (props.direction.includes('RTS EAST')) ? 'EB' : '';
+            const direction = (props.direction === 'WEST') ? 'WB' : (props.direction === 'EAST') ? 'EB' : '';
             if (fl) {
                 if (direction) {
                     const pattern = new RegExp(String.raw`(LVLS ${direction})([\d\s]*)( ${fl} )`, "u");
@@ -172,7 +171,8 @@ export function addTracks(data) {
                                 "track": myTrack.name,
                                 "point": entryPoint.name,
                                 "isMine": true,
-                                "description": myTrack.description
+                                "description": myTrack.description,
+                                "direction": myTrack.infos.direction
                             },
                             "geometry": {
                                 'coordinates': [longitude, latitude]
