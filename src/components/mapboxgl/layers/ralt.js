@@ -1,5 +1,5 @@
 /* global editolido */
-import {addLine, addPoints, changeDisplayGeneric, changeLineGeneric, changeMarkerGeneric, changeIconTextGeneric, changeLineWidthGeneric, changeIconSizeGeneric} from '../utils';
+import {addLine, addPoints, changeDisplayGeneric, changeLineGeneric, changeMarkerGeneric, changeIconTextGeneric, changeLineWidthGeneric, changeIconSizeGeneric, computeLineWidthSize} from '../utils';
 
 const folder = 'ralt';
 
@@ -8,7 +8,8 @@ const addRalt = (data) => {
     if (!ofp) return;
     const {affineAndClip, affineOrDrop} = mapData;
     const alternateRoute = new editolido.Route(ofp.wptCoordinatesAlternate(), {"name": "Route Dégagement"});
-    addLine(map, folder, alternateRoute.points, affineAndClip, kmlOptions.alternateColor, kmlOptions.alternateDisplay);
+    const lineWidth = computeLineWidthSize(kmlOptions['lineWidthChange']);
+    addLine(map, folder, alternateRoute.points, affineAndClip, kmlOptions.alternateColor, kmlOptions.alternateDisplay, lineWidth);
     addPoints(map, folder, alternateRoute.points, affineOrDrop, kmlOptions);
 }
 

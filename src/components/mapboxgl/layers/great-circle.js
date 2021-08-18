@@ -1,5 +1,5 @@
 /* global editolido */
-import {addLine, changeDisplayGeneric, changeLineGeneric} from '../utils';
+import {addLine, changeDisplayGeneric, changeLineGeneric, computeLineWidthSize} from '../utils';
 
 const folder = 'great-circle';
 
@@ -11,7 +11,8 @@ const addGreatCircle = (data) => {
     const routeName = `${ofp.infos.depICAO}-${ofp.infos.destICAO}`;
     const route = ofp.route;
     const greatCircle = new editolido.Route([route.points[0], route.points[route.points.length - 1]]).split(300, {"name": `Ortho ${routeName}`});
-    addLine(map, folder, greatCircle.points, affineAndClip, kmlOptions.greatCircleColor, kmlOptions.greatCircleDisplay);
+    const lineWidth = computeLineWidthSize(kmlOptions['lineWidthChange']);
+    addLine(map, folder, greatCircle.points, affineAndClip, kmlOptions.greatCircleColor, kmlOptions.greatCircleDisplay, lineWidth);
 }
 
 export default {

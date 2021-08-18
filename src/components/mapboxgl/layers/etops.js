@@ -3,13 +3,13 @@ import {changeAdequatesColor} from './airport';
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
 
 const folder = 'etops';
-const lineWidthDefault = 1;
+const lineWidthETOPS = 1;
 const epCircleLayer = `${folder}-ep-circle-line-layer`;
 const etopsCircleLayer = `${folder}-etops-circle-line-layer`;
 function addEtops(data) {
     const {map, mapData, ofp, kmlOptions} = data;
     if (!ofp) return;
-    const lineWidth = computeLineWidthSize(kmlOptions['lineWidthChange'], lineWidthDefault);
+    const lineWidth = computeLineWidthSize(kmlOptions['lineWidthChange'], lineWidthETOPS);
     if (ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
         const {affineAndClip} = mapData;
         const etopsTime = ofp.infos.maxETOPS;
@@ -49,7 +49,7 @@ function changeETOPSDisplay(data, visible) {
 }
 function changeLineWidth(data){
     const {map, value} = data;
-    const lineWidth = computeLineWidthSize(value, lineWidthDefault);
+    const lineWidth = computeLineWidthSize(value, lineWidthETOPS);
     if (map.getLayer(etopsCircleLayer)) {
         map.setPaintProperty(etopsCircleLayer, 'line-width', lineWidth);
     }

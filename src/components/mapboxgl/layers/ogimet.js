@@ -1,4 +1,4 @@
-import {addLine, changeDisplayGeneric, changeLineGeneric} from '../utils';
+import {addLine, changeDisplayGeneric, changeLineGeneric, computeLineWidthSize} from '../utils';
 
 const folder = 'ogimet';
 
@@ -7,7 +7,8 @@ const addOgimet = (data) => {
     if (mapOptions.id.startsWith('vb_')) return; // not relevant on this map
     if (!ofp) return;
     const {affineAndClip} = mapData;
-    addLine(map, folder, ofp.ogimetData.route.points, affineAndClip, kmlOptions.ogimetColor, kmlOptions.ogimetDisplay);
+    const lineWidth = computeLineWidthSize(kmlOptions['lineWidthChange']);
+    addLine(map, folder, ofp.ogimetData.route.points, affineAndClip, kmlOptions.ogimetColor, kmlOptions.ogimetDisplay, lineWidth);
 }
 
 export default {

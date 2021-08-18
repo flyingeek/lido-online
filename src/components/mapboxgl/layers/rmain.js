@@ -1,4 +1,4 @@
-import {addLine, addPoints, changeDisplayGeneric, changeLineGeneric, changeMarkerGeneric, changeIconTextGeneric, changeLineWidthGeneric, changeIconSizeGeneric} from '../utils';
+import {addLine, addPoints, changeDisplayGeneric, changeLineGeneric, changeMarkerGeneric, changeIconTextGeneric, changeLineWidthGeneric, changeIconSizeGeneric, computeLineWidthSize} from '../utils';
 import {changeEPCircleColor} from './etops';
 import {changeMyTrackLabels} from './tracks';
 
@@ -11,7 +11,8 @@ const addRmain = (data) => {
     const route = ofp.route;
     route.name = `${ofp.infos.depICAO}-${ofp.infos.destICAO}`;
     route.description = ofp.description;
-    addLine(map, folder, route.points, affineAndClip, kmlOptions.routeColor, true);
+    const lineWidth = computeLineWidthSize(kmlOptions['lineWidthChange']);
+    addLine(map, folder, route.points, affineAndClip, kmlOptions.routeColor, true, lineWidth);
     addPoints(map, folder, route.points, affineOrDrop, kmlOptions);
 }
 
