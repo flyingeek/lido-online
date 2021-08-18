@@ -75,7 +75,7 @@ export function addPoints(map, id, data, affine, kmlOptions) {
     const textSize = computeIconTextSize(kmlOptions[`iconTextChange`]);
     const iconSize = computeIconSize(kmlOptions[`iconSizeChange`], iconSizeDefault);
     map.addSource(`${id}-marker-source`, featureCollection(
-        geoPoints2LngLats(data, affine, (lngLat, geoPoint) => jsonPoint(lngLat, geoPoint.name.replace(/00\.0/g,'')))
+        geoPoints2LngLats(data, affine, (lngLat, geoPoint) => jsonPoint(lngLat, {title: geoPoint.name.replace(/00\.0/g,'')}))
     ));
     map.addLayer(markerLayer(id, selectedPin, kmlcolor, visibility, textSize, iconSize));
 }

@@ -57,17 +57,32 @@ export function addTracks(data) {
             const sublines = affineLine(track.points);
             const sublen = sublines.length;
             for (let i=0; i<sublen;i++){
-                lines[folder].push(jsonLine(sublines[i], natLabel));
+                lines[folder].push(jsonLine(sublines[i], {title: natLabel}));
             }
         }else{
-            lines[folder].push(jsonLine(track.points.map(g => [g.longitude, g.latitude]), track.name.slice(-1)))
+            lines[folder].push(jsonLine(track.points.map(g => [g.longitude, g.latitude]), {title: track.name.slice(-1)}))
         }
         const firstPoint = track.points[0];
         let lngLat = (affine) ? affine([firstPoint.longitude, firstPoint.latitude]) : [firstPoint.longitude, firstPoint.latitude];
-        if (lngLat) markers[folder].push(jsonPoint(lngLat, `${(track.isMine) ? track.name + '\n' : ''}${firstPoint.name}`, track.description, {track: track.name, point: firstPoint.name, isMine: track.isMine, overrideTextColor: (track.isMine) ? 1 : 0}));
+        if (lngLat) markers[folder].push(jsonPoint(lngLat, {
+            title: `${(track.isMine) ? track.name + '\n' : ''}${firstPoint.name}`,
+            description: track.description,
+            track: track.name,
+            point: firstPoint.name,
+            isMine: track.isMine,
+            overrideTextColor: (track.isMine) ? 1 : 0
+        }));
         const lastPoint = track.points[track.points.length - 1];
         lngLat = (affine) ? affine([lastPoint.longitude, lastPoint.latitude]) : [lastPoint.longitude, lastPoint.latitude];
-        if (lngLat) markers[folder].push(jsonPoint(lngLat, `${(track.isMine) ? track.name + '\n' : ''}${lastPoint.name}`, track.description, {track: track.name, point: lastPoint.name, isMine: track.isMine, noPin: 1, overrideTextColor: (track.isMine) ? 1 : 0}));
+        if (lngLat) markers[folder].push(jsonPoint(lngLat,{
+            title: `${(track.isMine) ? track.name + '\n' : ''}${lastPoint.name}`,
+            description:  track.description,
+            track: track.name,
+            point: lastPoint.name,
+            isMine: track.isMine,
+            noPin: 1,
+            overrideTextColor: (track.isMine) ? 1 : 0
+        }));
     }
     map.addSource(`rnat-marker-source`, featureCollection(markers['rnat']));
     map.addSource(`rnat-incomplete-marker-source`, featureCollection(markers['rnat-incomplete']));

@@ -1,5 +1,5 @@
 
-export function jsonPoint(lngLat, title, description, properties={}) {
+export function jsonPoint(lngLat, properties={}) {
     const json = {
         'type': 'Feature',
         'geometry': {
@@ -8,8 +8,6 @@ export function jsonPoint(lngLat, title, description, properties={}) {
         },
         properties
     };
-    if (title) json['properties']['title'] = title;
-    if (description) json['properties']['description'] = description;
     return json;
 }
 
@@ -23,16 +21,14 @@ export function featureCollection(features) {
     };
 }
 
-export function jsonLine(coordinates, title) {
+export function jsonLine(coordinates, properties={}) {
     const json = {
         'type': 'Feature',
         'geometry': {
             'type': 'LineString',
             'coordinates': coordinates
         },
-        'properties': {
-        }
+        properties
     };
-    if (title) json['properties']['title'] = title;
     return json;
 }
