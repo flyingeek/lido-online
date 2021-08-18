@@ -44,6 +44,9 @@
     }
     button.form-control{
         flex: 0 0 3em;
+        user-select: none; /* supported by Chrome and Opera */
+        -webkit-user-select: none; /* Safari */
+        -moz-user-select: none; /* Firefox */
     }
     label {
         width: 5em;
