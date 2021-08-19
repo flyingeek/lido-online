@@ -29,7 +29,7 @@ function parseGlobal() {
             }
             if (data[0].trim() === "OACI") return;
             //console.log(data[0], data[1], data[3], data[4], data[18], data[29], data[47]);
-            const aircrafts = [];
+
             let order = {}; // first
             let isDest = 0;
             
@@ -40,12 +40,15 @@ function parseGlobal() {
                 }
             }
             for (let i = 18; i <=29; i++) {
+                //
+                // The criteria used for adequate vs emergency in airport layer depends of those values
+                // adequate < 10 && emergency >= 10
+                //
                 const [aircraft, cat] = data[i].trim().split('-');
                 if (!aircraft) {
                     if (i!==23) console.log(`${data[0]}: empty aircraft column ${i}`); // 23=A340 removed
                     continue;
                 }
-                if (cat !== '0') aircrafts.push(aircraft);
                 if (cat === '3') {
                     order[aircraft] = 3 - isDest; // 2-3 for status 3
                 } else if (cat === '2'){
@@ -58,7 +61,7 @@ function parseGlobal() {
                     order[aircraft] = 11 - isDest; // 10-11 for emergency
                 } else {
                     console.log(`${data[0]}: unknow aircraft status: ${cat} for ${aircraft}`);
-                    order[aircraft] = 0; // should not be there but are displayed first
+                    continue; // skip when status is unknown
                 }
             }
             let level = 0;
@@ -82,7 +85,8 @@ function parseGlobal() {
             // if (longitude >= -30 && longitude <= 40 && latitude >=25) {
             //     icaoCountries[icao.substring(0, 2)] = true;
             // }
-            iataResults +=  data[2] + ":" + data[0].trim();
+            iataResults +=  data[2].trim() + ":" + data[0].trim();
+            if (!data[2].trim()) console.log(`unkwnown iata code for ${data[0]}`, data);
             const feature = {
                 'type': 'Feature',
                 'geometry': {
@@ -92,7 +96,7 @@ function parseGlobal() {
                 'properties': {
                     'name': data[0].trim(),
                     'title': data[1].trim(),
-                    'type': aircrafts,
+                    'iata': data[2].trim(),
                     'level': level,
                     'h': (data[48].trim() === 'H') ? 1 : 0
                 }
