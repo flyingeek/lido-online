@@ -157,6 +157,7 @@
         user-select: none; /* supported by Chrome and Opera */
         -webkit-user-select: none; /* Safari */
         -moz-user-select: none; /* Firefox */
+        touch-action: manipulation;
     }
     .form-group{
         margin-bottom: 0.8em;

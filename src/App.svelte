@@ -143,6 +143,12 @@
   :global(.btn) {
     text-transform: uppercase
   }
+  :global(.form-control, .mapboxgl-ctrl-attrib) {
+    user-select: none; /* supported by Chrome and Opera */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    touch-action: manipulation;
+  }
   .ofpError {
     display: flex;
     justify-content: center;
