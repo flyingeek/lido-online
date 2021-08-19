@@ -37,6 +37,7 @@
     let cacheValue = 0;
     let cacheError = false;
     let tilesMissing = [];
+    let settings;
     $: mapIsCached = tilesMissing.length === 0;
     const caches = {};
 
@@ -156,6 +157,7 @@
     onDestroy(() => {
         mapData.geolocate.off('trackuserlocationstart', hidePlane);
         //mapData.geolocate.off('trackuserlocationend', showPlane);
+        settings.endFocusMode();
         map = undefined;
         mapData = undefined;
     });
@@ -177,7 +179,7 @@
 </div>
 {#if (mapData && !!ofp  && ($showPlaneOnMap || $simulate >= 0))}<MapPlane {mapData}/>{/if}
 <AircraftType bind:aircraftTypeSelectElement on:change={aircraftChange}/>
-<FormSettings bind:kmlOptions on:change={update} on:save />
+<FormSettings bind:this={settings} bind:kmlOptions on:change={update} on:save />
 {#if $showGramet}<Gramet/>{/if}
 
 <style>
