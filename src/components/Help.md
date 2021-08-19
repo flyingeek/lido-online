@@ -35,7 +35,7 @@ __<big>☞</big> Il est aussi possible de modifier l'angle de vue en balayant de
 ## Réglages des calques
 
 <figure>![layers settings help](./images/layers-settings.webp)<figcaption>Réglages des calques</figcaption></figure>La carte, en haut à droite, dispose d'un bouton pour personnaliser les calques et les couleurs. Un calque contient un type d'information, par exemple les cercles ETOPS, les FIR réglementées, les tracks, la route...
-Il est possible d'afficher ou de masquer chaque calque en utilisant la coche qui précède son nom. La plupart des calques permettent de choisir la couleur et l'opacité, certains permettent de choisir une icône. Les icônes sont surtout utiles pour l’export dans les fichiers KML.
+Il est possible d'afficher ou de masquer chaque calque en utilisant la coche qui précède son nom. La plupart des calques permettent de choisir la couleur et l'opacité.
 Pour les aéroports (le type avion est déterminé dans l'OFP), il est possible de choisir entre 2 thèmes: couleur du statut ou vert/rouge. Si vous optez pour le second, le statut reste accessible en cliquant sur un terrain (popup).
 Enfin, trois boutons permettent la sauvegarde, la restauration ou un retour aux valeurs par défaut. Le bouton RESTAURER permet, après avoir fait des modifications temporaires (non sauvegardées), de revenir rapidement aux réglages précédents.
 
@@ -121,7 +121,7 @@ Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, 
 
 ## Export / Plugins (Raccourcis)
 
-La page Export permet d'exporter la route et les tracks au format KML, elle dispose de ses propres réglages pour générer le KML. Par défaut les réglages sont ceux de la carte. Si vous avez déjà sauvegardé un réglage d'export, alors le bouton « COMME CARTE » permet de récupérer les réglages choisis pour la carte.
+La page Export permet d'exporter la route et les tracks au format KML, elle dispose de ses propres réglages pour générer le KML. Pour l'export il est possible d'ajouter des repères. Les repères sont utiles pour afficher des informations textuelles dans MapsMe et Avenza. Le bouton « COMME CARTE » permet de récupérer les couleurs choisies pour la carte.
 
 Sur iPad, l'export des fichiers KML affiche une page un peu particulière, utilisez le bouton <svg style="vertical-align: bottom;"><use xlink:href="#share-symbol" /></svg> pour choisir l'app qui recevra le fichier. Cliquez en haut à gauche sur OK pour revenir à OFP2MAP. Alternativement, vous pouvez utiliser « Options... » pour définir une app qui recevra les fichiers kml par défaut et utiliser Ouvrir dans « nom de l'app ».
 

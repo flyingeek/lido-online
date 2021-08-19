@@ -34,10 +34,10 @@ export const stores = Object.freeze({
 
 export const storage = new Storage();
 
-export const validate = (options) => {
+export const validate = (options, defaultOptions=kmlDefaultOptions) => {
     const validated = {};
     for (let [key, value] of Object.entries(options)) {
-        if (key in kmlDefaultOptions) { 
+        if (key in defaultOptions) { 
             if (key.endsWith('Pin')) {
                 value *= 1; // coalesce to number or NaN
                 if (!isNaN(value)) {
@@ -55,7 +55,7 @@ export const validate = (options) => {
             }
         }
     }
-    return {...kmlDefaultOptions, ...validated};
+    return {...defaultOptions, ...validated};
 };
 
 

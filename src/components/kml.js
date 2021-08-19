@@ -1,6 +1,19 @@
 /* globals editolido */
 import {folderName} from './utils';
 
+export const kmlExportDefaultOptions = {
+  "routeDisplay": true,
+  "routePin": 0,
+  "routeColor": "FFDA25A8", /* #A825DAFF */
+  "alternateDisplay": true,
+  "alternatePin": 0,
+  "alternateColor": "FFFF00FF", /* #FF00FFFF */
+  "natDisplay": true,
+  "natPin": 8,
+  "natColor": "80DA25A8", /* #A825DA80 */
+  "greatCircleDisplay": true,
+  "greatCircleColor": "5F1478FF" /* #FF78145F */
+};
 export const kmlDefaultOptions = {
     "routeDisplay": true,
     "routePin": 0,
@@ -57,7 +70,7 @@ function skeleton (kmlGen, kmlOptions) {
 export const KmlGenerator = () => {
   if (!(window['kmlGen'])) {
     window['kmlGen'] = new editolido.KMLGenerator();
-    skeleton(window['kmlGen'], kmlDefaultOptions);
+    skeleton(window['kmlGen'], kmlExportDefaultOptions);
   }
   return window['kmlGen'];
 }
@@ -91,7 +104,7 @@ export function updateKml(name, value) {
  * @returns {string|Source|ConcatSource}
  */
 export function generateKML(ofp, options) {
-    let kmlOptions = {...kmlDefaultOptions, ...options};
+    let kmlOptions = {...kmlExportDefaultOptions, ...options};
     const kmlGen = KmlGenerator();
     skeleton(kmlGen, kmlOptions); //perform reset also
     const description = ofp.description;
