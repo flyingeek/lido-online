@@ -11,9 +11,7 @@
 
 <script>
     import { createEventDispatcher } from 'svelte';
-    import {slide} from "svelte/transition";
     import { fly } from 'svelte/transition';
-    import { flip } from "svelte/animate";
     import CheckboxColorCombo from './CheckboxColorCombo.svelte';
     import AirportSelector from './AirportSelector.svelte';
     import ZoomLevel from './ZoomLevel.svelte';
@@ -123,7 +121,8 @@
     <form on:submit|preventDefault class:mt-5={!$ofp}>
         {#if $ofp}
         <fieldset class="form-group">
-            <legend><input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR REG</legend>
+            <legend class="d-flex align-items-center">
+                <input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR REG</legend>
         </fieldset>
         <fieldset class="form-group">
             <CheckboxColorCombo name="route" kmlColor={kmlOptions['routeColor']} checked={kmlOptions['routeDisplay']} on:change={update}>
@@ -147,7 +146,8 @@
             <CheckboxColorCombo name="etops" kmlColor={kmlOptions['etopsColor']} checked={kmlOptions['etopsDisplay']} on:change={update}>ETOPS</CheckboxColorCombo>
         </fieldset>
         <fieldset class="form-group">
-            <legend><input name="airport-display" checked={kmlOptions['airportDisplay']} type="checkbox" on:change={update}/> Airports</legend>
+            <legend class="d-flex align-items-center">
+                <input name="airport-display" checked={kmlOptions['airportDisplay']} type="checkbox" on:change={update}/>Airports</legend>
             <AirportSelector selectedPin={kmlOptions['airportPin']} selectedLabel={kmlOptions['airportLabel']} on:change={update} />
         </fieldset>
         {/if}
