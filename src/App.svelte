@@ -143,7 +143,7 @@
   :global(.btn) {
     text-transform: uppercase
   }
-  :global(.form-control, .mapboxgl-ctrl-attrib) {
+  :global(.form-control, .mapboxgl-ctrl-attrib, .btn) {
     user-select: none; /* supported by Chrome and Opera */
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */

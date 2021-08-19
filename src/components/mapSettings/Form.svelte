@@ -11,13 +11,17 @@
 
 <script>
     import { createEventDispatcher } from 'svelte';
+    import {slide} from "svelte/transition";
     import { fly } from 'svelte/transition';
+    import { flip } from "svelte/animate";
     import CheckboxColorCombo from './CheckboxColorCombo.svelte';
     import AirportSelector from './AirportSelector.svelte';
     import ZoomLevel from './ZoomLevel.svelte';
     import {storage, stores, kmlDefaultOptions, validate} from './storage.js';
     import {sidebar, ofp} from "../../stores.js";
     import clickOutside from '../../actions/clickOutsideAction';
+    import { crossfade } from 'svelte/transition';
+    const [send, receive] = crossfade({duration: 1000});
     const dispatch = createEventDispatcher();
     const store = stores.optionsKML;
     export let kmlOptions;
@@ -25,6 +29,7 @@
     let focusBackup;
     const focusStore = stores.focusKML;
     let storedOptions = validate({...(storage.getItem(store) ||{})});
+    let animating = false;
     $: isDefault = compare(kmlOptions, kmlDefaultOptions);
     $: isChanged = !compare(storedOptions, kmlOptions);
 
@@ -77,12 +82,12 @@
     }
     function toggleFocus(e) {
         e.target.blur();
-        const focusOptionsDefault = Object.keys(kmlOptions)
+        if (focusOptions === undefined) {
+            const focusOptionsDefault = Object.keys(kmlOptions)
             .reduce((obj, key) => {
                     obj[key] = (key !== 'routeDisplay' && key.endsWith('Display'))  ? false : kmlOptions[key];
                     return obj;
                 }, {});
-        if (focusOptions === undefined) {
             focusBackup = {...kmlOptions};
             focusOptions = validate({...(storage.getItem(focusStore) ||focusOptionsDefault)});
             updateAll(focusOptions);
@@ -101,6 +106,7 @@
             focusOptions = undefined;
         }
     }
+
 </script>
 
 {#if $sidebar}
@@ -121,7 +127,7 @@
         </fieldset>
         <fieldset class="form-group">
             <CheckboxColorCombo name="route" kmlColor={kmlOptions['routeColor']} checked={kmlOptions['routeDisplay']} on:change={update}>
-                Route<a href="." class="getfocus btn btn-sm btn-outline-info" class:active={focusOptions!==undefined} on:click|preventDefault|stopPropagation={toggleFocus}>Focus</a>
+                Route<button class="getfocus btn btn-sm btn-outline-info" class:active={focusOptions!==undefined} on:click|preventDefault={toggleFocus}>Focus</button>
             </CheckboxColorCombo>
         </fieldset>
         <fieldset class="form-group">
@@ -153,15 +159,18 @@
             {/if}
             <ZoomLevel name="icon-size-change" label="Icône" value={kmlOptions['iconSizeChange']} on:change={update}/>
         </fieldset>
-
-        <div class="last" class:text-center={focusOptions !== undefined}>
-            {#if (focusOptions === undefined)}
-                <button disabled={!isChanged} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
-                <button disabled={!isChanged} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
-                {#if !isDefault}<button class="btn btn-outline-dark btn-sm reset" type="button" on:click={reset}>Reset</button>{/if}
-            {:else}
-                <button class="btn btn-outline-info btn-sm mb-2" style="background-color: white;" on:click|preventDefault|stopPropagation={endFocusMode}>Quitter le mode FOCUS</button>
-            {/if}
+        <div class="last">
+        {#if (focusOptions === undefined)}
+            <div out:send="{{key: 'buttons'}}" in:receive="{{key: 'buttons'}}" on:introend={()=> {setTimeout(()=>animating=false, 200);}}>
+                <button disabled={!isChanged||animating} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
+                <button disabled={!isChanged||animating} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
+                {#if !isDefault}<button disabled={animating} class="btn btn-outline-dark btn-sm reset" type="button" on:click={reset}>Reset</button>{/if}
+            </div>
+        {:else}
+            <div out:send="{{key: 'buttons'}}" in:receive="{{key: 'buttons'}}" class="text-center">
+                <button class="quitfocus btn btn-outline-info btn-sm mb-2" on:click|preventDefault|stopPropagation={() => {animating=true;endFocusMode()}}>Quitter le mode FOCUS</button>
+            </div>
+        {/if}
         </div>
     </form>
 </div>
@@ -225,6 +234,12 @@
     }
     .last {
         margin-top: 24px;
+        min-height: 40px;
+        position: relative;
+    }
+    .last div{
+        position: absolute;
+        width: var(--formwidth);
     }
     svg {
         stroke:#555;
@@ -235,9 +250,20 @@
     :global(.settings .btn) {
         font-variant: all-small-caps;
     }
-    a.getfocus{
+    .getfocus{
         line-height: 1;
         margin-left: 2ch;
-        -webkit-tap-highlight-color: rgba(0,0,0,0);
+    }
+    .getfocus.active::after{
+        display: inline-block;
+        content: "\00d7";
+        top: -0.25rem;
+        right: 1px;
+        color: white;
+        position: absolute;
+        font-weight: bolder;
+    }
+    .quitfocus:not(:hover){
+        background-color: white;
     }
 </style>
