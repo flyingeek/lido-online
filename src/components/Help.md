@@ -121,7 +121,7 @@ Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, 
 
 ## Export / Plugins (Raccourcis)
 
-La page Export permet d'exporter la route et les tracks au format KML, elle dispose de ses propres réglages pour générer le KML. Pour l'export il est possible d'ajouter des repères. Les repères sont utiles pour afficher des informations textuelles dans MapsMe et Avenza. Le bouton « COMME CARTE » permet de récupérer les couleurs choisies pour la carte.
+__Page Export&#8239;:__ Elle permet d'exporter la route et les tracks au format KML, elle dispose de ses propres réglages pour générer le KML. Pour l'export il est possible d'ajouter des repères. Les repères sont utiles pour afficher des informations textuelles dans MapsMe ou__ Avenza. Le bouton « COMME CARTE » permet de récupérer les couleurs choisies pour la carte.
 
 Sur iPad, l'export des fichiers KML affiche une page un peu particulière, utilisez le bouton <svg style="vertical-align: bottom;"><use xlink:href="#share-symbol" /></svg> pour choisir l'app qui recevra le fichier. Cliquez en haut à gauche sur OK pour revenir à OFP2MAP. Alternativement, vous pouvez utiliser « Options... » pour définir une app qui recevra les fichiers kml par défaut et utiliser Ouvrir dans « nom de l'app ».
 
@@ -129,7 +129,7 @@ Sur iPad, l'export des fichiers KML affiche une page un peu particulière, utili
 
 __Plugins depuis la carte&#8239;:__ Il est aussi possible de lancer des raccourcis ayant accès au contenu de l'OFP depuis le pavé d'informations du vol dans la barre de menu. Il faut autoriser les raccourcis non fiables dans Réglages/Raccourcis (après avoir lancé au moins un raccourci "fiable" depuis la Galerie), puis installer le(s) plugin(s).
 
-Liste des plugins:
+__Liste des plugins&#8239;:__
 
 {#each Object.entries(plugins) as [name, {url, description, version}]}
     - <Link href="{url}">{name} v{version}</Link> {description}
