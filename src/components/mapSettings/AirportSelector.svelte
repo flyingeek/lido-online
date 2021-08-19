@@ -32,7 +32,7 @@
 </div>
 <div class="input-group input-group-sm">
     <div class="input-group-prepend">
-        <label for="airport-label" class="input-group-text">Nom</label>
+        <label for="airport-label" class="input-group-text">Noms</label>
     </div>
     <!-- svelte-ignore a11y-no-onchange -->
     <select use:blurAction name="airport-label" bind:value={selectedLabel} class="custom-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: "airport-label", 'value': selectedLabel})}}>

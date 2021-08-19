@@ -147,17 +147,17 @@
         </fieldset>
         <fieldset class="form-group">
             <legend class="d-flex align-items-center">
-                <input name="airport-display" checked={kmlOptions['airportDisplay']} type="checkbox" on:change={update}/>Airports</legend>
+                <input name="airport-display" checked={kmlOptions['airportDisplay']} type="checkbox" on:change={update}/>Aéroports</legend>
             <AirportSelector selectedPin={kmlOptions['airportPin']} selectedLabel={kmlOptions['airportLabel']} on:change={update} />
         </fieldset>
         {/if}
         <fieldset class="form-group">
             <legend>Aspect général</legend>
-            <ZoomLevel name="icon-text-change" label="Label" value={kmlOptions['iconTextChange']} min={0.9} max={1.4} on:change={update}/>
+            <ZoomLevel name="icon-text-change" label="Labels" value={kmlOptions['iconTextChange']} min={0.9} max={1.4} on:change={update}/>
             {#if $ofp}
-            <ZoomLevel name="line-width-change" label="Ligne" value={kmlOptions['lineWidthChange']} on:change={update}/>
+            <ZoomLevel name="line-width-change" label="Lignes" value={kmlOptions['lineWidthChange']} on:change={update}/>
             {/if}
-            <ZoomLevel name="icon-size-change" label="Icône" value={kmlOptions['iconSizeChange']} on:change={update}/>
+            <ZoomLevel name="icon-size-change" label="Icônes" value={kmlOptions['iconSizeChange']} on:change={update}/>
         </fieldset>
         <div class="last">
         {#if (focusOptions === undefined)}
