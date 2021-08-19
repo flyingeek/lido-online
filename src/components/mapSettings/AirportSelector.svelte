@@ -13,6 +13,7 @@
 </script>
 <script>
     import { createEventDispatcher } from 'svelte';
+    import blurAction from '../../actions/blurAction';
     const dispatch = createEventDispatcher();
     export let selectedPin = 0;
     export let selectedLabel = 0;
@@ -23,7 +24,7 @@
         <label for="airport-pin" class="input-group-text">Style</label>
     </div>
     <!-- svelte-ignore a11y-no-onchange -->
-    <select name="airport-pin" bind:value={selectedPin} class="custom-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: 'airport-pin', 'value': selectedPin})}}>
+    <select use:blurAction name="airport-pin" bind:value={selectedPin} class="custom-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: 'airport-pin', 'value': selectedPin})}}>
         {#each options as option, index}
         <option value="{index}" selected={index === selectedPin}>{option.label}</option>
         {/each}
@@ -34,7 +35,7 @@
         <label for="airport-label" class="input-group-text">Nom</label>
     </div>
     <!-- svelte-ignore a11y-no-onchange -->
-    <select name="airport-label" bind:value={selectedLabel} class="custom-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: "airport-label", 'value': selectedLabel})}}>
+    <select use:blurAction name="airport-label" bind:value={selectedLabel} class="custom-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: "airport-label", 'value': selectedLabel})}}>
         {#each labels as option, index}
         <option value="{index}" selected={index === selectedLabel}>{option.label}</option>
         {/each}
