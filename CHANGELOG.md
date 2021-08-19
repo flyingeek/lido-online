@@ -5,15 +5,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.14.4] - 2021-08-xx
 
-### Added
-
-- un nouveau bouton FOCUS apparait dans les réglages des calques, par défaut il n'affiche que la route, mais il peut aussi être utilisé comme un deuxième jeu de réglages (les réglages du mode FOCUS sont distincts des autres réglages).
-
 ### Changed
 
 - les réglages d'export deviennent distinct de la carte, et sont les seuls à disposer du réglages des repères. Apparition d'un reset qui remet les valeurs par défaut de la v1.13
 - les réglages des calques sont simplifiés: il n'est plus possible d'utiliser des repères sur la carte. Le calque FIR-REG est remonté en première ligne, le tout me laisse de la place pour de nouvelles options.
 - aide mise à jour
+
+### Added
+
+- possibilité de choisir entre les noms ICAO (par défaut) et IATA
+- un nouveau bouton FOCUS apparait dans les réglages des calques, par défaut il n'affiche que la route, mais il peut aussi être utilisé comme un deuxième jeu de réglages en le modifiant. Astuce: bien qu'il y ait un bouton QUITTER LE MODE FOCUS, le bouton FOCUS est un toggle. Lorsque l'on change d'OFP le mode FOCUS est désactivé.
 
 ### Fixed
 
