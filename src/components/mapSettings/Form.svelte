@@ -87,6 +87,11 @@
             focusOptions = validate({...(storage.getItem(focusStore) ||focusOptionsDefault)});
             updateAll(focusOptions);
         }else{
+            endFocusMode();
+        }
+    }
+    export function endFocusMode() {
+        if (focusOptions !== undefined){
             storage.setItem(focusStore, kmlOptions);
             if (focusBackup) {
                 updateAll(focusBackup);
@@ -136,7 +141,8 @@
             <CheckboxColorCombo name="etops" kmlColor={kmlOptions['etopsColor']} checked={kmlOptions['etopsDisplay']} on:change={update}>ETOPS</CheckboxColorCombo>
         </fieldset>
         <fieldset class="form-group">
-            <AirportSelector name="airport" selected={kmlOptions['airportPin']} checked={kmlOptions['airportDisplay']} on:change={update} />
+            <legend><input name="airport-display" checked={kmlOptions['airportDisplay']} type="checkbox" on:change={update}/> Airports</legend>
+            <AirportSelector selectedPin={kmlOptions['airportPin']} selectedLabel={kmlOptions['airportLabel']} on:change={update} />
         </fieldset>
         {/if}
         <fieldset class="form-group">
@@ -154,7 +160,7 @@
                 <button disabled={!isChanged} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
                 {#if !isDefault}<button class="btn btn-outline-dark btn-sm reset" type="button" on:click={reset}>Reset</button>{/if}
             {:else}
-                <button class="btn btn-outline-info btn-sm mb-2" style="background-color: white;" on:click|preventDefault|stopPropagation={toggleFocus}>Quitter le mode FOCUS</button>
+                <button class="btn btn-outline-info btn-sm mb-2" style="background-color: white;" on:click|preventDefault|stopPropagation={endFocusMode}>Quitter le mode FOCUS</button>
             {/if}
         </div>
     </form>

@@ -76,9 +76,14 @@ const getTextColor = (style, raltNames, hexColor, ofpLoaded) => {
     ["==", 0, ["get", "level"]], styleBasedColor,
     '#C60'];
 };
-const getTextField = (style) => {
-    if (!isMedicalStyle(style)) return ["case", ["==", 1, ["get", "h"]], ["concat", ['get', 'name'], '\u200A✚'], ['get', 'name']];  //https://jkorpela.fi/chars/spaces.html
-    return ['get', 'name'];
+const getAdequateTextField = (style, labelling) => {
+    const label = (labelling === 0) ? ['get', 'name'] : ['get', 'iata'];
+    if (!isMedicalStyle(style)) return ["case", ["==", 1, ["get", "h"]], ["concat", label, '\u200A✚'], label];  //https://jkorpela.fi/chars/spaces.html
+    return label;
+};
+const getEmergencyTextField = (labelling) => {
+    const label = (labelling === 0) ? ['get', 'name'] : ['get', 'iata'];
+    return label;
 };
 const adequateTextSize = (etopsNames, textRatio) => {
     return ["case",
@@ -146,7 +151,7 @@ export const addAirports = (data) => {
                 'icon-allow-overlap': true,
                 'icon-ignore-placement': true,
                 'visibility': (visibility) ? 'visible' : 'none',
-                'text-field': ['get', 'name'],
+                'text-field': getEmergencyTextField(kmlOptions['airportLabel']),
                 //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
                 'text-size': emergencyTextSize(kmlOptions['iconTextChange']),
                 'text-offset': [0, 0.7],
@@ -179,7 +184,7 @@ export const addAirports = (data) => {
                 'icon-allow-overlap': true,
                 'icon-ignore-placement': true,
                 'visibility': (visibility) ? 'visible' : 'none',
-                'text-field': getTextField(style),
+                'text-field': getAdequateTextField(style, kmlOptions['airportLabel']),
                 //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
                 'text-size': adequateTextSize(etopsNames, kmlOptions['iconTextChange']),
                 'text-offset': [0, 0.7],
@@ -304,7 +309,7 @@ export function changeAirportStyle(data) {
     if (map.getLayer(adequateLayer)) {
         changeAdequatesColor(data);
         map.setPaintProperty(adequateLayer, 'icon-halo-width', getIconHaloWidth(style, !!ofp));
-        map.setLayoutProperty(adequateLayer, 'text-field', getTextField(style));
+        map.setLayoutProperty(adequateLayer, 'text-field', getAdequateTextField(style));
         map.setFilter(adequateLayer, filterByAircraftType(aircraftType, true, style===2));
     }
     if (map.getLayer(emergencyLayer)) map.setFilter(emergencyLayer, filterByAircraftType(aircraftType, false, style===2));
@@ -357,6 +362,15 @@ export const changeAdequatesColor = (data) => {
         map.setPaintProperty(adequateLayer, 'text-color', getTextColor(style, raltNames, hexcolorEtops, !!ofp));
     }
 }
+const changeLabel = (data) => {
+    const {map, kmlOptions, value} = data;
+    if (map.getLayer(adequateLayer)) {
+        map.setLayoutProperty(adequateLayer, 'text-field', getAdequateTextField(kmlOptions.airportPin, value));
+    }
+    if (map.getLayer(emergencyLayer)) {
+        map.setLayoutProperty(emergencyLayer, 'text-field', getEmergencyTextField(value));
+    }
+};
 export default {
     show: (data) => changeAirportDisplay(data, true),
     hide: (data) => changeAirportDisplay(data, false),
@@ -364,5 +378,6 @@ export default {
     changeMarker: changeAirportStyle,
     change: changeAircraftType,
     changeIconText,
-    changeIconSize
+    changeIconSize,
+    changeLabel
 }

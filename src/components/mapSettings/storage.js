@@ -15,6 +15,7 @@ export const kmlDefaultOptions = {
     "ogimetColor": "40FF0000", /* #0000FF40 */
     "airportDisplay": true,
     "airportPin": 0,
+    "airportLabel": 0,
     "firDisplay": true,
     "etopsDisplay": true,
     "etopsColor": "FF0324FC", /* #FC2403FF */
@@ -84,7 +85,7 @@ export const validate = (options, defaultOptions=kmlDefaultOptions) => {
 
 export const setHistory = (kmlOptions, route, name="Mon OFP2MAP") => {
     const options = {};
-    const excludedStores = ["exportKML"];
+    const excludedStores = ["exportKML", "focusKML"];
     for (const [key, store] of Object.entries(stores)) {
         if (excludedStores.includes(store)) continue;
         let value = storage.getItem(store);

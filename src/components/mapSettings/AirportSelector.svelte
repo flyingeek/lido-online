@@ -4,34 +4,48 @@
         {label: 'vert/rouge'},
         {label: 'médical'},
     ];
+    const labels = [
+        {label: 'ICAO'},
+        {label: 'IATA'},
+    ]
     export const isStatusStyle = (style) => style === 0;
     export const isMedicalStyle = (style) => style === 2;
 </script>
 <script>
     import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
-    export let selected = 0;
-    export let name = 'airport';
-    export let checked;
-    const displayName = name + '-display';
-    const pinName = name + '-pin';
+    export let selectedPin = 0;
+    export let selectedLabel = 0;
 </script>
 
-<div class="input-group checkbox-combo">
+<div class="input-group input-group-sm mb-2">
     <div class="input-group-prepend">
-        <label for="{displayName}" class="input-group-text"><input name="{displayName}" checked={checked} type="checkbox" on:change/>Airports</label>
+        <label for="airport-pin" class="input-group-text">Style</label>
     </div>
     <!-- svelte-ignore a11y-no-onchange -->
-    <select name="{pinName}" bind:value={selected} class="custom-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: pinName, 'value': selected})}}>
+    <select name="airport-pin" bind:value={selectedPin} class="custom-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: 'airport-pin', 'value': selectedPin})}}>
         {#each options as option, index}
-        <option value="{index}" selected={index === selected}>{option.label}</option>
+        <option value="{index}" selected={index === selectedPin}>{option.label}</option>
         {/each}
     </select>
 </div>
-
+<div class="input-group input-group-sm">
+    <div class="input-group-prepend">
+        <label for="airport-label" class="input-group-text">Nom</label>
+    </div>
+    <!-- svelte-ignore a11y-no-onchange -->
+    <select name="airport-label" bind:value={selectedLabel} class="custom-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: "airport-label", 'value': selectedLabel})}}>
+        {#each labels as option, index}
+        <option value="{index}" selected={index === selectedLabel}>{option.label}</option>
+        {/each}
+    </select>
+</div>
 <style>
     select {
         border-left: 1px;
         padding-left: 0.2rem;
+    }
+    label {
+        width: 5em;
     }
 </style>

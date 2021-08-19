@@ -31,7 +31,7 @@
 
 </script>
 
-<div class="input-group input-group-sm">
+<div class="input-group input-group-sm mb-2">
     <div class="input-group-prepend">
         <label for="{name}" class="input-group-text">{label}</label>
     </div>
@@ -51,8 +51,5 @@
     }
     label {
         width: 5em;
-    }
-    .input-group-sm{
-        margin-bottom: 0.5em;
     }
 </style>

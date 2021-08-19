@@ -54,6 +54,8 @@ export const updateMapLayers = (data) => {
     if (module) {
         if (name.endsWith('-display')){
             (value) ? module.show && module.show(data) : module.hide && module.hide(data);
+        }else if (name.endsWith('-label')) {
+            module.changeLabel && module.changeLabel(data);
         }else if (name.endsWith('-pin')) {
             module.changeMarker && module.changeMarker(data);
         }else if (name.endsWith('-color')) {
