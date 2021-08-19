@@ -163,11 +163,14 @@
     font-variant-caps: all-small-caps;
   }
   @media (hover:none), (hover:on-demand) {
-        /* suppress hover effect on devices that don't support hover fully */
-        :global(.btn-outline-info:hover, .btn-outline-info:active) { 
-            color: var(--info);
-            background-color: white;
-        }
+    /* suppress hover effect on devices that don't support hover fully */
+    :global(.btn-outline-info:hover, .btn-outline-info:active) { 
+        color: var(--info);
+        background-color: white;
     }
+    :global(.mapboxgl-ctrl button.mapboxgl-ctrl-layers:not(:disabled):hover){
+        background-color: transparent;
+    }
+  }
 
 </style>
