@@ -42,7 +42,7 @@ const getIconColor = (style, aircraftType, raltNames, hexColor, ofpLoaded) => {
 }
 
 const filterByAircraftType = (aircraftType, is=true, medicalOnly=false) => {
-    const typeCondition = ["in", `${aircraftType}`, ["get", "type"]];
+    const typeCondition = ["<", ["get", `${aircraftType}`], 10];
     if (medicalOnly) {
         if (is) {
             return ["all", medicalCondition, typeCondition];
