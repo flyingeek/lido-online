@@ -40,9 +40,11 @@ Pour les aéroports (le type avion est déterminé dans l'OFP), il est possible 
 
 Trois boutons permettent la sauvegarde, la restauration ou un retour aux valeurs par défaut. Le bouton RESTAURER permet, après avoir fait des modifications temporaires (non sauvegardées), de revenir rapidement aux réglages précédents.
 
-Enfin, un mode FOCUS est disponible, par défaut il n'affiche que la route. Pour une utilisation plus avancée, vous pouvez l'utiliser comme un deuxième jeu de réglages. En effet, vous pouvez en mode FOCUS modifier tous les réglages, et les réglages du mode FOCUS sont sauvegardés à part. Pour quitter le mode FOCUS, vous pouvez cliquer une deuxième fois sur le bouton FOCUS ou utiliser le bouton QUITTER LE MODE FOCUS.
-
 Pour vous entraîner, je vous recommande de modifier la couleur des terrains en vert/rouge et de sauvegarder votre choix.
+
+Enfin, pour une utilisation ponctuelle, un mode FOCUS est disponible, par défaut il n'affiche que la route. Pour quitter le mode FOCUS, vous pouvez cliquer une deuxième fois sur le bouton FOCUS ou utiliser le bouton QUITTER LE MODE FOCUS.
+
+Si vous avez des besoins complexes, vous pouvez aussi le mode FOCUS comme un deuxième jeu de réglages. En effet, vous pouvez en mode FOCUS modifier tous les réglages, et les réglages du mode FOCUS sont sauvegardés à part.
 
 ## Particularités de l'iPad
 

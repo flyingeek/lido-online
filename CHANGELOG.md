@@ -13,8 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- possibilité de choisir entre les noms ICAO (par défaut) et IATA
-- un nouveau bouton FOCUS apparait dans les réglages des calques, par défaut il n'affiche que la route, mais il peut aussi être utilisé comme un deuxième jeu de réglages en le modifiant. Astuce: bien qu'il y ait un bouton QUITTER LE MODE FOCUS, le bouton FOCUS est un toggle. Lorsque l'on change d'OFP le mode FOCUS est désactivé.
+- possibilité de choisir entre les noms ICAO (par défaut) et IATA pour les aéroports
+- un nouveau bouton FOCUS apparait dans les réglages des calques, par défaut il n'affiche que la route. Il est pensé pour utilisation ponctuelle et lorsque l'on change d'OFP il est automatiquement désactivé. Ce mode peut aussi être un deuxième jeu de réglages, voir l'aide (RÉGLAGES DES CALQUES).
 
 ### Fixed
 
