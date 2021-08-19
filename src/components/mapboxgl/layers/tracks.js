@@ -1,6 +1,6 @@
 /* global mapboxgl, editolido */
 import {jsonPoint, jsonLine, featureCollection} from '../json.js';
-import {lineLayer, markerLayer, changeMarkerGeneric, changeLineGeneric, changeDisplayGeneric, computeIconTextSize, computeLineWidthSize, computeIconSize, getIconSizeExpression, getTextKmlColorExpression, getOpacityKmlColorExpression} from '../utils';
+import {lineLayer, markerLayer, changeLineWidthGeneric, changeLineGeneric, changeDisplayGeneric, computeIconTextSize, computeLineWidthSize, computeIconSize, getTextKmlColorExpression, getOpacityKmlColorExpression, changeIconSizeGeneric, changeIconTextGeneric} from '../utils';
 import {takeOffTime} from "../../../stores";
 
 const folder = 'rnat';
@@ -36,7 +36,6 @@ export function addTracks(data) {
     const affine = affineOrDrop;
     const affineLine = affineAndClip;
     const kmlcolor = kmlOptions.natColor;
-    const selectedPin = kmlOptions.natPin;
     const visibility = kmlOptions.natDisplay;
 
     const lines = {
@@ -94,10 +93,10 @@ export function addTracks(data) {
     const iconSize = computeIconSize(kmlOptions[`iconSizeChange`]);
     map.addLayer(lineLayer('rnat', kmlcolor, visibility, lineWidth));
     map.addLayer(lineLayer('rnat-incomplete', kmlOptions.natIncompleteColor, visibility, lineWidth));
-    map.addLayer(markerLayer("rnat", selectedPin, kmlcolor, visibility, textSize, iconSize));
+    map.addLayer(markerLayer("rnat", kmlcolor, visibility, textSize, iconSize));
     changeMyTrackLabels(data); // text-color & text-opacity for entry/exit point
     map.setLayoutProperty("rnat-marker-layer", 'symbol-sort-key', ["case", ["==", 1, ["get", "overrideTextColor"]], 0, 1]);
-    map.addLayer(markerLayer("rnat-incomplete", selectedPin, kmlcolor, visibility, textSize, iconSize));
+    map.addLayer(markerLayer("rnat-incomplete", kmlcolor, visibility, textSize, iconSize));
     map.addLayer(rnatLabelLayer('rnat-labels', kmlcolor, visibility, textSize));
     map.addLayer(rnatLabelLayer('rnat-incomplete-labels', kmlOptions.natIncompleteColor, visibility, textSize));
 
@@ -186,46 +185,9 @@ export function addTracks(data) {
     };
     if (mapData.initialLoad) addEntryPointPopup();
 }
-function changeIconText(data){
-    const {map, value} = data;
-    const textSize = computeIconTextSize(value);
-    ['rnat-marker-layer', 'rnat-incomplete-marker-layer', 'rnat-labels-marker-layer', 'rnat-incomplete-labels-marker-layer'].forEach(layer => {
-        if (map.getLayer(layer)) {
-            map.setLayoutProperty(layer, 'text-size', textSize);
-        }
-    });
-    return true; // allows chaining
-}
-function changeLineWidth(data){
-    const {map, value} = data;
-    const lineWidth = computeLineWidthSize(value, lineWidthTracks);
-    ['rnat-line-layer', 'rnat-incomplete-line-layer'].forEach(layer => {
-        if (map.getLayer(layer)) {
-            map.setPaintProperty(layer, 'line-width', lineWidth);
-        }
 
-    });
-    return true; // allows chaining
-}
-function changeIconSize(data){
-    const {map, value, kmlOptions} = data;
-    const selectedPin = kmlOptions[`natPin`];
-    const expression = getIconSizeExpression(selectedPin, computeIconSize(value));
-    ['rnat-marker-layer', 'rnat-incomplete-marker-layer'].forEach(layer => {
-        if (map.getLayer(layer)) {
-            map.setLayoutProperty(layer, 'icon-size', expression);
-        }
-
-    });
-    return true; // allows chaining
-}
 function changeLine(data){
     changeLineGeneric(folder, data) && changeLineGeneric('rnat-labels', data);
-    changeMyTrackLabels(data);
-    return true; // allows chaining
-}
-function changeMarker(data){
-    changeMarkerGeneric(folder, data);
     changeMyTrackLabels(data);
     return true; // allows chaining
 }
@@ -243,8 +205,7 @@ export default {
     hide: (data) => [folder, 'rnat-incomplete', 'rnat-labels', 'rnat-incomplete-labels'].forEach(folder => changeDisplayGeneric(folder, false, data)),
     add: addTracks,
     changeLine,
-    changeMarker,
-    changeIconText,
-    changeLineWidth,
-    changeIconSize
+    changeIconText: (data) => [folder, 'rnat-incomplete', 'rnat-labels', 'rnat-incomplete-labels'].forEach(folder => changeIconTextGeneric(folder, data)),
+    changeLineWidth: (data) => [folder, 'rnat-incomplete'].forEach(folder => changeLineWidthGeneric(folder, data, lineWidthTracks)),
+    changeIconSize: (data) => [folder, 'rnat-incomplete'].forEach(folder => changeIconSizeGeneric(folder, data))
 }

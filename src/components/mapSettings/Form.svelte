@@ -8,22 +8,21 @@
         return str.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase()
     }
 </script>
+
 <script>
-    import {kmlDefaultOptions} from "../kml.js";
     import { createEventDispatcher } from 'svelte';
     import { fly } from 'svelte/transition';
-    import ColorPinCombo from './ColorPinCombo.svelte';
     import CheckboxColorCombo from './CheckboxColorCombo.svelte';
     import AirportSelector from './AirportSelector.svelte';
     import ZoomLevel from './ZoomLevel.svelte';
-    import {storage, stores} from './storage.js';
+    import {storage, stores, kmlDefaultOptions} from './storage.js';
     import {sidebar, ofp} from "../../stores.js";
     import clickOutside from '../../actions/clickOutsideAction';
     const dispatch = createEventDispatcher();
     const store = stores.optionsKML;
     export let kmlOptions;
     let storedOptions = {...kmlDefaultOptions, ...(storage.getItem(store) ||{})};
-    $: isDefault = compare(kmlDefaultOptions, kmlOptions);
+    $: isDefault = compare(kmlOptions, kmlDefaultOptions);
     $: isChanged = !compare(storedOptions, kmlOptions);
 
     /**
@@ -89,17 +88,17 @@
     <form on:submit|preventDefault class:mt-5={!$ofp}>
         {#if $ofp}
         <fieldset class="form-group">
-            <legend><input name="route-display" checked={kmlOptions['routeDisplay']} type="checkbox" on:change={update} />Route</legend>
-                <ColorPinCombo name="route" kmlColor={kmlOptions['routeColor']} selected={kmlOptions['routePin']} on:change={update} />
+            <legend><input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR REG</legend>
         </fieldset>
         <fieldset class="form-group">
-            <legend><input name="alternate-display" checked={kmlOptions['alternateDisplay']} type="checkbox" on:change={update} />Dégagement</legend>
-            <ColorPinCombo name="alternate" kmlColor={kmlOptions['alternateColor']} selected={kmlOptions['alternatePin']} on:change={update} />
+            <CheckboxColorCombo name="route" label="Route" kmlColor={kmlOptions['routeColor']} checked={kmlOptions['routeDisplay']} on:change={update}/>
         </fieldset>
         <fieldset class="form-group">
-            <legend><input name="nat-display" checked={kmlOptions['natDisplay']} type="checkbox" on:change={update}/>Tracks</legend>
-            <ColorPinCombo name="nat" kmlColor={kmlOptions['natColor']} selected={kmlOptions['natPin']} on:change={update} />
-            <small class="form-text text-muted">Positionné à l'entrée des tracks, un track incomplet restera rouge.</small>
+            <CheckboxColorCombo name="alternate" label="Dégagement" kmlColor={kmlOptions['alternateColor']} checked={kmlOptions['alternateDisplay']} on:change={update}/>
+        </fieldset>
+        <fieldset class="form-group">
+            <CheckboxColorCombo name="nat" label="Tracks" kmlColor={kmlOptions['natColor']} checked={kmlOptions['natDisplay']} on:change={update}/>
+            <small class="form-text text-muted">Un track incomplet sera rouge</small>
         </fieldset>
         <fieldset class="form-group">
             <CheckboxColorCombo name="great-circle" label="Orthodromie" kmlColor={kmlOptions['greatCircleColor']} checked={kmlOptions['greatCircleDisplay']} on:change={update}/>
@@ -112,9 +111,6 @@
         </fieldset>
         <fieldset class="form-group">
             <AirportSelector name="airport" selected={kmlOptions['airportPin']} checked={kmlOptions['airportDisplay']} on:change={update} />
-        </fieldset>
-        <fieldset class="form-group">
-            <legend><input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR REG</legend>
         </fieldset>
         {/if}
         <fieldset class="form-group">
@@ -143,7 +139,9 @@
     }
     small {
         line-height: 1.1;
-        margin-bottom: 0.25rem;
+        width: var(--formwidth);
+        display: block;
+        margin-top: -0.2em;
     }
     :global(.settings legend, .checkbox-combo .input-group-text) {
         font-size: 1rem;
@@ -152,8 +150,9 @@
         margin-bottom: 0;
     }
     form {
-        width: 250px;
-        margin-top: 13px;
+        --formwidth: 250px;
+        width: var(--formwidth);
+        margin-top: 5px;
         user-select: none; /* supported by Chrome and Opera */
         -webkit-user-select: none; /* Safari */
         -moz-user-select: none; /* Firefox */

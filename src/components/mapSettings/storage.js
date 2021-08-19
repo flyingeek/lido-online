@@ -1,5 +1,27 @@
 import {kmlRegex} from './ColorPinCombo.svelte';
-import {kmlDefaultOptions} from '../kml';
+
+export const kmlDefaultOptions = {
+    "routeDisplay": true,
+    "routeColor": "FFDA25A8", /* #A825DAFF */
+    "alternateDisplay": true,
+    "alternateColor": "FFFF00FF", /* #FF00FFFF */
+    "natDisplay": true,
+    "natPinPosition": 0,
+    "natColor": "80858585", /* "80DA25A8" */
+    "natIncompleteColor": "FF0000FF", /* #FF0000FF */
+    "greatCircleDisplay": true,
+    "greatCircleColor": "5F1478FF", /* #FF78145F */
+    "ogimetDisplay": true,
+    "ogimetColor": "40FF0000", /* #0000FF40 */
+    "airportDisplay": true,
+    "airportPin": 0,
+    "firDisplay": true,
+    "etopsDisplay": true,
+    "etopsColor": "FF0324FC", /* #FC2403FF */
+    "iconTextChange": '1.0',
+    "lineWidthChange": '1.0',
+    "iconSizeChange": '1.0'
+};
 
 class Storage {
     constructor() {}

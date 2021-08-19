@@ -39,10 +39,9 @@ export const computeLineWidthSize = (ratio, size=lineWidthDefault) => {
     return result;
 }
 //to increase size of track entry/exit points
-const sizeBasedOnOverride = (selectedPin, iconSize) =>  ["case", ["==", 1, ["get", "overrideTextColor"]], (selectedPin !== 0) ? iconSize :computeIconSize(iconSize/iconSizeDefault, iconSizeDefaultNoPin * 3), (selectedPin !== 0) ? iconSize : iconSizeDefaultNoPin];
-export const getIconSizeExpression = (selectedPin, iconSize) => ["case", ["==", 1, ["get", "noPin"]], sizeBasedOnOverride(0, iconSize), sizeBasedOnOverride(selectedPin, iconSize)];
-export const getIconAnchorExpression = (selectedPin) => ["case", ["==", 1, ["get", "noPin"]], 'center', (selectedPin !== 0) ? 'bottom' : 'center'];
-export const getIconImageExpression = (selectedPin) => ["case", ["==", 1, ["get", "noPin"]], 'sdf-triangle', (selectedPin !== 0) ? 'sdf-marker-15' : 'sdf-triangle'];
+export const getIconSizeExpression = (iconSize) =>["case", ["==", 1, ["get", "overrideTextColor"]], computeIconSize(iconSize/iconSizeDefault, iconSizeDefaultNoPin * 3), iconSizeDefaultNoPin];
+export const getIconAnchorExpression = () => 'center';
+export const getIconImageExpression = () => 'sdf-triangle';
 export const getIconColorExpression = (color, overrideColor) => (overrideColor) ? ["case", ["==", 1, ["get", "overrideIconColor"]], overrideColor, color] : color;
 export const getTextColorExpression = (color, overrideColor) => (overrideColor) ? ["case", ["==", 1, ["get", "overrideTextColor"]], overrideColor, color] : color;
 export const getOpacityColorExpression = (opacity, overrideOpacity, minOpacity=minTextOpacityDefault) => {
@@ -63,7 +62,6 @@ export const getOpacityKmlColorExpression= (kmlcolor, overrideKmlColor, minOpaci
 };
 export function addPoints(map, id, data, affine, kmlOptions) {
     const prefix = folder2prefix(id);
-    const selectedPin = kmlOptions[`${prefix}Pin`];
     const visibility = kmlOptions[`${prefix}Display`];
     const kmlcolor = kmlOptions[`${prefix}Color`];
     const textSize = computeIconTextSize(kmlOptions[`iconTextChange`]);
@@ -71,7 +69,7 @@ export function addPoints(map, id, data, affine, kmlOptions) {
     map.addSource(`${id}-marker-source`, featureCollection(
         geoPoints2LngLats(data, affine, (lngLat, geoPoint) => jsonPoint(lngLat, {title: geoPoint.name.replace(/00\.0/g,'')}))
     ));
-    map.addLayer(markerLayer(id, selectedPin, kmlcolor, visibility, textSize, iconSize));
+    map.addLayer(markerLayer(id, kmlcolor, visibility, textSize, iconSize));
 }
 
 export function addLine(map, id, data, affineLine, kmlcolor, visibility, lineWidth, dashes) {
@@ -103,16 +101,16 @@ export function addLines(map, id, data, affineLine, kmlcolor, visibility, lineWi
     }
     map.addLayer(lineLayer(id, kmlcolor, visibility, lineWidth, dashes));
 }
-export function markerLayer (folder, selectedPin, kmlcolor, visibility, textSize, iconSize) {
+export function markerLayer (folder, kmlcolor, visibility, textSize, iconSize) {
     const [hexcolor, opacity] = kml2mapColor(kmlcolor);
     const layer = {
         'id': `${folder}-marker-layer`,
         'type': 'symbol',
         'source': `${folder}-marker-source`,
         'layout': {
-            'icon-image': getIconImageExpression(selectedPin),
-            'icon-size': getIconSizeExpression(selectedPin, iconSize),
-            'icon-anchor': getIconAnchorExpression(selectedPin),
+            'icon-image': getIconImageExpression(),
+            'icon-size': getIconSizeExpression(iconSize),
+            'icon-anchor': getIconAnchorExpression(),
             'icon-offset': [0, 0],
             //'icon-rotate': ['get', 'orientation'],
             'icon-allow-overlap': false,
@@ -124,7 +122,7 @@ export function markerLayer (folder, selectedPin, kmlcolor, visibility, textSize
             'text-anchor': 'top'
         },
         'paint': {
-            'icon-color': getIconColorExpression((selectedPin !== 0) ? pinColors[selectedPin] : hexcolor),
+            'icon-color': getIconColorExpression(hexcolor),
             'icon-halo-width': 1,
             'icon-halo-color': '#000',
             'text-color': getTextColorExpression(hexcolor),
@@ -154,11 +152,10 @@ export function lineLayer(folder, kmlcolor, visibility, lineWidth=lineWidthDefau
     return layer;
 }
 export function changeIconSizeGeneric(folder, data, iconSize=iconSizeDefault){
-    const {map, value, kmlOptions} = data;
+    const {map, value} = data;
     const markerLayer = `${folder}-marker-layer`;
-    const selectedPin = kmlOptions[`${folder2prefix(folder)}Pin`];
     if (map.getLayer(markerLayer)) {
-        map.setLayoutProperty(markerLayer, 'icon-size', getIconSizeExpression(selectedPin, computeIconSize(value, iconSize)));
+        map.setLayoutProperty(markerLayer, 'icon-size', getIconSizeExpression(computeIconSize(value, iconSize)));
     }
     return true; // allows chaining
 }
@@ -178,22 +175,7 @@ export function changeLineWidthGeneric(folder, data, lineWidth=lineWidthDefault)
     }
     return true; // allows chaining
 }
-export function changeMarkerGeneric(folder, data){
-    const {map, value, kmlOptions} = data;
-    const lineLayer = `${folder}-line-layer`;
-    const markerLayer = `${folder}-marker-layer`;
-    if (map.getLayer(markerLayer) && map.getLayer(lineLayer)) {
-        const selectedPin = value;
-        const hexcolor = pinColors[selectedPin];
-        const lineColor = map.getPaintProperty(lineLayer, 'line-color');
-        map.setPaintProperty(markerLayer, 'icon-color', getIconColorExpression((selectedPin !== 0) ? hexcolor : lineColor));
-        map.setPaintProperty(markerLayer, 'text-color', getTextColorExpression(lineColor));
-        map.setLayoutProperty(markerLayer, 'icon-size', getIconSizeExpression(selectedPin, computeIconSize(kmlOptions['iconSizeChange'], iconSizeDefault)));
-        map.setLayoutProperty(markerLayer, 'icon-image', getIconImageExpression(selectedPin));
-        map.setLayoutProperty(markerLayer, 'icon-anchor', getIconAnchorExpression(selectedPin));
-    }
-    return true; // allows chaining
-}
+
 export function changeLineGeneric(folder, data){
     const {map, value} = data;
     const lineLayer = `${folder}-line-layer`;

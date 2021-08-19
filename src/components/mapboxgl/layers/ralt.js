@@ -1,5 +1,5 @@
 /* global editolido */
-import {addLine, addPoints, changeDisplayGeneric, changeLineGeneric, changeMarkerGeneric, changeIconTextGeneric, changeLineWidthGeneric, changeIconSizeGeneric, computeLineWidthSize} from '../utils';
+import {addLine, addPoints, changeDisplayGeneric, changeLineGeneric, changeIconTextGeneric, changeLineWidthGeneric, changeIconSizeGeneric, computeLineWidthSize} from '../utils';
 
 const folder = 'ralt';
 
@@ -18,7 +18,6 @@ export default {
     hide: changeDisplayGeneric.bind(null, folder, false),
     add: addRalt,
     changeLine: changeLineGeneric.bind(null, folder),
-    changeMarker: changeMarkerGeneric.bind(null, folder),
     changeIconText: changeIconTextGeneric.bind(null, folder),
     changeLineWidth: changeLineWidthGeneric.bind(null, folder),
     changeIconSize: changeIconSizeGeneric.bind(null, folder)
