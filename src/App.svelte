@@ -159,5 +159,12 @@
   :global(.table td){
         padding: 0.5rem 0.75rem;
   }
+  @media (hover:none), (hover:on-demand) {
+        /* suppress hover effect on devices that don't support hover fully */
+        :global(.btn-outline-info:hover, .btn-outline-info:active) { 
+            color: var(--info);
+            background-color: white;
+        }
+    }
 
 </style>

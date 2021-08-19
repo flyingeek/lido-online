@@ -51,7 +51,8 @@ export const stores = Object.freeze({
     "optionsKML": "optionsKML",
     "shortcut": "shortcut",
     "downloadType": "downloadType",
-    "exportKML": "exportKML"
+    "exportKML": "exportKML",
+    "focusKML": "focusKML"
 });
 
 export const storage = new Storage();

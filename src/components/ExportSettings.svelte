@@ -50,6 +50,7 @@
     $: isChanged = !compare(storedOptions, exportOptions);
     $: isLikeMap = compare({...exportOptions, ...allowedMapOptions}, exportOptions);
 
+
     function update(e) {
         const name = (e.detail) ? e.detail.name : e.target.name;
         const value = (e.detail) ? e.detail.value : e.target.checked;
@@ -91,7 +92,7 @@
         <small class="form-text text-muted">Positionné à l'entrée des tracks, un track incomplet restera rouge.</small>
     </fieldset>
     <fieldset class="form-group">
-        <CheckboxColorCombo name="great-circle" label="Orthodromie" kmlColor={exportOptions['greatCircleColor']} checked={exportOptions['greatCircleDisplay']} on:change={update}/>
+        <CheckboxColorCombo name="great-circle" kmlColor={exportOptions['greatCircleColor']} checked={exportOptions['greatCircleDisplay']} on:change={update}>Orthodromie</CheckboxColorCombo>
     </fieldset>
     <div class="mt-3 mb-1 d-flex">
         <button disabled={!isChanged} class="btn btn-primary btn-sm"type="button" on:click={save}>Mémoriser</button>

@@ -15,13 +15,16 @@
     import CheckboxColorCombo from './CheckboxColorCombo.svelte';
     import AirportSelector from './AirportSelector.svelte';
     import ZoomLevel from './ZoomLevel.svelte';
-    import {storage, stores, kmlDefaultOptions} from './storage.js';
+    import {storage, stores, kmlDefaultOptions, validate} from './storage.js';
     import {sidebar, ofp} from "../../stores.js";
     import clickOutside from '../../actions/clickOutsideAction';
     const dispatch = createEventDispatcher();
     const store = stores.optionsKML;
     export let kmlOptions;
-    let storedOptions = {...kmlDefaultOptions, ...(storage.getItem(store) ||{})};
+    let focusOptions;
+    let focusBackup;
+    const focusStore = stores.focusKML;
+    let storedOptions = validate({...(storage.getItem(store) ||{})});
     $: isDefault = compare(kmlOptions, kmlDefaultOptions);
     $: isChanged = !compare(storedOptions, kmlOptions);
 
@@ -72,6 +75,27 @@
         dispatch('save');
         storedOptions = {...kmlOptions};
     }
+    function toggleFocus(e) {
+        e.target.blur();
+        const focusOptionsDefault = Object.keys(kmlOptions)
+            .reduce((obj, key) => {
+                    obj[key] = (key !== 'routeDisplay' && key.endsWith('Display'))  ? false : kmlOptions[key];
+                    return obj;
+                }, {});
+        if (focusOptions === undefined) {
+            focusBackup = {...kmlOptions};
+            focusOptions = validate({...(storage.getItem(focusStore) ||focusOptionsDefault)});
+            updateAll(focusOptions);
+        }else{
+            storage.setItem(focusStore, kmlOptions);
+            if (focusBackup) {
+                updateAll(focusBackup);
+            } else {
+                console.error('the focus backup should never be undefined');
+            }
+            focusOptions = undefined;
+        }
+    }
 </script>
 
 {#if $sidebar}
@@ -91,23 +115,25 @@
             <legend><input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR REG</legend>
         </fieldset>
         <fieldset class="form-group">
-            <CheckboxColorCombo name="route" label="Route" kmlColor={kmlOptions['routeColor']} checked={kmlOptions['routeDisplay']} on:change={update}/>
+            <CheckboxColorCombo name="route" kmlColor={kmlOptions['routeColor']} checked={kmlOptions['routeDisplay']} on:change={update}>
+                Route<a href="." class="getfocus btn btn-sm btn-outline-info" class:active={focusOptions!==undefined} on:click|preventDefault|stopPropagation={toggleFocus}>Focus</a>
+            </CheckboxColorCombo>
         </fieldset>
         <fieldset class="form-group">
-            <CheckboxColorCombo name="alternate" label="Dégagement" kmlColor={kmlOptions['alternateColor']} checked={kmlOptions['alternateDisplay']} on:change={update}/>
+            <CheckboxColorCombo name="alternate" kmlColor={kmlOptions['alternateColor']} checked={kmlOptions['alternateDisplay']} on:change={update}>Dégagement</CheckboxColorCombo>
         </fieldset>
         <fieldset class="form-group">
-            <CheckboxColorCombo name="nat" label="Tracks" kmlColor={kmlOptions['natColor']} checked={kmlOptions['natDisplay']} on:change={update}/>
+            <CheckboxColorCombo name="nat" kmlColor={kmlOptions['natColor']} checked={kmlOptions['natDisplay']} on:change={update}>Tracks</CheckboxColorCombo>
             <small class="form-text text-muted">Un track incomplet sera rouge</small>
         </fieldset>
         <fieldset class="form-group">
-            <CheckboxColorCombo name="great-circle" label="Orthodromie" kmlColor={kmlOptions['greatCircleColor']} checked={kmlOptions['greatCircleDisplay']} on:change={update}/>
+            <CheckboxColorCombo name="great-circle" kmlColor={kmlOptions['greatCircleColor']} checked={kmlOptions['greatCircleDisplay']} on:change={update}>Orthodromie</CheckboxColorCombo>
         </fieldset>
         <fieldset class="form-group">
-            <CheckboxColorCombo name="ogimet" label="Route GRAMET" kmlColor={kmlOptions['ogimetColor']} checked={kmlOptions['ogimetDisplay']} on:change={update}/>
+            <CheckboxColorCombo name="ogimet" kmlColor={kmlOptions['ogimetColor']} checked={kmlOptions['ogimetDisplay']} on:change={update}>Route GRAMET</CheckboxColorCombo>
         </fieldset>
         <fieldset class="form-group">
-            <CheckboxColorCombo name="etops" label="ETOPS" kmlColor={kmlOptions['etopsColor']} checked={kmlOptions['etopsDisplay']} on:change={update}/>
+            <CheckboxColorCombo name="etops" kmlColor={kmlOptions['etopsColor']} checked={kmlOptions['etopsDisplay']} on:change={update}>ETOPS</CheckboxColorCombo>
         </fieldset>
         <fieldset class="form-group">
             <AirportSelector name="airport" selected={kmlOptions['airportPin']} checked={kmlOptions['airportDisplay']} on:change={update} />
@@ -122,10 +148,14 @@
             <ZoomLevel name="icon-size-change" label="Icône" value={kmlOptions['iconSizeChange']} on:change={update}/>
         </fieldset>
 
-        <div class="last">
-            <button disabled={!isChanged} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
-            <button disabled={!isChanged} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
-            {#if !isDefault}<button class="btn btn-outline-dark btn-sm reset" type="button" on:click={reset}>Reset</button>{/if}
+        <div class="last" class:text-center={focusOptions !== undefined}>
+            {#if (focusOptions === undefined)}
+                <button disabled={!isChanged} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
+                <button disabled={!isChanged} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
+                {#if !isDefault}<button class="btn btn-outline-dark btn-sm reset" type="button" on:click={reset}>Reset</button>{/if}
+            {:else}
+                <button class="btn btn-outline-info btn-sm mb-2" style="background-color: white;" on:click|preventDefault|stopPropagation={toggleFocus}>Quitter le mode FOCUS</button>
+            {/if}
         </div>
     </form>
 </div>
@@ -137,7 +167,7 @@
     .btn:disabled {
         opacity: .3;
     }
-    small {
+    fieldset small {
         line-height: 1.1;
         width: var(--formwidth);
         display: block;
@@ -199,5 +229,9 @@
     :global(.settings .btn) {
         font-variant: all-small-caps;
     }
-
+    a.getfocus{
+        line-height: 1;
+        margin-left: 2ch;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+    }
 </style>

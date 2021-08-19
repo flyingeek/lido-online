@@ -36,8 +36,11 @@ __<big>☞</big> Il est aussi possible de modifier l'angle de vue en balayant de
 
 <figure>![layers settings help](./images/layers-settings.webp)<figcaption>Réglages des calques</figcaption></figure>La carte, en haut à droite, dispose d'un bouton pour personnaliser les calques et les couleurs. Un calque contient un type d'information, par exemple les cercles ETOPS, les FIR réglementées, les tracks, la route...
 Il est possible d'afficher ou de masquer chaque calque en utilisant la coche qui précède son nom. La plupart des calques permettent de choisir la couleur et l'opacité.
-Pour les aéroports (le type avion est déterminé dans l'OFP), il est possible de choisir entre 2 thèmes: couleur du statut ou vert/rouge. Si vous optez pour le second, le statut reste accessible en cliquant sur un terrain (popup).
-Enfin, trois boutons permettent la sauvegarde, la restauration ou un retour aux valeurs par défaut. Le bouton RESTAURER permet, après avoir fait des modifications temporaires (non sauvegardées), de revenir rapidement aux réglages précédents.
+Pour les aéroports (le type avion est déterminé dans l'OFP), il est possible de choisir entre 3 styles: couleur du statut, vert/rouge ou médical. Si vous optez pour le second, le statut reste accessible en cliquant sur un terrain (popup). Le style médical n'affiche que les terrains de support médical.
+
+Trois boutons permettent la sauvegarde, la restauration ou un retour aux valeurs par défaut. Le bouton RESTAURER permet, après avoir fait des modifications temporaires (non sauvegardées), de revenir rapidement aux réglages précédents.
+
+Enfin, un mode FOCUS est disponible, par défaut il n'affiche que la route. Pour une utilisation plus avancée, vous pouvez l'utiliser comme un deuxième jeu de réglages. En effet, vous pouvez en mode FOCUS modifier tous les réglages, et les réglages du mode FOCUS sont sauvegardés à part. Pour quitter le mode FOCUS, vous pouvez cliquer une deuxième fois sur le bouton FOCUS ou utiliser le bouton QUITTER LE MODE FOCUS.
 
 Pour vous entraîner, je vous recommande de modifier la couleur des terrains en vert/rouge et de sauvegarder votre choix.
 
