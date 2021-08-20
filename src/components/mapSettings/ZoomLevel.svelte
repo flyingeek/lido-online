@@ -35,9 +35,9 @@
     <div class="input-group-prepend">
         <label for="{name}" class="input-group-text">{label}</label>
     </div>
-    <button class="form-control" type="button" on:click={decrement}>-</button>
+    <button class="form-control" type="button" on:click={decrement}><small>&#10134;</small></button>
     <div class=" form-control">{value}</div>
-    <button class="form-control" type="button" on:click={increment}>+</button>
+    <button class="form-control" type="button" on:click={increment}>&#10133;</button>
 </div>
 <style>
     div.form-control {
