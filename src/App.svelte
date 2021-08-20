@@ -19,7 +19,7 @@
     window.location.hash = '#/';
   }
 
-  storeSettingsFromURL(window.location.search);
+  if (storage.getItem(stores.optionsKML) === null) storeSettingsFromURL(window.location.search);
   let kmlOptions = validate(storage.getItem(stores.optionsKML) || {}); //include default
   setHistory(kmlOptions, $route);
 
