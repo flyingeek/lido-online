@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.14.4] - 2021-08-xx
+## [1.15.0] - 2021-08-xx
 
 ### Changed
 
@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - possibilité de choisir entre les noms ICAO (par défaut) et IATA pour les aéroports
-- un nouveau bouton FOCUS apparait dans les réglages des calques, par défaut il n'affiche que la route. Il est pensé pour utilisation ponctuelle et lorsque l'on change d'OFP il est automatiquement désactivé. Ce mode peut aussi être un deuxième jeu de réglages, voir l'aide (RÉGLAGES DES CALQUES).
+- un mode FOCUS apparait dans les réglages des calques, par défaut il n'affiche que la route. Il est pensé pour utilisation ponctuelle. Ce mode peut aussi être un deuxième jeu de réglages, voir l'aide (RÉGLAGES DES CALQUES).
 
 ### Fixed
 
