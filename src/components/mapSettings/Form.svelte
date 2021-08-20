@@ -83,9 +83,9 @@
         if (focusOptions === undefined) {
             const focusOptionsDefault = Object.keys(kmlOptions)
             .reduce((obj, key) => {
-                    obj[key] = (key !== 'routeDisplay' && key.endsWith('Display'))  ? false : kmlOptions[key];
-                    return obj;
-                }, {});
+                obj[key] = (key !== 'routeDisplay' && key.endsWith('Display'))  ? false : kmlOptions[key];
+                return obj;
+            }, {});
             focusBackup = {...kmlOptions};
             focusOptions = validate({...(storage.getItem(focusStore) ||focusOptionsDefault)});
             updateAll(focusOptions);
@@ -104,11 +104,15 @@
             focusOptions = undefined;
         }
     }
+    function resetFocus() {
+        endFocusMode();
+        storage.removeItem(focusStore);
+    }
 
 </script>
 
 {#if $sidebar}
-<div class:sidebar={$sidebar} class="settings"  use:clickOutside on:click_outside={() => $sidebar=false} transition:fly="{{duration: 300, x: 200, y: 0}}">
+<div class:sidebar={$sidebar} class:focusmode={focusOptions !== undefined} class="settings"  use:clickOutside on:click_outside={() => $sidebar=false} transition:fly="{{duration: 300, x: 200, y: 0}}">
     <a
     class="closeB"
     role="button"
@@ -161,14 +165,15 @@
         </fieldset>
         <div class="last">
         {#if (focusOptions === undefined)}
-            <div out:send="{{key: 'buttons'}}" in:receive="{{key: 'buttons'}}" on:introend={()=> {setTimeout(()=>animating=false, 200);}}>
+            <div out:send="{{key: 'buttons'}}" in:receive="{{key: 'buttons'}}" on:introend={()=> {setTimeout(()=>animating=false, 100);}}>
                 <button disabled={!isChanged||animating} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
                 <button disabled={!isChanged||animating} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
                 {#if !isDefault}<button disabled={animating} class="btn btn-outline-dark btn-sm reset" type="button" on:click={reset}>Reset</button>{/if}
             </div>
         {:else}
-            <div out:send="{{key: 'buttons'}}" in:receive="{{key: 'buttons'}}" class="text-center">
-                <button class="quitfocus btn btn-outline-info btn-sm mb-2" on:click|preventDefault|stopPropagation={() => {animating=true;endFocusMode()}}>Quitter le mode FOCUS</button>
+            <div out:send="{{key: 'buttons'}}" in:receive="{{key: 'buttons'}}">
+                <button class="quitfocus btn btn-outline-info btn-sm mb-2" on:click={() => {animating=true;endFocusMode()}}>Quitter FOCUS</button>
+                <button class="resetfocus btn btn-outline-danger btn-sm reset" type="button" on:click={() => {animating=true;resetFocus()}}>Reset FOCUS</button>
             </div>
         {/if}
         </div>
@@ -187,6 +192,7 @@
         width: var(--formwidth);
         display: block;
         margin-top: -0.2em;
+        font-size: 70%;
     }
     :global(.settings legend, .checkbox-combo .input-group-text) {
         font-size: 1rem;
@@ -231,6 +237,9 @@
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
         }
+        .settings.focusmode {
+            background-color: rgba(23, 162, 184, 0.1);
+        }
     }
     .last {
         margin-top: 24px;
@@ -263,7 +272,15 @@
         position: absolute;
         font-weight: bolder;
     }
-    .quitfocus:not(:hover){
+    .getfocus:hover{
+        background-color: transparent;
+        color: var(--info);
+    }
+    .getfocus.active:hover{
+        background-color: var(--info);
+        color: white;
+    }
+    .quitfocus:not(:hover), .resetfocus:not(:hover){
         background-color: white;
     }
 </style>

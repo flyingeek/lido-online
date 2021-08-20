@@ -164,12 +164,16 @@
   }
   @media (hover:none), (hover:on-demand) {
     /* suppress hover effect on devices that don't support hover fully */
-    :global(.btn-outline-info:hover, .btn-outline-info:active) { 
-        color: var(--info);
-        background-color: white;
+    :global(.focusmode .btn-outline-info:hover,.focusmode .btn-outline-info:active) { 
+      color: var(--info);
+      background-color: white;
     }
     :global(.mapboxgl-ctrl button.mapboxgl-ctrl-layers:not(:disabled):hover){
-        background-color: transparent;
+      background-color: transparent;
+    }
+    :global(.btn-outline-secondary:not(:disabled):hover, .btn-outline-secondary:active){
+      background-color: transparent;
+      color: var(--secondary);
     }
   }
 

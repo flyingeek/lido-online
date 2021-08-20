@@ -47,6 +47,9 @@ class Storage {
     removeItem(key) {
         localStorage.removeItem(key);
     }
+    hasItem(key) {
+        return localStorage.getItem(key) !== null;
+    }
 }
 export const stores = Object.freeze({
     "optionsKML": "optionsKML",

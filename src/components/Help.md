@@ -42,9 +42,9 @@ Trois boutons permettent la sauvegarde, la restauration ou un retour aux valeurs
 
 Pour vous entraîner, je vous recommande de modifier la couleur des terrains en vert/rouge et de sauvegarder votre choix.
 
-Enfin, pour une utilisation ponctuelle, un mode FOCUS est disponible, par défaut il n'affiche que la route. Pour quitter le mode FOCUS, vous pouvez cliquer une deuxième fois sur le bouton FOCUS ou utiliser le bouton QUITTER LE MODE FOCUS.
+Enfin, pour une utilisation ponctuelle, un mode FOCUS est disponible, par défaut il n'affiche que la route. Il s'active en cliquant sur FOCUS dans le champ ROUTE. Pour quitter ce mode, vous pouvez cliquer une deuxième fois sur le bouton ou utiliser le bouton QUITTER FOCUS. Le bouton RESET FOCUS efface les réglages et quitte le mode FOCUS.
 
-Si vous avez des besoins complexes, vous pouvez aussi le mode FOCUS comme un deuxième jeu de réglages. En effet, vous pouvez en mode FOCUS modifier tous les réglages, et les réglages du mode FOCUS sont sauvegardés à part.
+Si vous avez des besoins complexes, vous pouvez aussi le mode FOCUS comme un deuxième jeu de réglages. En effet, vous pouvez en mode FOCUS modifier tous les réglages, et ces réglages sont sauvegardés séparément.
 
 ## Particularités de l'iPad
 
