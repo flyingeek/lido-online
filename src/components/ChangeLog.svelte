@@ -53,7 +53,16 @@
         "REMOVED": "danger",
         "SECURITY": "secondary"
     }
+    const badgeTextColors = {
+        "ADDED": "text-white",
+        "FIXED": "text-white",
+        "DEPRECATED": "text-dark",
+        "CHANGED": "text-dark",
+        "REMOVED": "text-white",
+        "SECURITY": "text-white"
+    }
     export const badgeColor = (category) => badgeColors[category.toUpperCase()] || 'light';
+    export const badgeTextColor = (category) => badgeTextColors[category.toUpperCase()] || 'text-dark';
 </script>
 <script>
     export let data;
@@ -73,7 +82,7 @@
             {#each Object.entries(section) as [category, content]}
                 {#if category !== "raw"}
                     {#each content.raw.replace(/^\n\n|\n\n$/, '').split('\n') as item}
-                        <div class="item">{@html parseMarkdown(item).replace('- ', `- <span class="badge badge-${badgeColor(category)}">${_(category)}</span>`)}</div>
+                        <div class="item">{@html parseMarkdown(item).replace('- ', `- <span class="badge bg-${badgeColor(category)} ${badgeTextColor(category)}">${_(category)}</span>`)}</div>
                     {/each}
                 {:else}
                     <div class="item">{@html parseMarkdown(content)}</div>

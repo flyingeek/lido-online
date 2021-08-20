@@ -38,8 +38,6 @@
         }
     });
 </script>
-
-
 {#if $grametStatus !== 'error' && $grametStatus !== 'reload'}
     <div class="gramet-thumbnail" class:open={$showGramet} use:grametThumbAction={{ofp: $ofp, pos: $position.gramet, fl: $position.fl}} on:click={toggleGramet}>
         <svg id="gt-plane" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -52,10 +50,13 @@
     <Overlay  position="bottom-center" style="margin-right: 0 !important;" isOpen={grametUpdateAvailable}>
         <div slot="parent" class="d-none"></div>
         <div slot="content" let:close style="width: 290px;">
-            <div class="popover" role="tooltip" style="left: calc(-1rem - 35px); max-width: 290px; top: 20px;">
-                <h3 class="popover-header">Nouveau GRAMET disponible<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>
-                <div class="popover-body">
-                    <p class="text-center"><button class="btn btn-primary" on:click={reload}>Mettre à jour</button></p>
+            <div class="overlay card" style="left: calc(-1rem - 35px); max-width: 290px; top: 20px;">
+                <div class="card-header">
+                    <span>Nouveau GRAMET disponible</span>
+                    <button type="button" class="btn-close ms-auto" aria-label="Close" on:click={close}></button>
+                </div>
+                <div class="card-body">
+                    <p class="text-center mt-3"><button class="btn btn-primary" on:click={reload}>Mettre à jour</button></p>
                 </div>
             </div>
         </div>
@@ -66,10 +67,13 @@
             <svg class="gramet-error"><use xlink:href="#info-symbol"/></svg>
         </button>
     
-        <div slot="content" let:close style="width: 330px;">
-            <div class="popover" role="tooltip" style="max-width: 330px;">
-            <h3 class="popover-header">😱: Erreur de récupération du Gramet<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>
-            <div class="popover-body">
+        <div slot="content" let:close style="width: 350px;">
+            <div class="overlay card" style="position: absolute">
+                <div class="card-header">
+                    <span>😱: Erreur de récupération du Gramet</span>
+                    <button type="button" class="btn-close ms-auto" aria-label="Close" on:click={close}></button>
+                </div>
+                <div class="card-body">
                 <p><a href="." on:click|preventDefault={() => $grametStatus = 'loading'}>essayez à nouveau</a> ou allez sur <Link href={$ofp.ogimetData.url} target="_blank">ogimet</Link>.</p>
                 {#if $grametResponseStatus.status === 409}
                     <p>Erreur construction route GRAMET: Station "<code>{$grametResponseStatus.text}</code>" non reconnue par ogimet,
@@ -92,7 +96,6 @@
 
 
 <style>
-
 .gramet-thumbnail{
     --gramet-thumb-height: 39px;
     height: var(--gramet-thumb-height);
@@ -125,21 +128,14 @@
     /* margin-top: calc((var(--gramet-thumb-height) - var(--height)) / 2); */
 }
 .gramet-thumbnail .gramet-close{
-    stroke: var(--light);
+    stroke: var(--bs-light);
     width: 100%;
     height: 100%;
     position: relative;
     top: 0;
     z-index: 2;
 }
-button.close svg{
-    height: 20px;
-    width: 20px;
-    stroke: black;
-    top: -5px;
-    position: relative;
-    z-index: 2;
-}
+
 button[slot=parent]{
     display: flex;
     padding: 0;

@@ -47,7 +47,7 @@
     const _ = (t) =>  nightEventsFR[t] || t;
     const states = sunRisingStates.slice(1); // night and astronomical twilight are the same color now
 </script>   
-<div class="popover-body">
+<div class="card-body">
     <SunTimeLine {arrivalSun} {departureSun}/>
     <table class="table">
         <thead>
@@ -144,6 +144,14 @@
     <KpTimeLine/>
 </div>
 <style>
+    .table>:not(:last-child)>:last-child>* {
+        border-bottom-color: var(--light-grey);
+        border-bottom-width: 2px;
+    }
+    .table>tbody>:last-child>* {
+        border-bottom-color: transparent !important;
+        border-bottom-width: 0px !important;
+    }
     .table th {
         border-top: none;
         text-align: left;

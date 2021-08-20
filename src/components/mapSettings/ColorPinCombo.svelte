@@ -86,7 +86,7 @@
         </svg>
     </pin>
     <!-- svelte-ignore a11y-no-onchange -->
-    <select name="{pinName}" bind:value={selected} class="custom-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: pinName, 'value': selected})}}>
+    <select name="{pinName}" bind:value={selected} class="form-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: pinName, 'value': selected})}}>
         {#each options as option, index}
         <option value="{index}" selected={index === selected}>{option.label}</option>
         {/each}
@@ -193,11 +193,13 @@
     pin {
         flex:0 0 20px !important;
         padding: 0 2px !important;
+        margin-left: -2px;
         align-items: center !important;
         display: flex !important;
         position: absolute !important;
         width: 20px !important;
         z-index: 4;
+        height: 100%;
     }
     :global(kmlcolor pin svg, kmlpin pin svg){
         stroke: white;

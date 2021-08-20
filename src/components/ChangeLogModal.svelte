@@ -31,9 +31,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{title}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" on:click={close}>
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" on:click={close}></button>
                 </div>
                 <div class="modal-body" class:expanded={!version}>
                     {#await promise}

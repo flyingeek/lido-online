@@ -151,7 +151,7 @@
             if (file) {
                 $ofpStatus = 'loading';
                 $takeOffTime = undefined;
-                label = e.target.value.split(/([\\/])/g).pop();
+                //label = e.target.value.split(/([\\/])/g).pop();
                 dispatch('change', label);
                 window.location.hash = '#/map'; //TODO must be here and not in the then promise below to avoid map centering issues. Why ?
                 getOFP(file).then((ofp) => {
@@ -193,9 +193,16 @@
 </script>
 <form class="form-inline" on:submit|preventDefault>
     {#if (!$ofpStore)}
-    <div class="custom-file" class:blink={!$ofpStore}>
-        <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} on:click|once={preload} class="custom-file-input">
-        <label class:ready={readyClass} class="custom-file-label text-truncate" for="{name}">{label}</label>
+    <div class="input-group" class:blink={!$ofpStore}>
+        <span class="input-group-text">
+            <span class="d-block d-sm-none">Choisir</span>
+            <span class="d-none d-sm-block">Choisir un OFP</span>
+        </span>
+        <label class="input-group-text btn btn-primary" for="{name}">
+            <span class="d-block d-sm-none">OFP…</span>
+            <span class="d-none d-sm-block">Sélectionner</span>
+            <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} on:click|once={preload} hidden>
+        </label>
     </div>
     {:else}
         <label class="btn btn-outline-secondary btn-sm">
@@ -216,74 +223,46 @@
 </form>
 
 <style>
-
-input:lang(fr) ~ label::after {
-    content: "Sélectionner";
-    font-variant: all-small-caps;
-}
-.blink label::after {
-    background-color: var(--blue);
-    color: var(--white);
-}
-
-label {
-    justify-content: flex-start
-}
-.custom-file {
-    width: auto
-}
-.custom-file.blink {
-    animation: blink 3s ease infinite;
-}
-@keyframes blink {
-    0% { transform: scale(1.0); }
-    75% { transform: scale(1.0); }
-    80% { transform: scale(1.03); }
-    95% { transform: scale(1.03); }
-    100% { transform: scale(1.0); }
-}
-.footer {
-    position: absolute;
-    right: 5px;
-    bottom: 0;
-    text-align: right;
-    display: none;
-    z-index: 1;
-}
-:global(.home .footer){
-    display: block !important;
-}
-select {
-    background-color: var(--blueaf);
-    border-color: var(--blueaf);
-    color: #888;
-    margin: 5px;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-}
-@media (max-width: 576px){
-    input ~ label::after, input:lang(fr) ~ label::after {
-        content: "OFP…" !important;
+    span.input-group-text{
+        background-color: var(--bs-white);
+        padding-right: 0.5rem;
     }
-    .custom-file {
-        width: 155px;
-    }
-}
-label.btn {
-    margin-bottom: 0;
-    font-variant: all-small-caps;
-}
-.btn-outline-secondary:hover{
-    color: var(--secondary);
-    background-color: transparent;
-}
-/* @media (max-width: 768px){
     label {
-        padding-right: 70px;
+        font-variant-caps: all-small-caps;
     }
-    .custom-file {
-        width: 90px;
+    @media (min-width: 576px){
+        span.input-group-text {
+            padding-right: 50px;
+        }
     }
-} */
+    .blink {
+        animation: blink 3s ease infinite;
+    }
+    @keyframes blink {
+        0% { transform: scale(1.0); }
+        75% { transform: scale(1.0); }
+        80% { transform: scale(1.03); }
+        95% { transform: scale(1.03); }
+        100% { transform: scale(1.0); }
+    }
+    .footer {
+        position: absolute;
+        right: 5px;
+        top: calc( 100vh - 41px);
+        text-align: right;
+        display: none;
+        z-index: 1;
+    }
+    :global(.home .footer){
+        display: block !important;
+    }
+    select {
+        background-color: var(--blueaf);
+        border-color: var(--blueaf);
+        color: #888;
+        margin: 5px;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
 </style>

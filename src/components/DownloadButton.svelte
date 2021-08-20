@@ -1,6 +1,6 @@
 <script context="module">
     const options = ['KML Mapsme', 'KML Avenza', 'KML Google Earth'];
-    const optionColors = ['green', 'purple', 'cyan']
+    const optionColors = ['bs-green', 'bs-purple', 'bs4-cyan']
 </script>
 <script>
     import {KmlGenerator} from './kml.js';
@@ -85,25 +85,33 @@
 
 <div bind:this={cssRoot} class="input-group">
   <!-- svelte-ignore a11y-no-onchange -->
-  <select bind:value={selected} class="custom-select choice{selected}"aria-label="Example select with button addon" on:change={save} use:blurAction>
+  <select bind:value={selected} class="form-select choice{selected}"aria-label="Example select with button addon" on:change={save} use:blurAction>
     <option selected={selected === 0} value="{0}">{options[0]}</option>
     <option selected={selected === 1} value="{1}">{options[1]}</option>
     <option selected={selected === 2} value="{2}">{options[2]}</option>
   </select>
-  <div class="input-group-append">
+  <div class="input-group-text">
       <!-- Using the download attribute in standalone mode makes the app to lost the ofp on return (last check on iPadOS 14.4)-->
-    <a class="btn btn-success choice{selected}" download={filename} href={url} on:click={download}>{label}</a>
+    <a class="" download={filename} href={url} on:click={download}>{label}</a>
   </div>
 </div>
 <style>
     div.input-group {
-        --color: var(--green);
+        --color: var(--bs-green);
     }
     select {
         border-color: var(--color);
     }
-    a {
+    a, .input-group-text {
         background-color: var(--color);
         border-color: var(--color);
+    }
+    a {
+        color: var(--bs-white);
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        font-variant-caps: all-small-caps;
+        min-width:122px;
     }
 </style>

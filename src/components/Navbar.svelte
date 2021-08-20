@@ -8,6 +8,7 @@
     const collapse = () => menuCheckBox.checked = false;
 </script>
 <nav class="navbar navbar-expand-md navbar-light">
+  <div class="container-fluid">
   <input bind:this={menuCheckBox} type="checkbox" id="menu">
   <!-- following items are in reverse order to have the menu collapse nicely -->
   <slot></slot>
@@ -41,6 +42,7 @@
       <span>AIDE</span></a>
     </li>
   </ul>
+  </div>
 </nav>
 
 <style>
@@ -49,7 +51,7 @@
     }
     sup {
         background-color: var(--redaf);
-        color: var(--white);
+        color: var(--bs-white);
         padding: 1px 3px;
         border-radius: 3px;
         font-weight: normal;
@@ -70,11 +72,15 @@
       fill: rgba(0,0,0,.9);
       stroke: rgba(0,0,0,.9);
     }
-    nav {
+    .navbar {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    nav > .container-fluid{
       flex: 0 1 auto;
       position: static; /* for no ofp prompt on home page bottom */
       padding: 2px 10px 0px 10px;
-      background-color: var(--light);
+      background-color: var(--bs-light);
       flex-direction: row-reverse;
     }
 
@@ -86,7 +92,7 @@
         li {
           margin-right: 10px;
         }
-        :global(nav > div) {
+        :global(nav > div > div) {
           margin-right: 0.8rem;
         }
     }
@@ -94,19 +100,19 @@
       display: inline-block;
     }
     .nav-item.active {
-      border-left: 2px solid var(--pink);
+      border-left: 2px solid var(--bs-pink);
     }
     @media (min-width: 768px){
       li {
         padding-left: 0px;
       }
       .nav-item.active {
-        border-bottom: 2px solid var(--pink);
+        border-bottom: 2px solid var(--bs-pink);
         border-left: none;
       }
     }
     @media (min-width: 830px){
-      :global(nav > div) {
+      :global(nav > div > div) {
         margin-right: 1.6rem !important;
       }
     }

@@ -20,22 +20,18 @@
 </script>
 
 <div class="input-group input-group-sm mb-2">
-    <div class="input-group-prepend">
-        <label for="airport-pin" class="input-group-text">Style</label>
-    </div>
+    <label for="airport-pin" class="input-group-text">Style</label>
     <!-- svelte-ignore a11y-no-onchange -->
-    <select use:blurAction name="airport-pin" bind:value={selectedPin} class="custom-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: 'airport-pin', 'value': selectedPin})}}>
+    <select use:blurAction name="airport-pin" bind:value={selectedPin} class="form-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: 'airport-pin', 'value': selectedPin})}}>
         {#each options as option, index}
         <option value="{index}" selected={index === selectedPin}>{option.label}</option>
         {/each}
     </select>
 </div>
 <div class="input-group input-group-sm">
-    <div class="input-group-prepend">
-        <label for="airport-label" class="input-group-text">Noms</label>
-    </div>
+    <label for="airport-label" class="input-group-text">Noms</label>
     <!-- svelte-ignore a11y-no-onchange -->
-    <select use:blurAction name="airport-label" bind:value={selectedLabel} class="custom-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: "airport-label", 'value': selectedLabel})}}>
+    <select use:blurAction name="airport-label" bind:value={selectedLabel} class="form-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: "airport-label", 'value': selectedLabel})}}>
         {#each labels as option, index}
         <option value="{index}" selected={index === selectedLabel}>{option.label}</option>
         {/each}

@@ -96,9 +96,9 @@
     </fieldset>
     <div class="mt-3 mb-1 d-flex">
         <button disabled={!isChanged} class="btn btn-primary btn-sm"type="button" on:click={save}>Mémoriser</button>
-        <button disabled={!isChanged} class="btn btn-secondary btn-sm ml-3" type="button" on:click={restore}>Restaurer</button>
-        <button disabled={isLikeMap} class="btn btn-outline-secondary btn-sm ml-auto" type="button" on:click={asMap}>Comme Carte</button>
-        <button disabled={isDefault} class="btn btn-outline-secondary btn-sm ml-auto" type="button" on:click={reset}>Reset</button>
+        <button disabled={!isChanged} class="btn btn-secondary btn-sm ms-3" type="button" on:click={restore}>Restaurer</button>
+        <button disabled={isLikeMap} class="btn btn-outline-secondary btn-sm ms-auto" type="button" on:click={asMap}>Comme Carte</button>
+        <button disabled={isDefault} class="btn btn-outline-secondary btn-sm ms-auto" type="button" on:click={reset}>Reset</button>
     </div>
 </div>
 
@@ -112,5 +112,8 @@
     }
     .btn:disabled {
         opacity: 0.25;
+    }
+    div.d-flex{
+        font-variant-caps: all-small-caps;
     }
 </style>

@@ -65,31 +65,36 @@
 </script>
 
 {#if (($swUpdated && !$swDismiss && !prompt))}
-<div class="modal">
-    <div class="toast">   
-        <div class="toast-header">
-            <strong><span>👨🏻‍✈️</span>Mise à jour détectée</strong>
-        </div>
-        <div class="toast-body text-center">
-            <button class="btn" type="button" on:click|preventDefault><span>Mise à jour...</span></button>
+<div class="modal" tabindex="-1">
+    <div class="modal-dialog" style="margin-top: 15%; max-width: 270px;">
+        <div class="modal-content">
+            <h6 class="modal-header text-center">
+                <span class="modal-title"><span>👨🏻‍✈️</span> Mise à jour détectée</span>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" on:click={() => $swDismiss=true}></button>
+            </h6>
+            <div class="modal-body text-center">
+                <button class="btn" type="button" on:click|preventDefault><span>Mise à jour...</span></button>
+            </div>
         </div>
     </div>
 </div>{install(700) || ''}
 {:else if $swUpdated && !$swDismiss}
-    <div class="toast" transition:fade style="position: fixed; top: 0; right: 0;">   
-        <div class="toast-header">
-            <strong><span>👨🏻‍✈️</span>Mise à jour disponible</strong>
-            <button type="button" class="close" aria-label="Close" on:click={() => $swDismiss=true}>
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="toast-body text-center">
-            <p>Il faudra recharger l'OFP</p>
-            <button class="btn btn-primary" type="button" on:click|once={() => install()}><span class:blinking={installLabel.endsWith('...')}>{installLabel}</span></button>
+    <div class="modal" tabindex="-1">
+        <div class="modal-dialog" style="position: absolute; top:0; right: 1rem; max-width: 350px;">
+            <div class="modal-content">
+                <h6 class="modal-header pt-2 pb-2">
+                    <span class="modal-title text-center"><span>👨🏻‍✈️</span> Mise à jour disponible</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" on:click={() => $swDismiss=true}></button>
+                </h6>
+                <div class="modal-body text-center">
+                    <p>Il faudra recharger l'OFP</p>
+                    <button class="btn btn-primary" type="button" on:click|once={() => install()}><span class:blinking={installLabel.endsWith('...')}>{installLabel}</span></button>
+                </div>
+            </div>
         </div>
     </div>
 {:else if !$swUpdated && isAppUpdated() && $route !== "/install"}
-    <ChangeLogModal version={getPreviousAppVersion()} title="NOUVEAUTÉS" on:close={resetPreviousAppVersion}/>
+    <ChangeLogModal version={() => getPreviousAppVersion()} title="NOUVEAUTÉS" on:close={resetPreviousAppVersion}/>
 {/if}
 
 <style>
@@ -98,38 +103,11 @@
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
         display:block;
     }
-
-    /* Modal Content/Box */
-    .modal .toast {
-        margin: 15% auto 0 auto; /* 15% from the top and centered */
+    .modal-header {
+        background-color: var(--bs-light);
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
     }
-    .modal .toast-header {
-        justify-content: center;
-    }
-    .modal .toast-header strong {
-        margin-right: 0;
-    }
-    .toast {
-        opacity: 1;
-        z-index: 20;
-    }
-    .toast-header strong {
-        margin-right: auto;
-    }
-    button.close {
-        padding: 0;
-        background-color: transparent;
-        border: 0;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        margin-bottom: .25rem;
-        margin-left: 0.5rem;
-    }
-    strong>span {
-        padding-right: 1em;
-    }
-
     .blinking{
         animation:blink 1s infinite;
     }
@@ -139,6 +117,4 @@
         50% { opacity: 0.0; }
         100% { opacity: 1.0; }
     }
-
-
 </style>

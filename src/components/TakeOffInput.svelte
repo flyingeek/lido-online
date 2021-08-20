@@ -80,7 +80,7 @@
         fill: rgba(0,0,0,.5);
     }
     input {
-        background-color: var(--light);
+        background-color: var(--bs-light);
         border-color: transparent;
         color:rgba(0,0,0,.5);
         appearance: none;

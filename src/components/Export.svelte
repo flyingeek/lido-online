@@ -71,5 +71,6 @@
         width: auto;
         font-variant: none;
         border-radius: 0.2rem;
+        float:none;
     }
 </style>

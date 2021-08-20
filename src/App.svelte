@@ -55,16 +55,16 @@
       {:else if $ofpStatus && $ofpStatus !== 'success' && $route === '/map'}
         <Page><p class="ofpError">😱: {$ofpStatus}</p></Page>
       {:else if ($route === '/export') && $ofpStatus === 'success'}
-        <Page maxWidth="1366px">
+        <Page maxWidth="1400px">
           <Export {kmlOptions} on:save={() => setHistory(kmlOptions, $route)} />
           <LidoRoute />
         </Page>
       {:else if $route === '/'}
-        <Page maxWidth="1366px">
+        <Page maxWidth="1400px">
           <Home />
         </Page>
       {:else if $route === '/help'}
-        <Page  maxWidth="1366px"><Help /></Page>
+        <Page  maxWidth="1400px"><Help /></Page>
       {:else if !(($ofp || $aircraftType) && $route === '/map')}
         <!-- redirect -->
         { redirect($route) }
@@ -90,8 +90,10 @@
     --maximum-yellow-red: #FCBF49; /* used for warnings in LogWindow */
     --electric-blue: #87F1FF;
     --gramet-inner-height: 384px;
-    --plane-color: var(--yellow);
+    --plane-color: var(--bs-yellow);
     --plane-halo-color: var(--plane-color);
+    --bs4-cyan: #17a2b8;
+    --bs4-infos: #17a2b8;
   }
   .content{
     background-color: var(--blueaf);
@@ -105,7 +107,7 @@
     display: flex;
   }
   main.map > .content {
-    background-color: var(--white);
+    background-color: var(--bs-white);
     background-image: none;
   }
   main.help >.content {
@@ -130,7 +132,7 @@
       display:block;
     }
   }
-  @media (min-width: 1366px) {
+  @media (min-width: 1400px) {
     main {
       width: 100%;
       margin-right: auto;
@@ -159,13 +161,13 @@
   :global(.table td){
         padding: 0.5rem 0.75rem;
   }
-  :global(.input-group-prepend label) {
+  :global(label.input-group-text, label.form-control,.input-group-sm >.btn) {
     font-variant-caps: all-small-caps;
   }
   @media (hover:none), (hover:on-demand) {
     /* suppress hover effect on devices that don't support hover fully */
     :global(.focusmode .btn-outline-info:hover,.focusmode .btn-outline-info:active) { 
-      color: var(--info);
+      color: var(--bs-info);
       background-color: white;
     }
     :global(.mapboxgl-ctrl button.mapboxgl-ctrl-layers:not(:disabled):hover){
@@ -173,8 +175,23 @@
     }
     :global(.btn-outline-secondary:not(:disabled):hover, .btn-outline-secondary:active){
       background-color: transparent;
-      color: var(--secondary);
+      color: var(--bs-secondary);
     }
+  }
+  :global(a) {
+    text-decoration: none;
+  }
+  :global(a:hover){
+    text-decoration: underline;
+  }
+  :global(.overlay .card-header) {
+    display:flex;
+    align-items: center;
+    padding: .5rem .75rem
+  }
+  :global(.overlay .card-body) {
+    padding: .5rem .75rem;
+    font-size: 0.875rem;
   }
 
 </style>

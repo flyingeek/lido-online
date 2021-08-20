@@ -114,13 +114,10 @@
 {#if $sidebar}
 <div class:sidebar={$sidebar} class:focusmode={focusOptions !== undefined} class="settings"  use:clickOutside on:click_outside={() => $sidebar=false} transition:fly="{{duration: 300, x: 200, y: 0}}">
     <a
-    class="closeB"
+    class="btn-close float-end"
     role="button"
     href="."
     on:click|preventDefault={() =>  {$sidebar = !$sidebar}}>
-    <svg>
-        <use xlink:href="#close-symbol" />
-    </svg>
     </a>
     <form on:submit|preventDefault class:mt-5={!$ofp}>
         {#if $ofp}
@@ -194,7 +191,7 @@
         margin-top: -0.2em;
         font-size: 70%;
     }
-    :global(.settings legend, .checkbox-combo .input-group-text) {
+    :global(.settings legend, .checkbox-combo label.form-control) {
         font-size: 1rem;
         font-weight: bold;
         font-variant-caps: all-small-caps;
@@ -211,11 +208,6 @@
     }
     .form-group{
         margin-bottom: 0.8em;
-    }
-    .closeB {
-        position: absolute;
-        right:10px;
-        top: 7px;
     }
     .settings {
         position: absolute;
@@ -250,15 +242,6 @@
         position: absolute;
         width: var(--formwidth);
     }
-    svg {
-        stroke:#555;
-        width: 20px;
-        height: 20px;
-        animation: none;
-    }
-    :global(.settings .btn) {
-        font-variant: all-small-caps;
-    }
     .getfocus{
         line-height: 1;
         margin-left: 2ch;
@@ -268,19 +251,22 @@
         content: "\00d7";
         top: -0.25rem;
         right: 1px;
-        color: white;
+        color: #000;
         position: absolute;
         font-weight: bolder;
     }
     .getfocus:hover{
         background-color: transparent;
-        color: var(--info);
+        color: var(--bs-info);
     }
     .getfocus.active:hover{
-        background-color: var(--info);
-        color: white;
+        background-color: var(--bs-info);
+        color: #000;
     }
     .quitfocus:not(:hover), .resetfocus:not(:hover){
         background-color: white;
+    }
+    .btn-sm{
+        font-variant-caps: all-small-caps;
     }
 </style>

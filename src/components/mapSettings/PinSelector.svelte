@@ -19,16 +19,14 @@
 </script>
 
 <kmlpin class="input-group">
-    <div class="input-group-prepend">
-        <label class="input-group-text" for="{name}">Repère</label>
-        <pin class="input-group-text">
-            <svg>
-                <use xlink:href="#marker-symbol" style="stroke: {(selected === 0) ? '#fff': '#000' }; fill: {options[selected].color};"></use>
-            </svg>
-        </pin>
-    </div>
+    <label class="input-group-text" for="{name}">Repère</label>
+    <pin class="input-group-text">
+        <svg>
+            <use xlink:href="#marker-symbol" style="stroke: {(selected === 0) ? '#fff': '#000' }; fill: {options[selected].color};"></use>
+        </svg>
+    </pin>
     <!-- svelte-ignore a11y-no-onchange -->
-    <select name="{name}" bind:value={selected} class="custom-select" on:change={dispatch("change", {name, 'value': selected})}>
+    <select name="{name}" bind:value={selected} class="form-select" on:change={dispatch("change", {name, 'value': selected})}>
         {#each options as option, index}
         <option value="{index}" selected={index === selected}>{option.label}</option>
         {/each}

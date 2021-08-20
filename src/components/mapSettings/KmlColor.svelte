@@ -45,7 +45,7 @@
 </script>
 
 <kmlcolor class="input-group">
-    <div class="input-group-prepend">
+    <div class="input-group-text">
         <label for="{name}" class="input-group-text">Couleur</label>
     </div>
     <picker class="form-control" style="{pickerStyle(swatch[0])}">

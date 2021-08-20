@@ -36,9 +36,7 @@
 </script>
 
 <kmlcolor class="input-group checkbox-combo" use:changeSwatch={kmlColor}>
-    <div class="input-group-prepend">
-        <label for="{displayName}" class="input-group-text"><input name="{displayName}" checked={checked} type="checkbox" on:change/><slot>Couleur</slot></label>
-    </div>
+    <label for="{displayName}" class="form-control"><input name="{displayName}" checked={checked} type="checkbox" on:change/><slot>Couleur</slot></label>
     <picker class="form-control" style="{pickerStyle(swatch[0])}">
         <label use:changeKmlColor={swatch} style="{swatchStyle(swatch)}">
             <input bind:value={swatch[0]} type="color" />
@@ -48,24 +46,19 @@
 </kmlcolor>
 
 <style>
-:global(.checkbox-combo .input-group-prepend){
+:global(.checkbox-combo label.form-control){
     display:flex;
     align-items: center;
     flex: 1;
-}
-:global(.checkbox-combo .input-group-prepend > label){
-    width:auto;
-    padding-left: 0;
-    padding-right: 0;
+    padding-left: 0rem;
+    flex-grow: 1;
     background-color: white;
+    width:auto;
 }
 :global(.checkbox-combo input[type=checkbox]) {
     margin-left: -1px;
 }
 :global(.checkbox-combo) {
     padding-bottom: 5px;
-}
-:global(.checkbox-combo .input-group-text) {
-    flex-grow: 1;
 }
 </style>

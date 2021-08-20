@@ -50,18 +50,18 @@
     });
 </script>
 <!-- svelte-ignore a11y-no-onchange -->
-<select name="{name}" bind:value={selected} class="form-control form-control-sm" on:change use:blurAction>
+<select name="{name}" bind:value={selected} class="form-select form-select-sm" on:change use:blurAction>
     {#each authorizedOptions as option, index}
     <option value="{option}" selected={option.id === selected.id}>{(option.id === autoSelectedId) ? `${option.label.toUpperCase()}`: option.label}</option>
     {/each}
 </select>
 
 <style>
-    select.form-control {
-        width: auto;
+    .form-select-sm {
         font-size: small;
-        left: 5px;
-        top:5px;
-        display: inline;
+        /* left: 5px;
+        top:5px; */
+        width: auto;
+        display: inline-block;
     }
 </style>

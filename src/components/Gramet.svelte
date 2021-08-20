@@ -40,7 +40,7 @@
         z-index: 10;
         top: 10px;
         color: white;
-        background-color: var(--warning);
+        background-color: var(--bs-warning);
         padding: 5px;
         left: 10px;
     } */

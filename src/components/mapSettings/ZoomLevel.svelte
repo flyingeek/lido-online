@@ -32,11 +32,9 @@
 </script>
 
 <div class="input-group input-group-sm mb-2">
-    <div class="input-group-prepend">
-        <label for="{name}" class="input-group-text">{label}</label>
-    </div>
+    <label for="{name}" class="input-group-text">{label}</label>
     <button class="form-control" type="button" on:click={decrement}><small>&#10134;</small></button>
-    <div class=" form-control">{value}</div>
+    <div class="form-control">{value}</div>
     <button class="form-control" type="button" on:click={increment}>&#10133;</button>
 </div>
 <style>

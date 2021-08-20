@@ -72,7 +72,7 @@
                 <p class="card-text">Cette route est optimisée par rapport à celle de PilotMission car elle utilise les airways. Utiliser cette route permet
                     d'avoir une application Lido plus réactive.</p>
             </div>
-            <div class="text-md-right col align-self-center col-12 col-md-3 py-3 py-md-0">
+            <div class="text-md-end col align-self-center col-12 col-md-3 py-3 py-md-0">
                 {#if runningOnIpad}
                     <a role="button" class="btn btn-primary" on:click={click} href='lhs-mpilot://'>ouvrir mPilot <sup>*</sup></a>
                 {:else}

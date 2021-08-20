@@ -183,7 +183,7 @@
         margin-left: -1em;
         font-weight: 700;
         align-self: center;
-        background-color: var(--warning);
+        background-color: var(--bs-warning);
     }
     svg {
         width:20px;

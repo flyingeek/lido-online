@@ -44,8 +44,10 @@
                 {/each}
             </div>
         </div>
-        <div slot="content" style="width: 390px; max-width:390px; position:static;" class="popover" let:close in:slide={{ duration: 200 }}>
-            <h3 class="popover-header">Éphémérides du vol<button type="button" class="close" aria-label="Close" on:click={close}><svg><use xlink:href="#close-symbol"/></svg></button></h3>
+        <div slot="content" style="width: 390px;" class="overlay card" let:close in:slide={{ duration: 200 }}>
+            <h6 class="card-header">
+                <span>Éphémérides du vol</span>
+                <button type="button" class="btn-close ms-auto" aria-label="Close" on:click={close}></button></h6>
             <SunPopOver {departureSun} {moonEmoji} {estimatedDate} {moonIllumination}/>
         </div>
     </Overlay>
@@ -95,15 +97,6 @@
     }
     .icon{
         align-self: center;
-    }
-
-    svg{
-        height: 20px;
-        width: 20px;
-        stroke: black;
-        top: -5px;
-        position: relative;
-        z-index: 2;
     }
 
     :global(.overlay .content.bottom-bottom) { /*fix overlay misplacement*/

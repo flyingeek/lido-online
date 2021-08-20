@@ -99,7 +99,7 @@ onMount(() => {
                 {/if}
                 <button class="btn btn-outline-secondary btn-sm" on:click={modal.show}>CHANGELOG</button>
                 <!-- svelte-ignore a11y-no-onchange -->
-                <select class="custom-select custom-select-sm" bind:value="{selected}" on:change={jumpTo} use:blurAction>
+                <select class="form-select form-select-sm" bind:value="{selected}" on:change={jumpTo} use:blurAction>
                     {#each toc as {id, label}}
                         <option value={id} selected={id === selected}>{label}</option>
                     {/each}

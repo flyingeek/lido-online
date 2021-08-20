@@ -215,17 +215,17 @@
     .cacheButton {
         display: inline-block;
         position: relative;
-        color: var(--cyan);
+        color: var(--bs-cyan);
         margin-left: 10px;
         cursor:pointer;
-        --progress-color: var(--yellow);
+        --progress-color: var(--bs-yellow);
     }
 
     .cacheButton.cacheError {
-        color: var(--red) !important;
+        color: var(--bs-red) !important;
     }
     .cacheButton.cacheProgress {
-        color: var(--yellow);
+        color: var(--bs-yellow);
     }
     .cacheButton span {
         display:inline-block;
