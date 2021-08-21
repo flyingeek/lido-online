@@ -36,7 +36,7 @@
 </script>
 
 <kmlcolor class="input-group checkbox-combo" use:changeSwatch={kmlColor}>
-    <label for="{displayName}" class="form-control"><input name="{displayName}" checked={checked} type="checkbox" on:change/><slot>Couleur</slot></label>
+    <label for="{displayName}" class="form-control pe-0"><input name="{displayName}" checked={checked} type="checkbox" on:change/><slot>Couleur</slot></label>
     <picker class="form-control" style="{pickerStyle(swatch[0])}">
         <label use:changeKmlColor={swatch} style="{swatchStyle(swatch)}">
             <input bind:value={swatch[0]} type="color" />

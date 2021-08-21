@@ -18,8 +18,6 @@
     import {storage, stores, kmlDefaultOptions, validate} from './storage.js';
     import {sidebar, ofp} from "../../stores.js";
     import clickOutside from '../../actions/clickOutsideAction';
-    import { crossfade } from 'svelte/transition';
-    const [send, receive] = crossfade({duration: 1000});
     const dispatch = createEventDispatcher();
     const store = stores.optionsKML;
     export let kmlOptions;
@@ -27,9 +25,14 @@
     let focusBackup;
     const focusStore = stores.focusKML;
     let storedOptions = validate({...(storage.getItem(store) ||{})});
-    let animating = false;
+    const focusOptionsDefault = (options) => Object.keys(options)
+        .reduce((obj, key) => {
+            obj[key] = (key !== 'routeDisplay' && key.endsWith('Display'))  ? false : options[key];
+            return obj;
+        }, {});
     $: isDefault = compare(kmlOptions, kmlDefaultOptions);
     $: isChanged = !compare(storedOptions, kmlOptions);
+    $: isFocusDefault = (focusBackup) ? compare(focusOptionsDefault(focusBackup), kmlOptions) : false;
 
     /**
      * e is a component event or a dom checkbox event
@@ -78,20 +81,20 @@
         dispatch('save');
         storedOptions = {...kmlOptions};
     }
+
     function toggleFocus(e) {
         e.target.blur();
+        const settingsButtonEl = document.getElementsByClassName('mapboxgl-ctrl-layers')[0];
         if (focusOptions === undefined) {
-            const focusOptionsDefault = Object.keys(kmlOptions)
-            .reduce((obj, key) => {
-                obj[key] = (key !== 'routeDisplay' && key.endsWith('Display'))  ? false : kmlOptions[key];
-                return obj;
-            }, {});
             focusBackup = {...kmlOptions};
-            focusOptions = validate({...(storage.getItem(focusStore) ||focusOptionsDefault)});
+            focusOptions = validate({...(storage.getItem(focusStore) ||focusOptionsDefault(kmlOptions))});
             updateAll(focusOptions);
+            if (settingsButtonEl) settingsButtonEl.innerHTML=('<svg><use xlink:href="#single-layer-symbol"/></svg>');
         }else{
             endFocusMode();
+            if (settingsButtonEl) settingsButtonEl.innerHTML=('<svg><use xlink:href="#layers-symbol"/></svg>');
         }
+        $sidebar = false;
     }
     export function endFocusMode() {
         if (focusOptions !== undefined){
@@ -105,20 +108,20 @@
         }
     }
     function resetFocus() {
-        endFocusMode();
         storage.removeItem(focusStore);
+        if (focusBackup) {
+            focusOptions = focusOptionsDefault(focusBackup);
+            updateAll(focusOptions);
+        } else {
+            console.error('the focus backup should never be undefined');
+        }
     }
-
 </script>
 
 {#if $sidebar}
 <div class:sidebar={$sidebar} class:focusmode={focusOptions !== undefined} class="settings"  use:clickOutside on:click_outside={() => $sidebar=false} transition:fly="{{duration: 300, x: 200, y: 0}}">
-    <a
-    class="btn-close float-end"
-    role="button"
-    href="."
-    on:click|preventDefault={() =>  {$sidebar = !$sidebar}}>
-    </a>
+    <!-- svelte-ignore a11y-missing-content -->
+    <a class="btn-close float-end" role="button" href="." on:click|preventDefault={() =>  {$sidebar = !$sidebar}}></a>
     <form on:submit|preventDefault class:mt-5={!$ofp}>
         {#if $ofp}
         <fieldset class="form-group">
@@ -126,9 +129,7 @@
                 <input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR REG</legend>
         </fieldset>
         <fieldset class="form-group">
-            <CheckboxColorCombo name="route" kmlColor={kmlOptions['routeColor']} checked={kmlOptions['routeDisplay']} on:change={update}>
-                Route<button class="getfocus btn btn-sm btn-outline-info" class:active={focusOptions!==undefined} on:click|preventDefault={toggleFocus}>Focus</button>
-            </CheckboxColorCombo>
+            <CheckboxColorCombo name="route" kmlColor={kmlOptions['routeColor']} checked={kmlOptions['routeDisplay']} on:change={update}>Route<button class="getfocus btn btn-sm btn-outline-info" class:active={focusOptions!==undefined} on:click|preventDefault={toggleFocus}>{(focusOptions!==undefined) ? 'FOCUS OFF' : 'FOCUS'}</button></CheckboxColorCombo>
         </fieldset>
         <fieldset class="form-group">
             <CheckboxColorCombo name="alternate" kmlColor={kmlOptions['alternateColor']} checked={kmlOptions['alternateDisplay']} on:change={update}>Dégagement</CheckboxColorCombo>
@@ -160,23 +161,19 @@
             {/if}
             <ZoomLevel name="icon-size-change" label="Icônes" value={kmlOptions['iconSizeChange']} on:change={update}/>
         </fieldset>
-        <div class="last">
+        <div class="last" class:text-center={focusOptions !== undefined}>
         {#if (focusOptions === undefined)}
-            <div out:send="{{key: 'buttons'}}" in:receive="{{key: 'buttons'}}" on:introend={()=> {setTimeout(()=>animating=false, 100);}}>
-                <button disabled={!isChanged||animating} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
-                <button disabled={!isChanged||animating} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
-                {#if !isDefault}<button disabled={animating} class="btn btn-outline-dark btn-sm reset" type="button" on:click={reset}>Reset</button>{/if}
-            </div>
+            <button disabled={!isChanged} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
+            <button disabled={!isChanged} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
+            {#if !isDefault}<button class="reset btn btn-outline-dark btn-sm" type="button" on:click={reset}>Reset</button>{/if}
         {:else}
-            <div out:send="{{key: 'buttons'}}" in:receive="{{key: 'buttons'}}">
-                <button class="quitfocus btn btn-outline-info btn-sm mb-2" on:click={() => {animating=true;endFocusMode()}}>Quitter FOCUS</button>
-                <button class="resetfocus btn btn-outline-danger btn-sm reset" type="button" on:click={() => {animating=true;resetFocus()}}>Reset FOCUS</button>
-            </div>
+            <button disabled={isFocusDefault} class="resetfocus btn btn-outline-danger btn-sm" type="button" on:click={resetFocus}>Réglages FOCUS par défaut</button>
         {/if}
         </div>
     </form>
 </div>
 {/if}
+
 <style>
     :global(.settings input[type="checkbox"]) {
         margin-right: 0.5ch;
@@ -217,8 +214,6 @@
         border-left: 1px solid rgba(255,255,255,0.2);
         padding: 5px;
         z-index: 2;
-        /* height: 100%; */
-        /* top: 0; */
     }
     .reset{
         float: right;
@@ -235,36 +230,22 @@
     }
     .last {
         margin-top: 24px;
-        min-height: 40px;
-        position: relative;
-    }
-    .last div{
-        position: absolute;
-        width: var(--formwidth);
     }
     .getfocus{
         line-height: 1;
         margin-left: 2ch;
+        font-size: small;
+        font-weight: 500;
     }
-    .getfocus.active::after{
-        display: inline-block;
-        content: "\00d7";
-        top: -0.25rem;
-        right: 1px;
-        color: #000;
-        position: absolute;
-        font-weight: bolder;
+    .getfocus.active{
+        margin-left: 0.8ch; /* FOCUS OFF is too long */
     }
-    .getfocus:hover{
+    .getfocus:not(.active):hover{
         background-color: transparent;
         color: var(--bs-info);
     }
-    .getfocus.active:hover{
-        background-color: var(--bs-info);
-        color: #000;
-    }
-    .quitfocus:not(:hover), .resetfocus:not(:hover){
-        background-color: white;
+    .resetfocus:not(:hover){
+        background-color: var(--bg-white);
     }
     .btn-sm{
         font-variant-caps: all-small-caps;

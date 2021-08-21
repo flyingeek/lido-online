@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - possibilité de choisir entre les noms ICAO (par défaut) et IATA pour les aéroports
-- un mode FOCUS apparait dans les réglages des calques. Par défaut il n'affiche que la route. Il est pensé pour utilisation ponctuelle. Ce mode peut aussi être utilisé comme un deuxième jeu de réglages, voir l'aide (RÉGLAGES DES CALQUES).
+- un mode FOCUS apparait dans les réglages des calques. Par défaut il n'affiche que la route. Il est pensé pour utilisation de bascule rapide et ponctuelle. Ce mode peut aussi être utilisé comme un deuxième jeu de réglages, voir l'aide (RÉGLAGES DES CALQUES).
 - il est possible de ne pas afficher les nouveautés lors des mises à jour. On peut changer d'avis à tout moment dans le CHANGELOG.
 
 ### Fixed
