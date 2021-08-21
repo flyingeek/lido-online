@@ -1,13 +1,20 @@
+<script context="module">
+    import {storage, stores} from './mapSettings/storage.js';
+    const store = stores.changelogOnUpdate;
+    export const showChangelogOnUdate = () => {
+        return (storage.getItem(store) === null) ? true : !!storage.getItem(store);
+    }
+</script>
 <script>
     import { fade } from 'svelte/transition';
     import ChangeLog from "./ChangeLog.svelte";
     import clickOutside from '../actions/clickOutsideAction';
-    import { createEventDispatcher } from 'svelte';
     export let visible = false;
     export let title = 'CHANGELOG';
     export let version = undefined;
-    const dispatch = createEventDispatcher();
     let promise;
+    let checked = showChangelogOnUdate();
+
     export const show = async () => {
         visible = true;
         promise = fetch('./CHANGELOG.json').then(response => {
@@ -19,10 +26,9 @@
         });
     };
     export const close = () => {
-        dispatch("close");
         visible = false;
-    }
-    if (version) show();
+    };
+    if (version && checked) show();
 </script>
 
 {#if visible}
@@ -30,7 +36,12 @@
         <div class="modal-dialog modal-xl modal-dialog-centered" role="document" use:clickOutside  on:click_outside={close}>
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">{title}</h5>
+                    <h5 class="modal-title">{title}
+                        <small class="d-inline-block ms-4 form-check form-switch">
+                            <input bind:checked id="display-on-update" class="form-check-input" type="checkbox" on:change={() => storage.setItem(store, checked)}>
+                            <label for="display-on-update"class="form-check-label">Afficher lors des mises à jour</label>
+                        </small>
+                    </h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" on:click={close}></button>
                 </div>
                 <div class="modal-body" class:expanded={!version}>

@@ -56,7 +56,8 @@ export const stores = Object.freeze({
     "shortcut": "shortcut",
     "downloadType": "downloadType",
     "exportKML": "exportKML",
-    "focusKML": "focusKML"
+    "focusKML": "focusKML",
+    "changelogOnUpdate": "changelogOnUpdate"
 });
 
 export const storage = new Storage();
@@ -88,9 +89,9 @@ export const validate = (options, defaultOptions=kmlDefaultOptions) => {
 
 export const setHistory = (kmlOptions, route, name="Mon OFP2MAP") => {
     const options = {};
-    const excludedStores = ["exportKML", "focusKML"];
+    const includedStores = ["optionsKML", "shortcut", "downloadType"];
     for (const [key, store] of Object.entries(stores)) {
-        if (excludedStores.includes(store)) continue;
+        if (!includedStores.includes(store)) continue;
         let value = storage.getItem(store);
         if (key === stores.optionsKML && kmlOptions) {
             const diff = {};

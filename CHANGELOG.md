@@ -7,14 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- les réglages d'export deviennent distinct de la carte, et sont les seuls à disposer du réglages des repères. Apparition d'un reset qui remet les valeurs par défaut de la v1.13
-- les réglages des calques sont simplifiés: il n'est plus possible d'utiliser des repères sur la carte. Le calque FIR-REG est remonté en première ligne, le tout me laisse de la place pour de nouvelles options.
-- aide mise à jour
+- les réglages des calques sont simplifiés: il n'est plus possible d'utiliser des repères sur la carte. Le calque FIR-REG est remonté en première ligne, le tout me laisse de la place pour de nouvelles options. Les repères sont toujours disponibles pour l'export.
+- le framework CSS (Bootstrap) a été mis à jour, merci de me remonter les éventuels problèmes d'affichage.
 
 ### Added
 
 - possibilité de choisir entre les noms ICAO (par défaut) et IATA pour les aéroports
-- un mode FOCUS apparait dans les réglages des calques, par défaut il n'affiche que la route. Il est pensé pour utilisation ponctuelle. Ce mode peut aussi être un deuxième jeu de réglages, voir l'aide (RÉGLAGES DES CALQUES).
+- un mode FOCUS apparait dans les réglages des calques. Par défaut il n'affiche que la route. Il est pensé pour utilisation ponctuelle. Ce mode peut aussi être utilisé comme un deuxième jeu de réglages, voir l'aide (RÉGLAGES DES CALQUES).
+- il est possible de ne pas afficher les nouveautés lors des mises à jour. On peut changer d'avis à tout moment dans le CHANGELOG.
 
 ### Fixed
 

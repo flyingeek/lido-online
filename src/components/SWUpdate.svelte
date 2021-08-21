@@ -17,7 +17,7 @@
 <script>
     import {wb, route} from '../stores';
     import { fade } from 'svelte/transition';
-    import ChangeLogModal from './ChangeLogModal.svelte';
+    import ChangeLogModal, {showChangelogOnUdate} from './ChangeLogModal.svelte';
     import {semverCompare} from './utils'; 
     let installLabel = 'Installer';
     const previousAppVersionKey = 'previousAppVersion';
@@ -44,7 +44,7 @@
                 console.debug('SWUpdate: controllerchange reload');
                 (delay) ? setTimeout(() => window.location.reload(), delay) : window.location.reload();
             });
-            //This does not fire when Workbox mark event as isExternal
+            //This does not fire when Workbox mark event as isExternal (note should be fixed now in v6.2)
             // $wb.addEventListener('controlling', () => {
             //     //console.debug('controlling')
             //     if (refreshing) return;
@@ -54,7 +54,9 @@
             //     (delay) ? setTimeout(() => window.location.reload(), delay) : window.location.reload();
             // });
             installLabel = "En cours...";
-            if (!getPreviousAppVersion()) setPreviousAppVersion(); // only set if not already set (cover multiple updates loop)
+            // only set if not already set (cover multiple updates loop)
+            // or if we don't want to show update (in that case we must increase version number always)
+            if (!getPreviousAppVersion() || !showChangelogOnUdate()) setPreviousAppVersion();
             $swRegistration.waiting.postMessage({type: 'SKIP_WAITING'});
             console.debug('SWUpdate: SKIP_WAITING sent');
             // in a scenario where you dismiss update and manually reload the page we need a fallback
@@ -99,8 +101,8 @@
             </div>
         </div>
     </div>
-{:else if !$swUpdated && isAppUpdated() && $route !== "/install"}
-    <ChangeLogModal version={() => getPreviousAppVersion()} title="NOUVEAUTÉS" on:close={resetPreviousAppVersion}/>
+{:else if !$swUpdated && isAppUpdated() && $route !== "/install" && showChangelogOnUdate()}
+    <ChangeLogModal version={getPreviousAppVersion()} title="NOUVEAUTÉS" on:close={resetPreviousAppVersion}/>
 {/if}
 
 <style>
