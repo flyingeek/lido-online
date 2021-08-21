@@ -161,13 +161,13 @@
             {/if}
             <ZoomLevel name="icon-size-change" label="Icônes" value={kmlOptions['iconSizeChange']} on:change={update}/>
         </fieldset>
-        <div class="last" class:text-center={focusOptions !== undefined}>
+        <div>
         {#if (focusOptions === undefined)}
-            <button disabled={!isChanged} class="btn btn-primary btn-sm mb-2"type="button" on:click={save}>Mémoriser</button>
-            <button disabled={!isChanged} class="btn btn-secondary btn-sm mb-2" type="button" on:click={restore}>Restaurer</button>
-            {#if !isDefault}<button class="reset btn btn-outline-dark btn-sm" type="button" on:click={reset}>Reset</button>{/if}
+            <button disabled={!isChanged} class="btn btn-primary btn-sm"type="button" on:click={save}>Mémoriser</button>
+            <button disabled={!isChanged} class="btn btn-secondary btn-sm" type="button" on:click={restore}>Restaurer</button>
+            {#if !isDefault}<button class="btn btn-outline-dark btn-sm ms-auto" type="button" on:click={reset}>Reset</button>{/if}
         {:else}
-            <button disabled={isFocusDefault} class="resetfocus btn btn-outline-danger btn-sm" type="button" on:click={resetFocus}>Réglages FOCUS par défaut</button>
+            <button disabled={isFocusDefault} class="resetfocus btn btn-danger btn-sm" type="button" on:click={resetFocus}>RESET Réglages FOCUS</button>
         {/if}
         </div>
     </form>
@@ -195,7 +195,7 @@
         margin-bottom: 0;
     }
     form {
-        --formwidth: 250px;
+        --formwidth: 260px;
         width: var(--formwidth);
         margin-top: 5px;
         user-select: none; /* supported by Chrome and Opera */
@@ -215,9 +215,6 @@
         padding: 5px;
         z-index: 2;
     }
-    .reset{
-        float: right;
-    }
     @supports ( backdrop-filter: blur(4px) ) or ( -webkit-backdrop-filter: blur(4px) ) {
         .settings {
             background-color: rgba(254,254,254,0.6);
@@ -228,26 +225,28 @@
             background-color: rgba(23, 162, 184, 0.1);
         }
     }
-    .last {
-        margin-top: 24px;
-    }
+
     .getfocus{
         line-height: 1;
-        margin-left: 2ch;
+        margin-left: auto;
         font-size: small;
         font-weight: 500;
-    }
-    .getfocus.active{
-        margin-left: 0.8ch; /* FOCUS OFF is too long */
     }
     .getfocus:not(.active):hover{
         background-color: transparent;
         color: var(--bs-info);
     }
-    .resetfocus:not(:hover){
-        background-color: var(--bg-white);
+    .resetfocus{
+        margin-left: auto;
+        margin-right: auto;
     }
     .btn-sm{
         font-variant-caps: all-small-caps;
+    }
+    form>:last-child {
+        margin-top: 24px;
+        margin-bottom: 0.5rem;
+        display: flex;
+        column-gap: 0.5rem;
     }
 </style>

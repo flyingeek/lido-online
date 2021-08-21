@@ -19,28 +19,38 @@
     export let selectedLabel = 0;
 </script>
 
-<div class="input-group input-group-sm mb-2">
-    <label for="airport-pin" class="input-group-text">Style</label>
-    <!-- svelte-ignore a11y-no-onchange -->
-    <select use:blurAction name="airport-pin" bind:value={selectedPin} class="form-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: 'airport-pin', 'value': selectedPin})}}>
-        {#each options as option, index}
-        <option value="{index}" selected={index === selectedPin}>{option.label}</option>
-        {/each}
-    </select>
+<div class="row g-2">
+    <div class="col">
+        <div class="form-floating">
+            <!-- svelte-ignore a11y-no-onchange -->
+            <select use:blurAction name="airport-pin" bind:value={selectedPin} class="form-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: 'airport-pin', 'value': selectedPin})}}>
+                {#each options as option, index}
+                <option value="{index}" selected={index === selectedPin}>{option.label}</option>
+                {/each}
+            </select>
+            <label for="airport-pin">Style</label>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-floating">
+            <!-- svelte-ignore a11y-no-onchange -->
+            <select use:blurAction name="airport-label" bind:value={selectedLabel} class="form-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: "airport-label", 'value': selectedLabel})}}>
+                {#each labels as option, index}
+                <option value="{index}" selected={index === selectedLabel}>{option.label}</option>
+                {/each}
+            </select>
+            <label for="airport-label">Noms</label>
+        </div>
+    </div>
 </div>
-<div class="input-group input-group-sm">
-    <label for="airport-label" class="input-group-text">Noms</label>
-    <!-- svelte-ignore a11y-no-onchange -->
-    <select use:blurAction name="airport-label" bind:value={selectedLabel} class="form-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: "airport-label", 'value': selectedLabel})}}>
-        {#each labels as option, index}
-        <option value="{index}" selected={index === selectedLabel}>{option.label}</option>
-        {/each}
-    </select>
-</div>
+
 <style>
-    select {
+    /* select {
         border-left: 1px;
         padding-left: 0.2rem;
+    } */
+    .col, .row {
+        margin-top: 0;
     }
     label {
         width: 5em;
