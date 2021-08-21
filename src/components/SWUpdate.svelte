@@ -79,8 +79,8 @@
     </div>
 </div>{install(700) || ''}
 {:else if $swUpdated && !$swDismiss}
-    <div class="modal" tabindex="-1">
-        <div class="modal-dialog" style="position: absolute; top:0; right: 1rem; max-width: 350px;">
+    <div class="modal" transition:fade tabindex="-1">
+        <div class="modal-dialog" transition:fade style="position: absolute; top:0; right: 1rem; max-width: 350px;">
             <div class="modal-content">
                 <h6 class="modal-header pt-2 pb-2">
                     <span class="modal-title text-center"><span>👨🏻‍✈️</span> Mise à jour disponible</span>
