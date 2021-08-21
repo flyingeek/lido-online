@@ -56,6 +56,12 @@
             installLabel = "En cours...";
             if (!getPreviousAppVersion()) setPreviousAppVersion(); // only set if not already set (cover multiple updates loop)
             $swRegistration.waiting.postMessage({type: 'SKIP_WAITING'});
+            console.debug('SWUpdate: SKIP_WAITING sent');
+            // in a scenario where you dismiss update and manually reload the page we need a fallback
+            setTimeout(() => {
+                console.debug('SWUpdate: fallback reload');
+                window.location.reload();
+            }, 5000);//secure a reload after 5s
         }else{ /* update probably done in another tab */
             console.log($wb, $swRegistration, $swRegistration.waiting);
             console.debug('SWUpdate: no waiting reg reload');
