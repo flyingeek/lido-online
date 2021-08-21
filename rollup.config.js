@@ -18,6 +18,9 @@ const path = require('path');
 const Mustache = require('mustache');
 require('dotenv').config();
 const production = !process.env.ROLLUP_WATCH;
+const debugWorkbox = !!process.env.DEBUG_WORKBOX;
+const disableLiveReload = !!process.env.DISABLE_LIVERELOAD || debugWorkbox;
+
 const northId = 'northv3';
 const southId = 'southv3';
 const pacificId = 'pacificv1';
@@ -221,7 +224,7 @@ export default [{
 
     // Watch the `public` directory and refresh the
     // browser on changes when not in production
-    !production && livereload({watch: 'public', port:35729, https: (process.env.SERVE === 'start2') ? {
+    !production && !disableLiveReload && livereload({watch: 'public', port:35729, https: (process.env.SERVE === 'start2') ? {
       key: fs.readFileSync('localhost-key.pem'),
       cert: fs.readFileSync('localhost-cert.pem')
   } : null}),
