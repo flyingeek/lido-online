@@ -9,6 +9,8 @@
     import { fade } from 'svelte/transition';
     import ChangeLog from "./ChangeLog.svelte";
     import clickOutside from '../actions/clickOutsideAction';
+    import { createEventDispatcher } from 'svelte';
+    const dispatch = createEventDispatcher();
     export let visible = false;
     export let title = 'CHANGELOG';
     export let version = undefined;
@@ -27,6 +29,7 @@
     };
     export const close = () => {
         visible = false;
+        dispatch("close");
     };
     if (version && checked) show();
 </script>
