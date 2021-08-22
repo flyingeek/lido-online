@@ -93,7 +93,7 @@
     --plane-color: var(--bs-yellow);
     --plane-halo-color: var(--plane-color);
     --bs4-cyan: #17a2b8;
-    --bs4-infos: #17a2b8;
+    --bs4-info: #17a2b8;
   }
   .content{
     background-color: var(--blueaf);

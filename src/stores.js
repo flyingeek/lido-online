@@ -17,6 +17,7 @@ export const swDismiss = writable(false);
 export const swUpdated = writable(false);
 export const majorUpdate = writable(false);
 export const sidebar = writable(false);
+export const focusMode = writable(false);
 
 export const showGramet = writable(false);
 export const showPlaneOnMap = resetable(false);

@@ -58,7 +58,4 @@
 :global(.checkbox-combo input[type=checkbox]) {
     margin-left: -1px;
 }
-:global(.checkbox-combo) {
-    padding-bottom: 5px;
-}
 </style>

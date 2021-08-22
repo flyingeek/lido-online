@@ -16,7 +16,7 @@
     import AirportSelector from './AirportSelector.svelte';
     import ZoomLevel from './ZoomLevel.svelte';
     import {storage, stores, kmlDefaultOptions, validate} from './storage.js';
-    import {sidebar, ofp} from "../../stores.js";
+    import {sidebar, ofp, focusMode} from "../../stores.js";
     import clickOutside from '../../actions/clickOutsideAction';
     const dispatch = createEventDispatcher();
     const store = stores.optionsKML;
@@ -30,8 +30,10 @@
             obj[key] = (key !== 'routeDisplay' && key.endsWith('Display'))  ? false : options[key];
             return obj;
         }, {});
+
     $: isDefault = compare(kmlOptions, kmlDefaultOptions);
     $: isChanged = !compare(storedOptions, kmlOptions);
+    $: $focusMode = (focusOptions !== undefined);
     $: isFocusDefault = (focusBackup) ? compare(focusOptionsDefault(focusBackup), kmlOptions) : false;
 
     /**
@@ -84,15 +86,12 @@
 
     function toggleFocus(e) {
         e.target.blur();
-        const settingsButtonEl = document.getElementsByClassName('mapboxgl-ctrl-layers')[0];
-        if (focusOptions === undefined) {
+        if (focusOptions !== undefined) {
+            endFocusMode();
+        }else{
             focusBackup = {...kmlOptions};
             focusOptions = validate({...(storage.getItem(focusStore) ||focusOptionsDefault(kmlOptions))});
             updateAll(focusOptions);
-            if (settingsButtonEl) settingsButtonEl.innerHTML=('<svg><use xlink:href="#single-layer-symbol"/></svg>');
-        }else{
-            endFocusMode();
-            if (settingsButtonEl) settingsButtonEl.innerHTML=('<svg><use xlink:href="#layers-symbol"/></svg>');
         }
         $sidebar = false;
     }
@@ -119,17 +118,22 @@
 </script>
 
 {#if $sidebar}
-<div class:sidebar={$sidebar} class:focusmode={focusOptions !== undefined} class="settings"  use:clickOutside on:click_outside={() => $sidebar=false} transition:fly="{{duration: 300, x: 200, y: 0}}">
+<div class:sidebar={$sidebar} class:focusmode={$focusMode} class="settings"  use:clickOutside on:click_outside={() => $sidebar=false} transition:fly="{{duration: 300, x: 200, y: 0}}">
     <!-- svelte-ignore a11y-missing-content -->
     <a class="btn-close float-end" role="button" href="." on:click|preventDefault={() =>  {$sidebar = !$sidebar}}></a>
     <form on:submit|preventDefault class:mt-5={!$ofp}>
         {#if $ofp}
-        <fieldset class="form-group">
+        <fieldset class="form-group mb-4">
             <legend class="d-flex align-items-center">
                 <input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR REG</legend>
         </fieldset>
         <fieldset class="form-group">
-            <CheckboxColorCombo name="route" kmlColor={kmlOptions['routeColor']} checked={kmlOptions['routeDisplay']} on:change={update}>Route<button class="getfocus btn btn-sm btn-outline-info" class:active={focusOptions!==undefined} on:click|preventDefault={toggleFocus}>{(focusOptions!==undefined) ? 'FOCUS OFF' : 'FOCUS'}</button></CheckboxColorCombo>
+            <CheckboxColorCombo name="route" kmlColor={kmlOptions['routeColor']} checked={kmlOptions['routeDisplay']} on:change={update}>
+                Route
+                <button class="getfocus btn btn-sm btn-outline-info" class:active={$focusMode} on:click|preventDefault={toggleFocus}>
+                    {#if $focusMode}<svg><use xlink:href="#checkmark-symbol"/></svg>{/if}FOCUS</button>
+            </CheckboxColorCombo>
+            {#if $focusMode}<small class="text-center mt-0">Cliquez sur FOCUS pour sortir du mode</small>{/if}
         </fieldset>
         <fieldset class="form-group">
             <CheckboxColorCombo name="alternate" kmlColor={kmlOptions['alternateColor']} checked={kmlOptions['alternateDisplay']} on:change={update}>Dégagement</CheckboxColorCombo>
@@ -162,12 +166,12 @@
             <ZoomLevel name="icon-size-change" label="Icônes" value={kmlOptions['iconSizeChange']} on:change={update}/>
         </fieldset>
         <div>
-        {#if (focusOptions === undefined)}
+        {#if (!$focusMode)}
             <button disabled={!isChanged} class="btn btn-primary btn-sm"type="button" on:click={save}>Mémoriser</button>
             <button disabled={!isChanged} class="btn btn-secondary btn-sm" type="button" on:click={restore}>Restaurer</button>
             {#if !isDefault}<button class="btn btn-outline-dark btn-sm ms-auto" type="button" on:click={reset}>Reset</button>{/if}
         {:else}
-            <button disabled={isFocusDefault} class="resetfocus btn btn-danger btn-sm" type="button" on:click={resetFocus}>RESET Réglages FOCUS</button>
+            <button disabled={isFocusDefault} class="resetfocus btn btn-danger btn-sm" type="button" on:click={resetFocus}>RESET Réglages mode FOCUS</button>
         {/if}
         </div>
     </form>
@@ -182,11 +186,13 @@
         opacity: .3;
     }
     fieldset small {
-        line-height: 1.1;
+        line-height: 1;
         width: var(--formwidth);
         display: block;
-        margin-top: -0.2em;
+        margin-top: -0.05rem;
         font-size: 70%;
+        position: absolute;
+        font-variant: all-small-caps
     }
     :global(.settings legend, .checkbox-combo label.form-control) {
         font-size: 1rem;
@@ -195,7 +201,7 @@
         margin-bottom: 0;
     }
     form {
-        --formwidth: 260px;
+        --formwidth: 250px;
         width: var(--formwidth);
         margin-top: 5px;
         user-select: none; /* supported by Chrome and Opera */
@@ -204,7 +210,7 @@
         touch-action: manipulation;
     }
     .form-group{
-        margin-bottom: 0.8em;
+        margin-bottom: 1.25rem;
     }
     .settings {
         position: absolute;
@@ -229,8 +235,31 @@
     .getfocus{
         line-height: 1;
         margin-left: auto;
-        font-size: small;
+        font-size: 0.8rem;
         font-weight: 500;
+        display: flex;
+        align-items: center;
+        color: var(--bs-info);
+        border-color: var(--bs-info);
+    }
+    .getfocus.active, .getfocus:active {
+        color: var(--bs-dark);
+        background-color: var(--bs-info);
+        border-color: var(--bs-info);
+    }
+    .getfocus svg {
+        width: 0.7rem;
+        height: 0.7rem;
+        stroke: transparent;
+        stroke-width: 8px;
+        margin-right: 5px;
+        border: 1px solid var(--bs-info);
+        padding: 2px;
+        border-radius: 2px;
+    }
+    .getfocus.active svg {
+        stroke: var(--bs-dark);
+        border: 1px solid var(--bs-dark);
     }
     .getfocus:not(.active):hover{
         background-color: transparent;
@@ -248,5 +277,8 @@
         margin-bottom: 0.5rem;
         display: flex;
         column-gap: 0.5rem;
+    }
+    .settings :global(select[name=airport-pin]), .settings :global(select[name=airport-label]) {
+        font-size: 0.9rem;
     }
 </style>

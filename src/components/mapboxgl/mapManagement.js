@@ -2,13 +2,18 @@
 
 import {clamp, isInside, lineclip, getBounds} from '../utils';
 import {loadMapLayers} from './layersManagement';
-import {sidebar} from '../../stores';
+import {focusMode, sidebar} from '../../stores';
 import times from './pj_times';
 import eqearth from './pj_eqearth';
 
 export const token = 'MAPBOX_TOKEN';
 
 export const key = {};
+
+export const mapControlHTML = focusMode => (
+    (focusMode) 
+    ? '<svg><use xlink:href="#single-layer-symbol"/></svg>'
+    : '<svg><use xlink:href="#layers-symbol"/></svg>');
 
 export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadCb, initialLoad=false) {
     if (!window.proj4.Proj.projections.get('times')) window.proj4.Proj.projections.add(times);
@@ -160,7 +165,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
         this._button.className = 'mapboxgl-ctrl-layers';
         this._button.setAttribute('type', "button");
         this._button.setAttribute('title', "Personnaliser la carte");
-        this._button.innerHTML = `<svg><use xlink:href="#layers-symbol"/></svg>`;
+        this._focusModeUnsubscribe = focusMode.subscribe($focusMode => this._button.innerHTML = mapControlHTML($focusMode));
         this._container.appendChild(this._button);
         this._toggleSidebar = () => sidebar.update((value) => !value);
         this._button.addEventListener('click', this._toggleSidebar);
@@ -168,6 +173,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
         }
         onRemove() {
         this._button.removeEventListener('click', this._toggleSidebar);
+        this._focusModeUnsubscribe();
         this._container.parentNode.removeChild(this._container);
         this._map = undefined;
         }

@@ -94,7 +94,7 @@
     <fieldset class="form-group">
         <CheckboxColorCombo name="great-circle" kmlColor={exportOptions['greatCircleColor']} checked={exportOptions['greatCircleDisplay']} on:change={update}>Orthodromie</CheckboxColorCombo>
     </fieldset>
-    <div class="mt-3 mb-1 d-flex">
+    <div class="mt-4 mb-2 d-flex">
         <button disabled={!isChanged} class="btn btn-primary btn-sm"type="button" on:click={save}>Mémoriser</button>
         <button disabled={!isChanged} class="btn btn-secondary btn-sm ms-3" type="button" on:click={restore}>Restaurer</button>
         <button disabled={isLikeMap} class="btn btn-outline-secondary btn-sm ms-auto" type="button" on:click={asMap}>Comme Carte</button>
