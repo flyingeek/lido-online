@@ -44,7 +44,9 @@ Pour vous entraîner, je vous recommande de modifier la couleur des terrains en 
 
 Un mode FOCUS est disponible, par défaut il n'affiche que la route. Il s'active en cliquant sur FOCUS dans le champ ROUTE des réglages. Pour quitter ce mode, réaffichez les réglages et cliquez à nouveau sur le bouton.
 
-Le mode FOCUS est personnalisable, devenant ainsi un deuxième jeu de réglages&#8239;: En mode FOCUS, affichez et modifiez les réglages. Par exemple, une couleur rouge orangée de la route sera bien plus lisible dans la projection The World. Si besoin, il est possible de revenir aux réglages par défaut du mode FOCUS.
+Le mode FOCUS est personnalisable, devenant ainsi un deuxième jeu de réglages&#8239;: En mode FOCUS, affichez et modifiez les réglages, la sauvegarde est automatique. Dans mon usage personnel, à titre d'exemple, je modifie la couleur de la route pour une couleur rouge orangée bien plus lisible dans la projection The World.
+
+Si besoin, vous pouvez effacer vos réglages et revenir aux valeurs par défaut du mode FOCUS.
 
 ## Particularités de l'iPad
 

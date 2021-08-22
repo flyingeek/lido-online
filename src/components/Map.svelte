@@ -34,7 +34,7 @@
     let selectedProjection;
     let aircraftTypeSelectElement;
     let cacheMaxValue = 0;
-    let cacheValue = 0;
+    let cacheValue = -1;
     let cacheError = false;
     let tilesMissing = [];
     let settings;
@@ -67,7 +67,7 @@
     function projectionChange(e) {
         e.target.blur(); // to avoid zoom problem in standalone mode
         if (map) map.remove();
-        cacheValue = 0;
+        cacheValue = -1;
         cacheError = false;
         tilesMissing = [];
         cacheMaxValue = 0;
@@ -109,6 +109,7 @@
     const cacheMap = async (e) => {
         if (cacheButtonDisabled) return false;
         cacheButtonDisabled = true;
+        cacheValue = 0;
         try {
             cacheMaxValue = tilesMissing.length; // set the progress class
             cacheError = false; //remove error class
@@ -118,18 +119,20 @@
                 console.error(err);
                 cacheButtonDisabled = false;
                 cacheError = true;
+                cacheValue = -1;
                 return false;
             }
-            cacheValue = 0;
             await fetchSimultaneously(tilesMissing, () => cacheValue++);
             if (cacheValue>=cacheMaxValue){
                 caches[selectedProjection.id] = true;
                 caches=caches;
                 tilesMissing = [];
                 cacheMaxValue = 0;
+                cacheValue = -1;
             }
         }finally{
             cacheButtonDisabled = false;
+            cacheValue = -1;
         }
     }
     let supportWebP = true;
@@ -165,14 +168,18 @@
 
 <div id={id} use:mapResizeAction={map}></div>
 <div class="mapmenu">
-    <MapProjectionSelect bind:selected={selectedProjection} ofp={ofp} on:change={projectionChange}/>
-    {#if (selectedProjection && ofp && window.indexedDB && $online && caches[selectedProjection.id]!==true && !mapIsCached)}
-        <div class="cacheButton" class:cacheError={cacheError} class:cacheProgress={cacheValue > 0||cacheMaxValue > 0} on:click={(cacheButtonDisabled) ? () => false : cacheMap}>
-            <CircleProgress value={cacheValue} max={cacheMaxValue}>
-                <slot><span>↓</span></slot>
-            </CircleProgress>
-        </div>
+    <div class="projection">
+    <MapProjectionSelect bind:selected={selectedProjection} ofp={ofp} on:change={projectionChange}></MapProjectionSelect>
+    {#if (selectedProjection && window.indexedDB)}
+    <div class="cacheButton"
+        class:cacheError={cacheError}
+        class:cacheProgress={cacheValue >= 0||cacheMaxValue > 0}
+        class:hidden={!ofp || mapIsCached|| !$online || caches[selectedProjection.id]===true}
+        on:click={(cacheButtonDisabled) ? () => false : cacheMap}>
+        <CircleProgress value={(cacheValue>=0) ? cacheValue : 0} max={cacheMaxValue}></CircleProgress>
+    </div>
     {/if}
+    </div>
     {#if (!supportWebP && mapData && mapData.mapOptions && mapData.mapOptions.tiles && mapData.mapOptions.tiles[0].endsWith('.webp'))}
         <div class="nowebp">Votre navigateur ne supporte pas l'affichage d'images au format .webp</div>
     {/if}
@@ -192,9 +199,14 @@
         position: absolute;
         top: 10px;
         left: 10px;
+        width: 180px;
         user-select: none; /* supported by Chrome and Opera */
         -webkit-user-select: none; /* Safari */
         -moz-user-select: none; /* Firefox */
+    }
+    .projection {
+        display:flex;
+        align-items: center;
     }
     :global(.mapboxgl-ctrl-attrib-inner select[name=aircraftType]){
         display: inline-block !important;
@@ -212,6 +224,9 @@
             top :5px;
         }
     }
+    .hidden {
+        visibility: hidden;
+    }
     .cacheButton {
         display: inline-block;
         position: relative;
@@ -223,11 +238,17 @@
 
     .cacheButton.cacheError {
         color: var(--bs-red) !important;
+        --progress-trackcolor: var(--bs-gray-500) !important;
     }
     .cacheButton.cacheProgress {
         color: var(--bs-yellow);
+        --progress-trackcolor: black;
     }
-    .cacheButton span {
+    .cacheButton.cacheProgress, .cacheButton.cacheError{
+        --progress-circlefill: var(--bs-gray-100);
+    }
+    .cacheButton::after{
+        content: "↓";
         display:inline-block;
         text-align: center;
         height: 24px;

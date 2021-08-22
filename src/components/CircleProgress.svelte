@@ -20,9 +20,10 @@
     };
 </script>
 
-<svg viewBox="0 0 100 100">
-    <path d="M50,5A45 45 0 1 1 49.9999 5" />
-    <path d="{progressPath()}" />
+<svg viewBox="0 0 108 108">
+    <circle cx="54" cy="54" r="50"/>
+    <path d="M50,5A45 45 0 1 1 49.9999 5" transform="translate(4,4)"/>
+    <path d="{progressPath()}" transform="translate(4,4)"/>
 </svg>
 <slot></slot>
 
@@ -31,11 +32,16 @@
         fill: var(--progress-fill, transparent);
         height: var(--progress-height, 24px);
         stroke-linecap: var(--progress-linecap, round);
-        width: var(--progress-width, 24px);;
+        width: var(--progress-width, 24px);
     }
-    path:first-child {
-        stroke: var(--progress-trackcolor, grey);
-        stroke-width: var(--progress-trackwidth, 9px);
+    circle {
+        fill: var(--progress-circlefill, transparent);
+        stroke: var(--progress-circlestroke, white);
+        stroke-width: 8px;
+    }
+    path:first-of-type {
+        stroke: var(--progress-trackcolor, var(--bs-gray-500));
+        stroke-width: var(--progress-trackwidth, 10px);
     }
     path:last-child {
         stroke: var(--progress-color, yellow);
