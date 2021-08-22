@@ -3,12 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.15.0] - 2021-08-xx
+## [1.15.0] - 2021-08-23
 
 ### Changed
 
 - les réglages des calques sont simplifiés: il n'est plus possible d'utiliser des repères sur la carte. Le calque FIR-REG est remonté en première ligne, le tout me laisse de la place pour de nouvelles options. Les repères sont toujours disponibles pour l'export.
 - le framework CSS (Bootstrap) a été mis à jour, merci de me remonter les éventuels problèmes d'affichage.
+- _plugin_ [OFP2MAP-FAA WIPs v2](https://www.icloud.com/shortcuts/17bd4ab2ebec430596137173b131ce38) ajoute les dégagements s'ils publient une carte.
 
 ### Added
 
