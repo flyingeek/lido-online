@@ -11,3 +11,4 @@ localhost-cert.pem
 localhost-key.pem
 .vscode/settings.json
 data/eWAS-*.csv
+data/iata2country.json

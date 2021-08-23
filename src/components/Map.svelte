@@ -270,6 +270,9 @@
     :global(.map page) {
         overflow: hidden;
     }
+    :global(.mapboxgl-popup-content .airport) {
+        min-width: 180px;
+    }
     :global(.mapboxgl-popup-content .airport p){
         margin: 0 auto;
         display: inline-block;
@@ -293,6 +296,26 @@
     :global(.mapboxgl-popup-content){
         text-align: center;
     }
+    :global(.mapboxgl-popup-content h1){
+        display: flex;
+        align-items: center;
+        column-gap: 1ch;
+        font-size: small;
+        font-weight: bold;
+        margin-left: 5px;
+        margin-right: 5px; /* space for close button */
+        margin-bottom: 0; /* because the flag uses a xx-large font */
+    }
+    :global(.mapboxgl-popup-content .flag){
+        font-size: 1.78rem;
+        margin-left: auto;
+    }
+    :global(.mapboxgl-popup-content .cc){
+        text-overflow: ellipsis;
+        overflow: hidden;
+        font-weight: normal;
+        white-space: nowrap;
+    }
     :global(.mapboxgl-popup-content h2){
         font-size: small;
         font-weight: normal;
@@ -301,12 +324,6 @@
         color: #062DF8;
         font-weight: 900;
         margin-left: 0.25rem;
-    }
-    :global(.mapboxgl-popup-content h1){
-        font-size: small;
-        font-weight: bold;
-        margin-left: 1rem;
-        margin-right: 1rem;
     }
     :global(.mapboxgl-popup-content .track p){
         text-align: left;

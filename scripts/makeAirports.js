@@ -1,5 +1,8 @@
-const Papa = require('papaparse');
-const fs = require('fs');
+//const Papa = require('papaparse');
+import Papa from 'papaparse';
+import fs from 'fs';
+import { countryCodeEmoji, countryCodeName } from '../src/components/countries.js';
+
 const scriptArgs = process.argv.slice(2);
 const airac = ((scriptArgs.length === 1) ? scriptArgs[0] : process.env.npm_package_config_AIRAC).substring(0,4);
 if (typeof airac !== 'string' || airac.length !== 4) throw new Error(`invalid AIRAC: ${airac}, did you use npm run makeAirports ?`);
@@ -8,6 +11,12 @@ const dataPath = `data/Global${airac}.csv`;
 const output = "../lidojs/src/modules/airports.json";
 const iataOutput = "../lidojs/src/modules/iata2icao.json";
 const geojson = "data/airports.geojson";
+
+const iata2countryData = JSON.parse(fs.readFileSync('data/iata2country.json'));
+const iata2cc = (iata) => {
+    const index = iata2countryData.indexOf(iata + ':');
+    return (index >= 0) ? iata2countryData.substring(index + 4, index + 6): null;
+};
 
 function parseGlobal() {
     const file = fs.createReadStream(dataPath);
@@ -80,7 +89,14 @@ function parseGlobal() {
             //if (level>0) console.log(data[0], level);
             const latitude = parseFloat(data[3]);
             const longitude = parseFloat(data[4]);
-            const icao = data[0].trim()
+            const icao = data[0].trim();
+            const iata = data[2].trim();
+            const cc = (iata) ? iata2cc(iata) : null;
+            if (!cc) console.error(`unknown country code for ${icao}/${iata}`);
+            const emoji = countryCodeEmoji(cc);
+            if (!emoji) console.error(`unknown emoji for ${icao}/${iata}/${cc}`);
+            const countryName = countryCodeName(cc);
+            if (!countryName) console.error(`unknown country name for ${icao}/${iata}/${cc}`);
             results[icao] = [latitude, longitude];
             // if (longitude >= -30 && longitude <= 40 && latitude >=25) {
             //     icaoCountries[icao.substring(0, 2)] = true;
@@ -94,9 +110,10 @@ function parseGlobal() {
                     'coordinates': [parseFloat(data[4]), parseFloat(data[3])]
                 },
                 'properties': {
-                    'name': data[0].trim(),
+                    'name': icao,
                     'title': data[1].trim(),
-                    'iata': data[2].trim(),
+                    iata,
+                    cc,
                     'level': level,
                     'h': (data[48].trim() === 'H') ? 1 : 0
                 }

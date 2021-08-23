@@ -1,5 +1,5 @@
-const fs = require('fs');
-const etl = require('etl');
+import fs from 'fs';
+import etl from 'etl';
 const unzipper = require('unzipper');
 const parser = require('fast-xml-parser');
 const mapshaper = require('mapshaper');

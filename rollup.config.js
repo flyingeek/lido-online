@@ -12,11 +12,14 @@ import {version, config} from './package.json';
 import lidojsPkg from './node_modules/@flyingeek/lidojs/package.json';
 import md2json from 'md-2-json';
 import fs from 'fs';
-const workbox = require('rollup-plugin-workbox-inject');
-const {markdown} = require('svelte-preprocess-markdown');
-const path = require('path');
-const Mustache = require('mustache');
-require('dotenv').config();
+import workbox from 'rollup-plugin-workbox-inject';
+import {markdown} from 'svelte-preprocess-markdown';
+import path from 'path';
+import Mustache from 'mustache';
+import dotenv from 'dotenv'
+dotenv.config();
+import child_process from 'child_process';
+
 const production = !process.env.ROLLUP_WATCH;
 const debugWorkbox = !!process.env.DEBUG_WORKBOX;
 const disableLiveReload = !!process.env.DISABLE_LIVERELOAD || debugWorkbox;
@@ -80,7 +83,7 @@ function serve() {
       writeBundle() {
           if (server) return;
           const command = (process.env.SERVE === 'start2') ? 'start2' : 'start';
-          server = require('child_process').spawn('npm', ['run', command, '--', '--dev'], {
+          server = child_process.spawn('npm', ['run', command, '--', '--dev'], {
               stdio: ['ignore', 'inherit', 'inherit'],
               shell: true
           });

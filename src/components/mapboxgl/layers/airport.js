@@ -3,6 +3,7 @@ import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
 import {isMedicalStyle, isStatusStyle} from "../../mapSettings/AirportSelector.svelte";
 import {computeIconTextSize, computeIconSize} from '../utils';
 import {supportsHover} from "../../utils";
+import { countryCodeName, countryCodeEmoji } from "../../countries";
 import {get} from "svelte/store";
 import {aircraftType as aircraftTypeStore} from '../../../stores';
 
@@ -255,7 +256,9 @@ export const addAirports = (data) => {
                     break;
             }
             const isMedical = e.features[0].properties.h === 1 && statusNum !== "0";
-            let html = `<div class="airport"><h1>${icao} / ${iata}</h1><h2>${title}${(isMedical) ? ' <b>🄷</b>' : ''}</h2>`;
+            const cc = e.features[0].properties.cc;
+            let html = `<div class="airport"><h1><span class="title">${icao}/${iata}</span><span class="flag">${countryCodeEmoji(cc)}</span><span class="cc">${countryCodeName(cc)}</span></h1>`;
+            html += `<h2>${title}${(isMedical) ? ' <b>🄷</b>' : ''}</h2>`;
             if (ofp) {
                 html +=  `<p class="status status-${statusNum.charAt(0)}">STATUT ${statusNum}</p>`;
                 if(security > 0) html += `<p class="security-${security}">${(security==1) ? 'ORANGE' : 'RED'}</p>`;
