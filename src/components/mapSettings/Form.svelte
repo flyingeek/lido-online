@@ -33,7 +33,6 @@
 
     $: isDefault = compare(kmlOptions, kmlDefaultOptions);
     $: isChanged = !compare(storedOptions, kmlOptions);
-    $: $focusMode = (focusOptions !== undefined);
     $: isFocusDefault = (focusBackup) ? compare(focusOptionsDefault(focusBackup), kmlOptions) : false;
 
     /**
@@ -86,24 +85,24 @@
 
     function toggleFocus(e) {
         e.target.blur();
-        if (focusOptions !== undefined) {
+        if ($focusMode) {
             endFocusMode();
         }else{
             focusBackup = {...kmlOptions};
             focusOptions = validate({...(storage.getItem(focusStore) ||focusOptionsDefault(kmlOptions))});
+            $focusMode = true;
             updateAll(focusOptions);
         }
         $sidebar = false;
     }
     export function endFocusMode() {
-        if (focusOptions !== undefined){
+        if ($focusMode) {
             storage.setItem(focusStore, kmlOptions);
             if (focusBackup) {
                 updateAll(focusBackup);
-            } else {
-                console.error('the focus backup should never be undefined');
             }
             focusOptions = undefined;
+            $focusMode = false;
         }
     }
     function resetFocus() {
@@ -159,9 +158,9 @@
         {/if}
         <fieldset class="form-group">
             <legend>Aspect général</legend>
-            <ZoomLevel name="icon-text-change" label="Labels" value={kmlOptions['iconTextChange']} min={0.9} max={1.4} on:change={update}/>
+            <ZoomLevel name="icon-text-change" label="Labels" value={kmlOptions['iconTextChange']} min={0.9} max={2} on:change={update}/>
             {#if $ofp}
-            <ZoomLevel name="line-width-change" label="Lignes" value={kmlOptions['lineWidthChange']} on:change={update}/>
+            <ZoomLevel name="line-width-change" label="Lignes" value={kmlOptions['lineWidthChange']} max={3} on:change={update}/>
             {/if}
             <ZoomLevel name="icon-size-change" label="Icônes" value={kmlOptions['iconSizeChange']} on:change={update}/>
         </fieldset>
