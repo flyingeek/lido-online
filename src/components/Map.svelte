@@ -296,15 +296,22 @@
     :global(.mapboxgl-popup-content){
         text-align: center;
     }
-    :global(.mapboxgl-popup-content h1){
-        display: flex;
-        align-items: center;
-        column-gap: 1ch;
+    :global(.mapboxgl-popup-content h1) {
         font-size: small;
         font-weight: bold;
         margin-left: 5px;
         margin-right: 5px; /* space for close button */
+    }
+    :global(.mapboxgl-popup-content .airport h1){
+        display: flex;
+        align-items: center;
+        column-gap: 1ch;
+        margin-left: 5px;
+        margin-right: 5px; /* space for close button */
         margin-bottom: 0; /* because the flag uses a xx-large font */
+    }
+    :global(.mapboxgl-popup-content .airport .title){
+        flex: 1 1 auto;
     }
     :global(.mapboxgl-popup-content .flag){
         font-size: 1.78rem;
