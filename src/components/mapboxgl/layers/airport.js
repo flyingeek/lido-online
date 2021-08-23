@@ -309,7 +309,7 @@ export function changeAirportStyle(data) {
     if (map.getLayer(adequateLayer)) {
         changeAdequatesColor(data);
         map.setPaintProperty(adequateLayer, 'icon-halo-width', getIconHaloWidth(style, !!ofp));
-        map.setLayoutProperty(adequateLayer, 'text-field', getAdequateTextField(style));
+        map.setLayoutProperty(adequateLayer, 'text-field', getAdequateTextField(style, kmlOptions.airportLabel));
         map.setFilter(adequateLayer, filterByAircraftType(aircraftType, true, style===2));
     }
     if (map.getLayer(emergencyLayer)) map.setFilter(emergencyLayer, filterByAircraftType(aircraftType, false, style===2));
