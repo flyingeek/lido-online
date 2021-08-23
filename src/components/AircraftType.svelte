@@ -1,8 +1,9 @@
 <script>
-    import {selectedAircraftType, aircraftType} from '../stores';
+    import {selectedAircraftType, aircraftType, ofp} from '../stores';
     import {aircraftTypes, discontinuatedAircraftTypes} from '../constants';
     import blurAction from '../actions/blurAction';
     export let aircraftTypeSelectElement = null;
+    $: ofpAircraftType = ($ofp) ? $ofp.infos.aircraftType : undefined;
 </script>
 
 <!-- svelte-ignore a11y-no-onchange -->
@@ -11,7 +12,7 @@
         <option value="{undefined}" selected={true}>???</option>
     {/if}
     {#each aircraftTypes as type}
-        {#if (type === $aircraftType || !discontinuatedAircraftTypes.includes(type))}
+        {#if (type === $aircraftType|| (ofpAircraftType && type === ofpAircraftType) || !discontinuatedAircraftTypes.includes(type))}
             <option value="{type}" selected={type === $aircraftType}>{type}</option>
         {/if}
     {/each}

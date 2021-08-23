@@ -115,12 +115,10 @@ function parseGlobal() {
                     iata,
                     cc,
                     'level': level,
-                    'h': (data[48].trim() === 'H') ? 1 : 0
+                    'h': (data[48].trim() === 'H') ? 1 : 0,
+                    ...order
                 }
             };
-            for (const k in order){
-                feature.properties[k] = order[k];
-            }
             geojsonResults.push(feature);
             counter += 1;
             return;
