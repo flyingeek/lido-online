@@ -1,7 +1,7 @@
 /* global mapboxgl editolido */
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
 import {isMedicalStyle, isStatusStyle} from "../../mapSettings/AirportSelector.svelte";
-import {computeIconTextSize, computeIconSize} from '../utils';
+import {computeIconTextSize, computeIconSize, haloLightColor, haloTextBlur, haloTextWidth} from '../utils';
 import {supportsHover} from "../../utils";
 import { countryCodeName, countryCodeEmoji } from "../../countries";
 import {get} from "svelte/store";
@@ -75,7 +75,7 @@ const getTextColor = (style, raltNames, hexColor, ofpLoaded) => {
     return ["case",
     ["in", ["get", "name"], ["literal", raltNames]], hexColor,
     ["==", 0, ["get", "level"]], styleBasedColor,
-    '#C60'];
+    '#8d4600'];
 };
 const getAdequateTextField = (style, labelling) => {
     const label = (labelling === 0) ? ['get', 'name'] : ['get', 'iata'];
@@ -89,11 +89,27 @@ const getEmergencyTextField = (labelling) => {
 const adequateTextSize = (etopsNames, textRatio) => {
     return ["case",
     ["in", ["get", "name"], ["literal", etopsNames]], computeIconTextSize(textRatio, 10),
-    computeIconTextSize(textRatio, 8, 1.15)]
-}
+    computeIconTextSize(textRatio, 8, 1.15)];
+};
 const emergencyTextSize = (textRatio) => {
-    return computeIconTextSize(textRatio, 8, 1.15)
-}
+    return computeIconTextSize(textRatio, 8, 1.15);
+};
+const adequateHaloBlur = (etopsNames, textRatio) => {
+    return ["case",
+    ["in", ["get", "name"], ["literal", etopsNames]], haloTextBlur(computeIconTextSize(textRatio, 10)),
+    haloTextBlur(computeIconTextSize(textRatio, 8, 1.15))];
+};
+const emergencyHaloBlur = (textRatio) => {
+    return haloTextBlur(computeIconTextSize(textRatio, 8, 1.15));
+};
+const adequateHaloWidth = (etopsNames, textRatio) => {
+    return ["case",
+    ["in", ["get", "name"], ["literal", etopsNames]], haloTextWidth(computeIconTextSize(textRatio, 10)),
+    haloTextWidth(computeIconTextSize(textRatio, 8, 1.15))];
+};
+const emergencyHaloWidth = (textRatio) => {
+    return haloTextWidth(computeIconTextSize(textRatio, 8, 1.15));
+};
 const adequateIconSize = (etopsNames, iconRatio) => {
     return ["case",
     ["in", ["get", "name"], ["literal", etopsNames]], computeIconSize(iconRatio, 1),
@@ -123,18 +139,18 @@ export const addAirports = (data) => {
     const maxPriorityNames = (ofp) ? [ofp.departure.name, ofp.arrival.name].concat(etopsNames) : etopsNames;
     fetch('data/airports.CONF_AIRAC.geojson')
     .then(response => response.json())
-    .then(data => {
+    .then(json => {
         if (affine) {
             const projFeatures = [];
-            for (let feature of data.features) {
+            for (let feature of json.features) {
                 feature.geometry.coordinates = affine(feature.geometry.coordinates);
                 if(feature.geometry.coordinates !== undefined) projFeatures.push(feature);
             }
-            data.features = projFeatures;
+            json.features = projFeatures;
         }
         map.addSource(source, {
             type: 'geojson',
-            data: data
+            data: json
         });
         //<select style="background-color: transparent;border: none;"><option>773</option></select>
         map.addLayer({
@@ -166,6 +182,7 @@ export const addAirports = (data) => {
                 'icon-halo-width': 0,
                 'icon-halo-color': '#000',
                 'text-color': "#000",
+                'text-halo-color': haloLightColor,
                 'text-opacity': 0.8
             },
             'filter': filterByAircraftType(aircraftType, false, style===2)
@@ -199,12 +216,13 @@ export const addAirports = (data) => {
                 'icon-halo-width': getIconHaloWidth(style, !!ofp),
                 'icon-color': getIconColor(style, aircraftType, raltNames, hexcolorEtops, !!ofp),
                 'text-color': getTextColor(style, raltNames, hexcolorEtops, !!ofp),
-                'text-halo-color': "#000",
+                'text-halo-color': haloLightColor,
                 'text-halo-width': ["case", ["==", 0, ["get", "level"]], 0, 0],
                 'text-opacity': 0.8
             },
             'filter': filterByAircraftType(aircraftType, true, style===2)
         });
+        setTextHalo(data);
         const popup = new mapboxgl.Popup({
             closeButton: true,
             // on touchscreen, this allows to show popup on each airport click
@@ -344,6 +362,7 @@ const changeIconText = (data) => {
     if (map.getLayer(emergencyLayer)) {
         map.setLayoutProperty(emergencyLayer, 'text-size', emergencyTextSize(kmlOptions['iconTextChange']));
     }
+    setTextHalo(data);
 }
 const changeIconSize = (data) => {
     const {map, kmlOptions, ofp} = data;
@@ -374,6 +393,18 @@ const changeLabel = (data) => {
         map.setLayoutProperty(emergencyLayer, 'text-field', getEmergencyTextField(value));
     }
 };
+function setTextHalo(data){
+    const {map, kmlOptions, ofp} = data;
+    const value = kmlOptions.iconTextChange;
+    const [, etopsNames] = getEtopsNames(ofp);
+    if (value && map.getLayer(adequateLayer) && map.getLayer(emergencyLayer)) {
+        map.setPaintProperty(adequateLayer, 'text-halo-width', adequateHaloWidth(etopsNames, value));
+        map.setPaintProperty(emergencyLayer, 'text-halo-width', emergencyHaloWidth(value));
+        map.setPaintProperty(adequateLayer, 'text-halo-blur', adequateHaloBlur(etopsNames, value));
+        map.setPaintProperty(emergencyLayer, 'text-halo-blur', emergencyHaloBlur(value));
+    }
+    return true; // allows chaining
+}
 export default {
     show: (data) => changeAirportDisplay(data, true),
     hide: (data) => changeAirportDisplay(data, false),

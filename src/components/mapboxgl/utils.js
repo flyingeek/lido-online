@@ -1,6 +1,6 @@
 import {jsonLine, jsonPoint, featureCollection} from './json';
 import {folder2prefix} from '../utils';
-import {kml2mapColor} from "../mapSettings/ColorPinCombo.svelte";
+import {kml2mapColor, splitKmlColor} from "../mapSettings/ColorPinCombo.svelte";
 
 export const pinColors = [
     '#FFFFFF', '#6699FF', '#FFFF00',
@@ -12,7 +12,17 @@ export const lineWidthDefault = 2;
 export const iconSizeDefault = 1;
 export const iconSizeDefaultNoPin = 0.2;
 export const minTextOpacityDefault= 0.8;
-
+export const haloTextSizeThreshold =10;
+export const haloLightColor = "#f8f9fa"; //bs-gray-100
+export const haloDarkColor = "#212529"; //bs-dark
+export const haloTextBlur = (textSize) => (textSize >= haloTextSizeThreshold) ? textSize/2 : 0;
+export const haloTextWidth = (textSize) => textSize/4;
+export const getContrastColor = (kmlColor, opacityProperty) => {
+    const [R, G, B,] = splitKmlColor(kmlColor).map((v) => parseInt(v, 16));
+    const A = opacityProperty;
+    const brightness = R * 0.299 + G * 0.587 + B * 0.114 + (1 - A) * 255;
+    return brightness > 186 ? haloDarkColor : haloLightColor;
+}
 export const geoPoints2LngLats = (data, affine, cb) => {
     let lngLats = [];
     const len = data.length;
@@ -125,6 +135,7 @@ export function markerLayer (folder, kmlcolor, visibility, textSize, iconSize) {
             'icon-color': getIconColorExpression(hexcolor),
             'icon-halo-width': 1,
             'icon-halo-color': '#000',
+            'text-halo-color': haloLightColor,
             'text-color': getTextColorExpression(hexcolor),
             'text-opacity': getOpacityColorExpression(opacity)
         }
