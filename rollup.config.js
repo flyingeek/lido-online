@@ -273,6 +273,8 @@ export default [{
         "images/map-help.webp",
         "images/layers-settings.webp",
         "images/65x70_northern-lights.webp",
+        "images/stripe-orange.png",
+        "images/stripe-red.png",
         "css/bundle.css",
         "js/bundle.js",
         "svg/*.svg",

@@ -1,6 +1,7 @@
 const folder = 'fir-reg';
 const lineLayer = `${folder}-line-layer`;
-const fillLayer = `${folder}-layer`;
+const orangeStripeLayer = `${folder}-orange-stripe-layer`;
+const redStripeLayer = `${folder}-red-stripe-layer`;
 const source = `${folder}-source`;
 
 export const addFirReg = (data) => {
@@ -22,14 +23,28 @@ export const addFirReg = (data) => {
             data: data
         });
         map.addLayer({
-            'id': fillLayer,
+            'id': orangeStripeLayer,
             'type': 'fill',
             'source': source,
             'layout': {'visibility': (visibility) ? 'visible' : 'none'},
             'paint': {
-                'fill-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgba(255,0,0,0.2)", "rgba(255,127,0,0.25)"]
-                //'fill-outline-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgb(255,0,0)", "rgb(255,127,0)"]
-            }
+                //'fill-color': "rgba(255, 0, 0, 0.2)",
+                'fill-pattern': 'stripe-orange',
+                'fill-opacity': 0.4
+            },
+            'filter': ['!', ['==', 'FIR-RED', ['get', 'type']]]
+        });
+        map.addLayer({
+            'id': redStripeLayer,
+            'type': 'fill',
+            'source': source,
+            'layout': {'visibility': (visibility) ? 'visible' : 'none'},
+            'paint': {
+                //'fill-color': "rgba(255, 0, 0, 0.2)",
+                'fill-pattern': 'stripe-red',
+                'fill-opacity': 0.35
+            },
+            'filter': ['==', 'FIR-RED', ['get', 'type']]
         });
         map.addLayer({
             'id': lineLayer,
@@ -39,7 +54,7 @@ export const addFirReg = (data) => {
             'paint': {
                 'line-color': ['case', ['==', 'FIR-RED', ['get', 'type']], "rgb(255,0,0)", "rgb(255,127,0)"],
                 'line-width': 1,
-                'line-opacity': ['case', ['==', 'FIR-RED', ['get', 'type']], 0.4, 0.6]
+                'line-opacity': ['case', ['==', 'FIR-RED', ['get', 'type']], 0.35, 0.4]
             }
         });
     })
@@ -47,8 +62,11 @@ export const addFirReg = (data) => {
 
 export function changeFirDisplay(data, visible) {
     const {map} = data;
-    if (map.getLayer(fillLayer)) {
-        map.setLayoutProperty(fillLayer, 'visibility', (visible) ? 'visible': 'none');
+    if (map.getLayer(redStripeLayer)) {
+        map.setLayoutProperty(redStripeLayer, 'visibility', (visible) ? 'visible': 'none');
+    }
+    if (map.getLayer(orangeStripeLayer)) {
+        map.setLayoutProperty(orangeStripeLayer, 'visibility', (visible) ? 'visible': 'none');
     }
     if (map.getLayer(lineLayer)) {
         map.setLayoutProperty(lineLayer, 'visibility', (visible) ? 'visible': 'none');

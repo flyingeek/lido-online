@@ -67,6 +67,20 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
             map.addImage('sdf-star', image, { pixelRatio: 2, sdf: true});
         }
     });
+    map.loadImage('images/stripe-orange.png', function(error, image) {
+        if (error) {
+            console.log(error);
+        } else {
+            map.addImage('stripe-orange', image, { pixelRatio: 2, sdf: true});
+        }
+    });
+    map.loadImage('images/stripe-red.png', function(error, image) {
+        if (error) {
+            console.log(error);
+        } else {
+            map.addImage('stripe-red', image, { pixelRatio: 2, sdf: true});
+        }
+    });
     // definitions from epsg.io
     //https://epsg.io/4326
     window.proj4.defs('WGS84', "+proj=longlat +datum=WGS84");
