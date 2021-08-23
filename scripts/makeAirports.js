@@ -15,7 +15,16 @@ const geojson = "data/airports.geojson";
 const iata2countryData = JSON.parse(fs.readFileSync('data/iata2country.json'));
 const iata2cc = (iata) => {
     const index = iata2countryData.indexOf(iata + ':');
-    return (index >= 0) ? iata2countryData.substring(index + 4, index + 6): null;
+    if (index>=0) {
+        let cc = iata2countryData.substring(index + 4, index + 6);
+        if (cc == 'TY') {
+            cc = 'JP';
+        }else if (cc == 'NY'){
+            cc = 'US';
+        }
+        return cc;
+    }
+    return null;
 };
 
 function parseGlobal() {
