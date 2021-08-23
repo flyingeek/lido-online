@@ -5,11 +5,11 @@ const lineWidthOgimet = 1.5;
 
 const addOgimet = (data) => {
     const {map, ofp, kmlOptions, mapData, mapOptions} = data;
-    if (mapOptions.id.startsWith('vb_')) return; // not relevant on this map
     if (!ofp) return;
+    const visibility = (mapOptions.id.startsWith('vb_')) ? false : kmlOptions.ogimetDisplay; // not relevant on this map
     const {affineAndClip} = mapData;
     const lineWidth = computeLineWidthSize(kmlOptions['lineWidthChange'], lineWidthOgimet);
-    addLine(map, folder, ofp.ogimetData.route.points, affineAndClip, kmlOptions.ogimetColor, kmlOptions.ogimetDisplay, lineWidth);
+    addLine(map, folder, ofp.ogimetData.route.points, affineAndClip, kmlOptions.ogimetColor, visibility, lineWidth);
 }
 
 export default {

@@ -8,16 +8,16 @@ import ralt from './layers/ralt';
 import rmain from './layers/rmain';
 import tracks from './layers/tracks';
 
-const layers = {
-    'airport': airport,
-    'etops': etops,
-    'fir': fir,
-    'greatcircle': greatCircle,
-    'ogimet': ogimet,
-    'ralt': ralt,
-    'rmain': rmain,
-    'rnat': tracks
-}
+const layers = [ // order is important, so Array instead of dict
+    ['fir', fir],
+    ['airport', airport],
+    ['etops', etops],
+    ['greatcircle', greatCircle],
+    ['ogimet', ogimet],
+    ['ralt', ralt],
+    ['rmain', rmain],
+    ['rnat', tracks]
+];
 export const loadMapLayers = (data) => {
     const {map, mapOptions} = data;
     if (mapOptions.tiles) {
@@ -37,20 +37,20 @@ export const loadMapLayers = (data) => {
             }
         });
     }
-    Object.values(layers).forEach(layer => layer.add && layer.add(data));
+    layers.forEach(([,layer]) => layer.add && layer.add(data));
 }
 
 export const updateMapLayers = (data) => {
     const {name, value} = data;
     const folder = folderName(name);
     if (folder === 'icontext') {
-        return Object.values(layers).forEach(layer => layer.changeIconText && layer.changeIconText(data));
+        return layers.forEach(([,layer]) => layer.changeIconText && layer.changeIconText(data));
     }else if (folder === 'linewidth'){
-        return Object.values(layers).forEach(layer => layer.changeLineWidth && layer.changeLineWidth(data));
+        return layers.forEach(([,layer]) => layer.changeLineWidth && layer.changeLineWidth(data));
     }else if (folder === 'iconsize'){
-        return Object.values(layers).forEach(layer => layer.changeIconSize && layer.changeIconSize(data));
+        return layers.forEach(([,layer]) => layer.changeIconSize && layer.changeIconSize(data));
     }
-    const module = layers[folder];
+    const module = Object.fromEntries(layers)[folder];
     if (module) {
         if (name.endsWith('-display')){
             (value) ? module.show && module.show(data) : module.hide && module.hide(data);
