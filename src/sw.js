@@ -44,7 +44,7 @@ const deprecatedDB = ['swtest'];
 const SW_VERSION = 'APP_VERSION';
 precacheAndRoute(
     self.__WB_MANIFEST, {
-    "directoryIndex": null,
+    // "directoryIndex": null,
     "ignoreURLParametersMatching": [/.+Pin$/, /.+Display$/, /.+Color$/, /.+PinPosition$/, /^shortcut$/, /^downloadType$/, /^runShortcut$/, /.+Change$/, /.+Label$/]
 });
 
