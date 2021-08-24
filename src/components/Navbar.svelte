@@ -1,11 +1,27 @@
 <script>
-    import {aircraftType, ofp, route} from '../stores';
+    import {aircraftType, ofp, route, isHelpRoute} from '../stores';
     import GrametTrigger from './GrametTrigger.svelte';
     import OfpInfos from './OfpInfos.svelte';
     import TakeOffInput from './TakeOffInput.svelte';
     import Sun from './Sun.svelte';
+
     let menuCheckBox;
     const collapse = () => menuCheckBox.checked = false;
+    const getContextualHelpLink = (route) => {
+      let link;
+      switch (route) {
+        case '/map':
+          link = '#/help_mémo-visuel';
+          break;
+        case '/export':
+          link = '#/help_export--plugins-raccourcis';
+          break;
+        default:
+          link = '#/help';
+      }
+      return encodeURI(link);
+    };
+    $: contextualHelpLink = getContextualHelpLink($route);
 </script>
 <nav class="navbar navbar-expand-md navbar-light">
   <div class="container-fluid">
@@ -37,8 +53,8 @@
       <span>EXPORT</span></a>
     </li>
     {/if}
-    <li class="nav-item" class:active={$route === '/help'}>
-      <a class="nav-link" href="#/help" on:click={collapse}>
+    <li class="nav-item" class:active={$isHelpRoute}>
+      <a class="nav-link" href="{contextualHelpLink}" on:click={collapse}>
       <span>AIDE</span></a>
     </li>
   </ul>

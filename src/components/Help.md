@@ -12,6 +12,10 @@ OFP2MAP est une application PWA (ou Web Application), elle peut être lancée so
 
 L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au plus 21 stations météo) est transmise à l'hébergeur du proxy (voir plus bas) puis à Ogimet.com pour récupérer le Gramet. L'app ne collecte aucune donnée.
 
+## Mémo visuel
+
+<img src="./images/map-help.webp" alt="mémo visuel" id="memovisuel"><br/>
+
 ## Utilisation
 
 1. Dans Pilot Mission, onglet «Dossier de vol», affichez le PDF nommé "Dossier de vol OFP". Sur la gauche, cliquez sur le carré avec une flèche vers le haut. Choisissez «Enregistrer dans Fichiers». Dans l'app, c'est cet OFP qu'il faut ensuite sélectionner.
@@ -27,10 +31,6 @@ L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au pl
 
 3. Navigation dans la carte: on peut avec un doigt déplacer la carte, zoomer ou orienter la carte avec deux doigts.  
 __<big>☞</big> Il est aussi possible de modifier l'angle de vue en balayant de bas en haut avec deux doigts__.
-
-## Mémo visuel
-
-<img src="./images/map-help.webp" alt="mémo visuel" id="memovisuel"><br/>
 
 ## Réglages des calques
 

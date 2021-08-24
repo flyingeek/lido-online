@@ -3,6 +3,14 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.3] - 2021-08-24
+
+### Added
+
+- Il est possible de créer des liens vers une rubrique de l'aide. C'est utilisé dans le CHANGELOG et aussi pour contextualiser la rubrique affichée en fonction de la page consultée.
+- La page d'accueil contient le minimum vital: le point 1 de la rubrique UTILISATION de l'aide
+
+
 ## [1.15.2] - 2021-08-23
 
 ### Changed
@@ -32,7 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - possibilité de choisir entre les noms ICAO (par défaut) et IATA pour les aéroports
-- un mode FOCUS apparait dans les réglages des calques. Par défaut il n'affiche que la route. Il est pensé pour utilisation de bascule rapide et ponctuelle. Ce mode peut aussi être utilisé comme un deuxième jeu de réglages, voir l'aide (RÉGLAGES DES CALQUES).
+- un mode FOCUS apparait dans les réglages des calques. Par défaut il n'affiche que la route. Il est pensé pour utilisation de bascule rapide et ponctuelle. Ce mode peut aussi être utilisé comme un deuxième jeu de réglages, voir l'aide ([RÉGLAGES DES CALQUES](#/help_réglages-des-calques)).
 - il est possible de ne pas afficher les nouveautés lors des mises à jour. On peut changer d'avis à tout moment dans le CHANGELOG.
 
 ### Fixed
@@ -159,7 +167,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 
-- **Il faut mettre à jour tous les plugins** (liens dans l'aide)
+- **Il faut mettre à jour tous les plugins** [Liste des Plugins](#/help_export--plugins-raccourcis)
 
 ## [1.12.15] - 2021-07-15
 

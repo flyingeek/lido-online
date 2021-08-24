@@ -10,7 +10,7 @@
   import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
   import {storage, stores, validate, setHistory, storeSettingsFromURL} from "./components/mapSettings/storage.js";
-  import {swDismiss, sidebar, route, checkSwOnVisibilityChange, ofp, ofpStatus, aircraftType} from "./stores.js";
+  import {swDismiss, sidebar, route, checkSwOnVisibilityChange, ofp, ofpStatus, aircraftType, isHelpRoute} from "./stores.js";
   import HomePwaInstall from './components/HomePwaInstall.svelte';
   import {runningOnIpad} from './components/utils';
 
@@ -28,7 +28,6 @@
     $swDismiss = false;
     //$showGramet = false; // this one is set in OfpInput instead
   };
-
   onMount(() => {
         document.addEventListener("visibilitychange", checkSwOnVisibilityChange, false);
         return () => document.removeEventListener("visibilitychange", checkSwOnVisibilityChange);
@@ -63,7 +62,7 @@
         <Page maxWidth="1400px">
           <Home />
         </Page>
-      {:else if $route === '/help'}
+      {:else if $isHelpRoute}
         <Page  maxWidth="1400px"><Help /></Page>
       {:else if !(($ofp || $aircraftType) && $route === '/map')}
         <!-- redirect -->

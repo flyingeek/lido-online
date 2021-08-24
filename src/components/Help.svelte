@@ -1,7 +1,7 @@
 <script>
 import Helpmarkup from './Help.md';
 import ChangeLogModal from './ChangeLogModal.svelte';
-import {wb} from '../stores';
+import {wb, route} from '../stores';
 import {shareAppLink} from './utils';
 import {onMount} from "svelte";
 import blurAction from '../actions/blurAction';
@@ -26,6 +26,7 @@ let observer;
 let modal;
 
 $: style = (selected === undefined || selected === toc[0].id) ? "padding-top: 1rem;" : "padding-top: 0.25rem;";
+$: jumpToBasedOnRoute($route);
 
 function scrollTo(offset, callback) {
     const relativeOffset = offset  - scrollingElement.offsetTop - scrollingRoot.clientHeight;
@@ -45,7 +46,7 @@ function scrollTo(offset, callback) {
     })
 }
 const jumpTo = (e) => {
-    e.target.blur();
+    if (e) e.target.blur();
     observer.disconnect();
     scrollTo(document.getElementById(selected).offsetTop, () => {
         //console.log('scroll end')
@@ -54,6 +55,31 @@ const jumpTo = (e) => {
         });
     })
 }
+//allows to link to help topics
+const jumpToBasedOnRoute = (route) => {
+    if (route.startsWith('/help_')) {
+        const id = decodeURI(route.replace('/help_', 'md_')); // the md_ prefix is set in rollup.config
+        console.log(id, toc.map(v => v.id))
+        if (toc.map(v => v.id).includes(id)) {
+            // I do not have access to window.onload here
+            // and if images are not loaded the offsetTop will be wrong
+            const promises = [];
+            for (const img of document.querySelectorAll('.help img')) {
+                if (!img.complete) {
+                    promises.push(new Promise((resolve,) => {
+                        img.onload = () => (img.onload) ? resolve(img) && img.onload() : resolve(img);
+                        img.onerror = () => (img.onerror) ? resolve(img) && img.onerror(): resolve(img); // we don't care of errors, offsetTop will be valid
+                    }));
+                }
+            }
+            Promise.all(promises).then(() => {
+                selected = id;
+                modal.close();
+                jumpTo();
+            }).catch((err) => console.error(err));
+        }
+    }
+};
 
 onMount(() => {
     tocNodeList = scrollingElement.querySelectorAll('h2[id]');
@@ -78,6 +104,7 @@ onMount(() => {
         observer.observe(elt);
     });
     selected = toc[0].id;
+    jumpToBasedOnRoute($route);
     return () => {
         observer.disconnect();
         tocNodeList = undefined;
@@ -99,7 +126,7 @@ onMount(() => {
                 {/if}
                 <button class="btn btn-outline-secondary btn-sm" on:click={modal.show}>CHANGELOG</button>
                 <!-- svelte-ignore a11y-no-onchange -->
-                <select class="form-select form-select-sm" bind:value="{selected}" on:change={jumpTo} use:blurAction>
+                <select class="form-select form-select-sm fw-bold text-uppercase" bind:value="{selected}" on:change={jumpTo} use:blurAction>
                     {#each toc as {id, label}}
                         <option value={id} selected={id === selected}>{label}</option>
                     {/each}
