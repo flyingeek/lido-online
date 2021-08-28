@@ -79,7 +79,7 @@ const symbolSortKey = (aircraftType, maxPriorityNames) => {
 
 const getIconHaloWidth = (style, ofpLoaded) => (style === 0 && ofpLoaded) ? 3 : 0;
 const getTextColor = (style, raltNames, hexColor, ofpLoaded) => {
-    const styleBasedColor = (!isMedicalStyle(style)) ? ["case", medicalCondition, medicalColor, '#000'] : '#000';
+    const styleBasedColor = '#000'; // (!isMedicalStyle(style)) ? ["case", medicalCondition, medicalColor, '#000'] : '#000';
     if (!ofpLoaded) return styleBasedColor;
     return ["case",
     ["in", ["get", "name"], ["literal", raltNames]], hexColor,
@@ -88,7 +88,15 @@ const getTextColor = (style, raltNames, hexColor, ofpLoaded) => {
 };
 const getAdequateTextField = (style, labelling) => {
     const label = (labelling === 0) ? ['get', 'name'] : ['get', 'iata'];
-    if (!isMedicalStyle(style)) return ["case", ["==", 1, ["get", "h"]], ["concat", label, '\u200A✚'], label];  //https://jkorpela.fi/chars/spaces.html
+    if (!isMedicalStyle(style)){
+        return ["case", ["==", 1, ["get", "h"]],
+            ["format",
+                label, {},
+                '\u200A✚', {"text-color": medicalColor, "font-scale": 0.9}   //https://jkorpela.fi/chars/spaces.html
+            ],
+            label
+        ];
+    }
     return label;
 };
 const getETOPSTextField = getAdequateTextField;
