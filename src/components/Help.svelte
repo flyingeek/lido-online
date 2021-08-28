@@ -400,10 +400,12 @@ onMount(() => {
     @media (min-width: 992px) {
         .help {
             flex-direction: row;
-            column-gap: 1rem;
+            /* gap replaced by a padding-left on the scrollContainer for better focus outline of details element */
+            /* column-gap: 1rem; */
         }
         .scrollContainer{
             height: auto;
+            padding-left: 0.5rem;
         }
         div.toc {
             display: block;

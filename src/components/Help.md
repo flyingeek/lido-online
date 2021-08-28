@@ -128,6 +128,8 @@ Pour afficher le Gramet, cliquez sur sa miniature dans la barre de menu. Pour af
 
 Pour mieux comprendre le GRAMET, je vous conseille son <Link href="http://www.ogimet.com/guia_gramet.phtml.en">Guide d'interprétation</Link>.
 
+Le site GRAMET est indisponible lorsqu'il met à jour ses données, cela intervient entre minuit et 3h (heure française). Par ailleurs, je suis limité à 10 secondes pour la durée d'exécution du proxy, ce délai est un peu faible lorsqu'ogimet est saturé (tranche 18h30-20h00) et cela peut entrainer des erreurs, cliquer sur <svg style="stroke: red; transform: rotate(180deg); height: 20px; width: 20px;"><use xlink:href="#info-symbol"></use></svg> vous affichera des consignes.
+
 </section>
 <section id="_position">
 
@@ -167,32 +169,33 @@ __Précision des calculs&#8239;:__ si vous avez bien recalé la position estimé
 
 __Correction d'altitude&#8239;:__ Si votre niveau de vol est différent de l'OFP, appliquez une correction de 15s/1000ft pour le soleil. Exemple: FL OFP 400, FL réel 360, il faut ajouter 1min pour le lever, et soustraire 1min pour le coucher.
 
-Pour rappel, la chronologie des événements pour le soleil est:
-
-<table class="table">
-    <thead><tr><th>Angle</th><th>▲ Soleil levant</th><th>▼ Soleil couchant</th></tr></thead>
-    <tbody>
-        <tr><td>-0.83°</td><td>↑ Lever du soleil (fin aube civile)</td><td>↓ Coucher du soleil (début crépuscule civil)</td></tr>
-        <tr><td>-6°</td><td>↑ début aube civile (jour civil)</td><td>↓ fin du crépuscule civil (début nuit civile)</td></tr>
-        <tr><td>-12°</td><td>↑ début aube nautique (jour nautique)</td><td>↓ fin du crépuscule nautique (début nuit nautique)</td></tr>
-    </tbody>
-</table>
-
-Et pour la lune:
-
-<table class="table moon">
-    <thead><tr><th>Jour</th><th>Nom</th><th>Hémisphère nord</th><th>Hémisphère sud</th></tr></thead>
-    <tbody>
-        <tr><td>1</td><td>Nouvelle lune</td><td>🌑</td><td>🌑</td></tr>
-        <tr><td></td><td>Premier croissant</td><td>🌒</td><td>🌘</td></tr>
-        <tr><td>7</td><td>Premier quartier</td><td>🌓</td><td>🌗</td></tr>
-        <tr><td></td><td>Lune gibbeuse croissante</td><td>🌔</td><td>🌖</td></tr>
-        <tr><td>14</td><td>Pleine lune</td><td>🌕</td><td>🌕</td></tr>
-        <tr><td></td><td>Lune gibbeuse décroissante</td><td>🌖</td><td>🌔</td></tr>
-        <tr><td>21</td><td>Dernier quartier</td><td>🌗</td><td>🌓</td></tr>
-        <tr><td></td><td>Dernier croissant</td><td>🌘</td><td>🌒</td></tr>
-    </tbody>
-</table>
+<details>
+    <summary>Cliquez ici pour afficher un rappel sur la chronologie des événements astronomiques</summary>
+    <p>Pour le soleil:</p>
+    <table class="table">
+        <thead><tr><th>Angle</th><th>▲ Soleil levant</th><th>▼ Soleil couchant</th></tr></thead>
+        <tbody>
+            <tr><td>-0.83°</td><td>↑ Lever du soleil (fin aube civile)</td><td>↓ Coucher du soleil (début crépuscule civil)</td></tr>
+            <tr><td>-6°</td><td>↑ début aube civile (jour civil)</td><td>↓ fin du crépuscule civil (début nuit civile)</td></tr>
+            <tr><td>-12°</td><td>↑ début aube nautique (jour nautique)</td><td>↓ fin du crépuscule nautique (début nuit nautique)</td></tr>
+        </tbody>
+    </table>
+    <p>Et pour la lune:</p>
+    <table class="table moon">
+        <thead><tr><th>Jour</th><th>Nom</th><th>Hémisphère nord</th><th>Hémisphère sud</th></tr></thead>
+        <tbody>
+            <tr><td>1</td><td>Nouvelle lune</td><td>🌑</td><td>🌑</td></tr>
+            <tr><td></td><td>Premier croissant</td><td>🌒</td><td>🌘</td></tr>
+            <tr><td>7</td><td>Premier quartier</td><td>🌓</td><td>🌗</td></tr>
+            <tr><td></td><td>Lune gibbeuse croissante</td><td>🌔</td><td>🌖</td></tr>
+            <tr><td>14</td><td>Pleine lune</td><td>🌕</td><td>🌕</td></tr>
+            <tr><td></td><td>Lune gibbeuse décroissante</td><td>🌖</td><td>🌔</td></tr>
+            <tr><td>21</td><td>Dernier quartier</td><td>🌗</td><td>🌓</td></tr>
+            <tr><td></td><td>Dernier croissant</td><td>🌘</td><td>🌒</td></tr>
+        </tbody>
+    </table>
+</details>
+<br/>
 
 </section>
 <section id="_export">
