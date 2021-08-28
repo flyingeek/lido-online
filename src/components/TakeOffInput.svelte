@@ -3,14 +3,8 @@
     import blurAction from '../actions/blurAction';
     export let name="take-off";
 
-    const getOfpTakeOffTime =  (currentOfp) => {
-        const value = new Date(currentOfp.infos.ofpOFF.getTime());
-        $takeOffTime = value;
-        return value;
-    };
-
-    $: ofpTakeOff = getOfpTakeOffTime($ofp);
-
+    const ofpTakeOff = new Date($ofp.infos.ofpOFF.getTime());
+    //console.log($takeOffTime, $ofp)
     const hm2input = (hours, minutes) => `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 
     const changeTime = (e) => {
@@ -43,12 +37,13 @@
     };
 </script>
 
+{#if $takeOffTime}
 <div>
     <svg class:show={$showPlaneOnMap || $simulate >= 0} class:hide={!($showPlaneOnMap || $simulate >= 0)} on:click={() => $showPlaneOnMap = !$showPlaneOnMap}><use xlink:href="#takeoff-symbol"/></svg>
     <label for="{name}">Heure de décollage</label><!-- displayed in ios popup -->
-    <input id="{name}" name="{name}" type="time" use:blurAction on:change={changeTime} value="{hm2input(ofpTakeOff.getUTCHours(), ofpTakeOff.getUTCMinutes())}" />
+    <input id="{name}" name="{name}" type="time" use:blurAction on:change={changeTime} value="{hm2input($takeOffTime.getUTCHours(), $takeOffTime.getUTCMinutes())}" />
 </div>
-
+{/if}
 <style>
     label{
         display: none;

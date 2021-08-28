@@ -150,7 +150,6 @@
             const form = e.target.closest('form');
             if (file) {
                 $ofpStatus = 'loading';
-                $takeOffTime = undefined;
                 //label = e.target.value.split(/([\\/])/g).pop();
                 dispatch('change', label);
                 window.location.hash = '#/map'; //TODO must be here and not in the then promise below to avoid map centering issues. Why ?
@@ -158,6 +157,7 @@
                     $ofpStore = ofp;
                     $selectedAircraftType = undefined;
                     $ofpStatus = 'success';
+                    $takeOffTime = new Date(ofp.infos.ofpOFF.getTime());
                     form.blur();
                     e.target.blur();
                 }).catch((err) => {
@@ -253,13 +253,15 @@
         display: none;
         z-index: 1;
     }
-    :global(.home .footer){
-        display: block !important;
+    @media (min-width: 768px){
+        :global(.home .footer){
+            display: block !important;
+        }
     }
     select {
         background-color: var(--blueaf);
         border-color: var(--blueaf);
-        color: #888;
+        color: rgba(255,255,255,  0.18);
         margin: 5px;
         appearance: none;
         -webkit-appearance: none;
