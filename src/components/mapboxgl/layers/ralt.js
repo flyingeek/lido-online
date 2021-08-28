@@ -4,13 +4,14 @@ import {addLine, addPoints, changeDisplayGeneric, changeLineGeneric, changeIconT
 const folder = 'ralt';
 
 const addRalt = (data) => {
-    const {map, ofp, kmlOptions, mapData} = data;
+    const {map, ofp, kmlOptions, mapData, mapOptions} = data;
     if (!ofp) return;
     const {affineAndClip, affineOrDrop} = mapData;
+    const maxZoom = mapOptions.interpolateZoom || mapOptions.mapboxOptions.maxZoom;
     const alternateRoute = new editolido.Route(ofp.wptCoordinatesAlternate(), {"name": "Route Dégagement"});
     const lineWidth = computeLineWidthSize(kmlOptions['lineWidthChange']);
     addLine(map, folder, alternateRoute.points, affineAndClip, kmlOptions.alternateColor, kmlOptions.alternateDisplay, lineWidth);
-    addPoints(map, folder, alternateRoute.points, affineOrDrop, kmlOptions);
+    addPoints(map, folder, alternateRoute.points, affineOrDrop, kmlOptions, maxZoom);
 }
 
 export default {
