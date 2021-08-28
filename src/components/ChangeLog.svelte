@@ -23,7 +23,7 @@
             //.replace(/^# (.*$)/gim, '<h1>$1</h1>')
             //.replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
             .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
-            .replace(/_(.*)\_/gim, '<i>$1</i>')
+            .replace(/\*(.*)\*/gim, '<i>$1</i>')
             //.replace(/\*(.*)\*/gim, '<i>$1</i>')
             //.replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' />")
             .replace(/\[(.*?)\]\((#.*?)\)/gim, "<a href='$2'>$1</a>")
@@ -100,12 +100,15 @@
     li{
         list-style: square;
     }
+    li:not(:first-child) h2{
+        margin-top: 1rem;
+    }
     h2{
         font-size: 1.5rem;
         border-bottom: 1px solid #eee;
-    }
-    li:not(:first-child) h2{
-        margin-top: 1rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-variant: all-petite-caps;
     }
     h2 :global(.date){
         font-size: 1rem;
@@ -113,7 +116,6 @@
     }
     h2 :global(.version)::before{
         content: "v";
-        font-variant: normal;
         font-size: 1rem;
     }
     .item {
