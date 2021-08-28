@@ -50,7 +50,7 @@
     display:flex;
     align-items: center;
     flex: 1;
-    padding-left: 0rem;
+    padding-left: 0;
     flex-grow: 1;
     background-color: white;
     width:auto;

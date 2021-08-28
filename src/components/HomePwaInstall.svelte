@@ -44,7 +44,7 @@
     .prompt{
         background: #FFF;
         border-radius: 2px;
-        box-shadow: 0px 4px 8px rgba(0,0,0,0.125);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.125);
         box-sizing: border-box;
         color: #424242;
         font-family: sans-serif;

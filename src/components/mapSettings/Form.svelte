@@ -213,7 +213,7 @@
     }
     .settings {
         position: absolute;
-        right: 0px;
+        right: 0;
         transition: right 0.15s ease-out;
         background-color: #eee;
         border-left: 1px solid rgba(255,255,255,0.2);

@@ -75,6 +75,7 @@ export async function addToSWCache(urls, cacheName) {
 // intersect a segment against one of the 4 lines that make up the bbox
 
 function intersect(a, b, edge, bbox) {
+    // noinspection JSBitwiseOperatorUsage
     return edge & 8 ? [a[0] + (b[0] - a[0]) * (bbox[3] - a[1]) / (b[1] - a[1]), bbox[3]] : // top
         edge & 4 ? [a[0] + (b[0] - a[0]) * (bbox[1] - a[1]) / (b[1] - a[1]), bbox[1]] : // bottom
         edge & 2 ? [bbox[2], a[1] + (b[1] - a[1]) * (bbox[2] - a[0]) / (b[0] - a[0])] : // right

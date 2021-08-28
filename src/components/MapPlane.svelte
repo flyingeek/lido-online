@@ -48,7 +48,6 @@
         /* position: absolute; */
         -webkit-animation: mapboxgl-map-plane-dot-pulse 10s infinite;
         -moz-animation: mapboxgl-map-plane-dot-pulse 10s infinite;
-        -ms-animation: mapboxgl-map-plane-dot-pulse 10s infinite;
         animation: mapboxgl-map-plane-dot-pulse 10s infinite;
         /* align-content: baseline; */
     }

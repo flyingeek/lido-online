@@ -125,7 +125,7 @@
         background: linear-gradient(90deg, rgba(var(--range-red), var(--range-green), var(--range-blue), 0.12), rgba(var(--range-red), var(--range-green), var(--range-blue), 1));
     }
     :global(picker input[type=range]::-webkit-slider-thumb) {
-        box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+        box-shadow: 1px 1px 1px #000000, 0 0 1px #0d0d0d;
         border: 1px solid #cccccc;
         height: 12px;
         width: 15px;
@@ -145,7 +145,7 @@
         background: linear-gradient(90deg, rgba(var(--range-red), var(--range-green), var(--range-blue), 0.12), rgba(var(--range-red), var(--range-green), var(--range-blue), 1));
     }
     :global(picker input[type=range]::-moz-range-thumb) {
-        box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+        box-shadow: 1px 1px 1px #000000, 0 0 1px #0d0d0d;
         border: 1px solid #cccccc;
         height: 12px;
         width: 15px;
@@ -188,7 +188,7 @@
     :global(kmlcolor pin, kmlpin pin) {
         background-color: white !important;
         padding: 0 0 0 0.2rem !important;
-        border-right: 0px !important;
+        border-right: 0 !important;
     }
     pin {
         flex:0 0 20px !important;

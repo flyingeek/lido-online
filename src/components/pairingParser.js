@@ -24,7 +24,7 @@ const getMeridians = (base, baseTZ, duties) => {
     const meridians = [];
     for (const duty of duties) {
         const lastLeg = duty.legs[duty.legs.length - 1];
-        console.log(lastLeg, parseFloat(lastLeg.destTZ) - baseTZ, isBase(lastLeg.destIATA), lastLeg.destIATA)
+        //console.log(lastLeg, parseFloat(lastLeg.destTZ) - baseTZ, isBase(lastLeg.destIATA), lastLeg.destIATA)
         if (!isBase(base, lastLeg.destIATA)) {
             meridians.push(Math.abs(parseFloat(lastLeg.destTZ) - baseTZ));
         }
