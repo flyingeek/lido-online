@@ -49,7 +49,7 @@ $: setAndJumpTo($route);
 const scrollEndCondition = (element) => {
     const relativeOffset = element.offsetTop  - scrollingElement.offsetTop;
     const maxOffset = Math.floor(scrollingElement.scrollHeight - scrollingElement.clientHeight);
-    return scrollingElement.scrollTop.toFixed() === relativeOffset.toFixed() || scrollingElement.scrollTop >= maxOffset;
+    return scrollingElement.scrollTop.toFixed() === relativeOffset.toFixed() || (scrollingElement.scrollTop >= maxOffset && relativeOffset >= maxOffset);
 }
 function scrollTo(element, callback) {
     const onScroll = function () {
