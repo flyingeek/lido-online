@@ -4,15 +4,16 @@
     import {solar} from "./solarstore";
     import { binarysearch } from "./utils";
 
-    const devTimeDelta = (tsref) => Math.round((Date.now() - tsref)/86400000) * 86400000;
+    //adjust to the takeoff time but for today
+    const devTimeDelta = (tsref) => (Math.trunc(Date.now()/86400000) - Math.trunc(tsref/86400000) + ((tsref/86400000) % 1)) * 86400000;
     export const kpColor = (kp) => {
-        switch(kp){ 
+        switch(kp){
             case 0:
             case 1:
             case 2:
                 return '#69B34C';
             case 3:
-                return '#ACB334'; 
+                return '#ACB334';
             case 4:
                 return '#FAB733'
             case 5:
@@ -25,10 +26,10 @@
                 return '#FF0D0D';
             default:
                 return 'lightgray';
-        };
+        }
     };
     export const noaaKp = writable();
-    const fetchNoaaKpAndSet = async () => {    
+    const fetchNoaaKpAndSet = async () => {
         return fetch('CONF_NOAA_KP_JSON')
         .then(response => response.json())
         .then(data => {
@@ -85,7 +86,7 @@
             get: fn
         };
     });
-    
+
     export const aurora = derived(
         [solar, Kp],
         ([$solar, $Kp]) => {
