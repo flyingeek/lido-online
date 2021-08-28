@@ -92,7 +92,7 @@
         margin: 0 0 5px;
         width: 30px;
         height: 30px;
-        fill: #007AFF;
+        color: #007AFF;
     }
     svg.safari {
         width: 20px;

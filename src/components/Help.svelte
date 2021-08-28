@@ -504,7 +504,6 @@ onMount(() => {
             width: calc(1rem * 1.2);
             height: calc(1rem * 1.2);
             margin-bottom: 3px;
-            stroke: var(--bs-gray-400);
         }
         .actions button.changelog{
             text-transform: none;
