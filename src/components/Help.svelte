@@ -531,4 +531,7 @@ onMount(() => {
         position:relative;
         display: inline-block;
     }
+    :global(.markdown h3) {
+        font-size: 1.25rem;
+    }
 </style>
