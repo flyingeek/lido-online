@@ -1,27 +1,16 @@
 <script>
-    import {aircraftType, ofp, route, isHelpRoute} from '../stores';
+    import {aircraftType, ofp, route} from '../stores';
     import GrametTrigger from './GrametTrigger.svelte';
     import OfpInfos from './OfpInfos.svelte';
     import TakeOffInput from './TakeOffInput.svelte';
     import Sun from './Sun.svelte';
+    import {getContextualHelpLink, helpRouteRegex} from './Help.svelte';
 
     let menuCheckBox;
     const collapse = () => menuCheckBox.checked = false;
-    const getContextualHelpLink = (route) => {
-      let link;
-      switch (route) {
-        case '/map':
-          link = '#/help_mémo-visuel';
-          break;
-        case '/export':
-          link = '#/help_export--plugins-raccourcis';
-          break;
-        default:
-          link = '#/help';
-      }
-      return encodeURI(link);
-    };
+
     $: contextualHelpLink = getContextualHelpLink($route);
+
 </script>
 <nav class="navbar navbar-expand-md navbar-light">
   <div class="container-fluid">
@@ -30,8 +19,7 @@
   <slot></slot>
   {#if ($ofp) }
     <OfpInfos/>
-    <TakeOffInput/>
-    {#if $route === '/map'}<GrametTrigger/><Sun/>{/if}
+    {#if $route === '/map'}<TakeOffInput/><GrametTrigger/><Sun/>{/if}
   {/if}
   <label class="navbar-toggler" for="menu"><span class="navbar-toggler-icon"></span></label>
   <!-- end of items in reverse order -->
@@ -53,9 +41,9 @@
       <span>EXPORT</span></a>
     </li>
     {/if}
-    <li class="nav-item" class:active={$isHelpRoute}>
-      <a class="nav-link" href="{contextualHelpLink}" on:click={collapse}>
-      <span>AIDE</span></a>
+    <li class="nav-item" class:active={$route.match(helpRouteRegex)}>
+      <a class="nav-link" href="{contextualHelpLink.href}" on:click={collapse}>
+      <span>AIDE{#if contextualHelpLink.name}<small class="d-none d-lg-inline-block text-small-caps">/{contextualHelpLink.name}</small>{/if}</span></a>
     </li>
   </ul>
   </div>
@@ -95,13 +83,13 @@
     nav > .container-fluid{
       flex: 0 1 auto;
       position: static; /* for no ofp prompt on home page bottom */
-      padding: 2px 10px 0px 10px;
+      padding: 2px 10px 0 10px;
       background-color: var(--bs-light);
       flex-direction: row-reverse;
     }
 
     li {
-      margin-right: 0px;
+      margin-right: 0;
       padding-left: 10px;
     }
     @media (min-width: 630px){
@@ -120,7 +108,7 @@
     }
     @media (min-width: 768px){
       li {
-        padding-left: 0px;
+        padding-left: 0;
       }
       .nav-item.active {
         border-bottom: 2px solid var(--bs-pink);
@@ -134,5 +122,8 @@
     }
     input:checked ~ .collapse{
         display: block;
+    }
+    .nav-link small{
+      color: rgba(0,0,0,.4);
     }
 </style>
