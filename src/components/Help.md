@@ -15,6 +15,8 @@ OFP2MAP est une application PWA (ou Web Application), elle peut être lancée so
 
 L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au plus 21 stations météo) est transmise à l'hébergeur du proxy (voir plus bas) puis à Ogimet.com pour récupérer le Gramet. L'app ne collecte aucune donnée.
 
+Avant d'utiliser OFP2MAP en vol, il est préférable de lire la rubrique [Mode hors ligne](#_offline). Ensuite le mémo visuel devrait vous permettre de vous débrouiller. Vos retours seront appréciés pour faire évoluer l'app.
+
 </section>
 
 <section id="_memovisuel">
@@ -107,13 +109,11 @@ Pour vous entraîner, je vous recommande de modifier la couleur des terrains en 
 
 ### Mode FOCUS&#8239;
 
-Par défaut le mode FOCUS n'affiche que la route. Il s'active en cliquant sur FOCUS dans le champ ROUTE. Pour quitter ce mode, réaffichez les réglages et cliquez à nouveau sur le bouton.
+C'est un mode pensé pour basculer rapidement sur d'autres réglages pour un usage ponctuel. Par défaut le mode FOCUS n'affiche que la route. Il s'active en cliquant sur FOCUS dans le champ ROUTE. Pour quitter ce mode, réaffichez les réglages et cliquez à nouveau sur le bouton.
 
-Le mode FOCUS est personnalisable, devenant ainsi un deuxième jeu de réglages&#8239;: Après avoir activé le mode MODE FOCUS, réaffichez les réglages et modifiez les à votre convenance. Lorsque vous quitterez le mode FOCUS, ce jeu de réglages sera sauvegardé et les réglages normaux seront restaurés.
+Le mode FOCUS est personnalisable&#8239;: Après avoir activé le mode MODE FOCUS, réaffichez les réglages et modifiez les à votre convenance. Lorsque vous quitterez le mode FOCUS, ce jeu de réglages sera sauvegardé séparément et il sera rechargé à la prochaine activation.
 
 Si nécessaire, un bouton permet de revenir aux valeurs par défaut.
-
-Dans mon usage personnel, à titre d'exemple, je modifie la couleur de la route pour une couleur rouge orangée bien plus lisible dans la projection The World.
 
 </section>
 <section id="_gramet">
@@ -128,7 +128,7 @@ Pour afficher le Gramet, cliquez sur sa miniature dans la barre de menu. Pour af
 
 Pour mieux comprendre le GRAMET, je vous conseille son <Link href="http://www.ogimet.com/guia_gramet.phtml.en">Guide d'interprétation</Link>.
 
-Le site GRAMET est indisponible lorsqu'il met à jour ses données, cela intervient entre minuit et 3h (heure française). Par ailleurs, je suis limité à 10 secondes pour la durée d'exécution du proxy, ce délai est un peu faible lorsqu'ogimet est saturé (tranche 18h30-20h00) et cela peut entrainer des erreurs, cliquer sur <svg style="stroke: red; transform: rotate(180deg); height: 20px; width: 20px;"><use xlink:href="#info-symbol"></use></svg> vous affichera des consignes.
+*Le site GRAMET est indisponible lorsqu'il met à jour ses données, cela intervient entre minuit et 3h (heure française). Par ailleurs, je suis limité à 10 secondes pour la durée d'exécution du proxy, ce délai est un peu faible lorsqu'ogimet est saturé (tranche 18h30-20h00) et cela peut entrainer des erreurs, cliquer sur <svg style="stroke: red; transform: rotate(180deg); height: 20px; width: 20px;"><use xlink:href="#info-symbol"></use></svg> vous affichera des consignes.*
 
 </section>
 <section id="_position">
@@ -154,7 +154,7 @@ La capacité ETOPS est determinée depuis l'OFP et les cercles sont tracés. Un 
 
 ## Éphémérides ☀️🌘🔭
 
-<figure>![éphémerides exemple](./images/ephemerides.webp)<figcaption>avec aurore boréale prévue</figcaption></figure>
+<figure>![éphémerides exemple](./images/ephemerides.webp)<figcaption>Exemple avec aurore boréale prévue</figcaption></figure>
 
 Un clic sur le widget révèle les éphémérides avec 2 timelines. La première synthétise le jour et la nuit le long du vol ainsi que les zones favorables à l'observation des aurores boréales. La seconde montre les prévisions de Kp. Le Kp permet de prédire les aurores boréales. Entre ces deux timelines, la Lune est un objet dynamique: l'angle des cornes va se modifier en fonction de la position estimée et cet angle est indiqué pour les levers et les couchers. Pour le soleil, l'aube nautique est indiquée, car ce n'est pas tout à fait la nuit: en vol l'horizon est partiellement discernable, et au sol on distingue encore le relief.
 
