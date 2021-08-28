@@ -4,8 +4,8 @@
     import {solar} from "./solarstore";
     import { binarysearch } from "./utils";
 
-    //adjust to the takeoff time but for today
-    const devTimeDelta = (tsref) => (Math.trunc(Date.now()/86400000) - Math.trunc(tsref/86400000) + ((tsref/86400000) % 1)) * 86400000;
+    //adjust to the time to be for today
+    const devTimeDelta = (tsref) => (Math.trunc(Date.now()/86400000) - Math.trunc(tsref/86400000)) * 86400000;
     export const kpColor = (kp) => {
         switch(kp){
             case 0:
