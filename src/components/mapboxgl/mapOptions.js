@@ -21,6 +21,7 @@ const options = [
             'maxZoom': 12
         },
         'cacheName': 'CONF_MERCATOR',
+        'interpolateZoom': 7, // overrides maxboxOptions.maxZoom for interpolate expression
         'cacheZoom': 6
     },
     {
@@ -38,7 +39,8 @@ const options = [
         'cacheZoom': 4,
         'cacheName': 'CONF_NORTH',
         'cacheAll': true,
-        'tileSize': tilesResolution
+        'tileSize': tilesResolution,
+        'subLabel': 'recommandée au nord du 30N'
     },
     {
         'label': 'Lambert South',
@@ -55,7 +57,8 @@ const options = [
         'cacheZoom': 4,
         'cacheName': 'CONF_SOUTH',
         'cacheAll': true,
-        'tileSize': tilesResolution
+        'tileSize': tilesResolution,
+        'subLabel': 'recommandée au sud du 30N'
     },
     {
         'label': 'Lambert Pacific',
@@ -71,7 +74,8 @@ const options = [
         'cacheName': 'CONF_PACIFIC',
         'cacheZoom': 4,
         'cacheAll': true,
-        'tileSize': tilesResolution
+        'tileSize': tilesResolution,
+        'subLabel': 'recommandée au sud du 30N'
     },
     {
         'label': 'The World',

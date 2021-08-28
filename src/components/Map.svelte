@@ -1,20 +1,8 @@
-<script context="module">
-    import {showPlaneOnMap} from '../stores';
-
-    const showPlane = (e) => {
-        if('BACKGROUND' !== e.target._watchState) showPlaneOnMap.set(true);
-        //console.log('show plane', e.target._watchState);
-    };
-    const hidePlane = (e) => {
-        showPlaneOnMap.set(false);
-        //if (e) console.log('hide plane', e.target._watchState);
-    }
-</script>
 <script>
     import FormSettings from "./mapSettings/Form.svelte";
     import {createMap, token} from './mapboxgl/mapManagement';
     import {updateMapLayers} from './mapboxgl/layersManagement';
-    import {online, showGramet, simulate, aircraftType} from "../stores.js";
+    import {online, showGramet, simulate, aircraftType, mapZoom, showPlaneOnMap} from "../stores.js";
     import {promiseTimeout, fetchSimultaneously} from './utils';
     import { createEventDispatcher, onMount, onDestroy, tick} from 'svelte';
     import {get} from 'svelte/store';
@@ -33,27 +21,30 @@
     let mapData;
     let selectedProjection;
     let aircraftTypeSelectElement;
-    let cacheMaxValue = 0;
-    let cacheValue = -1;
-    let cacheError = false;
-    let tilesMissing = [];
+
+    let cacheMaxValue, cacheValue, cacheError, tilesMissing;
+    const initCacheMap = () => {
+        cacheMaxValue = 0;
+        cacheValue = -1;
+        cacheError = false;
+        tilesMissing = [];
+    };
+
     let settings;
-    $: mapIsCached = tilesMissing.length === 0;
+    $: mapIsCached = tilesMissing !== undefined && tilesMissing.length === 0;
     const caches = {};
 
 
     export let id = 'map';
 
     async function afterMapLoad(){
+        initCacheMap();
         if (!!ofp) {
             try {
                 tilesMissing = await findMissingCacheTiles(ofp, mapData);
             } catch (err){
-                tilesMissing = [];
                 console.error(`Could not find missing cache tiles`, err);
             }
-        }else{
-            tilesMissing = [];
         }
         //console.log(tilesMissing);
         const attribution = document.querySelector(`#${id} .mapboxgl-ctrl-attrib-inner`);
@@ -66,21 +57,12 @@
 
     function projectionChange(e) {
         e.target.blur(); // to avoid zoom problem in standalone mode
-        if (map) map.remove();
-        cacheValue = -1;
-        cacheError = false;
-        tilesMissing = [];
-        cacheMaxValue = 0;
-        if (mapData && mapData.geolocate) {
-            mapData.geolocate.off('trackuserlocationstart', hidePlane);
-            //mapData.geolocate.off('trackuserlocationend', showPlane);
-        }
         const showPlaneState = get(showPlaneOnMap);
-        hidePlane(); // dom element will be removed by createMap
+        if (map) map.remove();
+
+        showPlaneOnMap.set(false); // dom element will be removed by createMap
         mapData = createMap(id, selectedProjection, ofp, kmlOptions, $aircraftType, afterMapLoad);
         map = mapData.map;
-        mapData.geolocate.on('trackuserlocationstart', hidePlane);
-        //mapData.geolocate.on('trackuserlocationend', showPlane);
         setTimeout(async () => {
             await tick;
             showPlaneOnMap.set(showPlaneState);
@@ -100,6 +82,7 @@
             value: e.detail.value,
             ofp: ofp,
             kmlOptions,
+            mapOptions: selectedProjection,
             aircraftType: $aircraftType
         });
         dispatch('save'); // set History
@@ -150,16 +133,11 @@
     onMount(() => {
         mapboxgl.accessToken = token;
         mapData = createMap(id, selectedProjection, ofp, kmlOptions, $aircraftType, afterMapLoad, true); //initialLoad = true
-        hidePlane(); // dom element was removed by createMap
         showPlaneOnMap.reset();
         map = mapData.map;
-        mapData.geolocate.on('trackuserlocationstart', hidePlane);
-        //mapData.geolocate.on('trackuserlocationend', showPlane);
-
     });
     onDestroy(() => {
-        mapData.geolocate.off('trackuserlocationstart', hidePlane);
-        //mapData.geolocate.off('trackuserlocationend', showPlane);
+        //if (map) map.remove(); /-> map is removed by resize action
         settings.endFocusMode();
         map = undefined;
         mapData = undefined;
@@ -169,21 +147,27 @@
 <div id={id} use:mapResizeAction={map}></div>
 <div class="mapmenu">
     <div class="projection">
-    <MapProjectionSelect bind:selected={selectedProjection} ofp={ofp} on:change={projectionChange}></MapProjectionSelect>
-    {#if (selectedProjection && window.indexedDB)}
-    <div class="cacheButton"
-        class:cacheError={cacheError}
-        class:cacheProgress={cacheValue >= 0||cacheMaxValue > 0}
-        class:hidden={!ofp || mapIsCached|| !$online || caches[selectedProjection.id]===true}
-        on:click={(cacheButtonDisabled) ? () => false : cacheMap}>
-        <CircleProgress value={(cacheValue>=0) ? cacheValue : 0} max={cacheMaxValue}></CircleProgress>
+        <MapProjectionSelect bind:selected={selectedProjection} ofp={ofp} on:change={projectionChange}></MapProjectionSelect>
+        {#if (selectedProjection && window.indexedDB)}
+        <div class="cacheButton"
+            class:cacheError={cacheError}
+            class:cacheProgress={cacheValue >= 0||cacheMaxValue > 0}
+            class:hidden={!ofp || mapIsCached|| !$online || caches[selectedProjection.id]===true}
+            on:click={(cacheButtonDisabled) ? () => false : cacheMap}>
+            <CircleProgress value={(cacheValue>=0) ? cacheValue : 0} max={cacheMaxValue}></CircleProgress>
+        </div>
+        {/if}
     </div>
+    {#if selectedProjection && selectedProjection.subLabel}
+        <div class="projection-info"><small>{selectedProjection.subLabel}</small></div>
     {/if}
-    </div>
     {#if (!supportWebP && mapData && mapData.mapOptions && mapData.mapOptions.tiles && mapData.mapOptions.tiles[0].endsWith('.webp'))}
         <div class="nowebp">Votre navigateur ne supporte pas l'affichage d'images au format .webp</div>
     {/if}
 </div>
+{#if selectedProjection && selectedProjection.id === 'mercator' && $mapZoom}
+    <div class="mapzoom">🔎{$mapZoom.toFixed(1)}</div>
+{/if}
 {#if (mapData && !!ofp  && ($showPlaneOnMap || $simulate >= 0))}<MapPlane {mapData}/>{/if}
 <AircraftType bind:aircraftTypeSelectElement on:change={aircraftChange}/>
 <FormSettings bind:this={settings} bind:kmlOptions on:change={update} on:save />
@@ -208,6 +192,16 @@
         display:flex;
         align-items: center;
     }
+    .projection-info {
+        margin-right: 24px;
+        font-size: 11px;
+        color: var(--bs-gray);
+        padding: 0 5px;
+        position: absolute;
+        margin-top: -3px;
+        margin-left: 2px;
+        background-color: rgba(255,255,255,0.4);
+    }
     :global(.mapboxgl-ctrl-attrib-inner select[name=aircraftType]){
         display: inline-block !important;
     }
@@ -228,35 +222,26 @@
         visibility: hidden;
     }
     .cacheButton {
+        margin-left: 10px;
+    }
+    :global(.cacheButton) {
         display: inline-block;
         position: relative;
-        color: var(--bs-cyan);
-        margin-left: 10px;
         cursor:pointer;
         --progress-color: var(--bs-yellow);
+        --progress-arrowstroke: var(--bs-cyan);
     }
 
-    .cacheButton.cacheError {
-        color: var(--bs-red) !important;
+    :global(.cacheButton.cacheError) {
+        --progress-arrowstroke: var(--bs-red) !important;
         --progress-trackcolor: var(--bs-gray-500) !important;
     }
-    .cacheButton.cacheProgress {
-        color: var(--bs-yellow);
+    :global(.cacheButton.cacheProgress) {
+        --progress-arrowstroke: var(--bs-yellow);
         --progress-trackcolor: black;
     }
-    .cacheButton.cacheProgress, .cacheButton.cacheError{
+    :global(.cacheButton.cacheProgress), :global(.cacheButton.cacheError){
         --progress-circlefill: var(--bs-gray-100);
-    }
-    .cacheButton::after{
-        content: "↓";
-        display:inline-block;
-        text-align: center;
-        height: 24px;
-        width: 24px;
-        left: 50%;
-        position: absolute;
-        top: 50%;
-        transform: translate(-50%, -50%);
     }
     :global(.mapboxgl-ctrl button.mapboxgl-ctrl-layers){
         display:flex;
@@ -382,5 +367,13 @@
         font-size:small;
         padding: 10px;
         margin-top: 10px;
+    }
+    .mapzoom {
+        position: absolute;
+        bottom: 7px;
+        font-size: small;
+        left: 100px;
+        color: var(--bs-gray-dark);
+        opacity: 0.7;
     }
 </style>
