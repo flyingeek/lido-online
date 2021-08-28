@@ -75,19 +75,21 @@
     .sun p {
         margin: 0;
     }
-    .sun.aurora::before{
+    .sun.aurora::before, :global(.markdown .aurora::before){
         content: "";
         position: absolute;
-        top: -8px;
-        left: -15px;
-        width: 50px;
-        height: 38px;
         background-image: url(/images/65x70_northern-lights.webp);
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
         filter: blur(3px) opacity(40%);
         z-index: -1;
+    }
+    .sun.aurora::before{
+        top: -8px;
+        left: -15px;
+        width: 50px;
+        height: 38px;
     }
     .two p {
         font-size: small;

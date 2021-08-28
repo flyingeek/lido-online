@@ -44,13 +44,5 @@
         padding: 5px;
         left: 10px;
     } */
-    div :global(label) {
-        position: absolute;
-        color: var(--plane-color);
-        top: 0px;
-        left: 5px;
-        font-size: 45px;
-        -webkit-text-stroke-width: 3px;
-        -webkit-text-stroke-color: black;
-    }
+
 </style>
