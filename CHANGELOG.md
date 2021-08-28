@@ -3,12 +3,18 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.15.3] - 2021-08-24
+## [1.15.3] - 2021-08-28
 
 ### Added
 
-- Il est possible de créer des liens vers une rubrique de l'aide. C'est utilisé dans le CHANGELOG et aussi pour contextualiser la rubrique affichée en fonction de la page consultée.
-- La page d'accueil contient le minimum vital: le point 1 de la rubrique UTILISATION de l'aide
+- Gros travail sur l'aide avec la création d'un mode paysage, l'inclusion des symboles utilisés dans l'app, la navigation depuis le mémo visuel, la possibilité de créer des liens depuis changelog. L'aide est même contextualisée pour chaque page (renvoi vers une rubrique différente).
+- Affichage du niveau de zoom sur la Mercator (en bas à gauche). Rappel: à partir du zoom 7 (inclus) ce n'est plus en cache. Exception: si vous zoomez sur destination (ou ailleurs) juste avant de vous déconnecter, alors avec un peu de chance vous ne saturerez pas le cache de 50Mo de mapbox et vous pourrez en profiter hors ligne.
+
+### Changed
+
+- La page d'accueil a été modifiée, elle contient le minimum vital: le point 1 de la rubrique UTILISATION de l'aide
+- icône de mise en cache légérement retravaillée
+- Lors du zoom sur la carte, les icônes et les étiquettes sont grossies, du coup c'est bien plus lisible et agréable.
 
 
 ## [1.15.2] - 2021-08-23
@@ -35,12 +41,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - les réglages des calques sont simplifiés: il n'est plus possible d'utiliser des repères sur la carte. Le calque FIR-REG est remonté en première ligne, le tout me laisse de la place pour de nouvelles options. Les repères sont toujours disponibles pour l'export.
 - le framework CSS (Bootstrap) a été mis à jour, merci de me remonter les éventuels problèmes d'affichage.
-- _plugin_ [OFP2MAP-FAA WIPs v2](https://www.icloud.com/shortcuts/17bd4ab2ebec430596137173b131ce38) ajoute les dégagements s'ils publient une carte.
+- *plugin* [OFP2MAP-FAA WIPs v2](https://www.icloud.com/shortcuts/17bd4ab2ebec430596137173b131ce38) ajoute les dégagements s'ils publient une carte.
 
 ### Added
 
 - possibilité de choisir entre les noms ICAO (par défaut) et IATA pour les aéroports
-- un mode FOCUS apparait dans les réglages des calques. Par défaut il n'affiche que la route. Il est pensé pour utilisation de bascule rapide et ponctuelle. Ce mode peut aussi être utilisé comme un deuxième jeu de réglages, voir l'aide ([RÉGLAGES DES CALQUES](#/help_réglages-des-calques)).
+- un mode FOCUS apparait dans les réglages des calques. Par défaut il n'affiche que la route. Il est pensé pour utilisation de bascule rapide et ponctuelle. Ce mode peut aussi être utilisé comme un deuxième jeu de réglages, voir l'aide [RÉGLAGES DES CALQUES](#/help_reglages_des_calques).
 - il est possible de ne pas afficher les nouveautés lors des mises à jour. On peut changer d'avis à tout moment dans le CHANGELOG.
 
 ### Fixed
@@ -94,15 +100,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - les aéroports de support médical sont prioritaires pour l'affichage à petite échelle
 - ajout de l'Airbus 220 même si je ne suis pas sur de la codification de son type dans l'OFP
 - pour les vols sur track océanique, une popup affiche les détails du point d'entrée
-- _plugin_ [OFP2MAP-FAA WIPs v1](https://www.icloud.com/shortcuts/6f341a7550d149a4be6c9ddacd6345bd) affiche le plan des travaux au sol sur les terrains US
+- *plugin* [OFP2MAP-FAA WIPs v1](https://www.icloud.com/shortcuts/6f341a7550d149a4be6c9ddacd6345bd) affiche le plan des travaux au sol sur les terrains US
 
 ### Changed
 
 - couleur des tracks par défaut proche de la couleur des graticules, aucun pin par défaut pour les tracks, pensez à modifier le repère des tracks dans les réglages d'export pour conserver (à l'export) la visibilité du nom des tracks.
 - modification de la présentation des tracks inspirée par eWAS: affichage des points d'entrée et de sortie, la lettre du track est affichée le long de la ligne du track. A l'export en raison des limitations des logiciels, l'aspect reste inchangé.
 - popup des tracks modifiée, si le vol a lieu sur un track, le point d'entrée et de sortie affichent l'ETO en fonction de l'heure de décollage choisie
-- _plugin_ [OFP2MAP-ETOPS v4](https://www.icloud.com/shortcuts/271499bbcfea414eaa7d2d6ec96ae235): mise en évidence du ΔFUEL si proche des limitations (même condition que le flag ETOPS d'OFP2MAP)
-- _plugin_ [OFP2MAP-AURORA v3](https://www.icloud.com/shortcuts/0da61ab87f40469db1842622b4d951ff): indique la version du plugin dans les résultats
+- *plugin* [OFP2MAP-ETOPS v4](https://www.icloud.com/shortcuts/271499bbcfea414eaa7d2d6ec96ae235): mise en évidence du ΔFUEL si proche des limitations (même condition que le flag ETOPS d'OFP2MAP)
+- *plugin* [OFP2MAP-AURORA v3](https://www.icloud.com/shortcuts/0da61ab87f40469db1842622b4d951ff): indique la version du plugin dans les résultats
 
 ### Fixed
 
@@ -119,7 +125,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - AIRAC 2108
-- _plugin_ [OFP2MAP-ETOPS v3](https://www.icloud.com/shortcuts/c8216ddf7e7446edab5577632d501232): meilleure présentation
+- *plugin* [OFP2MAP-ETOPS v3](https://www.icloud.com/shortcuts/c8216ddf7e7446edab5577632d501232): meilleure présentation
 
 ## [1.13.4] - 2021-08-11
 
@@ -167,7 +173,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 
-- **Il faut mettre à jour tous les plugins** [Liste des Plugins](#/help_export--plugins-raccourcis)
+- **Il faut mettre à jour tous les plugins** [Liste des Plugins](#/help_plugins)
 
 ## [1.12.15] - 2021-07-15
 
