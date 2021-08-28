@@ -91,15 +91,29 @@ Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, 
 
 <figure>![layers settings help](./images/layers-settings.webp)<figcaption>Réglages des calques</figcaption></figure>La carte, en haut à droite, dispose d'un bouton pour personnaliser les calques et les couleurs. Un calque contient un type d'information, par exemple les cercles ETOPS, les FIR réglementées, les tracks, la route...
 Il est possible d'afficher ou de masquer chaque calque en utilisant la coche qui précède son nom. La plupart des calques permettent de choisir la couleur et l'opacité.
-Pour les aéroports (le type avion est déterminé dans l'OFP), il est possible de choisir entre 3 styles: couleur du statut, vert/rouge ou médical. Si vous optez pour le second, le statut reste accessible en cliquant sur un terrain (popup). Le style médical n'affiche que les terrains de support médical.
+
+Pour les aéroports (le type avion est déterminé dans l'OFP), il est possible de choisir entre 4 styles:
+
+- **statuts** reprend les couleurs du statut telles que définies dans le Manex C.
+- **vert/rouge** reprend le code couleur des Regional Planning Chart, il y ajoute le symbole <span style="color: #062DF8;">✚</span> pour les terrains de support médical.
+- **bleu/vert/rouge** permet de distinguer les adéquats de support médical par la couleur de l'icône
+- **médical** n'affiche que les terrains de support médical
+
+Pour information, le statut est aussi disponible en cliquant sur un terrain (popup).
 
 Trois boutons permettent la sauvegarde, la restauration ou un retour aux valeurs par défaut. Le bouton RESTAURER permet, après avoir fait des modifications temporaires (non sauvegardées), de revenir rapidement aux réglages précédents.
 
 Pour vous entraîner, je vous recommande de modifier la couleur des terrains en vert/rouge et de sauvegarder votre choix.
 
-Un mode FOCUS est disponible, par défaut il n'affiche que la route. Il s'active en cliquant sur FOCUS dans le champ ROUTE. Pour quitter ce mode, réaffichez les réglages et cliquez à nouveau sur le bouton.
+### Mode FOCUS&#8239;
 
-Le mode FOCUS est personnalisable, devenant ainsi un deuxième jeu de réglages&#8239;: Après avoir activé le mode MODE FOCUS, réaffichez les réglages et modifiez les à votre convenance. Lorsque vous quitterez le mode FOCUS, ce jeu de réglages sera sauvegardé et les réglages normaux seront restaurés. Si besoin, vous pouvez aussi revenir aux valeurs par défaut du mode FOCUS. Dans mon usage personnel, à titre d'exemple, je modifie la couleur de la route pour une couleur rouge orangée bien plus lisible dans la projection The World.
+Par défaut le mode FOCUS n'affiche que la route. Il s'active en cliquant sur FOCUS dans le champ ROUTE. Pour quitter ce mode, réaffichez les réglages et cliquez à nouveau sur le bouton.
+
+Le mode FOCUS est personnalisable, devenant ainsi un deuxième jeu de réglages&#8239;: Après avoir activé le mode MODE FOCUS, réaffichez les réglages et modifiez les à votre convenance. Lorsque vous quitterez le mode FOCUS, ce jeu de réglages sera sauvegardé et les réglages normaux seront restaurés.
+
+Si nécessaire, un bouton permet de revenir aux valeurs par défaut.
+
+Dans mon usage personnel, à titre d'exemple, je modifie la couleur de la route pour une couleur rouge orangée bien plus lisible dans la projection The World.
 
 </section>
 <section id="_gramet">

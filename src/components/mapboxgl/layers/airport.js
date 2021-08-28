@@ -1,6 +1,6 @@
 /* global mapboxgl editolido */
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
-import {isMedicalStyle, isStatusStyle} from "../../mapSettings/AirportSelector.svelte";
+import {isMedicalStyle, isStatusStyle, isBlueGreenRedStyle} from "../../mapSettings/AirportSelector.svelte";
 import {computeIconTextSize, computeIconSize, haloLightColor, haloTextBlur, haloTextWidth} from '../utils';
 import {supportsHover} from "../../utils";
 import { countryCodeName, countryCodeEmoji } from "../../countries";
@@ -19,6 +19,9 @@ const medicalCondition = ["==", 1, ["get", "h"]];
 const basicAirportIconColor = (raltNames, hexColor) => ["case",
     ["in", ["get", "name"], ["literal", raltNames]], hexColor,
     ["==", 0, ["get", "level"]], '#095','#C71'];
+const blueGreenRedAirportIconColor = (raltNames, hexColor) => ["case",
+    ["in", ["get", "name"], ["literal", raltNames]], hexColor,
+    ["==", 0, ["get", "level"]], ["case", ["==", 1, ["get", "h"]], '#0525cc', '#095'],'#C71'];
 const medicalAirportIconColor = (raltNames, hexColor) => ["case",
     ["in", ["get", "name"], ["literal", raltNames]], hexColor,
     ["==", 0, ["get", "level"]], medicalColor,'#C71'];
@@ -39,6 +42,8 @@ const getIconColor = (style, aircraftType, raltNames, hexColor, ofpLoaded) => {
         return statusAirportIconColor(aircraftType);
     } else if (isMedicalStyle(style)) {
         return medicalAirportIconColor(raltNames, hexColor);
+    } else if (isBlueGreenRedStyle(style)){
+        return blueGreenRedAirportIconColor(raltNames, hexColor);
     }
     return basicAirportIconColor(raltNames, hexColor);
 }
@@ -88,14 +93,33 @@ const getTextColor = (style, raltNames, hexColor, ofpLoaded) => {
 };
 const getAdequateTextField = (style, labelling) => {
     const label = (labelling === 0) ? ['get', 'name'] : ['get', 'iata'];
-    if (!isMedicalStyle(style)){
-        return ["case", ["==", 1, ["get", "h"]],
+    if (isBlueGreenRedStyle(style)) {
+        return ["case", ["==", 0, ["get", "level"]],
+            label,
+            ["case", ["==", 1, ["get", "h"]],
+                ["format",
+                    label, {},
+                    '\u200A✚', {"text-color": '#0525cc', "font-scale": 1.1}
+                ],
+                label
+            ]
+        ];
+    }else if (!isMedicalStyle(style)){
+        const lowZoomExpression = ["case", ["==", 1, ["get", "h"]],
             ["format",
                 label, {},
-                '\u200A✚', {"text-color": medicalColor, "font-scale": 0.9}   //https://jkorpela.fi/chars/spaces.html
+                '\u200A✚', {"text-color": medicalColor, "font-scale": 1.1}   //https://jkorpela.fi/chars/spaces.html
             ],
             label
         ];
+        const highZoomExpression = ["case", ["==", 1, ["get", "h"]],
+            ["format",
+                label, {"text-color": medicalColor},
+                '\u200A✚', {"text-color": medicalColor, "font-scale": 1}   //https://jkorpela.fi/chars/spaces.html
+            ],
+            label
+        ];
+        return lowZoomExpression; //[ "step", ["zoom"], lowZoomExpression, 4, highZoomExpression];
     }
     return label;
 };
