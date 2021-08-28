@@ -7,15 +7,15 @@
   import Navbar from "./components/Navbar.svelte";
   import OfpInput from './components/OfpInput.svelte';
   import Page from "./components/Page.svelte";
-  import Help from "./components/Help.svelte";
+  import Help, {helpRouteRegex} from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
   import {storage, stores, validate, setHistory, storeSettingsFromURL} from "./components/mapSettings/storage.js";
-  import {swDismiss, sidebar, route, checkSwOnVisibilityChange, ofp, ofpStatus, aircraftType, isHelpRoute} from "./stores.js";
+  import {swDismiss, sidebar, route, checkSwOnVisibilityChange, ofp, ofpStatus, aircraftType} from "./stores.js";
   import HomePwaInstall from './components/HomePwaInstall.svelte';
   import {runningOnIpad} from './components/utils';
 
   const redirect = (requestedRoute) => {
-    console.log(`unkwnown route ${requestedRoute}, redirecting to #/`, !!$ofp, $ofpStatus); 
+    console.log(`unknown route ${requestedRoute}, redirecting to #/`, !!$ofp, $ofpStatus);
     window.location.hash = '#/';
   }
 
@@ -28,6 +28,8 @@
     $swDismiss = false;
     //$showGramet = false; // this one is set in OfpInput instead
   };
+  $: isHelpRoute = helpRouteRegex.test($route); // needed because in scenario: reload, go to help, load ofp, svelte shows both map and help....
+
   onMount(() => {
         document.addEventListener("visibilitychange", checkSwOnVisibilityChange, false);
         return () => document.removeEventListener("visibilitychange", checkSwOnVisibilityChange);
@@ -62,11 +64,11 @@
         <Page maxWidth="1400px">
           <Home />
         </Page>
-      {:else if $isHelpRoute}
+      {:else if isHelpRoute}
         <Page  maxWidth="1400px"><Help /></Page>
       {:else if !(($ofp || $aircraftType) && $route === '/map')}
         <!-- redirect -->
-        { redirect($route) }
+        { redirect($route) || ''}
       {/if}
     {/if}
   </div>
@@ -96,7 +98,7 @@
   }
   .content{
     background-color: var(--blueaf);
-    background-image: url("../svg/worldmap.svg");
+    /*noinspection CssUnknownTarget*/background-image: url("../svg/worldmap.svg");
     background-attachment: fixed;
     background-size: cover;
     transition:background-position 0.3s ease;
@@ -104,6 +106,8 @@
     padding: 0;
     flex-direction: column;
     display: flex;
+    min-height: 100vh;
+    min-width: 100vw;
   }
   main.map > .content {
     background-color: var(--bs-white);
@@ -123,7 +127,7 @@
     min-height: 100%;
     position: relative;
   }
-  @media (max-width: 575px), (max-height: 575px)  { /* allow scrolling long pages */
+  @media (max-width: 992px), (max-height: 575px)  { /* allow scrolling long pages */
     :global(html, body) {
       position: relative;
     }
@@ -144,7 +148,7 @@
   :global(.btn) {
     text-transform: uppercase
   }
-  :global(.form-control, .mapboxgl-ctrl-attrib, .btn) {
+  :global(.form-control, .mapboxgl-ctrl-attrib, .btn, aside h2) {
     user-select: none; /* supported by Chrome and Opera */
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
@@ -163,9 +167,9 @@
   :global(label.input-group-text, label.form-control,.input-group-sm >.btn) {
     font-variant-caps: all-small-caps;
   }
-  @media (hover:none), (hover:on-demand) {
+  @media (hover:none) {
     /* suppress hover effect on devices that don't support hover fully */
-    :global(.focusmode .btn-outline-info:hover,.focusmode .btn-outline-info:active) { 
+    :global(.focusmode .btn-outline-info:hover,.focusmode .btn-outline-info:active) {
       color: var(--bs-info);
       background-color: white;
     }
@@ -191,6 +195,15 @@
   :global(.overlay .card-body) {
     padding: .5rem .75rem;
     font-size: 0.875rem;
+  }
+  :global(.text-small-caps) {
+    font-variant-caps: all-small-caps !important;
+  }
+  :global(svg.user-location-estimate){
+    color: var(--plane-color);
+  }
+  :global(svg.user-location-gps){
+    color: #1da1f2;
   }
 
 </style>
