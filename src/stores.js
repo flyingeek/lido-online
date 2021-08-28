@@ -22,6 +22,7 @@ export const focusMode = writable(false);
 export const showGramet = writable(false);
 export const showPlaneOnMap = resetable(false);
 export const grametPosition = writable(100);
+export const mapZoom = writable(0);
 export const simulate = writable(-1);
 export const ofp = writable();
 export const ofpStatus = writable();

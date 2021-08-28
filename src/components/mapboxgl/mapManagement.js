@@ -2,7 +2,7 @@
 
 import {clamp, isInside, lineclip, getBounds} from '../utils';
 import {loadMapLayers} from './layersManagement';
-import {focusMode, sidebar} from '../../stores';
+import {focusMode, sidebar, showPlaneOnMap, mapZoom} from '../../stores';
 import times from './pj_times';
 import eqearth from './pj_eqearth';
 
@@ -153,7 +153,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
         map.fitBounds(bbox, {padding: {top: 30, bottom:80, left: 30, right: 30}});
     }
     //map.addControl(new mapboxgl.FullscreenControl());
-    const geolocate = new mapboxgl.GeolocateControl({
+    const geolocateControl = new mapboxgl.GeolocateControl({
         positionOptions: {
             enableHighAccuracy: false
         },
@@ -161,14 +161,14 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
         trackUserLocation: true
     });
     if (affine) {
-        const originalOnSuccess = geolocate._onSuccess;
-        geolocate._onSuccess = function(position) {
+        const originalOnSuccess = geolocateControl._onSuccess;
+        geolocateControl._onSuccess = function(position) {
             const [lng, lat] = affine([position.coords.longitude, position.coords.latitude]);
             return originalOnSuccess.apply(this, [{'coords': {'longitude': lng, 'latitude': lat, 'accuracy': position.coords.accuracy}}]);
         }
     }
 
-    const mapData = {map, affine, affineAndClamp, affineAndClip, affineOrDrop, bbox, mapOptions, geolocate, initialLoad};
+    const mapData = {map, affine, affineAndClamp, affineAndClip, affineOrDrop, bbox, mapOptions, geolocate: geolocateControl, initialLoad};
 
     class LayersControl {
         onAdd(map) {
@@ -193,7 +193,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
         }
     }
     map.addControl(new(LayersControl));
-    map.addControl(geolocate);
+    map.addControl(geolocateControl);
     let calibrateMode = false;
     let calibrateData = [];
     const calibrate = (e) => {
@@ -231,6 +231,8 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
         }
         
     };
+    const hidePlane = () => showPlaneOnMap.set(false);
+    const storeZoom = e => mapZoom.set(Math.floor( ( e.target.getZoom() + Number.EPSILON ) * 10 ) / 10);
     map.on('load', function() {
 
         loadMapLayers({
@@ -241,22 +243,24 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
             mapOptions,
             aircraftType
         });
-
+        geolocateControl.on('trackuserlocationstart', hidePlane);
         // if (ofp) addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');
         //fetch(ofp.ogimetData.proxyImg); // add to cache
         if (onLoadCb) onLoadCb(map, mapOptions);
         // eslint-disable-next-line no-constant-condition
         if ('process.env.NODE_ENV' === '"development"') {
             document.addEventListener('keydown', handleKeydown);
-            console.log(`map initial zoom: ${map.getZoom()}`);
         }
+        map.on('zoom', storeZoom);
+        mapZoom.set(map.getZoom())
     });
+
     map.on('remove', function() {
+        geolocateControl.off('trackuserlocationstart', hidePlane);
         // eslint-disable-next-line no-constant-condition
         if ('process.env.NODE_ENV' === '"development"') document.removeEventListener('keydown', handleKeydown);
+        map.off('zoom', storeZoom);
     });
-    // map.on('zoom', function() {
-    //     console.log(map.getZoom());
-    // });
+
     return mapData;
 }
