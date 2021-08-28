@@ -272,6 +272,7 @@ export default [{
         "images/ofp2map-icons/icon-128x128.png",
         "images/map-help.webp",
         "images/layers-settings.webp",
+        "images/ephemerides.webp",
         "images/65x70_northern-lights.webp",
         "images/stripe-orange.png",
         "images/stripe-red.png",

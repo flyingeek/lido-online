@@ -1,9 +1,26 @@
+<script context="module">
+    export const helpRouteRegex = /^\/help_?/u;
+    export const getContextualHelpLink = (route) => {
+        let name = "", href;
+        switch (route) {
+            case '/map':
+            href = '#/help_memovisuel';
+            break;
+            case '/export':
+            href = '#/help_export';
+            break;
+            default:
+            href = '#/help';
+        }
+        return {name, href: encodeURI(href)};
+    };
+</script>
 <script>
 import Helpmarkup from './Help.md';
 import ChangeLogModal from './ChangeLogModal.svelte';
 import {wb, route} from '../stores';
-import {shareAppLink} from './utils';
-import {onMount} from "svelte";
+import {shareAppLink, debounce, Deferred} from './utils';
+import {onMount, tick} from "svelte";
 import blurAction from '../actions/blurAction';
 
 const version = "APP_VERSION";
@@ -18,131 +35,226 @@ const reload = () => {
 };
 
 $: updateVersion($wb);
-let scrollingRoot, scrollingElement;
+let scrollingElement, tocSelectElement, scrollingElementScrolling;
 const toc = [];
 let tocNodeList;
 let selected;
 let observer;
 let modal;
+let imageMapSelector = '#memovisuel';
 
-$: style = (selected === undefined || selected === toc[0].id) ? "padding-top: 1rem;" : "padding-top: 0.25rem;";
-$: jumpToBasedOnRoute($route);
 
-function scrollTo(offset, callback) {
-    const relativeOffset = offset  - scrollingElement.offsetTop - scrollingRoot.clientHeight;
-    const fixedOffset = relativeOffset.toFixed();
+$: setAndJumpTo($route);
+
+const scrollEndCondition = (element) => {
+    const relativeOffset = element.offsetTop  - scrollingElement.offsetTop;
     const maxOffset = Math.floor(scrollingElement.scrollHeight - scrollingElement.clientHeight);
+    return scrollingElement.scrollTop.toFixed() === relativeOffset.toFixed() || scrollingElement.scrollTop >= maxOffset;
+}
+function scrollTo(element, callback) {
     const onScroll = function () {
-        if (scrollingElement.scrollTop.toFixed() === fixedOffset || scrollingElement.scrollTop >= maxOffset) {
-            scrollingElement.removeEventListener('scroll', onScroll);
-            if (callback) callback();
+        if (scrollEndCondition(element)) {
+            callback();
         }
     };
-    scrollingElement.addEventListener('scroll', onScroll);
-    onScroll();
-    scrollingElement.scrollTo({
-        top: relativeOffset,
-        behavior: 'smooth' // not supported by Safari
-    })
-}
-const jumpTo = (e) => {
-    if (e) e.target.blur();
-    observer.disconnect();
-    scrollTo(document.getElementById(selected).offsetTop, () => {
-        //console.log('scroll end')
-        tocNodeList.forEach((elt) => {
-            observer.observe(elt);
+    if (!scrollEndCondition(element)) {
+        if (scrollingElementScrolling) scrollingElementScrolling.reset();
+        scrollingElement.addEventListener('scroll', onScroll);
+        scrollingElement.scrollTo({
+            top: element.offsetTop  - scrollingElement.offsetTop,
+            behavior: 'smooth' // not supported by Safari
         });
-    })
-}
-//allows to link to help topics
-const jumpToBasedOnRoute = (route) => {
-    if (route.startsWith('/help_')) {
-        const id = decodeURI(route.replace('/help_', 'md_')); // the md_ prefix is set in rollup.config
-        console.log(id, toc.map(v => v.id))
-        if (toc.map(v => v.id).includes(id)) {
-            // I do not have access to window.onload here
-            // and if images are not loaded the offsetTop will be wrong
-            const promises = [];
-            for (const img of document.querySelectorAll('.help img')) {
-                if (!img.complete) {
-                    promises.push(new Promise((resolve,) => {
-                        img.onload = () => (img.onload) ? resolve(img) && img.onload() : resolve(img);
-                        img.onerror = () => (img.onerror) ? resolve(img) && img.onerror(): resolve(img); // we don't care of errors, offsetTop will be valid
-                    }));
-                }
+        return {
+            reset: () => {
+                scrollingElement.removeEventListener('scroll', onScroll);
+                scrollingElementScrolling = undefined;
+                //console.log('scrollingElementScrolling reset')
             }
-            Promise.all(promises).then(() => {
-                selected = id;
-                modal.close();
-                jumpTo();
-            }).catch((err) => console.error(err));
+        };
+    }
+}
+// called from:
+// - the toc select menu
+// - setAndJumpTo (without arguments)
+const jumpTo = (e) => {
+    if (!selected || !tocNodeList) return;
+    if (e) e.target.blur(); // the toc select
+    const element = document.getElementById(selected);
+    if (element) {
+        if (!scrollEndCondition(element)) {
+            observer.disconnect();
+            scrollingElementScrolling = scrollTo(element, () => {
+                //console.log('scroll end')
+                if (tocNodeList) {
+                    tocNodeList.forEach((elt) => {
+                        observer.observe(elt);
+                    });
+                }
+                scrollingElementScrolling.reset();
+            });
+            //if (scrollingElementScrolling) console.log('scrollingElementScrolling set');
+        }else{
+            if (scrollingElementScrolling) scrollingElementScrolling.reset();
         }
     }
 };
-
-onMount(() => {
-    tocNodeList = scrollingElement.querySelectorAll('h2[id]');
-    observer = new IntersectionObserver((entries) => {
-        const y = scrollingElement.scrollTop;
-        const max = Math.floor(scrollingElement.scrollHeight - scrollingElement.clientHeight);
-        if (y < max) {
-            let current = toc[0].id;
-            for (const elt of tocNodeList) {
-                if (y < (elt.offsetTop - scrollingElement.offsetTop - scrollingRoot.clientHeight)) break;
-                current = elt.id;
+// called from:
+// - onMount with the route
+// - the expanded toc menu
+const setAndJumpTo = (optionalRouteOrEvent) => {
+    if (optionalRouteOrEvent) {
+        if (optionalRouteOrEvent.target) {
+            selected = optionalRouteOrEvent.target.dataset.id;
+        }else{
+            const decoded = decodeURI(optionalRouteOrEvent);
+            if (decoded.startsWith('/help')){
+                const id = decoded.replace('/help_', '_'); //we use a _ prefix in section
+                if (toc && toc.map(v => v.id).includes(id)) {
+                    selected = id;
+                    modal.close(); // in case we are reading the changelog
+                }
             }
-            selected = current;
+        } 
+    }
+    if (!selected && toc && toc.length > 0) {
+        selected = toc[0].id;
+    }
+    if (selected) {
+        jumpTo();
+    }
+}
+const imagesOnLoadPromise = (selector) => {
+    const promises = [];
+    document.querySelectorAll(selector).forEach((img) => {
+        if (!img.complete) {
+            const d = new Deferred();
+            img.onload = () => d.resolve(img);
+            img.onerror = () =>  d.resolve(img);
+            if (!img.complete) {
+                promises.push(d.promise);
+            }
         }
+    });
+    //console.log(Promise.all(promises));
+    return Promise.all(promises);
+};
+
+const resizeImageMap = () => {
+    document.querySelectorAll(imageMapSelector).forEach((img) => {
+        const xScale = img.clientWidth/img.naturalWidth;
+        const yScale = img.clientHeight/img.naturalHeight;
+        const px = parseFloat(window.getComputedStyle(img).getPropertyValue('padding-left'));
+        const py = parseFloat(window.getComputedStyle(img).getPropertyValue('padding-top'));
+        document.querySelectorAll(`map[name="${img.useMap.substring(1)}"] area`).forEach((area) => {
+            if(!area.dataset.coords) area.dataset.coords = area.coords;
+            const coords = area.dataset.coords
+                .split(',')
+                .map((v, i) => ((i % 2 === 0) ? xScale * Number(v) + px : yScale * Number(v) + py).toFixed(0))
+                .join(',');
+                area.coords = coords;
+        });
+    });
+};
+onMount(() => {
+    tocNodeList = scrollingElement.querySelectorAll('.markdown section[id]');
+    const observerRegistry = new Map();
+    observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => observerRegistry.set(entry.target.id, entry.isIntersecting));
+        //console.log(observerRegistry)
+        let first;
+        for (const [id, isIntercepting] of observerRegistry.entries()) {
+            if (isIntercepting) {
+                first = id;
+                break;
+            }
+        }
+        if (first) selected = first;
     }, {
         root: scrollingElement,
-        rootMargin: `${ 0 - scrollingRoot.clientHeight}px 0px 30px 0px`,
-        threshold: 1.0
+        rootMargin: '0px',
+        threshold: 0
     });
+    //observe all of our markdown sections
     tocNodeList.forEach((elt) => {
-        toc.push({id: elt.id, label: elt.innerText});
+        const h2 = elt.querySelector('h2:first-of-type')
+        toc.push({id: elt.id, label: h2.innerText, html: h2.innerHTML});
         observer.observe(elt);
     });
-    selected = toc[0].id;
-    jumpToBasedOnRoute($route);
+    //console.log(toc)
+
+    //remap all internal links
+    const remapper = (e) => {
+        e.preventDefault();
+        const url = new URL(e.target.href);
+        setAndJumpTo(url.hash.replace('#_', '/help_'));
+    }
+    const remapperQueryExpression = 'a[href^="#_"], area[href^="#_"]';
+    document.querySelectorAll(remapperQueryExpression).forEach(elt => elt.addEventListener('click', remapper));
+
+    // clicking on help link or navbar triggers a scrollToTop like function
+    const jumpToTopQueryExpression  = '.navbar-nav, .nav-link[href="#/help"]';
+    document.querySelectorAll(jumpToTopQueryExpression).forEach(elt => elt.addEventListener('click', setAndJumpTo));
+
+    // we have to resize the image's map on load and on resize
+    imagesOnLoadPromise(imageMapSelector).then(() => {
+        resizeImageMap();
+    }).catch((err) => console.error(err));
+
+    tick().then(() => setAndJumpTo($route)); // tick avoid bad positionning in Safari
+
     return () => {
         observer.disconnect();
+        document.querySelectorAll(jumpToTopQueryExpression).forEach(elt => elt.removeEventListener('click', setAndJumpTo));
+        document.querySelectorAll(remapperQueryExpression).forEach(elt => elt.removeEventListener('click', remapper));
+        if (scrollingElementScrolling) scrollingElementScrolling.reset();
         tocNodeList = undefined;
         observer = undefined;
     }
 });
-
 </script>
+<svelte:window on:resize={debounce(resizeImageMap, 500)}/>
+
 <ChangeLogModal bind:this={modal} />
-<div class="help markdown" {style}>
-    <div bind:this={scrollingElement} class="scrollContainer">
-        <div><!--prevents safari sticky bug-->
-            <h1 bind:this={scrollingRoot}>
+<div class="help">
+    <aside>
+        <h1>
+            <div class="appInfos">
                 <div class="app"><img src="images/ofp2map-icons/icon-128x128.png" alt="logo"></div>
                 <div class="infos"><div>OFP2MAP v{version}</div><small on:click|once={() => $wb && $wb.update() && console.log('updating SW')}>ServiceWorker&#8239;: {swVersion}</small></div>
-                {#if navigator.standalone === true || 'process.env.NODE_ENV' === '"development"'}
-                    {#if (navigator.share || 'process.env.NODE_ENV' === '"development"')}<button class="btn btn-outline-secondary btn-sm" on:click={shareAppLink}>Partager</button>{/if}
-                    <button class="btn btn-outline-secondary btn-sm" on:click={reload}>Recharger</button>
+            </div>
+            <div class="actions">
+                {#if ((navigator.standalone === true && navigator.share) || 'process.env.NODE_ENV' === '"development"')}
+                    <button class="share btn btn-outline-secondary btn-sm" on:click={shareAppLink}><svg><use xlink:href="#share-symbol" /></svg><!-- Partager --></button>
                 {/if}
-                <button class="btn btn-outline-secondary btn-sm" on:click={modal.show}>CHANGELOG</button>
-                <!-- svelte-ignore a11y-no-onchange -->
-                <select class="form-select form-select-sm fw-bold text-uppercase" bind:value="{selected}" on:change={jumpTo} use:blurAction>
-                    {#each toc as {id, label}}
-                        <option value={id} selected={id === selected}>{label}</option>
-                    {/each}
-                </select>
-            </h1>
+                {#if navigator.standalone === true || 'process.env.NODE_ENV' === '"development"'}
+                    <button class="reload btn btn-outline-secondary btn-sm" on:click={reload}><!-- Recharger --></button>
+                {/if}
+                <button class="changelog btn btn-outline-secondary btn-sm" on:click={modal.show}><!-- CHANGELOG --></button>
+            </div>
+            <!-- svelte-ignore a11y-no-onchange -->
+            <select bind:this={tocSelectElement} class="toc form-select form-select-sm" bind:value="{selected}" on:change={jumpTo} use:blurAction>
+                {#each toc as {id, label} (id)}
+                    <option value={id} selected={id === selected}>{label}</option>
+                {/each}
+            </select>
+        </h1>
+        <div class="toc">
+            {#each toc as {id, html} (id)}
+                <h2 class:selected={selected === id} data-id="{id}" on:click={setAndJumpTo}>{@html html}</h2>
+            {/each}
+        </div>
+    </aside>
+    <div bind:this={scrollingElement} class="scrollContainer">
+        <div class="markdown">
             <Helpmarkup/>
         </div>
     </div>
 </div>
-
 <style>
     h1 {
         font-size: 1rem;
-        padding-bottom: 0.25rem;
         display: flex;
-        top: 0;
+        align-items: center;
     }
 
     h1 button {
@@ -151,11 +263,41 @@ onMount(() => {
     small {
         font-size:x-small;
     }
-    h1 > * {
-        align-self: center;
-    }
     h1, .scrollContainer {
         background-color: white;
+    }
+    :global(#_memovisuel){
+        margin-bottom: 1rem;
+    }
+    :global(#_memovisuel h2:first-of-type){
+        position: relative;
+    }
+    :global(#_memovisuel h2:first-of-type::after){
+        content: "\24D8\00A0Vous pouvez cliquer sur les zones"; /* ⓘ + nbsp;*/ 
+        margin-left: 1rem;
+        font-size: small;
+        /* font-weight: normal; */
+        display: none;
+        /* color: white; */
+        background-color: var(--bs-teal);
+        position: absolute;
+        left: 50%;
+        bottom: -0.5rem;
+        transform: translate(-50%, 0);
+        padding: 0.25rem;
+        border-radius: 2px;
+    }
+    @media (min-width: 576px) {
+        :global(#_memovisuel h2:first-of-type::after){
+            display: inline-block;
+        }
+    }
+    .toc {
+        display: none;
+    }
+    .toc :global(svg) {
+        height: 1.2rem;
+        width: 1.2rem;
     }
     .scrollContainer {
         -webkit-overflow-scrolling: touch;
@@ -164,22 +306,18 @@ onMount(() => {
         height: 0;
         z-index: 1;
         padding-right: 1rem;
+        margin-right: -1rem;
+        padding-bottom: 50vh;
     }
+
     .help {
         margin:0;
-        padding:1rem 0 0.5rem 1rem;
+        padding: 0.5rem 1rem;
         flex: 1 1 auto;
         height: 0;
         display: flex;
         flex-direction: column;
         background-color: white;
-        transition: padding-top 0.5s linear;
-    }
-    :global(.markdown h2) {
-        font-weight: 500;
-        /* text-transform: uppercase; */
-        /* font-size: 1.5rem; */
-        font-variant: all-petite-caps;
     }
     :global(.markdown svg) {
         height: 24px;
@@ -210,8 +348,12 @@ onMount(() => {
         font-size: small;
         font-variant: all-small-caps;
     }
+    .appInfos {
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+    }
     .app {
-        display: none;
         vertical-align: middle;
         text-align: center;
         margin-right: 0.5rem;
@@ -225,26 +367,168 @@ onMount(() => {
         height: 32px;
         border-radius: 5px;
     }
-    select {
+    .reload::before{
+        content: "Recharger";
+    }
+    .share::before{
+        content: "Partager";
+    }
+    .share svg {
+        display: none;
+    }
+    .changelog::before{
+        content: "Changelog";
+    }
+    select.toc {
         display: none;
         width: auto;
+        text-transform: uppercase;
+        color: rgba(0,0,0,.55);
+        font-weight: 700;
         margin-left: auto;
+        max-width: 20ch;
+        text-overflow: ellipsis;
     }
-    @media (min-width: 576px) {
-        select {
+    @media (min-width: 768px) {
+        select.toc {
             display: inline-block;
+        }
+    }
+    /**
+    * Here we put the menu on the left side
+    */
+    @media (min-width: 992px) {
+        .help {
+            flex-direction: row;
+            column-gap: 1rem;
+        }
+        .scrollContainer{
+            height: auto;
+        }
+        div.toc {
+            display: block;
+            margin-top: 1rem;
+            margin-left: -8px; /* makes place to put a star */
+        }
+        select.toc {
+            display: none;
+        }
+        aside {
+            display: block;
+            flex: 0 0 auto;
+        }
+        
+        aside h1 {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        aside h2 {
+            color: var(--bs-gray-600);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 5px 5px 5px 13px;
+            margin-left: -5px;
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+        }
+        aside h2.selected {
+            color: black;
+            border-left-color: var(--bs-pink);
+        }
+        :global(h2[data-id="_memovisuel"]::before){
+            content: "★";
+            color: var(--bs-yellow);
+            margin-left: -11px;
+            font-size: 10px;
+            line-height: 1.2rem;
+            position: absolute;
+        }
+        .actions {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            margin-top: 1rem;
+            row-gap: 0.25rem;
+        }
+        .actions button:not(.reload){
+            border: none;
+            padding: 0;
+            font-size: 1rem;
+            margin-top: 0;
+            margin-bottom: 0;
+            margin-left: 0;
+            font-weight: 500;
+            line-height: 1.2;
+            text-align: left;
+        }
+        .actions button:not(.reload):hover, .actions button:not(.reload):active{
+            color: var(--bs-gray);
+            background-color: transparent;
+        }
+        .actions button:not(.reload):focus{
+            box-shadow: none;
+        }
+        .actions button.reload{
+            position: absolute;
+            bottom: 1rem;
+            margin-left: 0;
+        }
+        .appInfos {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
         }
         .app {
             display: inline-block;
         }
-    }
-    @media (min-width: 576px) and (min-height: 576px) {
-        h1 {
-            position: sticky;
-            position: -webkit-sticky;
+        .infos {
+            display: inline-flex;
+        }
+        .reload::before{
+            content: "Recharger l'App";
+        }
+        .share::before{
+            content: "Partager l'App";
+        }
+        .changelog::after{
+            content: "\1F4E3"; /* 📣 */
+            margin-left: 1ch;
+            display: inline-block;
+            /* -webkit-transform: scaleX(-1);
+            transform: scaleX(-1); */
+        }
+        .share svg {
+            display: inline-block;
+            width: calc(1rem * 1.2);
+            height: calc(1rem * 1.2);
+            margin-bottom: 3px;
+            stroke: var(--bs-gray-400);
+        }
+        .actions button.changelog{
+            text-transform: none;
+            border-top: 1px solid var(--bs-gray-200);
+            border-bottom: 1px solid var(--bs-gray-200);
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            width: 100%;
+            margin-top: 0.5rem;
         }
     }
+    /* smartphones, touchscreens */
+    /* @media (hover: none) and (pointer: coarse) {
+        div.toc h2 {
+            margin-bottom: 0.835rem;
+        }
+    } */
     :global(.markdown .table th), :global(.markdown .table td){
         padding: 0.25rem 0.75rem;
+    }
+    :global(.markdown .aurora::before){
+        height: 100%;
+        width: 100%;
+    }
+    :global(.markdown .aurora) {
+        position:relative;
+        display: inline-block;
     }
 </style>
