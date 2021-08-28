@@ -2,6 +2,29 @@
     import {ofp, takeOffTime} from '../stores';
     import plugins from "../plugins.json";
     import {pairingData} from "./pairingParser";
+    let shareURL;
+
+    /**
+     * standalone app and safari share the same app cache
+     * This is an attempt to read a share_cache/share-shortcut fake endpoint
+     * 
+     * It is not yet functional
+     */
+    const getShortcutName = async () => {
+        const cache = await caches.open("share_cache");
+        const response = await cache.match('/share-shortcut');
+
+        if (!response) {
+        return null;
+        }
+
+        const responseBody = await response.json();
+        return responseBody['shortcutName'];
+    };
+    let shareShortcut;
+    getShortcutName()
+        .then(name => shareShortcut = name)
+        .catch(err => console.error(err));
 
     function* etopsData(ofp, takeOff){
         if (!ofp || !takeOff) return [];
@@ -106,7 +129,9 @@
             "latitude":  p.latitude.toFixed(6),
             "longitude":  p.longitude.toFixed(6)}));
     };
-    export const shareOFP = async () => {
+    export const shareOFP = async (e) => {
+        if (!shareShortcut) e.preventDefault();
+        if (!(navigator && navigator.share)) {e.preventDefault(); return false;}
         const ofp = $ofp;
         const takeOffTime = $takeOffTime;
         const excluded = ['EEP', 'EXP', 'raltPoints', 'rawFPL', 'inFlightStart', 'inFlightReleased'];
@@ -132,24 +157,30 @@
                 rawText: ofp.text
             })//.replace(/"(?:lati|longi)tude":"([0-9.]+)"/gu, (_, p1) => p1)
         }
-        try {
-            await navigator.share(shareData)
-        } catch(err) {
-            console.log(err);
+
+        if (shareShortcut) {
+            shareURL = "shortcuts://run-shortcut?name=" + encodeURIComponent(shareShortcut) + "&input=text&text=" + encodeURIComponent(JSON.stringify(shareData));
+            return true;
+        }else{
+            try {
+                await navigator.share(shareData)
+            } catch(err) {
+                console.log(err);
+            }
+            return false;
         }
-        return false;
     };
 
 </script>
 
-<div class="infos" class:cursor-pointer={(navigator && navigator.share)} on:click={(navigator && navigator.share) ? shareOFP : null}>
+<div class="infos">
     {#if (fuelMarginTime < 20)}<p class="etops">ETOPS</p>{/if}
-    <div class="details">
+    <a  href="{shareURL}" class="details"  class:cursor-pointer={(navigator && navigator.share)} on:click={shareOFP}>
     <p><b>{$ofp.infos.flightNo}</b> {$ofp.infos.depICAO}-{$ofp.infos.destICAO}</p>
     <p>{$ofp.infos.ofpTextDate} {($ofp.infos.ofp.includes('/')) ? '' : 'ofp: '}{$ofp.infos.ofp}
-        {#if (navigator && navigator.share)}<svg><use xlink:href="#share-symbol"/></svg>{/if}
+        {#if (navigator && navigator.share)}<span class="plugin">🧩</span>{/if}
     </p>
-    </div>
+    </a>
 </div>
 
 <style>
@@ -159,10 +190,17 @@
         font-size: small;
         flex-direction: row;
         max-height: 38px;
+        cursor: none;
+        align-items: center;
     }
     .details{
         display: flex;
         flex-direction: column;
+        color: inherit;
+        cursor: default;
+    }
+    .details, .details:hover{
+        text-decoration: none;
     }
     @media (min-width: 500px){
         .infos {
@@ -173,19 +211,18 @@
         margin:0
     }
     .cursor-pointer{
-        cursor: pointer;
+        cursor: pointer !important;
     }
-    .etops{
+    :global(.etops){
         writing-mode: vertical-rl;
         text-orientation: upright;
         font-size: 6px;
         margin-right: 5px;
         margin-left: -1em;
         font-weight: 700;
-        align-self: center;
         background-color: var(--bs-warning);
     }
-    svg {
+    .plugin {
         width:20px;
         height: 20px;
         vertical-align: bottom;
