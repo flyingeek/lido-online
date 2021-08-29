@@ -1,6 +1,6 @@
 /* global mapboxgl */
 
-import {clamp, isInside, lineclip, getBounds} from '../utils';
+import {clamp, isInside, lineclip, getBounds, throttle} from '../utils';
 import {loadMapLayers} from './layersManagement';
 import {focusMode, sidebar, showPlaneOnMap, mapZoom} from '../../stores';
 import times from './pj_times';
@@ -232,7 +232,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
         
     };
     const hidePlane = () => showPlaneOnMap.set(false);
-    const storeZoom = e => mapZoom.set(Math.floor( ( e.target.getZoom() + Number.EPSILON ) * 10 ) / 10);
+    const storeZoom = throttle(e => mapZoom.set(Math.floor( ( e.target.getZoom() + Number.EPSILON ) * 10 ) / 10), 100);
     map.on('load', function() {
 
         loadMapLayers({

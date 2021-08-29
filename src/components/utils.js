@@ -25,6 +25,37 @@ export function debounce(func, wait, immediate) {
         if (callNow) func.apply(context, args);
     };
 }
+export function throttle(func, wait, leading, trailing, context) {
+    let ctx, args, result;
+    let timeout = null;
+    let previous = 0;
+    const later = function() {
+        previous = new Date;
+        timeout = null;
+        result = func.apply(ctx, args);
+    };
+    return function() {
+        var now = new Date;
+        if (!previous && !leading) previous = now;
+        var remaining = wait - (now - previous);
+        ctx = context || this;
+        args = arguments;
+        // Si la période d'attente est écoulée
+        if (remaining <= 0) {
+            // Réinitialiser les compteurs
+            clearTimeout(timeout);
+            timeout = null;
+            // Enregistrer le moment du dernier appel
+            previous = now;
+            // Appeler la fonction
+            result = func.apply(ctx, args);
+        } else if (!timeout && trailing) {
+            // Sinon on s’endort pendant le temps restant
+            timeout = setTimeout(later, remaining);
+        }
+        return result;
+    };
+}
 
 export function folderName(str) {
     const a = str.split('-');
