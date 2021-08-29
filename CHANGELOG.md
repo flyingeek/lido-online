@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.15.3] - 2021-08-28
+## [1.15.3] - 2021-08-29
 
 ### Added
 
@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - La page d'accueil a été modifiée, elle contient le minimum vital: le point 1 de la rubrique UTILISATION de l'aide
-- icône de mise en cache légérement retravaillée
+- icône de mise en cache légérement retravaillée pour un meilleur contraste
 - Lors du zoom sur la carte, les icônes et les étiquettes sont grossies, du coup c'est bien plus lisible et agréable. Si vous aviez modifié les tailles par défaut des icônes et des labels (1.0), il faudra peut être les réajuster.
 - Styles statuts et vert/rouge: retour en arrière pour les terrains de support médical: l'étiquette redevient noire. Le symbole ✚ reste bleu, il est légérement plus grand. La carte semble ainsi moins chargée à grande échelle.
 
