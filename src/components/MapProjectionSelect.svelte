@@ -71,7 +71,7 @@
         transform: translate(0, -50%);
         background-color: var(--bs-gray-100);
         font-size: small;
-        min-width: 45px;
+        min-width: 48px;
         z-index: 1;
     }
     select {
