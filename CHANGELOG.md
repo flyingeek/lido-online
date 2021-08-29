@@ -9,13 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Gros travail sur l'aide avec la création d'un mode paysage, l'inclusion des symboles utilisés dans l'app, la navigation depuis le mémo visuel, la possibilité de créer des liens depuis le changelog. L'aide est même contextualisée pour chaque page (renvoi vers une rubrique différente).
 - Affichage du niveau de zoom sur la Mercator. Rappel: à partir du zoom 7 (inclus), ce n'est plus garanti de rester dans le cache.
-- Un thème bleu/vert/rouge fait son apparition. Bleu = adéquat médical. Si le niveau de sûreté du terrain est orange (seulement DTTA à ce jour), le symbole ✚ est accolé au nom.
+- Un thème bleu/vert/rouge fait son apparition. Bleu = adéquat médical. Si le niveau de sûreté du terrain est orange (seulement DTTA à ce jour), le symbole ✚ est accolé au nom. Ce thème me semble bien adapté au MC.
 
 ### Changed
 
 - La page d'accueil a été modifiée, elle contient le minimum vital: le point 1 de la rubrique UTILISATION de l'aide
 - icône de mise en cache légérement retravaillée
-- Lors du zoom sur la carte, les icônes et les étiquettes sont grossies, du coup c'est bien plus lisible et agréable.
+- Lors du zoom sur la carte, les icônes et les étiquettes sont grossies, du coup c'est bien plus lisible et agréable. Si vous aviez modifié les tailles par défaut des icônes et des labels (1.0), il faudra peut être les réajuster.
 - Styles statuts et vert/rouge: retour en arrière pour les terrains de support médical: l'étiquette redevient noire. Le symbole ✚ reste bleu, il est légérement plus grand. La carte semble ainsi moins chargée à grande échelle.
 
 
