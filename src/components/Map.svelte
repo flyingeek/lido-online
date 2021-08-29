@@ -2,7 +2,7 @@
     import FormSettings from "./mapSettings/Form.svelte";
     import {createMap, token} from './mapboxgl/mapManagement';
     import {updateMapLayers} from './mapboxgl/layersManagement';
-    import {online, showGramet, simulate, aircraftType, mapZoom, showPlaneOnMap} from "../stores.js";
+    import {online, showGramet, simulate, aircraftType, showPlaneOnMap} from "../stores.js";
     import {promiseTimeout, fetchSimultaneously} from './utils';
     import { createEventDispatcher, onMount, onDestroy, tick} from 'svelte';
     import {get} from 'svelte/store';
@@ -165,9 +165,6 @@
         <div class="nowebp">Votre navigateur ne supporte pas l'affichage d'images au format .webp</div>
     {/if}
 </div>
-{#if selectedProjection && selectedProjection.id === 'mercator' && $mapZoom}
-    <div class="mapzoom">🔎{$mapZoom.toFixed(1)}</div>
-{/if}
 {#if (mapData && !!ofp  && ($showPlaneOnMap || $simulate >= 0))}<MapPlane {mapData}/>{/if}
 <AircraftType bind:aircraftTypeSelectElement on:change={aircraftChange}/>
 <FormSettings bind:this={settings} bind:kmlOptions on:change={update} on:save />
@@ -367,13 +364,5 @@
         font-size:small;
         padding: 10px;
         margin-top: 10px;
-    }
-    .mapzoom {
-        position: absolute;
-        bottom: 7px;
-        font-size: small;
-        left: 100px;
-        color: var(--bs-gray-dark);
-        opacity: 0.7;
     }
 </style>

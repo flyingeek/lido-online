@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Gros travail sur l'aide avec la création d'un mode paysage, l'inclusion des symboles utilisés dans l'app, la navigation depuis le mémo visuel, la possibilité de créer des liens depuis le changelog. L'aide est même contextualisée pour chaque page (renvoi vers une rubrique différente).
-- Affichage du niveau de zoom sur la Mercator (en bas à gauche). Rappel: à partir du zoom 7 (inclus) ce n'est plus en cache. Exception: si vous zoomez sur la destination (ou ailleurs) juste avant de vous déconnecter, alors avec un peu de chance vous ne saturerez pas le cache de 50Mo de mapbox et vous pourrez en profiter hors ligne.
+- Affichage du niveau de zoom sur la Mercator. Rappel: à partir du zoom 7 (inclus), ce n'est plus garanti de rester dans le cache.
 - Un thème bleu/vert/rouge fait son apparition. Bleu = adéquat médical. Si le niveau de sûreté du terrain est orange (seulement DTTA à ce jour), le symbole ✚ est accolé au nom.
 
 ### Changed

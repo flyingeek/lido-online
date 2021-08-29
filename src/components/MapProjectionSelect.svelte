@@ -1,5 +1,6 @@
 <script>
     /* global editolido */
+    import {mapZoom} from '../stores';
     import options from './mapboxgl/mapOptions';
     import blurAction from '../actions/blurAction';
     import {onMount} from 'svelte';
@@ -50,18 +51,32 @@
     });
 </script>
 <div class="input-group">
-<!-- svelte-ignore a11y-no-onchange -->
-<select name="{name}" bind:value={selected} class="form-select form-select-sm" on:change use:blurAction>
-    {#each authorizedOptions as option, index}
-    <option value="{option}" selected={option.id === selected.id}>{(option.id === autoSelectedId) ? `${option.label.toUpperCase()}`: option.label}</option>
-    {/each}
-</select>
+    <!-- svelte-ignore a11y-no-onchange -->
+    <select id="{name}" name="{name}" bind:value={selected} class="form-select form-select-sm" on:change use:blurAction>
+        {#each authorizedOptions as option (option.id)}
+        <option value="{option}" selected={option.id === selected.id}>
+            {(option.id === autoSelectedId) ? `${option.label.toUpperCase()}`: option.label}
+        </option>
+        {/each}
+    </select>
+    {#if selected.id==='mercator'}
+        <label for="{name}" class="mapzoom">🔎&nbsp;{$mapZoom.toFixed(1)}</label>
+    {/if}
 </div>
-
 <style>
-    .form-select-sm {
+    label {
+        position: absolute;
+        right: 2.25rem;
+        top: 50%;
+        transform: translate(0, -50%);
+        background-color: var(--bs-gray-100);
         font-size: small;
-        width: auto;
+        min-width: 45px;
+        z-index: 1;
+    }
+    select {
+        width: auto !important;
+        font-size: small;
         display: inline-block;
         background-color: var(--bs-gray-100);
     }
