@@ -26,6 +26,8 @@
     <path d="{progressPath()}" transform="translate(4,4)"/>
     <line x1="54" y1="36" x2="54" y2="72" />
     <polyline points="36 54, 54 72, 72 54" />
+    <line x1="54" y1="36" x2="54" y2="72" />
+    <polyline points="36 54, 54 72, 72 54" />
 </svg>
 <slot></slot>
 
@@ -38,7 +40,7 @@
     }
     circle {
         fill: var(--progress-circlefill, transparent);
-        stroke: var(--progress-circlestroke, white);
+        stroke: var(--progress-circleoutline, black);
         stroke-width: 4px;
     }
     path:first-of-type {
@@ -49,8 +51,12 @@
         stroke: var(--progress-color, yellow);
         stroke-width: var(--progress-width, 14px);
     }
-    line, polyline {
-        stroke: var(--progress-arrowstroke, teal);
+    line:last-of-type, polyline:last-of-type {
+        stroke: var(--progress-arrowstroke, black);
         stroke-width: var(--progress-arrowwidth, 10px);
+    }
+    line:first-of-type, polyline:first-of-type {
+        stroke: var(--progress-arrowoutline, var(--progress-circleoutline, black));
+        stroke-width: calc(var(--progress-arrowwidth, 10px) + 4px);
     }
 </style>
