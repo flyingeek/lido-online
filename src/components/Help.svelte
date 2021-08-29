@@ -541,4 +541,7 @@ onMount(() => {
         padding-left: 1rem;
         background-color: var(--bs-gray-100);
     }
+    :global(.markdown details){
+        margin-bottom: 1rem; /* extra space otherwise menu might consider the wrong item */
+    }
 </style>
