@@ -80,7 +80,7 @@ Pour partager le lien vers OFP2MAP, utilisez le bouton situé en haut sur cette 
 
 Une fois un premier OFP chargé, il est possible même en mode déconnecté de charger un autre OFP pour l'exporter. Le cache de l'App vous permettra de naviguer sur les cartes déjà visualisées. Pour mettre en cache les cartes, il suffit de les consulter.
 
-Pour mettre rapidement en cache un vol, il existe à droite du sélecteur de carte, un bouton de mise en cache de la projection&#8239;: <span class="cacheButton"><CircleProgress value=0/></span>. Sur les cartes LAMBERT, THE WORLD, =Physique= et {cbName}, il mettra en cache la totalité de la carte. Sur la MERCATOR, seule la partie de carte incluant la route sera mise en cache. Ce bouton ne s'affiche que si la projection n'est pas encore dans le cache.
+Pour mettre rapidement en cache un vol, il existe à droite du sélecteur de carte, un bouton de mise en cache de la projection&#8239;: <span class="cacheButton"><CircleProgress value=0/></span>. Ce bouton ne s'affiche que si la projection n'est pas encore dans le cache. Sur les cartes LAMBERT, THE WORLD, =Physique= et {cbName}, il mettra en cache la totalité de la carte. Sur la MERCATOR, seule la partie de carte incluant la route sera mise en cache et le niveau de détails sera limité à un zoom < 7.
 
 Le bouton affiche la progression du téléchargement&#8239;: <span class="cacheButton cacheProgress"><CircleProgress value=33/></span>, puis il disparait une fois la projection en cache. En cas d'erreur, il affiche: <span class="cacheButton cacheError"><CircleProgress value=0/></span>, et vous pouvez faire une nouvelle tentative.
 
@@ -128,7 +128,7 @@ Pour afficher le Gramet, cliquez sur sa miniature dans la barre de menu. Pour af
 
 Pour mieux comprendre le GRAMET, je vous conseille son <Link href="http://www.ogimet.com/guia_gramet.phtml.en">Guide d'interprétation</Link>.
 
-*Le site GRAMET est indisponible lorsqu'il met à jour ses données, cela intervient entre minuit et 3h (heure française). Par ailleurs, je suis limité à 10 secondes pour la durée d'exécution du proxy, ce délai est un peu faible lorsqu'ogimet est saturé (tranche 18h30-20h00) et cela peut entrainer des erreurs, cliquer sur <svg style="stroke: red; transform: rotate(180deg); height: 20px; width: 20px;"><use xlink:href="#info-symbol"></use></svg> vous affichera des consignes.*
+*Le site ogimet est indisponible lorsqu'il met à jour ses données, cela intervient entre minuit et 3h (heure française). Par ailleurs, je suis limité à 10 secondes pour la durée d'exécution du proxy, ce délai est un peu faible lorsqu'ogimet est saturé (tranche 18h30-20h00) et cela peut entrainer des erreurs, cliquer sur <svg style="stroke: red; transform: rotate(180deg); height: 20px; width: 20px;"><use xlink:href="#info-symbol"></use></svg> vous affichera des consignes.*
 
 </section>
 <section id="_position">
