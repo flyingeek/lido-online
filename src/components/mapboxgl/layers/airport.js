@@ -123,7 +123,19 @@ const getAdequateTextField = (style, labelling) => {
     }
     return label;
 };
-const getETOPSTextField = getAdequateTextField;
+const getETOPSTextField = (style, labelling) => {
+    const label = (labelling === 0) ? ['get', 'name'] : ['get', 'iata'];
+    if (!isMedicalStyle(style)){
+        return ["case", ["==", 1, ["get", "h"]],
+            ["format",
+                label, {},
+                '\u200A✚', {"text-color": medicalColor, "font-scale": 1.1}   //https://jkorpela.fi/chars/spaces.html
+            ],
+            label
+        ];
+    }
+    return label;
+}
 const getEmergencyTextField = (labelling) => {
     const label = (labelling === 0) ? ['get', 'name'] : ['get', 'iata'];
     return label;
