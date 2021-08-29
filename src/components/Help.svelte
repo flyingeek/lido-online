@@ -535,4 +535,10 @@ onMount(() => {
     :global(.markdown h3) {
         font-size: 1.25rem;
     }
+    :global(.markdown blockquote) {
+        font-style: italic;
+        border-left: 3px solid var(--bs-gray-300);
+        padding-left: 1rem;
+        background-color: var(--bs-gray-100);
+    }
 </style>

@@ -1,6 +1,7 @@
 <script>
     import Link from '../components/Link.svelte';
     import CircleProgress from '../components/CircleProgress.svelte';
+    import EmbeddedVideo from '../components/EmbeddedVideo.svelte';
     import {ofp} from '../stores.js';
     import plugins from "../plugins.json";
     $: ogimetURL = ($ofp) ? $ofp.ogimetData.url: 'http://www.ogimet.com';
@@ -60,7 +61,7 @@ Avant d'utiliser OFP2MAP en vol, il est préférable de lire la rubrique [Mode h
 
 
 3. Navigation dans la carte: on peut avec un doigt déplacer la carte, zoomer ou orienter la carte avec deux doigts.  
-__<big>☞</big> Il est aussi possible de modifier l'angle de vue en balayant de bas en haut avec deux doigts__.
+__<span class="big">☞</span> Il est aussi possible de modifier l'angle de vue en balayant de bas en haut avec deux doigts__.
 
 </section>
 <section id="_ipad">
@@ -98,14 +99,14 @@ Pour les aéroports (le type avion est déterminé dans l'OFP), il est possible 
 
 - **statuts** reprend les couleurs du statut telles que définies dans le Manex C.
 - **vert/rouge** reprend le code couleur des Regional Planning Chart, il y ajoute le symbole <span style="color: #062DF8;">✚</span> pour les terrains de support médical.
-- **bleu/vert/rouge** permet de distinguer les adéquats de support médical par la couleur de l'icône
+- **bleu/vert/rouge** permet de distinguer les adéquats de support médical par la couleur de l'icône.
 - **médical** n'affiche que les terrains de support médical
 
 Pour information, le statut est aussi disponible en cliquant sur un terrain (popup).
 
 Trois boutons permettent la sauvegarde, la restauration ou un retour aux valeurs par défaut. Le bouton RESTAURER permet, après avoir fait des modifications temporaires (non sauvegardées), de revenir rapidement aux réglages précédents.
 
-Pour vous entraîner, je vous recommande de modifier la couleur des terrains en vert/rouge et de sauvegarder votre choix.
+> Pour vous entraîner, je vous recommande de modifier la couleur des terrains en vert/rouge sur LC ou bleu/vert/rouge sur MC, et de sauvegarder votre choix.
 
 ### Mode FOCUS&#8239;
 
@@ -114,6 +115,8 @@ C'est un mode pensé pour basculer rapidement sur d'autres réglages pour un usa
 Le mode FOCUS est personnalisable&#8239;: Après avoir activé le mode MODE FOCUS, réaffichez les réglages et modifiez les à votre convenance. Lorsque vous quitterez le mode FOCUS, ce jeu de réglages sera sauvegardé séparément et il sera rechargé à la prochaine activation.
 
 Si nécessaire, un bouton permet de revenir aux valeurs par défaut.
+
+> Idées pour utiliser ce mode&#8239;: changer la couleur de la route pour The World; avoir un jeu de réglages pour la présentation aux pax;...
 
 </section>
 <section id="_gramet">
@@ -128,7 +131,7 @@ Pour afficher le Gramet, cliquez sur sa miniature dans la barre de menu. Pour af
 
 Pour mieux comprendre le GRAMET, je vous conseille son <Link href="http://www.ogimet.com/guia_gramet.phtml.en">Guide d'interprétation</Link>.
 
-*Le site ogimet est indisponible lorsqu'il met à jour ses données, cela intervient entre minuit et 3h (heure française). Par ailleurs, je suis limité à 10 secondes pour la durée d'exécution du proxy, ce délai est un peu faible lorsqu'ogimet est saturé (tranche 18h30-20h00) et cela peut entrainer des erreurs, cliquer sur <svg style="stroke: red; transform: rotate(180deg); height: 20px; width: 20px;"><use xlink:href="#info-symbol"></use></svg> vous affichera des consignes.*
+> Le site ogimet est indisponible lorsqu'il met à jour ses données, cela intervient entre minuit et 3h (heure française). Par ailleurs, je suis limité à 10 secondes pour la durée d'exécution du proxy, ce délai est un peu faible lorsqu'ogimet est saturé (tranche 18h30-20h00) et cela peut entrainer des erreurs, cliquer sur <svg style="stroke: red; transform: rotate(180deg); height: 20px; width: 20px;"><use xlink:href="#info-symbol"></use></svg> vous affichera des consignes.
 
 </section>
 <section id="_position">
@@ -141,6 +144,7 @@ La position estimée est affichée en permanence sur le GRAMET, la miniature du 
 
 OFP2MAP peut aussi utiliser un GPS. En cliquant sur <svg><use xlink:href="#geolocate-symbol"></use></svg>, la position GPS <svg style="color: #1da1f2"><use xlink:href="#location-symbol"></svg> sera affichée sur la carte. Si la localisation GPS semble ne pas fonctionner (au sol ou en vol avec un gps externe), vérifiez que vous n'avez pas désactivé la localisation dans iPad / Réglages / Confidentialité / Service de localisation / Sites Safari. Vous devez choisir «Lorsque l'app est active» ou «Demander la prochaine fois». Le Bouton <svg><use xlink:href="#geolocate-symbol"></use></svg> a trois positions: OFF, ON centré, ON non centré. Si, dans la position ON centré, vous déplacez la carte, il passe en ON non centré. L'appui suivant le repassera en ON centré. Un dernier appui le mettra sur OFF.
 
+> C'est toujours la position estimée qui est utilisée pour les éphémérides
 
 </section>
 <section id="_etops">
@@ -148,6 +152,8 @@ OFP2MAP peut aussi utiliser un GPS. En cliquant sur <svg><use xlink:href="#geolo
 ## ETOPS
 
 La capacité ETOPS est determinée depuis l'OFP et les cercles sont tracés. Un drapeau <span style="background-color: var(--bs-warning); padding: 0 3px; font-size: 9px;">ETOPS</span> apparait dans le pavé d'information de l'OFP si le carburant est limitatif (20mn, soit environ 2T de marge sur 777). Pour avoir plus d'informations vous pouvez utiliser un [plugin](#_plugins).
+
+Les appuis ETOPS sont affichés avec l'icône <span class="big" style="color: #FC2403FF;">▲</span> (dans la couleur des cercles ETOPS). Les adéquats d'entrée et de sortie ETOPS avec le symbole <span class="big" style="color: #095;">▲</span> (dans la couleur des adéquats du style utilisé). La couleur des cercles des points d'entrée et de sortie est celle de la route.
 
 </section>
 <section id="_ephemerides">
@@ -217,15 +223,16 @@ Depuis le pavé d'informations du vol dans la barre de menu, il est possible de 
 
 Installer le premier plugin est un peu compliqué&#8239;: Il faut au préalable autoriser les raccourcis non fiables dans Réglages/Raccourcis (et ce après avoir lancé au moins un raccourci "fiable" depuis la Galerie).
 
-Je recommande d'installer le plugin OFP2MAP-MENU, de le lancer pour éditer le menu contextuel qui s'affiche, il faut alors remonter OFP2MAP-MENU dans les premières positions. De cette manière, vous accéderez rapidement à OFP2MAP-MENU et à l'ensemble des plugins installés puisque le rôle de ce plugin est de les afficher dans un menu.
-
 __Liste des plugins&#8239;:__
 
 {#each Object.entries(plugins) as [name, {url, description, version}]}
     - <Link href="{url}">{name} v{version}</Link> {description}
 {/each}
 
-*Remarque: OFP2MAP-PLUGIN n'est volontairement pas affiché par OFP2MAP-MENU*
+> Je recommande d'installer le plugin OFP2MAP-MENU, cliquez ensuite sur 🧩 pour afficher le menu contextuel. Faites défiler tout en bas, cliquez sur «Modifier les actions...», puis cherchez OFP2MAP-MENU dans la liste, cliquez sur le +, faites défiler jusqu'en haut, vous pouvez ajuster la position puis cliquer sur OK. Une fois la liste fermée, vous pouvez faire défiler le menu contextuel précédent vers le haut et lancer OFP2MAP-MENU. Comme le rôle de ce plugin est d'afficher les plugins installés dans un menu, vous venez de simplifier l'accès à l'ensemble des plugins.
+> La vidéo ci-dessous montre la manip si vous êtes online.
+
+<EmbeddedVideo src="https://p169.p3.n0.cdn.getcloudapp.com/items/KouJeA4l/42ec3a9e-a573-41cb-bd34-763da10c514c.mp4?source=client" title="Utilisation\nOFP2MAP-MENU"/>
 
 </section>
 <section id="_updates">

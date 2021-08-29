@@ -205,5 +205,9 @@
   :global(svg.user-location-gps){
     color: #1da1f2;
   }
+  :global(.big){
+    font-size: larger;
+    font-weight: bolder;
+  }
 
 </style>
