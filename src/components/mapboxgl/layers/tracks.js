@@ -7,7 +7,7 @@ const folder = 'rnat';
 const lineWidthTracks = 1;
 const minTextOpacityTracks = 0.9;
 
-const rnatLabelLayer = (id, kmlcolor, visibility, textSize, maxZoom) => {
+const rnatLabelLayer = (id, kmlcolor, visibility, textSize, minZoom, maxZoom) => {
     return {
         'id': `${id}-marker-layer`,
         'type': 'symbol',
@@ -15,7 +15,7 @@ const rnatLabelLayer = (id, kmlcolor, visibility, textSize, maxZoom) => {
         'layout': {
             'visibility': ( visibility) ? 'visible' : 'none',
             'text-field': ['get', 'title'],
-            'text-size': interpolateTextSize(textSize, maxZoom),
+            'text-size': interpolateTextSize(textSize, minZoom, maxZoom),
             'text-offset': [0, -0.1],
             'text-anchor': 'bottom',
             'text-ignore-placement': true,
@@ -37,7 +37,8 @@ export function addTracks(data) {
     const affineLine = affineAndClip;
     const kmlcolor = kmlOptions.natColor;
     const visibility = kmlOptions.natDisplay;
-    const maxZoom = mapOptions.interpolateZoom || mapOptions.mapboxOptions.maxZoom;
+    const minZoom = mapOptions.interpolateMinZoom || mapOptions.mapboxOptions.minZoom || 0;
+    const maxZoom = mapOptions.interpolateMaxZoom || mapOptions.mapboxOptions.maxZoom || 10;
 
     const lines = {
         'rnat': [],
@@ -94,12 +95,12 @@ export function addTracks(data) {
     const iconSize = computeIconSize(kmlOptions[`iconSizeChange`]);
     map.addLayer(lineLayer('rnat', kmlcolor, visibility, lineWidth));
     map.addLayer(lineLayer('rnat-incomplete', kmlOptions.natIncompleteColor, visibility, lineWidth));
-    map.addLayer(markerLayer("rnat", kmlcolor, visibility, textSize, iconSize, maxZoom));
+    map.addLayer(markerLayer("rnat", kmlcolor, visibility, textSize, iconSize, minZoom, maxZoom));
     changeMyTrackLabels(data); // text-color & text-opacity for entry/exit point
     map.setLayoutProperty("rnat-marker-layer", 'symbol-sort-key', ["case", ["==", 1, ["get", "overrideTextColor"]], 0, 1]);
-    map.addLayer(markerLayer("rnat-incomplete", kmlcolor, visibility, textSize, iconSize, maxZoom));
-    map.addLayer(rnatLabelLayer('rnat-labels', kmlcolor, visibility, textSize, maxZoom));
-    map.addLayer(rnatLabelLayer('rnat-incomplete-labels', kmlOptions.natIncompleteColor, visibility, textSize, maxZoom));
+    map.addLayer(markerLayer("rnat-incomplete", kmlcolor, visibility, textSize, iconSize, minZoom, maxZoom));
+    map.addLayer(rnatLabelLayer('rnat-labels', kmlcolor, visibility, textSize, minZoom, maxZoom));
+    map.addLayer(rnatLabelLayer('rnat-incomplete-labels', kmlOptions.natIncompleteColor, visibility, textSize, minZoom, maxZoom));
 
     const popup = (e) => {
         const coordinates = e.features[0].geometry.coordinates.slice();

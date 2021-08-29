@@ -70,7 +70,7 @@ export const getOpacityKmlColorExpression= (kmlcolor, overrideKmlColor, minOpaci
     const [,overrideOpacity] = (overrideKmlColor) ? kml2mapColor(overrideKmlColor) : [null, null];
     return getOpacityColorExpression(opacity, overrideOpacity, minOpacity)
 };
-export function addPoints(map, id, data, affine, kmlOptions, maxZoom) {
+export function addPoints(map, id, data, affine, kmlOptions, minZoom, maxZoom) {
     const prefix = folder2prefix(id);
     const visibility = kmlOptions[`${prefix}Display`];
     const kmlcolor = kmlOptions[`${prefix}Color`];
@@ -79,7 +79,7 @@ export function addPoints(map, id, data, affine, kmlOptions, maxZoom) {
     map.addSource(`${id}-marker-source`, featureCollection(
         geoPoints2LngLats(data, affine, (lngLat, geoPoint) => jsonPoint(lngLat, {title: geoPoint.name.replace(/00\.0/g,'')}))
     ));
-    map.addLayer(markerLayer(id, kmlcolor, visibility, textSize, iconSize, maxZoom));
+    map.addLayer(markerLayer(id, kmlcolor, visibility, textSize, iconSize, minZoom, maxZoom));
 }
 
 export function addLine(map, id, data, affineLine, kmlcolor, visibility, lineWidth, dashes) {
@@ -111,14 +111,14 @@ export function addLines(map, id, data, affineLine, kmlcolor, visibility, lineWi
     }
     map.addLayer(lineLayer(id, kmlcolor, visibility, lineWidth, dashes));
 }
-export const interpolateTextSize = (size, maxZoom, magnification =2) => [
+export const interpolateTextSize = (size, minZoom=0, maxZoom=10, magnification =2) => [
     "interpolate", ["linear"], ["zoom"],
     // zoom is 5 (or less) -> circle radius will be 1px
-    3, size,
+    minZoom, size,
     // zoom is 10 (or greater) -> circle radius will be 5px
     maxZoom, size * magnification
 ];
-export function markerLayer (folder, kmlcolor, visibility, textSize, iconSize, maxZoom) {
+export function markerLayer (folder, kmlcolor, visibility, textSize, iconSize, minZoom, maxZoom) {
     const [hexcolor, opacity] = kml2mapColor(kmlcolor);
     const layer = {
         'id': `${folder}-marker-layer`,
@@ -134,7 +134,7 @@ export function markerLayer (folder, kmlcolor, visibility, textSize, iconSize, m
             'visibility': ( visibility) ? 'visible' : 'none',
             'text-field': ['get', 'title'],
             //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-            'text-size': interpolateTextSize(textSize, maxZoom),
+            'text-size': interpolateTextSize(textSize, minZoom, maxZoom),
             'text-offset': [0, 0.7],
             'text-anchor': 'top'
         },
@@ -179,10 +179,11 @@ export function changeIconSizeGeneric(folder, data, iconSize=iconSizeDefault){
 }
 export function changeIconTextGeneric(folder, data, textSize=iconTextSizeDefault){
     const {map, value, mapOptions} = data;
-    const maxZoom = mapOptions.interpolateZoom || mapOptions.mapboxOptions.maxZoom;
+    const minZoom = mapOptions.interpolateMinZoom || mapOptions.mapboxOptions.minZoom || 0;
+    const maxZoom = mapOptions.interpolateMaxZoom || mapOptions.mapboxOptions.maxZoom || 10;
     const markerLayer = `${folder}-marker-layer`;
     if (map.getLayer(markerLayer)) {
-        map.setLayoutProperty(markerLayer, 'text-size', interpolateTextSize(computeIconTextSize(value, textSize), maxZoom));
+        map.setLayoutProperty(markerLayer, 'text-size', interpolateTextSize(computeIconTextSize(value, textSize), minZoom, maxZoom));
     }
     return true; // allows chaining
 }

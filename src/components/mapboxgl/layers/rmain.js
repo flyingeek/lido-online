@@ -8,13 +8,14 @@ const addRmain = (data) => {
     const {map, ofp, kmlOptions, mapData, mapOptions} = data;
     if (!ofp) return;
     const {affineAndClip, affineOrDrop} = mapData;
-    const maxZoom = mapOptions.interpolateZoom || mapOptions.mapboxOptions.maxZoom;
+    const minZoom = mapOptions.interpolateMinZoom || mapOptions.mapboxOptions.minZoom || 0;
+    const maxZoom = mapOptions.interpolateMaxZoom || mapOptions.mapboxOptions.maxZoom || 10;
     const route = ofp.route;
     route.name = `${ofp.infos.depICAO}-${ofp.infos.destICAO}`;
     route.description = ofp.description;
     const lineWidth = computeLineWidthSize(kmlOptions['lineWidthChange']);
     addLine(map, folder, route.points, affineAndClip, kmlOptions.routeColor, true, lineWidth);
-    addPoints(map, folder, route.points, affineOrDrop, kmlOptions, maxZoom);
+    addPoints(map, folder, route.points, affineOrDrop, kmlOptions, minZoom, maxZoom);
     setTextHalo(data);
 }
 

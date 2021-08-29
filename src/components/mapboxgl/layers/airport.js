@@ -128,18 +128,18 @@ const getEmergencyTextField = (labelling) => {
     const label = (labelling === 0) ? ['get', 'name'] : ['get', 'iata'];
     return label;
 };
-const interpolateTextSize = (size, maxZoom=10, magnification =2) => [
+const interpolateTextSize = (size, minZoom=0, maxZoom=10, magnification =2) => [
     "interpolate", ["linear"], ["zoom"],
     // zoom is 5 (or less) -> circle radius will be 1px
-    3, size,
+    minZoom, size,
     // zoom is 10 (or greater) -> circle radius will be 5px
     maxZoom, size * magnification
 ];
-const etopsTextSize = (textRatio, maxZoom) => {
-    return interpolateTextSize(computeIconTextSize(textRatio, 10), maxZoom);
+const etopsTextSize = (textRatio, minZoom, maxZoom) => {
+    return interpolateTextSize(computeIconTextSize(textRatio, 10), minZoom, maxZoom);
 };
-const emergencyTextSize = (textRatio, maxZoom) => {
-    return interpolateTextSize(computeIconTextSize(textRatio, 8, 1.15), maxZoom);
+const emergencyTextSize = (textRatio, minZoom, maxZoom) => {
+    return interpolateTextSize(computeIconTextSize(textRatio, 8, 1.15), minZoom, maxZoom);
 };
 const adequateTextSize = emergencyTextSize;
 
@@ -161,21 +161,21 @@ const etopsHaloWidth = (textRatio) => {
 const emergencyHaloWidth = (textRatio) => {
     return haloTextWidth(computeIconTextSize(textRatio, 8, 1.15));
 };
-const interpolateIconSize = (size, maxZoom, magnification =1.8) => [
+const interpolateIconSize = (size, minZoom, maxZoom, magnification =1.8) => [
     "interpolate", ["linear"], ["zoom"],
     // zoom is 5 (or less) -> circle radius will be 1px
-    3, size,
+    minZoom, size,
     // zoom is 10 (or greater) -> circle radius will be 5px
     maxZoom, size * magnification
 ];
-const adequateIconSize = (iconRatio, maxZoom) => {
-    return interpolateIconSize(computeIconSize(iconRatio, 0.6), maxZoom);
+const adequateIconSize = (iconRatio, minZoom, maxZoom) => {
+    return interpolateIconSize(computeIconSize(iconRatio, 0.6), minZoom, maxZoom);
 }
-const etopsIconSize = (iconRatio, maxZoom) => {
-    return interpolateIconSize(computeIconSize(iconRatio, 1), maxZoom);
+const etopsIconSize = (iconRatio, minZoom, maxZoom) => {
+    return interpolateIconSize(computeIconSize(iconRatio, 1), minZoom, maxZoom);
 }
-const emergencyIconSize = (iconRatio, maxZoom, ofpLoaded) => {
-    return interpolateIconSize(computeIconSize(iconRatio, 0.5, 1.2), maxZoom);
+const emergencyIconSize = (iconRatio, minZoom, maxZoom, ofpLoaded) => {
+    return interpolateIconSize(computeIconSize(iconRatio, 0.5, 1.2), minZoom, maxZoom);
     // return (ofpLoaded) ? ["case",
     // ["==", 2, ["get", "level"]], computeIconSize(iconRatio, 0.5, 1.2),
     // computeIconSize(iconRatio, 0.4, 1.2)] : computeIconSize(iconRatio, 0.4, 1.2);
@@ -184,7 +184,8 @@ export const addAirports = (data) => {
     const {map, mapData, ofp, kmlOptions, aircraftType, mapOptions} = data;
     const {affineOrDrop} = mapData;
     const affine = affineOrDrop;
-    const maxZoom = mapOptions.interpolateZoom || mapOptions.mapboxOptions.maxZoom;
+    const minZoom = mapOptions.interpolateMinZoom || mapOptions.mapboxOptions.minZoom || 0;
+    const maxZoom = mapOptions.interpolateMaxZoom || mapOptions.mapboxOptions.maxZoom || 10;
     let epPoints = [];
     if (ofp && ofp.infos['EEP'] && ofp.infos['EXP'] && ofp.infos['raltPoints'].length > 0) {
         epPoints = [ofp.infos['EEP'], ofp.infos['EXP']];
@@ -222,7 +223,7 @@ export const addAirports = (data) => {
                 'icon-image': (ofp) ? ["case",
                     ["==", 2, ["get", "level"]], 'sdf-star',
                     'sdf-airport'] : 'sdf-airport',
-                'icon-size': emergencyIconSize(kmlOptions['iconSizeChange'], maxZoom, !!ofp),
+                'icon-size': emergencyIconSize(kmlOptions['iconSizeChange'], minZoom, maxZoom, !!ofp),
                 'icon-anchor': 'center',
                 'icon-offset': [0, 0],
                 //'icon-rotate': ['get', 'orientation'],
@@ -231,7 +232,7 @@ export const addAirports = (data) => {
                 'visibility': (visibility) ? 'visible' : 'none',
                 'text-field': getEmergencyTextField(kmlOptions['airportLabel']),
                 //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-                'text-size': emergencyTextSize(kmlOptions['iconTextChange'], maxZoom),
+                'text-size': emergencyTextSize(kmlOptions['iconTextChange'], minZoom, maxZoom),
                 'text-offset': [0, 0.7],
                 'text-anchor': 'top',
                 'text-allow-overlap': false,
@@ -254,7 +255,7 @@ export const addAirports = (data) => {
             'source': source,
             'layout': {
                 'icon-image': 'sdf-airport',
-                'icon-size': adequateIconSize(kmlOptions['iconSizeChange'], maxZoom),
+                'icon-size': adequateIconSize(kmlOptions['iconSizeChange'], minZoom, maxZoom),
                 'icon-anchor': 'center',
                 'icon-offset': [0, 0],
                 //'icon-rotate': ['get', 'orientation'],
@@ -263,7 +264,7 @@ export const addAirports = (data) => {
                 'visibility': (visibility) ? 'visible' : 'none',
                 'text-field': getAdequateTextField(style, kmlOptions['airportLabel']),
                 //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-                'text-size': adequateTextSize(kmlOptions['iconTextChange'], maxZoom),
+                'text-size': adequateTextSize(kmlOptions['iconTextChange'], minZoom, maxZoom),
                 'text-offset': [0, 0.7],
                 'text-anchor': 'top',
                 'text-allow-overlap': false,
@@ -287,7 +288,7 @@ export const addAirports = (data) => {
             'source': source,
             'layout': {
                 'icon-image': 'sdf-triangle',
-                'icon-size': etopsIconSize(kmlOptions['iconSizeChange'], maxZoom),
+                'icon-size': etopsIconSize(kmlOptions['iconSizeChange'], minZoom, maxZoom),
                 'icon-anchor': 'center',
                 'icon-offset': [0, 0],
                 //'icon-rotate': ['get', 'orientation'],
@@ -296,7 +297,7 @@ export const addAirports = (data) => {
                 'visibility': (visibility) ? 'visible' : 'none',
                 'text-field': getETOPSTextField(style, kmlOptions['airportLabel']),
                 //'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-                'text-size': etopsTextSize(kmlOptions['iconTextChange'], maxZoom),
+                'text-size': etopsTextSize(kmlOptions['iconTextChange'], minZoom, maxZoom),
                 'text-offset': [0, 0.7],
                 'text-anchor': 'top',
                 'text-allow-overlap': false,
@@ -468,29 +469,31 @@ export function changeAircraftType(data) {
 }
 const changeIconText = (data) => {
     const {map, kmlOptions, mapOptions} = data;
-    const maxZoom = mapOptions.interpolateZoom || mapOptions.mapboxOptions.maxZoom;
+    const minZoom = mapOptions.interpolateMinZoom || mapOptions.mapboxOptions.minZoom || 0;
+    const maxZoom = mapOptions.interpolateMaxZoom || mapOptions.mapboxOptions.maxZoom || 10;
     if (map.getLayer(adequateLayer)) {
-        map.setLayoutProperty(adequateLayer, 'text-size', adequateTextSize(kmlOptions['iconTextChange'], maxZoom));
+        map.setLayoutProperty(adequateLayer, 'text-size', adequateTextSize(kmlOptions['iconTextChange'], minZoom, maxZoom));
     }
     if (map.getLayer(etopsLayer)) {
-        map.setLayoutProperty(etopsLayer, 'text-size', etopsTextSize(kmlOptions['iconTextChange'], maxZoom));
+        map.setLayoutProperty(etopsLayer, 'text-size', etopsTextSize(kmlOptions['iconTextChange'], minZoom, maxZoom));
     }
     if (map.getLayer(emergencyLayer)) {
-        map.setLayoutProperty(emergencyLayer, 'text-size', emergencyTextSize(kmlOptions['iconTextChange'], maxZoom));
+        map.setLayoutProperty(emergencyLayer, 'text-size', emergencyTextSize(kmlOptions['iconTextChange'], minZoom, maxZoom));
     }
     setTextHalo(data);
 }
 const changeIconSize = (data) => {
     const {map, kmlOptions, mapOptions} = data;
-    const maxZoom = mapOptions.interpolateZoom || mapOptions.mapboxOptions.maxZoom;
+    const minZoom = mapOptions.interpolateMinZoom || mapOptions.mapboxOptions.minZoom || 0;
+    const maxZoom = mapOptions.interpolateMaxZoom || mapOptions.mapboxOptions.maxZoom || 10;
     if (map.getLayer(adequateLayer)) {
-        map.setLayoutProperty(adequateLayer, 'icon-size', adequateIconSize(kmlOptions['iconSizeChange'], maxZoom));
+        map.setLayoutProperty(adequateLayer, 'icon-size', adequateIconSize(kmlOptions['iconSizeChange'], minZoom, maxZoom));
     }
     if (map.getLayer(etopsLayer)) {
-        map.setLayoutProperty(etopsLayer, 'icon-size', etopsIconSize(kmlOptions['iconSizeChange'], maxZoom));
+        map.setLayoutProperty(etopsLayer, 'icon-size', etopsIconSize(kmlOptions['iconSizeChange'], minZoom, maxZoom));
     }
     if (map.getLayer(emergencyLayer)) {
-        map.setLayoutProperty(emergencyLayer, 'icon-size', emergencyIconSize(kmlOptions['iconSizeChange'], maxZoom));
+        map.setLayoutProperty(emergencyLayer, 'icon-size', emergencyIconSize(kmlOptions['iconSizeChange'], minZoom, maxZoom));
     }
 }
 export const changeAdequatesColor = (data) => {

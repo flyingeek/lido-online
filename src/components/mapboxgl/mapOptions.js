@@ -21,7 +21,8 @@ const options = [
             'maxZoom': 12
         },
         'cacheName': 'CONF_MERCATOR',
-        'interpolateZoom': 7, // overrides maxboxOptions.maxZoom for interpolate expression
+        'interpolateMinZoom': 2,
+        'interpolateMaxZoom': 7, // overrides maxboxOptions.maxZoom for interpolate expression
         'cacheZoom': 6
     },
     {
@@ -40,6 +41,7 @@ const options = [
         'cacheName': 'CONF_NORTH',
         'cacheAll': true,
         'tileSize': tilesResolution,
+        'interpolateMinZoom': 2,
         'subLabel': 'recommandée au nord du 30N'
     },
     {
@@ -58,6 +60,7 @@ const options = [
         'cacheName': 'CONF_SOUTH',
         'cacheAll': true,
         'tileSize': tilesResolution,
+        'interpolateMinZoom': 2,
         'subLabel': 'recommandée au sud du 30N'
     },
     {
@@ -75,6 +78,7 @@ const options = [
         'cacheZoom': 4,
         'cacheAll': true,
         'tileSize': tilesResolution,
+        'interpolateMinZoom': 3,
         'subLabel': 'recommandée au sud du 30N'
     },
     {
@@ -105,6 +109,7 @@ const options = [
         'cacheZoom': 5,
         'cacheName': 'CONF_THEWORLD',
         'cacheAll': true,
+        'interpolateMinZoom': 3,
         'tileSize': tilesResolution
     },
     {
@@ -133,6 +138,7 @@ const options = [
         'cacheZoom': 5,
         'cacheName': 'CONF_EQE_PHYSICAL_FR',
         'cacheAll': true,
+        'interpolateMinZoom': 3,
         'tileSize': tilesResolution
     }
     //,
@@ -182,6 +188,7 @@ const options = [
         'cacheName': 'CONF_CB',
         'cacheZoom': 5,
         'cacheAll': true,
+        'interpolateMinZoom': 0.5,
         'tileSize': tilesResolution
     }
 ];
