@@ -57,6 +57,6 @@
     }
     line:first-of-type, polyline:first-of-type {
         stroke: var(--progress-arrowoutline, var(--progress-circleoutline, black));
-        stroke-width: calc(var(--progress-arrowwidth, 10px) + 4px);
+        stroke-width: calc(var(--progress-arrowwidth, 10px) + 2px);
     }
 </style>
