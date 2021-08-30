@@ -196,12 +196,18 @@ const adequateTextField = ({kmlOptions: {airportPin: style, airportLabel: labell
             return medicalFormatter(label, {"text-color": MEDICAL_COLOR, "font-scale": 1.1});
     }
 };
-const etopsTextField = ({ofp, kmlOptions: {airportLabel: labelling}}) => {
+const etopsTextField = ({ofp, kmlOptions: {airportPin: style, airportLabel: labelling}}) => {
     const label = airportLabeller(labelling);
-    return ["case", raltCondition(ofp),
-        medicalFormatter(label, {"text-color": MEDICAL_COLOR, "font-scale": 1.1}),
-        label
-    ];
+    switch (style){
+        case BLUEGREENRED:
+        case MEDICAL:
+            return ["case", raltCondition(ofp), // only ralts are not "blue"
+                medicalFormatter(label, {"text-color": MEDICAL_COLOR, "font-scale": 1.1}),
+                label
+            ];
+        default:
+            return medicalFormatter(label, {"text-color": MEDICAL_COLOR, "font-scale": 1.1});
+    }
 };
 const emergencyTextField = ({kmlOptions: {airportLabel: labelling}}) => {
     return airportLabeller(labelling);
