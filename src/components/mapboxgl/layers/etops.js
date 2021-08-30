@@ -1,5 +1,5 @@
 import {addLines, computeLineWidthSize} from '../utils';
-import {changeAdequatesColor} from './airport';
+import {changeAirportETOPSColor, changeAirportETOPSDisplay} from './airport';
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
 
 const folder = 'etops';
@@ -16,12 +16,12 @@ function addEtops(data) {
         const visibility = kmlOptions.etopsDisplay;
         addLines(map, `${folder}-ep-circle`, [ofp.infos['EEP'].circle(420, 48), ofp.infos['EXP'].circle(420, 48)] , affineAndClip, kmlOptions.routeColor, visibility, lineWidth, true);
         addLines(map, `${folder}-etops-circle`, ofp.infos['raltPoints'].map(d => d.circle(7 * etopsTime)), affineAndClip, kmlOptions.etopsColor, visibility, lineWidth, true);
+        changeAirportETOPSDisplay(data, visibility);
     }
 }
 
-export function changeEPCircleColor(data) {
-    const {map, kmlOptions} = data;
-    const [hexcolor, opacity] = kml2mapColor(kmlOptions.routeColor);
+export function changeEPCircleColor({map, kmlOptions:{routeColor}}) {
+    const [hexcolor, opacity] = kml2mapColor(routeColor);
     if (map.getLayer(epCircleLayer)) {
         map.setPaintProperty(epCircleLayer, 'line-color', hexcolor);
         map.setPaintProperty(epCircleLayer, 'line-opacity', opacity);
@@ -35,7 +35,7 @@ function changeETOPSCircleColor(data) {
         map.setPaintProperty(etopsCircleLayer, 'line-color', hexcolor);
         map.setPaintProperty(etopsCircleLayer, 'line-opacity', opacity);
     }
-    changeAdequatesColor(data);
+    changeAirportETOPSColor(data);
 }
 
 function changeETOPSDisplay(data, visible) {
@@ -46,6 +46,7 @@ function changeETOPSDisplay(data, visible) {
     if (map.getLayer(epCircleLayer)) {
         map.setLayoutProperty(epCircleLayer, 'visibility', (visible) ? 'visible': 'none');
     }
+    changeAirportETOPSDisplay(data, visible);
 }
 function changeLineWidth(data){
     const {map, value} = data;

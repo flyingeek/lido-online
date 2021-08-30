@@ -2,6 +2,7 @@ const folder = 'fir-reg';
 const lineLayer = `${folder}-line-layer`;
 const orangeStripeLayer = `${folder}-orange-stripe-layer`;
 const redStripeLayer = `${folder}-red-stripe-layer`;
+const layers = [orangeStripeLayer, redStripeLayer, lineLayer];
 const source = `${folder}-source`;
 
 export const addFirReg = (data) => {
@@ -60,16 +61,11 @@ export const addFirReg = (data) => {
     })
 };
 
-export function changeFirDisplay(data, visible) {
-    const {map} = data;
-    if (map.getLayer(redStripeLayer)) {
-        map.setLayoutProperty(redStripeLayer, 'visibility', (visible) ? 'visible': 'none');
-    }
-    if (map.getLayer(orangeStripeLayer)) {
-        map.setLayoutProperty(orangeStripeLayer, 'visibility', (visible) ? 'visible': 'none');
-    }
-    if (map.getLayer(lineLayer)) {
-        map.setLayoutProperty(lineLayer, 'visibility', (visible) ? 'visible': 'none');
+export function changeFirDisplay({map}, visible) {
+    for (const layer of layers) {
+        if (map.getLayer(layer)) {
+            map.setLayoutProperty(layer, 'visibility', (visible) ? 'visible': 'none');
+        }
     }
 }
 

@@ -1,25 +1,27 @@
 <script context="module">
+    export const STATUS = 0;
+    export const GREENRED = 1;
+    export const MEDICAL = 2;
+    export const BLUEGREENRED = 3;
     const options = [
-        {label: 'statuts', id: 0},
-        {label: 'vert/rouge', id: 1},
-        {label: 'bleu/vert/rouge', id: 3},
-        {label: 'médical', id: 2},
+        {label: 'statuts', id: STATUS},
+        {label: 'vert/rouge', id: GREENRED},
+        {label: 'bleu/vert/rouge', id: BLUEGREENRED},
+        {label: 'médical', id: MEDICAL},
     ];
+    export const ICAO = 0;
+    export const IATA = 1;
     const labels = [
-        {label: 'ICAO'},
-        {label: 'IATA'},
-    ]
-    export const isStatusStyle = (style) => style === 0;
-    export const isRedGreenStyle = (style) => style === 1;
-    export const isMedicalStyle = (style) => style === 2;
-    export const isBlueGreenRedStyle = (style) => style === 3;
+        {label: 'ICAO', id:ICAO},
+        {label: 'IATA', id:IATA},
+    ];
 </script>
 <script>
     import { createEventDispatcher } from 'svelte';
     import blurAction from '../../actions/blurAction';
     const dispatch = createEventDispatcher();
-    export let selectedPin = 0;
-    export let selectedLabel = 0;
+    export let selectedPin = STATUS;
+    export let selectedLabel = ICAO;
 </script>
 
 <div class="row g-2">
@@ -38,8 +40,8 @@
         <div class="form-floating">
             <!-- svelte-ignore a11y-no-onchange -->
             <select use:blurAction name="airport-label" bind:value={selectedLabel} class="form-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: "airport-label", 'value': selectedLabel})}}>
-                {#each labels as option, index}
-                <option value="{index}" selected={index === selectedLabel}>{option.label}</option>
+                {#each labels as option (option.id)}
+                <option value="{option.id}" selected={option.id === selectedLabel}>{option.label}</option>
                 {/each}
             </select>
             <label for="airport-label">Noms</label>
