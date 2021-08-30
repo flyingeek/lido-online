@@ -15,8 +15,14 @@ export const minTextOpacityDefault= 0.8;
 export const haloTextSizeThreshold =10;
 export const haloLightColor = "#f8f9fa"; //bs-gray-100
 export const haloDarkColor = "#212529"; //bs-dark
-export const haloTextBlur = (textSize) => (textSize >= haloTextSizeThreshold) ? textSize/2 : 0;
-export const haloTextWidth = (textSize) => textSize/4;
+export const haloTextBlur = ({ratio, size=iconTextSizeDefault, extraFactor=1}) => {
+    const textSize = computeIconTextSize(ratio, size, extraFactor);
+    return (textSize >= haloTextSizeThreshold) ? textSize/2 : 0;
+};
+export const haloTextWidth = ({ratio, size=iconTextSizeDefault, extraFactor=1}) => {
+    const textSize = computeIconTextSize(ratio, size, extraFactor);
+    return textSize / 4;
+};
 export const getContrastColor = (kmlColor, opacityProperty) => {
     const [R, G, B,] = splitKmlColor(kmlColor).map((v) => parseInt(v, 16));
     const A = opacityProperty;

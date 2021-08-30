@@ -1,4 +1,4 @@
-import {addLine, addPoints, changeDisplayGeneric, changeLineGeneric, changeIconTextGeneric, changeLineWidthGeneric, changeIconSizeGeneric, computeLineWidthSize, computeIconTextSize, getContrastColor, haloTextBlur, haloTextWidth} from '../utils';
+import {addLine, addPoints, changeDisplayGeneric, changeLineGeneric, changeIconTextGeneric, changeLineWidthGeneric, changeIconSizeGeneric, computeLineWidthSize, getContrastColor, haloTextBlur, haloTextWidth} from '../utils';
 import {changeEPCircleColor} from './etops';
 import {changeMyTrackLabels} from './tracks';
 
@@ -28,15 +28,14 @@ const changeLine = (data) => {
 }
 function setTextHalo(data){
     const {map, kmlOptions} = data;
-    const value = kmlOptions.iconTextChange;
+    const ratio = kmlOptions.iconTextChange;
     const markerLayer = `${folder}-marker-layer`;
     if (map.getLayer(markerLayer)) {
-        const textSize = computeIconTextSize(value);
         const opacityProperty = map.getPaintProperty(markerLayer, 'text-opacity');
         const contrastColor = getContrastColor(kmlOptions.routeColor, opacityProperty);
         map.setPaintProperty(markerLayer, 'text-halo-color', contrastColor);
-        map.setPaintProperty(markerLayer, 'text-halo-width', haloTextWidth(textSize));
-        map.setPaintProperty(markerLayer, 'text-halo-blur', haloTextBlur(textSize));
+        map.setPaintProperty(markerLayer, 'text-halo-width', haloTextWidth({ratio}));
+        map.setPaintProperty(markerLayer, 'text-halo-blur', haloTextBlur({ratio}));
     }
     return true; // allows chaining
 }

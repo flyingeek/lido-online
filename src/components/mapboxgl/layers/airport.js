@@ -208,40 +208,41 @@ const emergencyTextField = ({kmlOptions: {airportLabel: labelling}}) => {
 };
 
 // -------------> text-size
-const interpolateTextSize = (size, mapOptions, magnification =2) => {
+const interpolateTextSize = (mapOptions, {ratio, size, magnification=2, extraFactor=1}) => {
     const minZoom = mapOptions.interpolateMinZoom || mapOptions.mapboxOptions.minZoom || 0;
     const maxZoom = mapOptions.interpolateMaxZoom || mapOptions.mapboxOptions.maxZoom || 10;
+    const textSize = computeIconTextSize(ratio, size, extraFactor);
     return [
         "interpolate", ["linear"], ["zoom"],
         // zoom is 5 (or less) -> circle radius will be 1px
-        minZoom, size,
+        minZoom, textSize,
         // zoom is 10 (or greater) -> circle radius will be 5px
-        maxZoom, size * magnification
+        maxZoom, textSize * magnification
     ];
 };
-const adequateTextSize = ({mapOptions, kmlOptions:{iconTextChange: textRatio}}) => {
-    return interpolateTextSize(computeIconTextSize(textRatio, 8, 1.15),mapOptions);
+const adequateTextSize = ({mapOptions, kmlOptions:{iconTextChange: ratio}}) => {
+    return interpolateTextSize(mapOptions, {ratio, size: 8, extraFactor: 1.15});
 };
-const etopsTextSize = ({mapOptions, kmlOptions:{iconTextChange: textRatio}}) => {
-    return interpolateTextSize(computeIconTextSize(textRatio, 10), mapOptions);
+const etopsTextSize = ({mapOptions, kmlOptions:{iconTextChange: ratio}}) => {
+    return interpolateTextSize(mapOptions, {ratio, size: 10});
 };
 const emergencyTextSize =adequateTextSize;
 
 // -------------> text-halo-blur
-const adequateTextHaloBlur = ({kmlOptions:{iconTextChange: textRatio}}) => {
-    return haloTextBlur(computeIconTextSize(textRatio, 8, 1.15));
+const adequateTextHaloBlur = ({kmlOptions:{iconTextChange: ratio}}) => {
+    return haloTextBlur({ratio, size: 8, extraFactor: 1.15});
 };
-const etopsTextHaloBlur = ({kmlOptions:{iconTextChange: textRatio}}) => {
-    return haloTextBlur(computeIconTextSize(textRatio, 10));
+const etopsTextHaloBlur = ({kmlOptions:{iconTextChange: ratio}}) => {
+    return haloTextBlur({ratio, size: 10});
 };
 const emergencyTextHaloBlur = adequateTextHaloBlur;
 
 // -------------> text-halo-width
-const adequateTextHaloWidth = ({kmlOptions:{iconTextChange: textRatio}}) => {
-    return haloTextWidth(computeIconTextSize(textRatio, 8, 1.15));
+const adequateTextHaloWidth = ({kmlOptions:{iconTextChange: ratio}}) => {
+    return haloTextWidth({ratio, size: 8, extraFactor: 1.15});
 };
-const etopsTextHaloWidth = ({kmlOptions:{iconTextChange: textRatio}}) => {
-    return haloTextWidth(computeIconTextSize(textRatio, 10));
+const etopsTextHaloWidth = ({kmlOptions:{iconTextChange: ratio}}) => {
+    return haloTextWidth({ratio, size: 10});
 };
 const emergencyTextHaloWidth = adequateIconHaloWidth;
 
