@@ -1,6 +1,6 @@
 /* global mapboxgl, editolido */
 import {jsonPoint, jsonLine, featureCollection} from '../json.js';
-import {lineLayer, markerLayer, changeLineWidthGeneric, changeLineGeneric, changeDisplayGeneric, computeIconTextSize, computeLineWidthSize, computeIconSize, getTextKmlColorExpression, getOpacityKmlColorExpression, changeIconSizeGeneric, changeIconTextGeneric, interpolateTextSize} from '../utils';
+import {lineLayer, markerLayer, changeLineWidthGeneric, changeLineGeneric, changeDisplayGeneric, computeIconTextSize, computeLineWidthSize, computeIconSize, getTextKmlColorExpression, getOpacityKmlColorExpression, changeIconSizeGeneric, changeIconTextGeneric, interpolateTextSize, getContrastColor, haloTextBlur, haloTextWidth} from '../utils';
 import {takeOffTime} from "../../../stores";
 
 const folder = 'rnat';
@@ -29,7 +29,7 @@ const rnatLabelLayer = (id, kmlcolor, visibility, textSize, minZoom, maxZoom) =>
         }
     };
 };
-export function addTracks(data) {
+function addTracks(data) {
     const {map, ofp, mapData, kmlOptions, mapOptions} = data;
     if (!ofp) return;
     const {affineOrDrop, affineAndClip} = mapData;
@@ -193,12 +193,26 @@ function changeLine(data){
     changeMyTrackLabels(data);
     return true; // allows chaining
 }
+function changeIconText(data) {
+    [folder, 'rnat-incomplete', 'rnat-labels', 'rnat-incomplete-labels'].forEach(folder => changeIconTextGeneric(folder, data));
+    changeMyTrackLabels(data);
+}
 export function changeMyTrackLabels(data) {
     const {map, kmlOptions} = data;
     const markerLayer = `rnat-marker-layer`;
+    const rmainLayer = 'rmain-marker-layer';
     if (map.getLayer(markerLayer)) {
+        const ratio = kmlOptions.iconTextChange;
         map.setPaintProperty(markerLayer, 'text-color', getTextKmlColorExpression(kmlOptions["natColor"], kmlOptions["routeColor"]));
         map.setPaintProperty(markerLayer, 'text-opacity', getOpacityKmlColorExpression(kmlOptions["natColor"], kmlOptions["routeColor"], minTextOpacityTracks));
+        if (map.getLayer(rmainLayer)){
+            const opacityProperty = map.getPaintProperty(rmainLayer, 'text-opacity');
+            const contrastColor = getContrastColor(kmlOptions.routeColor, opacityProperty);
+            const condition = ["==", 1, ["get", "overrideTextColor"]];
+            map.setPaintProperty(markerLayer, 'text-halo-color', ["case", condition, contrastColor, "rgba(0, 0, 0, 0)"]);
+            map.setPaintProperty(markerLayer, 'text-halo-width', ["case", condition, haloTextWidth({ratio}), 0]);
+            map.setPaintProperty(markerLayer, 'text-halo-blur', ["case", condition, haloTextBlur({ratio}), 0]);
+        }
     }
     return true; // allows chaining
 }
@@ -207,7 +221,7 @@ export default {
     hide: (data) => [folder, 'rnat-incomplete', 'rnat-labels', 'rnat-incomplete-labels'].forEach(folder => changeDisplayGeneric(folder, false, data)),
     add: addTracks,
     changeLine,
-    changeIconText: (data) => [folder, 'rnat-incomplete', 'rnat-labels', 'rnat-incomplete-labels'].forEach(folder => changeIconTextGeneric(folder, data)),
+    changeIconText,
     changeLineWidth: (data) => [folder, 'rnat-incomplete'].forEach(folder => changeLineWidthGeneric(folder, data, lineWidthTracks)),
     changeIconSize: (data) => [folder, 'rnat-incomplete'].forEach(folder => changeIconSizeGeneric(folder, data))
 }
