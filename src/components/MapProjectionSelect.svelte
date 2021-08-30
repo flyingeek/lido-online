@@ -52,7 +52,7 @@
 </script>
 <div class="input-group">
     <!-- svelte-ignore a11y-no-onchange -->
-    <select id="{name}" name="{name}" bind:value={selected} class="form-select form-select-sm" on:change use:blurAction>
+    <select id="{name}" name="{name}" bind:value={selected} class="form-select form-select-sm" class:extend={autoSelectedId === 'mercator' && selected.id === 'mercator'} on:change use:blurAction>
         {#each authorizedOptions as option (option.id)}
         <option value="{option}" selected={option.id === selected.id}>
             {(option.id === autoSelectedId) ? `${option.label.toUpperCase()}`: option.label}
@@ -60,7 +60,7 @@
         {/each}
     </select>
     {#if selected.id==='mercator'}
-        <label for="{name}" class="mapzoom">🔎&nbsp;{$mapZoom.toFixed(1)}</label>
+        <label for="{name}">🔎&nbsp;{$mapZoom.toFixed(1)}</label>
     {/if}
 </div>
 <style>
@@ -72,12 +72,15 @@
         background-color: var(--bs-gray-100);
         font-size: small;
         min-width: 48px;
-        z-index: 1;
+        z-index: 3; /* same as .input-group:focus*/
     }
     select {
         width: auto !important;
         font-size: small;
         display: inline-block;
         background-color: var(--bs-gray-100);
+    }
+    select.extend{
+        padding-right: 3.5rem !important;
     }
 </style>
