@@ -2,6 +2,7 @@ import { writable, readable, derived } from 'svelte/store';
 import {aircraftTypes} from "./constants";
 import {binarysearch} from "./components/utils";
 
+export const previousAppVersionKey = 'previousAppVersion';
 export function resetable(resetValue) {
     const { subscribe, set, update } = writable(resetValue);
     return {

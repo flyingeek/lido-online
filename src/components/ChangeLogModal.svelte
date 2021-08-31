@@ -31,6 +31,10 @@
         visible = false;
         dispatch("close");
     };
+
+    export const save = () => {
+        storage.setItem(store, checked);
+    }
     if (version && checked) show();
 </script>
 
@@ -41,7 +45,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title">{title}
                         <small class="d-inline-block ms-4 form-check form-switch">
-                            <input bind:checked id="display-on-update" class="form-check-input" type="checkbox" on:change={() => storage.setItem(store, checked)}>
+                            <input bind:checked id="display-on-update" class="form-check-input" type="checkbox" on:change={save}>
                             <label for="display-on-update"class="form-check-label">Afficher lors des mises à jour</label>
                         </small>
                     </h5>

@@ -1,6 +1,6 @@
 <script context="module">
     import {writable} from 'svelte/store';
-    import {swDismiss, swUpdated, majorUpdate} from '../stores';
+    import {swDismiss, swUpdated, majorUpdate, previousAppVersionKey} from '../stores';
     import {isPatchUpdate} from '../components/utils';
     export const swRegistration = writable();
 
@@ -20,7 +20,6 @@
     import ChangeLogModal, {showChangelogOnUdate} from './ChangeLogModal.svelte';
     import {semverCompare} from './utils'; 
     let installLabel = 'Installer';
-    const previousAppVersionKey = 'previousAppVersion';
     const getPreviousAppVersion = () => (sessionStorage)  ? sessionStorage.getItem(previousAppVersionKey) : undefined;
     const setPreviousAppVersion = () => (sessionStorage) ? sessionStorage.setItem(previousAppVersionKey, 'APP_VERSION') : undefined;
     const resetPreviousAppVersion = () => (sessionStorage) ? sessionStorage.removeItem(previousAppVersionKey) : undefined;
@@ -55,8 +54,7 @@
             // });
             installLabel = "En cours...";
             // only set if not already set (cover multiple updates loop)
-            // or if we don't want to show update (in that case we must increase version number always)
-            if (!getPreviousAppVersion() || !showChangelogOnUdate()) setPreviousAppVersion();
+            if (!getPreviousAppVersion()) setPreviousAppVersion();
             $swRegistration.waiting.postMessage({type: 'SKIP_WAITING'});
             console.debug('SWUpdate: SKIP_WAITING sent');
             // in a scenario where you dismiss update and manually reload the page we need a fallback
