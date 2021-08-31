@@ -3,6 +3,27 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.4] - 2021-08-31
+
+### Added
+
+- support souris/trackpad externe: le survol (hover) affiche les popups.
+- Les réglages montrent à présent si un calque est désactivé sur la projection actuelle
+- La route du GRAMET est désactivée sur les Atlas
+
+### Changed
+
+- La symbologie ETOPS des aéroports est à présent affichée/masquée par le calque ETOPS
+- Sur clavier externe les touches Tab et option Tab sont mieux gérées
+- Réglages des calques: nouvelles icônes pour les boutons de l'aspect général
+
+### Fixed
+
+- Corrections css sur l'affichage du zoom de la Mercator
+- Les points d'entrée du track de l'OFP n'avaient pas le "halo" dans le label
+- logique du calque airports revue, les petits soucis d'affichage sont corrigés
+- la page d'aide s'affiche correctement sur mobile, le problème venait de la vidéo ajoutée dans la rubrique Plugins
+
 ## [1.15.3] - 2021-08-29
 
 ### Added
