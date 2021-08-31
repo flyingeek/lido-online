@@ -272,14 +272,11 @@ onMount(() => {
     }
     :global(#_memovisuel h2:first-of-type){
         position: relative;
+        padding-bottom: 1rem;
     }
     :global(#_memovisuel h2:first-of-type::after){
         content: "\24D8\00A0Vous pouvez cliquer sur les zones"; /* ⓘ + nbsp;*/ 
-        margin-left: 1rem;
         font-size: small;
-        /* font-weight: normal; */
-        display: none;
-        /* color: white; */
         background-color: var(--bs-teal);
         position: absolute;
         left: 50%;
@@ -287,11 +284,7 @@ onMount(() => {
         transform: translate(-50%, 0);
         padding: 0.25rem;
         border-radius: 2px;
-    }
-    @media (min-width: 576px) {
-        :global(#_memovisuel h2:first-of-type::after){
-            display: inline-block;
-        }
+        width:fit-content;
     }
     .toc {
         display: none;
