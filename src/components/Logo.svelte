@@ -39,4 +39,7 @@
             margin: 3rem auto;
         }
     }
+    button.btn{
+        outline-color: var(--bs-yellow);
+    }
 </style>

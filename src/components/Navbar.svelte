@@ -126,4 +126,7 @@
     .nav-link small{
       color: rgba(0,0,0,.4);
     }
+    .nav-link {
+      outline-offset: -3px;
+    }
 </style>

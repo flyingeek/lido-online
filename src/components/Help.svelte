@@ -22,6 +22,7 @@ import {wb, route} from '../stores';
 import {shareAppLink, debounce, Deferred} from './utils';
 import {onMount, tick} from "svelte";
 import blurAction from '../actions/blurAction';
+import clickOnEnterKey from '../actions/clickOnEnterKey';
 
 const version = "APP_VERSION";
 let swVersion = '';
@@ -224,12 +225,12 @@ onMount(() => {
             </div>
             <div class="actions">
                 {#if ((navigator.standalone === true && navigator.share) || 'process.env.NODE_ENV' === '"development"')}
-                    <button class="share btn btn-outline-secondary btn-sm" on:click={shareAppLink}><svg><use xlink:href="#share-symbol" /></svg><!-- Partager --></button>
+                    <button tabindex="0" class="share btn btn-outline-secondary btn-sm" on:click={shareAppLink}><svg><use xlink:href="#share-symbol" /></svg><!-- Partager --></button>
                 {/if}
                 {#if navigator.standalone === true || 'process.env.NODE_ENV' === '"development"'}
                     <button class="reload btn btn-outline-secondary btn-sm" on:click={reload}><!-- Recharger --></button>
                 {/if}
-                <button class="changelog btn btn-outline-secondary btn-sm" on:click={modal.show}><!-- CHANGELOG --></button>
+                <button tabindex="0" class="changelog btn btn-outline-secondary btn-sm" on:click={modal.show}><!-- CHANGELOG --></button>
             </div>
             <!-- svelte-ignore a11y-no-onchange -->
             <select bind:this={tocSelectElement} class="toc form-select form-select-sm" bind:value="{selected}" on:change={jumpTo} use:blurAction>
@@ -240,7 +241,7 @@ onMount(() => {
         </h1>
         <div class="toc">
             {#each toc as {id, html} (id)}
-                <h2 class:selected={selected === id} data-id="{id}" on:click={setAndJumpTo}>{@html html}</h2>
+                <h2 use:clickOnEnterKey tabindex="0" class:selected={selected === id} data-id="{id}" on:click={setAndJumpTo}>{@html html}</h2>
             {/each}
         </div>
     </aside>
@@ -432,6 +433,7 @@ onMount(() => {
             margin-left: -5px;
             border-left: 3px solid transparent;
             border-right: 3px solid transparent;
+            outline-offset: -2px;
         }
         aside h2.selected {
             color: black;

@@ -44,6 +44,7 @@
     import { createEventDispatcher } from 'svelte';
     import {showGramet, ofp as ofpStore, ofpStatus, selectedAircraftType, takeOffTime} from '../stores';
     import {aircraftTypes, discontinuatedAircraftTypes} from '../constants';
+    import clickOnEnterKey from '../actions/clickOnEnterKey';
     export let kmlOptions;
     let disabled = false;
     let ready = new Deferred();
@@ -198,14 +199,14 @@
             <span class="d-block d-sm-none">Choisir</span>
             <span class="d-none d-sm-block">Choisir un OFP</span>
         </span>
-        <label class="input-group-text btn btn-primary" for="{name}">
+        <label use:clickOnEnterKey tabindex="0" class="input-group-text btn btn-primary" for="{name}">
             <span class="d-block d-sm-none">OFP…</span>
             <span class="d-none d-sm-block">Sélectionner</span>
             <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} on:click|once={preload} hidden>
         </label>
     </div>
     {:else}
-        <label class="btn btn-outline-secondary btn-sm">
+        <label tabindex="0" class="btn btn-outline-secondary btn-sm">
             Changer<input id={name} name={name} type="file" accept="application/pdf" on:change={process} hidden>
         </label>
     {/if}
