@@ -126,13 +126,13 @@
     <a class="btn-close float-end" role="button" href="." on:click|preventDefault={() =>  {$sidebar = !$sidebar}}></a>
     <form on:submit|preventDefault class:mt-5={!$ofp}>
         {#if $ofp}
-        <fieldset class="form-group" style="margin-right: 90px;">
+        <fieldset class="form-group">
             <div class="input-group checkbox-combo">
                 <label for="fir-display" class="form-control"><input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR REG
                     {#if firMapIdCondition(mapOptions)}<svg><use xlink:href="#eye-off-symbol"></use></svg>{/if}
                 </label>
             </div>
-            {#if firMapIdCondition(mapOptions)}<small class="deactivated form-text text-muted">⚠ Calque désactivé sur cette projection</small>{/if}
+            {#if firMapIdCondition(mapOptions)}<small class="deactivated form-text text-muted">Calque désactivé sur cette projection</small>{/if}
         </fieldset>
         <fieldset class="form-group">
             <CheckboxColorCombo name="route" kmlColor={kmlOptions['routeColor']} checked={kmlOptions['routeDisplay']} on:change={update}>
@@ -153,13 +153,13 @@
             <CheckboxColorCombo name="great-circle" kmlColor={kmlOptions['greatCircleColor']} checked={kmlOptions['greatCircleDisplay']} on:change={update}>Orthodromie
                 {#if greatCircleMapIdCondition(mapOptions)}<svg><use xlink:href="#eye-off-symbol"></use></svg>{/if}
             </CheckboxColorCombo>
-            {#if greatCircleMapIdCondition(mapOptions)}<small class="deactivated form-text text-muted">⚠ Calque désactivé sur cette projection</small>{/if}
+            {#if greatCircleMapIdCondition(mapOptions)}<small class="deactivated form-text text-muted">Calque désactivé sur cette projection</small>{/if}
         </fieldset>
         <fieldset class="form-group">
             <CheckboxColorCombo name="ogimet" kmlColor={kmlOptions['ogimetColor']} checked={kmlOptions['ogimetDisplay']} on:change={update}>Route GRAMET
                 {#if ogimetMapIdCondition(mapOptions)}<svg><use xlink:href="#eye-off-symbol"></use></svg>{/if}
             </CheckboxColorCombo>
-            {#if ogimetMapIdCondition(mapOptions)}<small class="deactivated form-text text-muted">⚠ Calque désactivé sur cette projection</small>{/if}
+            {#if ogimetMapIdCondition(mapOptions)}<small class="deactivated form-text text-muted">Calque désactivé sur cette projection</small>{/if}
         </fieldset>
         <fieldset class="form-group">
             <CheckboxColorCombo name="etops" kmlColor={kmlOptions['etopsColor']} checked={kmlOptions['etopsDisplay']} on:change={update}>ETOPS</CheckboxColorCombo>
@@ -203,13 +203,14 @@
         width: var(--formwidth);
         display: block;
         margin-top: -0.05rem;
-        font-size: 70%;
+        font-size: 0.7rem;
         position: absolute;
         font-variant: all-small-caps
     }
-    /* fieldset small.deactivated {
-        color: var(--bs-danger);
-    } */
+    fieldset small.deactivated::before {
+        content: "⚠️ ";
+        
+    }
     :global(.settings legend, .checkbox-combo label.form-control) {
         font-size: 1rem;
         font-weight: bold;
@@ -303,5 +304,11 @@
         position: absolute;
         right: 3px;
         color: var(--bs-gray-400);
+    }
+    form>fieldset:first-of-type{
+        margin-right: 45px;
+    }
+    form>fieldset:first-of-type svg{
+        right: 48px;
     }
 </style>
