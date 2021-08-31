@@ -3,6 +3,14 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.5] - 2021-08-31
+
+Pas grand chose dans cette version, j'avais juste besoin de tester l'affichage des mises à jour en production.
+
+### Fixed
+
+- Halo des étiquettes des EMER corrigé
+
 ## [1.15.4] - 2021-08-31
 
 ### Added
