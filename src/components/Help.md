@@ -108,6 +108,8 @@ Pour information, le statut est aussi disponible en cliquant sur un terrain (pop
 
 Trois boutons permettent la sauvegarde, la restauration ou un retour aux valeurs par défaut. Le bouton RESTAURER permet, après avoir fait des modifications temporaires (non sauvegardées), de revenir rapidement aux réglages précédents.
 
+⚠️ Le symbole <svg style="color: var(--bs-gray-500);width: 16px; height: 16px;"><use xlink:href="#eye-off-symbol"></use></svg> indique que, dans un soucis de lisibilité, le calque a été automatiquement désactivé sur la projection choisie.
+
 > Pour vous entraîner, je vous recommande de modifier la couleur des terrains en vert/rouge sur LC ou bleu/vert/rouge sur MC, et de sauvegarder votre choix.
 
 ### Mode FOCUS&#8239;
