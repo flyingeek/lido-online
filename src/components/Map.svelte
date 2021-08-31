@@ -365,4 +365,8 @@
         padding: 10px;
         margin-top: 10px;
     }
+    :global(.mapboxgl-popup-close-button:focus){
+        outline-offset: -6px;
+        outline: 2px solid lightskyblue;
+    }
 </style>

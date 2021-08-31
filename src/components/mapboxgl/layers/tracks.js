@@ -102,7 +102,7 @@ function addTracks(data) {
     map.addLayer(rnatLabelLayer('rnat-labels', kmlcolor, visibility, textSize, minZoom, maxZoom));
     map.addLayer(rnatLabelLayer('rnat-incomplete-labels', kmlOptions.natIncompleteColor, visibility, textSize, minZoom, maxZoom));
 
-    const popup = (e) => {
+    const popup = (e, {closeButton=true, focusAfterOpen=false, closeOnMove=true}={}) => {
         const coordinates = e.features[0].geometry.coordinates.slice();
         // Ensure that if the map is zoomed out such that multiple
         // copies of the feature are visible, the popup appears
@@ -112,9 +112,8 @@ function addTracks(data) {
         }
         const props = e.features[0].properties; // WARNING properties created above or in addEntryPointPopup below
         //console.log(props);
-        const trackPopup = new mapboxgl.Popup()
-            .setLngLat(coordinates)
-            .addTo(map);
+        let trackPopup = new mapboxgl.Popup({closeButton, focusAfterOpen, closeOnMove});
+        trackPopup.setLngLat(coordinates);
         const unsubscribe = takeOffTime.subscribe($takeOffTime => {
             let description = props.description.replace(props.point, `<b>${props.point}</b>`);
             let entry = [undefined, undefined, undefined];
@@ -139,20 +138,26 @@ function addTracks(data) {
         })
         trackPopup.on('close', () => {
             unsubscribe();
+            trackPopup = undefined;
         });
+        return trackPopup.addTo(map);
     };
-    const activatePopup = (folder) => {
-        const layer = folder + '-marker-layer';
-        map.on('click', layer, popup);
-        map.on('mouseenter', layer, function() {
+    let trackPopup;
+    for (const layer of ['rnat-marker-layer', 'rnat-incomplete-marker-layer']) {
+        map.on('click', layer, function(e) {
+            if (trackPopup) trackPopup.remove();
+            trackPopup = popup(e, {closeOnMove: false});
+        });
+        map.on('mouseenter', layer, function(e) {
             map.getCanvas().style.cursor = 'pointer';
+            if (trackPopup) trackPopup.remove();
+            trackPopup = popup(e, {closeButton: false});
         });
         map.on('mouseleave', layer, function() {
+            if (trackPopup) trackPopup.remove();
             map.getCanvas().style.cursor = '';
         });
     }
-    activatePopup('rnat');
-    activatePopup('rnat-incomplete');
     const addEntryPointPopup = () => {
         const myTrack = ofp.tracks.filter(t => t.isMine).pop();
         if (myTrack && myTrack.points.length > 0) {
@@ -181,7 +186,7 @@ function addTracks(data) {
                         }
                     ]
                 };
-                popup(popupData);
+                popup(popupData, {closeButton:true, focusAfterOpen: true, closeOnMove: false}); //TODO on iPad although the close button has focus, we can't close with keyboard
             }
         }
     };

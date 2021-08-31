@@ -2,7 +2,6 @@
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
 import {STATUS, GREENRED, MEDICAL, BLUEGREENRED} from "../../mapSettings/AirportSelector.svelte";
 import {computeIconTextSize, computeIconSize, haloLightColor, haloTextBlur, haloTextWidth} from '../utils';
-import {supportsHover} from "../../utils";
 import { countryCodeName, countryCodeEmoji } from "../../countries";
 import {get} from "svelte/store";
 import {aircraftType as aircraftTypeStore} from '../../../stores';
@@ -364,17 +363,8 @@ export const addAirports = (data) => {
         etopsOptions.paint['text-halo-width'] = etopsTextHaloWidth(data);
         map.addLayer(etopsOptions);
 
-        const popup = new mapboxgl.Popup({
-            closeButton: true,
-            // on touchscreen, this allows to show popup on each airport click
-            // whitout having to click on the map first to cancel the popup
-            // this setting has no effect on hover mode
-            closeOnClick: false,
-            // we need a way to close airport's popup: just move the map
-            // this is not needed for popup on hover mode
-            closeOnMove: !supportsHover
-        });
-        const addAirportPopup = function (e) {
+ 
+        const addAirportPopup = function (e, {focusAfterOpen=false, closeOnMove=true, closeButton=true}={}) {
             const coordinates = e.features[0].geometry.coordinates.slice();
             const title = e.features[0].properties.title;
             const icao = e.features[0].properties.name;
@@ -418,30 +408,28 @@ export const addAirports = (data) => {
                 if(statusText) html += `<p class="status-text">${statusText}</p>`;
             }
             html += "</div>";
-            popup.setLngLat(coordinates).setHTML(html).addTo(map);
+            let popup = new mapboxgl.Popup({closeButton, focusAfterOpen, closeOnMove});
+            popup.on('close', () => {
+                popup=undefined;
+            });
+            return popup.setLngLat(coordinates).setHTML(html).addTo(map);
         };
-        const setCursorPointer = () => map.getCanvas().style.cursor = 'pointer';
-        const resetCursor = () => map.getCanvas().style.cursor = '';
-        const removeAirportPopup = function () {
-            resetCursor();
-            popup.remove();
-        };
-        if (supportsHover) {
-            for (const layer of layers) {
-                map.on('mouseenter', layer, (e) => {
-                    setCursorPointer();
-                    addAirportPopup(e);
-                });
-                map.on('mouseleave', layer, removeAirportPopup);
-            }
-        }else{
-            for (const layer of layers) {
-                map.on('mouseenter', layer, setCursorPointer);
-                map.on('click', layer, addAirportPopup);
-                map.on('mouseleave', layer, resetCursor);
-            }
+        let popup;
+        for (const layer of layers) {
+            map.on('mouseenter', layer, (e) => {
+                if (popup) popup.remove();
+                map.getCanvas().style.cursor = 'pointer';
+                popup = addAirportPopup(e, {closeButton: false});
+            });
+            map.on('mouseleave', layer, () => {
+                if (popup) popup.remove();
+                map.getCanvas().style.cursor = '';
+            });
+            map.on('click', layer, (e) => {
+                if (popup) popup.remove();
+                popup = addAirportPopup(e);
+            });
         }
-
     })
 };
 
