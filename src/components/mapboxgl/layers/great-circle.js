@@ -1,13 +1,13 @@
 /* global editolido */
 import {addLine, changeDisplayGeneric, changeLineGeneric, changeLineWidthGeneric, computeLineWidthSize} from '../utils';
-
+export const greatCircleMapIdCondition = (mapOptions) => (mapOptions && mapOptions.id.startsWith('vb_'));
 const folder = 'great-circle';
 const lineWidthGreatCircle = 1.5;
 
 const addGreatCircle = (data) => {
     const {ofp, kmlOptions, mapData, map, mapOptions} = data;
-    if (!ofp) return;
-    const visibility = (mapOptions.id.startsWith('vb_')) ? false : kmlOptions.greatCircleDisplay;  // not relevant on this map
+    if (!ofp || greatCircleMapIdCondition(mapOptions)) return;
+    const visibility = kmlOptions.greatCircleDisplay;
     const {affineAndClip} = mapData;
     const routeName = `${ofp.infos.depICAO}-${ofp.infos.destICAO}`;
     const route = ofp.route;

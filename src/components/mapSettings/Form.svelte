@@ -18,9 +18,13 @@
     import {storage, stores, kmlDefaultOptions, validate} from './storage.js';
     import {sidebar, ofp, focusMode} from "../../stores.js";
     import clickOutside from '../../actions/clickOutsideAction';
+    import {ogimetMapIdCondition} from '../mapboxgl/layers/ogimet';
+    import {firMapIdCondition} from '../mapboxgl/layers/fir-reg';
+    import {greatCircleMapIdCondition} from '../mapboxgl/layers/great-circle';
     const dispatch = createEventDispatcher();
     const store = stores.optionsKML;
     export let kmlOptions;
+    export let mapOptions;
     let focusOptions;
     let focusBackup;
     const focusStore = stores.focusKML;
@@ -122,9 +126,13 @@
     <a class="btn-close float-end" role="button" href="." on:click|preventDefault={() =>  {$sidebar = !$sidebar}}></a>
     <form on:submit|preventDefault class:mt-5={!$ofp}>
         {#if $ofp}
-        <fieldset class="form-group mb-4">
-            <legend class="d-flex align-items-center">
-                <input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR REG</legend>
+        <fieldset class="form-group" style="margin-right: 90px;">
+            <div class="input-group checkbox-combo">
+                <label for="fir-display" class="form-control"><input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR REG
+                    {#if firMapIdCondition(mapOptions)}<svg><use xlink:href="#eye-off-symbol"></use></svg>{/if}
+                </label>
+            </div>
+            {#if firMapIdCondition(mapOptions)}<small class="deactivated form-text text-muted">⚠ Calque désactivé sur cette projection</small>{/if}
         </fieldset>
         <fieldset class="form-group">
             <CheckboxColorCombo name="route" kmlColor={kmlOptions['routeColor']} checked={kmlOptions['routeDisplay']} on:change={update}>
@@ -142,10 +150,16 @@
             <small class="form-text text-muted">Un track incomplet sera rouge</small>
         </fieldset>
         <fieldset class="form-group">
-            <CheckboxColorCombo name="great-circle" kmlColor={kmlOptions['greatCircleColor']} checked={kmlOptions['greatCircleDisplay']} on:change={update}>Orthodromie</CheckboxColorCombo>
+            <CheckboxColorCombo name="great-circle" kmlColor={kmlOptions['greatCircleColor']} checked={kmlOptions['greatCircleDisplay']} on:change={update}>Orthodromie
+                {#if greatCircleMapIdCondition(mapOptions)}<svg><use xlink:href="#eye-off-symbol"></use></svg>{/if}
+            </CheckboxColorCombo>
+            {#if greatCircleMapIdCondition(mapOptions)}<small class="deactivated form-text text-muted">⚠ Calque désactivé sur cette projection</small>{/if}
         </fieldset>
         <fieldset class="form-group">
-            <CheckboxColorCombo name="ogimet" kmlColor={kmlOptions['ogimetColor']} checked={kmlOptions['ogimetDisplay']} on:change={update}>Route GRAMET</CheckboxColorCombo>
+            <CheckboxColorCombo name="ogimet" kmlColor={kmlOptions['ogimetColor']} checked={kmlOptions['ogimetDisplay']} on:change={update}>Route GRAMET
+                {#if ogimetMapIdCondition(mapOptions)}<svg><use xlink:href="#eye-off-symbol"></use></svg>{/if}
+            </CheckboxColorCombo>
+            {#if ogimetMapIdCondition(mapOptions)}<small class="deactivated form-text text-muted">⚠ Calque désactivé sur cette projection</small>{/if}
         </fieldset>
         <fieldset class="form-group">
             <CheckboxColorCombo name="etops" kmlColor={kmlOptions['etopsColor']} checked={kmlOptions['etopsDisplay']} on:change={update}>ETOPS</CheckboxColorCombo>
@@ -193,6 +207,9 @@
         position: absolute;
         font-variant: all-small-caps
     }
+    /* fieldset small.deactivated {
+        color: var(--bs-danger);
+    } */
     :global(.settings legend, .checkbox-combo label.form-control) {
         font-size: 1rem;
         font-weight: bold;
@@ -279,5 +296,12 @@
     }
     .settings :global(select[name=airport-pin]), .settings :global(select[name=airport-label]) {
         font-size: 0.9rem;
+    }
+    svg {
+        width: 16px;
+        height: 16px;
+        position: absolute;
+        right: 3px;
+        color: var(--bs-gray-400);
     }
 </style>

@@ -167,7 +167,7 @@
 </div>
 {#if (mapData && !!ofp  && ($showPlaneOnMap || $simulate >= 0))}<MapPlane {mapData}/>{/if}
 <AircraftType bind:aircraftTypeSelectElement on:change={aircraftChange}/>
-<FormSettings bind:this={settings} bind:kmlOptions on:change={update} on:save />
+<FormSettings mapOptions={selectedProjection} bind:this={settings} bind:kmlOptions on:change={update} on:save />
 {#if $showGramet}<Gramet/>{/if}
 
 <style>

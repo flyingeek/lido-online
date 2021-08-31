@@ -1,3 +1,4 @@
+export const firMapIdCondition = (mapOptions) => (mapOptions && (mapOptions.id === 'jb_pacific' || mapOptions.id.startsWith('vb_')));
 const folder = 'fir-reg';
 const lineLayer = `${folder}-line-layer`;
 const orangeStripeLayer = `${folder}-orange-stripe-layer`;
@@ -7,9 +8,9 @@ const source = `${folder}-source`;
 
 export const addFirReg = (data) => {
     const {ofp, map, mapData, kmlOptions, mapOptions} = data;
-    if (!ofp) return;
+    if (!ofp || firMapIdCondition(mapOptions)) return;
     const {affine} = mapData;
-    const visibility = (mapOptions.id === 'jb_pacific' || mapOptions.id.startsWith('vb_')) ? false : kmlOptions.firDisplay; // displays badly on this map
+    const visibility = kmlOptions.firDisplay;
     fetch('data/fir-reg.CONF_AIRAC.geojson')
     .then(response => response.json())
     .then(data => {
