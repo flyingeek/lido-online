@@ -17,12 +17,11 @@
 <script>
     import {wb, route} from '../stores';
     import { fade } from 'svelte/transition';
-    import ChangeLogModal, {showChangelogOnUdate} from './ChangeLogModal.svelte';
+    import ChangeLogModal, {showChangelogOnUdate, resetPreviousAppVersion} from './ChangeLogModal.svelte';
     import {semverCompare} from './utils'; 
     let installLabel = 'Installer';
     const getPreviousAppVersion = () => (sessionStorage)  ? sessionStorage.getItem(previousAppVersionKey) : undefined;
     const setPreviousAppVersion = () => (sessionStorage) ? sessionStorage.setItem(previousAppVersionKey, 'APP_VERSION') : undefined;
-    const resetPreviousAppVersion = () => (sessionStorage) ? sessionStorage.removeItem(previousAppVersionKey) : undefined;
     const isAppUpdated = () => {
         const previous = getPreviousAppVersion();
         if (!previous) return false;
@@ -31,6 +30,8 @@
 
     $swDismiss = false;
     export let prompt = false;
+    
+    $: showChangeLog = isAppUpdated($swUpdated) && showChangelogOnUdate($swUpdated);
     const install = (delay=0) => {
         if (delay) console.debug('automatic install ')
         // $swRegistration.waiting check is needed to the 'reload the page' fallback
@@ -99,7 +100,7 @@
             </div>
         </div>
     </div>
-{:else if !$swUpdated && isAppUpdated() && $route !== "/install" && showChangelogOnUdate()}
+{:else if showChangeLog && !$swUpdated && $route !== "/install"}
     <ChangeLogModal version={getPreviousAppVersion()} title="NOUVEAUTÉS" on:close={resetPreviousAppVersion}/>
 {/if}
 

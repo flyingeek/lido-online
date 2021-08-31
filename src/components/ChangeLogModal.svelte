@@ -1,9 +1,13 @@
 <script context="module">
     import {storage, stores} from './mapSettings/storage.js';
+    import {previousAppVersionKey} from '../stores';
     const store = stores.changelogOnUpdate;
     export const showChangelogOnUdate = () => {
         return (storage.getItem(store) === null) ? true : !!storage.getItem(store);
     }
+    export const resetPreviousAppVersion = () => {
+        if (sessionStorage) sessionStorage.removeItem(previousAppVersionKey);
+    };
 </script>
 <script>
     import { fade } from 'svelte/transition';
@@ -34,6 +38,9 @@
 
     export const save = () => {
         storage.setItem(store, checked);
+        if (checked && sessionStorage) {
+            resetPreviousAppVersion(); // will get updates after this version
+        }
     }
     if (version && checked) show();
 </script>
