@@ -105,6 +105,7 @@ const jumpTo = (e) => {
 const setAndJumpTo = (optionalRouteOrEvent) => {
     if (optionalRouteOrEvent) {
         if (optionalRouteOrEvent.target) {
+            optionalRouteOrEvent.target.blur();
             selected = optionalRouteOrEvent.target.dataset.id;
         }else{
             const decoded = decodeURI(optionalRouteOrEvent);
