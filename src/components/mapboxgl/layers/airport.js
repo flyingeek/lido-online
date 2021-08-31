@@ -249,7 +249,7 @@ const adequateTextHaloWidth = ({kmlOptions:{iconTextChange: ratio}}) => {
 const etopsTextHaloWidth = ({kmlOptions:{iconTextChange: ratio}}) => {
     return haloTextWidth({ratio, size: 10});
 };
-const emergencyTextHaloWidth = adequateIconHaloWidth;
+const emergencyTextHaloWidth = adequateTextHaloWidth;
 
 export const changeAdequatesColor = (data) => {
     const map = data.map;
