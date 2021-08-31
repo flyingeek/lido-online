@@ -5,11 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.15.6] - 2021-08-31
 
-Devrait corriger l'affichage du changelog à partir de la prochaine version
-
 ### Fixed
 
 - Halo des étiquettes des EMER corrigé
+- L'affichage du Changelog lors des nouveautés devrait reprendre à partir de la 1.15.7
 
 ## [1.15.4] - 2021-08-31
 
