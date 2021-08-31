@@ -78,7 +78,7 @@
     .sun.aurora::before, :global(.markdown .aurora::before){
         content: "";
         position: absolute;
-        background-image: url(/images/65x70_northern-lights.webp);
+        background-image: url(../images/65x70_northern-lights.webp);
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
