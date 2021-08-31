@@ -26,7 +26,7 @@
 </script>
 {#if $online}
     <!-- svelte-ignore a11y-media-has-caption -->
-    <video controls height="400" width="575" style="{svgThumbnailAsStyle(...title.split('\\n'))}">
+    <video controls style="{svgThumbnailAsStyle(...title.split('\\n'))}">
         <source src="{url}" type="video/mp4">
     </video>
 {/if}
@@ -36,5 +36,9 @@
         background-repeat: no-repeat;
         border: 1px solid var(--bs-gray-300);
         margin-bottom: 1rem;
+        max-width: 100%;
+        max-height: 400px;
+        height: auto;
+        width: 575px;
     }
 </style>
