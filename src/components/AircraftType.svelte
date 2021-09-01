@@ -7,7 +7,7 @@
 </script>
 
 <!-- svelte-ignore a11y-no-onchange -->
-<select bind:this={aircraftTypeSelectElement} name="aircraftType" bind:value={$selectedAircraftType} on:change use:blurAction>
+<select tabindex="{((ofp) ? -1 : 0)}" bind:this={aircraftTypeSelectElement} name="aircraftType" bind:value={$selectedAircraftType} on:change use:blurAction>
     {#if (!$aircraftType)}
         <option value="{undefined}" selected={true}>???</option>
     {/if}

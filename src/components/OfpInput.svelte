@@ -213,7 +213,7 @@
     {#if !$ofpStore && !$selectedAircraftType}
         <div class="footer">
         <!-- svelte-ignore a11y-no-onchange -->
-        <select class="form-control-sm" on:click|once={preload} disabled={disabled} on:change={processAircraftType}>
+        <select tabindex="-1" class="form-control-sm" on:click|once={preload} disabled={disabled} on:change={processAircraftType}>
             <option value="{undefined}">pas d'ofp ?</option>
             {#each aircraftTypes.filter(v => !discontinuatedAircraftTypes.includes(v)) as aircraft}
             <option value={aircraft}>{aircraft}</option>
