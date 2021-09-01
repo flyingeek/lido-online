@@ -129,7 +129,7 @@
         <fieldset class="form-group">
             <div class="input-group checkbox-combo">
                 <label for="fir-display" class="form-control"><input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR REG
-                    {#if firMapIdCondition(mapOptions)}<svg><use xlink:href="#eye-off-symbol"></use></svg>{/if}
+                    {#if firMapIdCondition(mapOptions)}<svg class="deactivated eye"><use xlink:href="#eye-off-symbol"></use></svg>{/if}
                 </label>
             </div>
             {#if firMapIdCondition(mapOptions)}<small class="deactivated form-text text-muted">Calque désactivé sur cette projection</small>{/if}
@@ -138,7 +138,7 @@
             <CheckboxColorCombo name="route" kmlColor={kmlOptions['routeColor']} checked={kmlOptions['routeDisplay']} on:change={update}>
                 Route
                 <button class="getfocus btn btn-sm btn-outline-info" class:active={$focusMode} on:click|preventDefault={toggleFocus}>
-                    {#if $focusMode}<svg><use xlink:href="#checkmark-symbol"/></svg>{/if}FOCUS</button>
+                    {#if $focusMode}<svg class="checkmark"><use xlink:href="#checkmark-symbol"/></svg>{/if}FOCUS</button>
             </CheckboxColorCombo>
             {#if $focusMode}<small class="text-center mt-0">Cliquez sur FOCUS pour sortir du mode</small>{/if}
         </fieldset>
@@ -151,13 +151,13 @@
         </fieldset>
         <fieldset class="form-group">
             <CheckboxColorCombo name="great-circle" kmlColor={kmlOptions['greatCircleColor']} checked={kmlOptions['greatCircleDisplay']} on:change={update}>Orthodromie
-                {#if greatCircleMapIdCondition(mapOptions)}<svg><use xlink:href="#eye-off-symbol"></use></svg>{/if}
+                {#if greatCircleMapIdCondition(mapOptions)}<svg class="deactivated eye"><use xlink:href="#eye-off-symbol"></use></svg>{/if}
             </CheckboxColorCombo>
             {#if greatCircleMapIdCondition(mapOptions)}<small class="deactivated form-text text-muted">Calque désactivé sur cette projection</small>{/if}
         </fieldset>
         <fieldset class="form-group">
             <CheckboxColorCombo name="ogimet" kmlColor={kmlOptions['ogimetColor']} checked={kmlOptions['ogimetDisplay']} on:change={update}>Route GRAMET
-                {#if ogimetMapIdCondition(mapOptions)}<svg><use xlink:href="#eye-off-symbol"></use></svg>{/if}
+                {#if ogimetMapIdCondition(mapOptions)}<svg class="deactivated eye"><use xlink:href="#eye-off-symbol"></use></svg>{/if}
             </CheckboxColorCombo>
             {#if ogimetMapIdCondition(mapOptions)}<small class="deactivated form-text text-muted">Calque désactivé sur cette projection</small>{/if}
         </fieldset>
@@ -264,7 +264,7 @@
         background-color: var(--bs-info);
         border-color: var(--bs-info);
     }
-    .getfocus svg {
+    svg.checkmark {
         width: 0.7rem;
         height: 0.7rem;
         stroke: transparent;
@@ -298,11 +298,15 @@
     .settings :global(select[name=airport-pin]), .settings :global(select[name=airport-label]) {
         font-size: 0.9rem;
     }
-    svg {
-        width: 16px;
-        height: 16px;
+    svg.eye {
         position: absolute;
         right: 3px;
+    }
+    :global(svg.eye) {
+        width: 16px;
+        height: 16px;
+    }
+    :global(svg.eye.deactivated){
         color: var(--bs-gray-400);
     }
     form>fieldset:first-of-type{
