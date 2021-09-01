@@ -51,19 +51,22 @@ Avant d'utiliser OFP2MAP en vol, il est préférable de lire la rubrique [Mode h
 
 ## Utilisation
 
-1. Dans Pilot Mission, onglet «Dossier de vol», affichez le PDF nommé "Dossier de vol OFP". Sur la gauche, cliquez sur le carré avec une flèche vers le haut. Choisissez «Enregistrer dans Fichiers». Dans l'app, c'est cet OFP qu'il faut ensuite sélectionner.
+1. Dans Pilot Mission, onglet **Dossier de vol**, affichez le PDF nommé **Dossier de vol OFP**. Sur la gauche, cliquez sur le carré avec une flèche vers le haut. Choisissez **Enregistrer dans Fichiers**. Dans l'app, c'est cet OFP qu'il faut ensuite sélectionner.
 
-2. La carte par défaut dépend de la distance: {cbName} 2020, puis Mercator jusqu'à 1500nm puis LAMBERT, il est possible sur la carte, en haut à gauche, de basculer sur d'autres projections&#8239;:
-    - LAMBERT NORTH (parallèles sécants N30 et N65) est recommandée au-dessus du 30N
-    - LAMBERT SOUTH & PACIFIC (sécants N30 et S15 ) sont recommandées sous 30N
-    - THE WORLD permet de disposer d'un Atlas off-line, c'est une projection Times
-    - MERCATOR est une Web Mercator avec un thème est inspiré des cartes VFR. Il y a 12 niveaux de zoom, dont 6 disponibles off-line
-    - =Physique= est un Atlas physique basé sur une projection Equal Earth (qui montre les continents et les pays à leur taille réelle) avec des étiquettes en français (par Tom Patterson).
-    - {cbName} 2020 est une carte VFR, elle couvre France/Belgique/Luxembourg/Suisse et {window.atob("VmluY2VudCBCb3NzeQ==")} a autorisé son utilisation. Sur cette carte, déjà très dense en informations, la route Gramet, l'orthodromie et les FIR sont désactivées. La dernière version est disponible sur <Link href="{`https://www.${cbName.toLowerCase()}.com`}">{cbName}.com</Link>.
+2. La carte par défaut dépend de la distance: {cbName}, puis Mercator jusqu'à 1500nm puis Lambert. Il est possible sur la carte, en haut à gauche, de basculer sur d'autres projections&#8239;:
+    - **Lambert North** (parallèles sécants N30 et N65) est recommandée au-dessus du 30N
+    - **Lambert South & Pacific** (sécants N30 et S15 ) sont recommandées sous 30N
+    - **The World** est un Atlas politique, c'est une projection Times
+    - **Mercator** est une Web Mercator avec un thème est inspiré des cartes VFR. Il y a 12 niveaux de zoom, dont 6 disponibles off-line
+    - **=Physique=** est un Atlas physique basé sur une projection Equal Earth (qui montre les continents et les pays à leur taille réelle) avec des étiquettes en français (par Tom Patterson).
+    - **{cbName} 2020** est une carte VFR, elle couvre France/Belgique/Luxembourg/Suisse et {window.atob("VmluY2VudCBCb3NzeQ==")} a autorisé son utilisation. La dernière version est disponible sur <Link href="{`https://www.${cbName.toLowerCase()}.com`}">{cbName}.com</Link>.
 
 
 3. Navigation dans la carte: on peut avec un doigt déplacer la carte, zoomer ou orienter la carte avec deux doigts.  
 __<span class="big">☞</span> Il est aussi possible de modifier l'angle de vue en balayant de bas en haut avec deux doigts__.
+
+> OFP2MAP est compatible avec l'utilisation d'une souris, d'un trackpad ou d'un clavier, y compris sur iPad. Au clavier, donner le focus à la carte avec la touche Tab, puis utilisez les flèches pour vous déplacer, shift + flèches pour tilter ou tourner, =+ pour zoomer et -_ pour élargir.
+
 
 </section>
 <section id="_ipad">
@@ -83,7 +86,7 @@ Pour partager le lien vers OFP2MAP, utilisez le bouton situé en haut sur cette 
 
 Une fois un premier OFP chargé, il est possible même en mode déconnecté de charger un autre OFP pour l'exporter. Le cache de l'App vous permettra de naviguer sur les cartes déjà visualisées. Pour mettre en cache les cartes, il suffit de les consulter.
 
-Pour mettre rapidement en cache un vol, il existe à droite du sélecteur de carte, un bouton de mise en cache de la projection&#8239;: <span class="cacheButton"><CircleProgress value=0/></span>. Ce bouton ne s'affiche que si la projection n'est pas encore dans le cache. Sur les cartes LAMBERT, THE WORLD, =Physique= et {cbName}, il mettra en cache la totalité de la carte. Sur la MERCATOR, seule la partie de carte incluant la route sera mise en cache et le niveau de détails sera limité à un zoom < 7.
+Pour mettre rapidement en cache un vol, il existe à droite du sélecteur de carte, un bouton de mise en cache de la projection&#8239;: <span class="cacheButton"><CircleProgress value=0/></span>. Ce bouton ne s'affiche que si la projection n'est pas encore dans le cache. Sur la MERCATOR, seule la partie de carte incluant la route sera mise en cache et le niveau de détails sera limité à un zoom < 7. Pour les autres projections, c'est la totalité de la carte qui sera mise en cache.
 
 Le bouton affiche la progression du téléchargement&#8239;: <span class="cacheButton cacheProgress"><CircleProgress value=33/></span>, puis il disparait une fois la projection en cache. En cas d'erreur, il affiche: <span class="cacheButton cacheError"><CircleProgress value=0/></span>, et vous pouvez faire une nouvelle tentative.
 
@@ -108,7 +111,7 @@ Pour information, le statut est aussi disponible en cliquant sur un terrain (pop
 
 Trois boutons permettent la sauvegarde, la restauration ou un retour aux valeurs par défaut. Le bouton RESTAURER permet, après avoir fait des modifications temporaires (non sauvegardées), de revenir rapidement aux réglages précédents.
 
-⚠️ Le symbole <svg style="color: var(--bs-gray-500);width: 16px; height: 16px;"><use xlink:href="#eye-off-symbol"></use></svg> indique que, dans un soucis de lisibilité, le calque a été automatiquement désactivé sur la projection choisie.
+⚠️ Le symbole <svg class="eye deactivated"><use xlink:href="#eye-off-symbol"></use></svg> indique que le calque a été automatiquement désactivé sur la projection choisie pour des raisons de lisibilité.
 
 > Pour vous entraîner, je vous recommande de modifier la couleur des terrains en vert/rouge sur LC ou bleu/vert/rouge sur MC, et de sauvegarder votre choix.
 
@@ -231,7 +234,7 @@ __Liste des plugins&#8239;:__
     - <Link href="{url}">{name} v{version}</Link> {description}
 {/each}
 
-> Je recommande d'installer le plugin OFP2MAP-MENU, cliquez ensuite sur 🧩 pour afficher le menu contextuel. Faites défiler tout en bas, cliquez sur «Modifier les actions...», puis cherchez OFP2MAP-MENU dans la liste, cliquez sur le +, faites défiler jusqu'en haut, vous pouvez ajuster la position puis cliquer sur OK. Une fois la liste fermée, vous pouvez faire défiler le menu contextuel précédent vers le haut et lancer OFP2MAP-MENU. Comme le rôle de ce plugin est d'afficher les plugins installés dans un menu, vous venez de simplifier l'accès à l'ensemble des plugins.
+> Pour un accès plus rapide aux plugins, je recommande d'installer OFP2MAP-MENU. Il faut ensuite le remonter dans le menu contextuel qui s'affiche en cliquant 🧩.
 > La vidéo ci-dessous montre la manip si vous êtes online.
 
 <EmbeddedVideo src="https://p169.p3.n0.cdn.getcloudapp.com/items/KouJeA4l/42ec3a9e-a573-41cb-bd34-763da10c514c.mp4?source=client" title="Utilisation\nOFP2MAP-MENU"/>
@@ -265,5 +268,6 @@ L'hébergement des images est normalement fourni par alwaysdata.com (pack gratui
 ### Liens
 
 - <Link href="https://flyingeek.github.io/flytax/" rel="noopener"><span class="flytax">Fly<span>Tax</span></span></Link> une aide aux calculs des frais professionnels (même auteur).
+- <Link href="https://apps.apple.com/app/id364904503">The World HD</Link> un très bon atlas offline pour l'iPad (prix 3$).
 
 </section>
