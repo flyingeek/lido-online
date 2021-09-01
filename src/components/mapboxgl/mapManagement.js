@@ -231,6 +231,31 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
         }
         
     };
+    //patch for logitech combo touch azerty 
+    const patchKeyboard = (e) => {
+        let patchEvent;
+        if(e.keyCode === 187 && (e.key === '-' || e.key === '_')) {
+            e.preventDefault();
+            e.stopPropagation();
+            patchEvent = new KeyboardEvent('keydown', {
+                location: e.location,
+                ctrlKey: e.ctrlKey,
+                shiftKey: e.shiftKey,
+                altKey: e.altKey,
+                metaKey: e.metaKey,
+                repeat: e.repeat,
+                isComposing: e.isComposing,
+                charCode: e.charCode,
+                key: e.key,
+                code: e.code,
+                bubbles: true,
+                keyCode: 189,
+                which: 189
+            });
+            map.getCanvas().dispatchEvent(patchEvent);
+            console.log('patched event keycode 187 -> 189');
+        }
+    };
     const hidePlane = () => showPlaneOnMap.set(false);
     const storeZoom = throttle(e => mapZoom.set(Math.floor( ( e.target.getZoom() + Number.EPSILON ) * 10 ) / 10), 100);
     map.on('load', function() {
@@ -252,7 +277,8 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
             document.addEventListener('keydown', handleKeydown);
         }
         map.on('zoom', storeZoom);
-        mapZoom.set(map.getZoom())
+        mapZoom.set(map.getZoom());
+        map.getCanvasContainer().addEventListener('keydown', patchKeyboard, {capture: true});
     });
 
     map.on('remove', function() {
@@ -260,6 +286,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
         // eslint-disable-next-line no-constant-condition
         if ('process.env.NODE_ENV' === '"development"') document.removeEventListener('keydown', handleKeydown);
         map.off('zoom', storeZoom);
+        map.getCanvasContainer().removeEventListener('keydown', patchKeyboard);
     });
 
     return mapData;
