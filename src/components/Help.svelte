@@ -406,6 +406,7 @@ onMount(() => {
             display: block;
             margin-top: 1rem;
             margin-left: -8px; /* makes place to put a star */
+            margin-right: 3px; /* for outline focus */
         }
         select.toc {
             display: none;
@@ -539,5 +540,8 @@ onMount(() => {
     }
     :global(.markdown details){
         margin-bottom: 1rem; /* extra space otherwise menu might consider the wrong item */
+    }
+    :global(.markdown li li p) {
+        margin-bottom: 0.15rem;
     }
 </style>
