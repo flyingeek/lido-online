@@ -189,7 +189,7 @@ function addTracks(data) {
                         }
                     ]
                 };
-                popup(popupData, {closeButton:true, focusAfterOpen: true, closeOnMove: false}); //TODO on iPad although the close button has focus, we can't close with keyboard
+                popup(popupData, {closeButton:true, focusAfterOpen: false, closeOnMove: false}); //TODO on iPad if the close button has focus, we can't close with keyboard
             }
         }
     };
