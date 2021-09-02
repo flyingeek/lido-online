@@ -3,6 +3,18 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.7] - 2021-09-02
+
+### Changed
+
+- Pour faciliter l'utilisation d'un clavier, le focus est donné prioritairement à la carte
+- La touche <kbd>-</kbd> est correctement reconnue sur le clavier AZERTY du Logitech Combo Touch
+- Aide mise à jour pour l'utilisation d'un clavier
+
+### Fixed
+
+- CSS compatible avec Google Chrome pour les dernières modifications
+
 ## [1.15.6] - 2021-08-31
 
 ### Fixed
