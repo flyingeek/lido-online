@@ -119,10 +119,14 @@
             console.error('the focus backup should never be undefined');
         }
     }
+    function clickOutsideHandler () {
+        $sidebar=false;
+        //do not focus on map without checking if e.detail.target is an input field
+    }
 </script>
 
 {#if $sidebar}
-<div class:sidebar={$sidebar} class:focusmode={$focusMode} class="settings"  use:clickOutside on:click_outside={() => {$sidebar=false; focusMap()}} transition:fly="{{duration: 300, x: 200, y: 0}}">
+<div class:sidebar={$sidebar} class:focusmode={$focusMode} class="settings"  use:clickOutside on:click_outside={clickOutsideHandler} transition:fly="{{duration: 300, x: 200, y: 0}}">
     <!-- svelte-ignore a11y-missing-content -->
     <a class="btn-close float-end" role="button" href="." on:click|preventDefault={() =>  {$sidebar = !$sidebar; if (!$sidebar) focusMap();}}></a>
     <form on:submit|preventDefault class:mt-5={!$ofp}>
