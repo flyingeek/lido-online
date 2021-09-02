@@ -81,6 +81,6 @@
         background-color: var(--bs-gray-100);
     }
     select.extend{
-        padding-right: 3.5rem !important;
+        padding-right: 4rem !important;
     }
 </style>
