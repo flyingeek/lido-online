@@ -4,10 +4,12 @@
     import {grametThumbAction, grametStatus, grametResponseStatus} from '../actions/grametAction';
     import Link from '../components/Link.svelte';
     import {showGramet, ofp, position} from '../stores';
+    import { focusMap } from './utils';
     let grametUpdateAvailable = false;
 
     const toggleGramet = () => {
         if ($grametStatus === 'success') $showGramet = !$showGramet;
+        if (!$showGramet) focusMap();
     }
     const reload = async () => {
         $grametStatus = 'reload';
@@ -15,6 +17,7 @@
         grametUpdateAvailable = false;
         await tick;
         $grametStatus = 'loading';
+        focusMap();
     };
     const grametSourceUpdate = async (event) => {
         if (event.data.meta === 'workbox-broadcast-update' && event.data.type === 'CACHE_UPDATED') {
@@ -62,7 +65,7 @@
         </div>
     </Overlay>
 {:else if ($grametStatus !== 'reload')}
-    <Overlay  position="bottom-center" >
+    <Overlay  position="bottom-center" on:close={focusMap}>
         <button slot="parent" class="btn btn-light" let:toggle on:click={toggle}>
             <svg class="gramet-error"><use xlink:href="#info-symbol"/></svg>
         </button>

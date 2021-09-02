@@ -8,6 +8,7 @@
     import {sun, moon, getMoonIllumination} from "./suncalc";
     import {ofp, takeOffTime, position} from "../stores";
     import {solar} from "./solarstore";
+    import { focusMap } from "./utils";
 
     
     const getWidgetEmojiWhenNoSunEvent = (departureSun, isMoonVisibleDuringFlight) => {
@@ -29,7 +30,7 @@
 </script>
 <KpUpdater/>
 {#if $ofp && $ofp.timeMatrix.length > 0}
-    <Overlay  position="bottom-center" isOpen={false}>
+    <Overlay  position="bottom-center" isOpen={false} on:close={focusMap}>
         <div slot="parent" class="sun" class:aurora={$aurora.length > 0} let:toggle on:click={toggle}>
             <p class="icon">
                 {#if (widgetEmoji === 'moon')}

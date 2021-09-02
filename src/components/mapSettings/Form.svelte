@@ -21,6 +21,7 @@
     import {ogimetMapIdCondition} from '../mapboxgl/layers/ogimet';
     import {firMapIdCondition} from '../mapboxgl/layers/fir-reg';
     import {greatCircleMapIdCondition} from '../mapboxgl/layers/great-circle';
+    import {focusMap} from '../utils';
     const dispatch = createEventDispatcher();
     const store = stores.optionsKML;
     export let kmlOptions;
@@ -121,9 +122,9 @@
 </script>
 
 {#if $sidebar}
-<div class:sidebar={$sidebar} class:focusmode={$focusMode} class="settings"  use:clickOutside on:click_outside={() => $sidebar=false} transition:fly="{{duration: 300, x: 200, y: 0}}">
+<div class:sidebar={$sidebar} class:focusmode={$focusMode} class="settings"  use:clickOutside on:click_outside={() => {$sidebar=false; focusMap()}} transition:fly="{{duration: 300, x: 200, y: 0}}">
     <!-- svelte-ignore a11y-missing-content -->
-    <a class="btn-close float-end" role="button" href="." on:click|preventDefault={() =>  {$sidebar = !$sidebar}}></a>
+    <a class="btn-close float-end" role="button" href="." on:click|preventDefault={() =>  {$sidebar = !$sidebar; if (!$sidebar) focusMap();}}></a>
     <form on:submit|preventDefault class:mt-5={!$ofp}>
         {#if $ofp}
         <fieldset class="form-group">

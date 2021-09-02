@@ -1,6 +1,6 @@
 /* global mapboxgl */
 
-import {clamp, isInside, lineclip, getBounds, throttle} from '../utils';
+import {clamp, isInside, lineclip, getBounds, throttle, focusMap} from '../utils';
 import {loadMapLayers} from './layersManagement';
 import {focusMode, sidebar, showPlaneOnMap, mapZoom} from '../../stores';
 import times from './pj_times';
@@ -258,6 +258,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
     };
     const hidePlane = () => showPlaneOnMap.set(false);
     const storeZoom = throttle(e => mapZoom.set(Math.floor( ( e.target.getZoom() + Number.EPSILON ) * 10 ) / 10), 100);
+    const geolocateControlElt = document.querySelector('.mapboxgl-ctrl-geolocate');
     map.on('load', function() {
 
         loadMapLayers({
@@ -268,7 +269,9 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
             mapOptions,
             aircraftType
         });
+        if (geolocateControlElt) geolocateControlElt.addEventListener('click', focusMap);
         geolocateControl.on('trackuserlocationstart', hidePlane);
+        
         // if (ofp) addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');
         //fetch(ofp.ogimetData.proxyImg); // add to cache
         if (onLoadCb) onLoadCb(map, mapOptions);
@@ -279,9 +282,11 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
         map.on('zoom', storeZoom);
         mapZoom.set(map.getZoom());
         map.getCanvasContainer().addEventListener('keydown', patchKeyboard, {capture: true});
+        //map.getCanvas().focus(); //we do not give focus here because the nat entry point might be focused on the close button
     });
 
     map.on('remove', function() {
+        if (geolocateControlElt) geolocateControlElt.removeEventListener('click', focusMap);
         geolocateControl.off('trackuserlocationstart', hidePlane);
         // eslint-disable-next-line no-constant-condition
         if ('process.env.NODE_ENV' === '"development"') document.removeEventListener('keydown', handleKeydown);

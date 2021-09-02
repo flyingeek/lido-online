@@ -303,3 +303,10 @@ export const binarysearch = (sortedArray, condition) => {
     }
     return (ans === -1 || !condition(sortedArray[ans])) ? -1 : ans;
 };
+
+export const focusMap = (evenIfHidden= false) => {
+    const canvas = (evenIfHidden) ?
+        document.querySelector("#map canvas.mapboxgl-canvas") :
+        document.querySelector("page:not(.d-none)>#map canvas.mapboxgl-canvas");
+    if (canvas) canvas.focus();
+};

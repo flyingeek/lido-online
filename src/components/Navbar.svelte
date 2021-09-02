@@ -5,9 +5,18 @@
     import TakeOffInput from './TakeOffInput.svelte';
     import Sun from './Sun.svelte';
     import {getContextualHelpLink, helpRouteRegex} from './Help.svelte';
+    import { focusMap } from './utils';
 
     let menuCheckBox;
-    const collapse = () => menuCheckBox.checked = false;
+    const collapse = (e) => {
+        menuCheckBox.checked = false;
+        if (e.target.href === '#/map') {
+          window.location.hash = '/map';
+          e.preventDefault();
+          e.stopPropagation();
+          focusMap();
+        }
+    };
 
     $: contextualHelpLink = getContextualHelpLink($route);
 

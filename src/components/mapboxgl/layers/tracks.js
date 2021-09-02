@@ -135,11 +135,14 @@ function addTracks(data) {
             const eto = (eet && $takeOffTime) ? ' - ETO: ' + (new Date($takeOffTime.getTime() + 60000 * eet)).toISOString().substring(11,16) + 'z' : '';
             let html = `<div class="track"><h1>${props.track}${eto}${flInTitle}</h1><p>${description}</p>`;
             trackPopup.setHTML(html);
-        })
-        trackPopup.on('close', () => {
-            unsubscribe();
-            trackPopup = undefined;
         });
+        const closePopup = () => {
+            unsubscribe();
+            if (trackPopup) trackPopup.off('close', closePopup);
+            trackPopup = undefined;
+            map.getCanvas().focus();
+        };
+        trackPopup.on('close', closePopup);
         return trackPopup.addTo(map);
     };
     let trackPopup;

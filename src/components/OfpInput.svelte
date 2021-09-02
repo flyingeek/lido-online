@@ -45,6 +45,7 @@
     import {showGramet, ofp as ofpStore, ofpStatus, selectedAircraftType, takeOffTime} from '../stores';
     import {aircraftTypes, discontinuatedAircraftTypes} from '../constants';
     import clickOnEnterKey from '../actions/clickOnEnterKey';
+    import {focusMap} from './utils';
     export let kmlOptions;
     let disabled = false;
     let ready = new Deferred();
@@ -161,6 +162,7 @@
                     $takeOffTime = new Date(ofp.infos.ofpOFF.getTime());
                     form.blur();
                     e.target.blur();
+                    focusMap();
                 }).catch((err) => {
                     $ofpStatus = err;
                     $ofpStore = undefined;

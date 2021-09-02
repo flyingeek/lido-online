@@ -1,3 +1,5 @@
+import {focusMap} from '../components/utils';
+
 export default function blurAction(node) {
     // const observer = new IntersectionObserver((entries) => { 
     //     entries.forEach(entry => {
@@ -9,7 +11,10 @@ export default function blurAction(node) {
     // observer.observe(node);
     const handleVisibilityChange = () =>{
         if (document && document.visibilityState && document.visibilityState !== 'visible') {
-            if(node && node.blur) node.blur();
+            if(node && node.blur) {
+                node.blur();
+                focusMap();
+            }
         }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange, false);

@@ -2,8 +2,8 @@
     import FormSettings from "./mapSettings/Form.svelte";
     import {createMap, token} from './mapboxgl/mapManagement';
     import {updateMapLayers} from './mapboxgl/layersManagement';
-    import {online, showGramet, simulate, aircraftType, showPlaneOnMap} from "../stores.js";
-    import {promiseTimeout, fetchSimultaneously} from './utils';
+    import {online, showGramet, simulate, aircraftType, showPlaneOnMap, route} from "../stores.js";
+    import {promiseTimeout, fetchSimultaneously, focusMap} from './utils';
     import { createEventDispatcher, onMount, onDestroy, tick} from 'svelte';
     import {get} from 'svelte/store';
     import {findMissingCacheTiles} from '../tilesCache';
@@ -32,6 +32,11 @@
 
     let settings;
     $: mapIsCached = tilesMissing !== undefined && tilesMissing.length === 0;
+    $: {
+        if ($route === '/map') {
+            tick().then(focusMap);
+        }
+    }
     const caches = {};
 
 
@@ -62,6 +67,7 @@
 
         showPlaneOnMap.set(false); // dom element will be removed by createMap
         mapData = createMap(id, selectedProjection, ofp, kmlOptions, $aircraftType, afterMapLoad);
+        focusMap();
         map = mapData.map;
         setTimeout(async () => {
             await tick;
@@ -71,6 +77,7 @@
 
     function aircraftChange(e) {
         e.target.blur(); // to avoid zoom problem in standalone mode
+        focusMap();
         update({detail: {value: $aircraftType, name: "airport-change"}});
     }
 
@@ -365,8 +372,22 @@
         padding: 10px;
         margin-top: 10px;
     }
-    :global(.mapboxgl-popup-close-button:focus){
+    :global(.mapboxgl-popup-close-button:focus), :global(.mapboxgl-popup-close-button:focus:not(:focus-visible)){
         outline-offset: -6px;
         outline: 2px solid lightskyblue;
+    }
+    :global(.mapboxgl-canvas-container:focus-within::after){
+        content: "";
+        left: 0;
+        bottom: 0px;
+        width: 30px;
+        height: 30px;
+        display: block;
+        position: absolute;
+        border: #4D90FE80 5px solid;
+        border-top: none;
+        border-right: none;
+        line-height: 30px;
+        border-bottom-left-radius: 10px;
     }
 </style>

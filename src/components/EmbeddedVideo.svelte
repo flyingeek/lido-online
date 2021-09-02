@@ -3,6 +3,7 @@
     export let src;
     export let title;
     export let forcePreview = true;
+    export let tabindex = 0;
     const symbols = /[\r\n%#()<>?[\\\]^`{|}]/g;
     const svgThumbnailAsStyle = (line1, line2) => {
         const svg = `
@@ -26,7 +27,7 @@
 </script>
 {#if $online}
     <!-- svelte-ignore a11y-media-has-caption -->
-    <video controls style="{svgThumbnailAsStyle(...title.split('\\n'))}">
+    <video tabindex="{tabindex}" controls style="{svgThumbnailAsStyle(...title.split('\\n'))}">
         <source src="{url}" type="video/mp4">
     </video>
 {/if}

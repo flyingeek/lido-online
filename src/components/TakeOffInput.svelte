@@ -1,22 +1,29 @@
 <script>
     import {ofp, simulate, takeOffTime, showPlaneOnMap} from '../stores';
     import blurAction from '../actions/blurAction';
+    import {focusMap} from './utils';
     export let name="take-off";
 
     const ofpTakeOff = new Date($ofp.infos.ofpOFF.getTime());
     //console.log($takeOffTime, $ofp)
     const hm2input = (hours, minutes) => `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 
+    const togglePlane = () => {
+        $showPlaneOnMap = !$showPlaneOnMap;
+        focusMap();
+    };
     const changeTime = (e) => {
         let minutes, hours;
         if (e.target.value == ''){
             hours = ofpTakeOff.getUTCHours();
             minutes = ofpTakeOff.getUTCMinutes();
             e.target.blur();
+            focusMap();
             e.target.value = hm2input(hours, minutes);
         }else{
             hours = parseFloat(e.target.value.slice(0,2));
             minutes = parseFloat(e.target.value.slice(3));
+            //can not set focus here, input still shown!
         }
 
         let newTakeOff = new Date(ofpTakeOff);
@@ -39,7 +46,7 @@
 
 {#if $takeOffTime}
 <div>
-    <svg class:show={$showPlaneOnMap || $simulate >= 0} class:hide={!($showPlaneOnMap || $simulate >= 0)} on:click={() => $showPlaneOnMap = !$showPlaneOnMap}><use xlink:href="#takeoff-symbol"/></svg>
+    <svg class:show={$showPlaneOnMap || $simulate >= 0} class:hide={!($showPlaneOnMap || $simulate >= 0)} on:click={togglePlane}><use xlink:href="#takeoff-symbol"/></svg>
     <label for="{name}">Heure de décollage</label><!-- displayed in ios popup -->
     <input id="{name}" name="{name}" type="time" use:blurAction on:change={changeTime} value="{hm2input($takeOffTime.getUTCHours(), $takeOffTime.getUTCMinutes())}" tabindex={(navigator.standalone) ? "-1" : null}/>
 </div>
