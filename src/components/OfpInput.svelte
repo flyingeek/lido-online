@@ -208,7 +208,7 @@
         </label>
     </div>
     {:else}
-        <label tabindex="0" class="btn btn-outline-secondary btn-sm">
+        <label use:clickOnEnterKey tabindex="0" class="btn btn-outline-secondary btn-sm">
             Changer<input id={name} name={name} type="file" accept="application/pdf" on:change={process} hidden>
         </label>
     {/if}
