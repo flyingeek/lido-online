@@ -33,7 +33,7 @@
         height: 40px;
         top:60px;
         left: 0;
-        fill: var(--plane-color);
+        color: var(--plane-color);
     }
     /* .warning {
         position: absolute;

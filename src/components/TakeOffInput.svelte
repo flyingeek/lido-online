@@ -68,11 +68,11 @@
     }
     svg.show {
         stroke: rgba(0,0,0,.9);
-        fill: var(--plane-halo-color);
+        color: var(--plane-halo-color);
     }
     svg.hide {
         stroke:transparent;
-        fill: rgba(0,0,0,.5);
+        color: rgba(0,0,0,.5);
     }
     input {
         background-color: var(--bs-light);
