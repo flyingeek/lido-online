@@ -139,8 +139,7 @@
 
 {#if $sidebar}
 <div class:sidebar={$sidebar} class:focusmode={$focusMode} class="settings"  use:clickOutside on:click_outside={clickOutsideHandler} transition:fly="{{duration: 300, x: 200, y: 0}}">
-    <!-- svelte-ignore a11y-missing-content -->
-    <a class="btn-close float-end" role="button" href="." on:click|preventDefault={() =>  {$sidebar = !$sidebar; if (!$sidebar) focusMap();}}></a>
+    <button type="button" tabindex="0" class="btn-close float-end"  aria-label="Close" on:click={() =>  {$sidebar = !$sidebar; if (!$sidebar) focusMap();}}></button>
     <form on:submit|preventDefault class:mt-5={!$ofp}>
         {#if $ofp}
         <fieldset class="form-group">
