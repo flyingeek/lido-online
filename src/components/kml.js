@@ -53,6 +53,7 @@ export function updateKml(name, value) {
     || name.startsWith('airport-')
     || name.startsWith('fir-')
     || name.endsWith('-change')
+    || name.endsWidth('-hide')
     || name === 'nat-incomplete-color'
     || name === 'nat-pin-position'
     || name.startsWith('ogimet-')) return;

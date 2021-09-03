@@ -45,7 +45,7 @@ const SW_VERSION = 'APP_VERSION';
 precacheAndRoute(
     self.__WB_MANIFEST, {
     // "directoryIndex": null,
-    "ignoreURLParametersMatching": [/.+Pin$/, /.+Display$/, /.+Color$/, /.+PinPosition$/, /^shortcut$/, /^downloadType$/, /^runShortcut$/, /.+Change$/, /.+Label$/]
+    "ignoreURLParametersMatching": [/.+Pin$/, /.+Display$/, /.+Color$/, /.+PinPosition$/, /^shortcut$/, /^downloadType$/, /^runShortcut$/, /.+Change$/, /.+Label$/, /.+Hide$/]
 });
 
 const thirdPartyUrls = [

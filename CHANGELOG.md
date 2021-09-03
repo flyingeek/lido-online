@@ -3,13 +3,19 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.8] - 2021-09-02
+
+### Added
+
+- Possibilité de masquer les FIR par projection en plus du réglage global avec <svg class="eye"><use xlink:href="#eye-symbol"></use></svg>
+
 ## [1.15.7] - 2021-09-02
 
 ### Changed
 
 - Pour faciliter l'utilisation d'un clavier, le focus est donné prioritairement à la carte
 - La touche <kbd>-</kbd> est correctement reconnue sur le clavier AZERTY du Logitech Combo Touch
-- Aide mise à jour pour l'utilisation d'un clavier
+- Aide mise à jour pour l'[utilisation d'un clavier](#/help_utilisation)
 
 ### Fixed
 

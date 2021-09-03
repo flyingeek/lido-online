@@ -17,6 +17,7 @@ export const kmlDefaultOptions = {
     "airportPin": 0,
     "airportLabel": 0,
     "firDisplay": true,
+    "firHide": "",
     "etopsDisplay": true,
     "etopsColor": "FF0324FC", /* #FC2403FF */
     "iconTextChange": '1.0',
@@ -80,6 +81,8 @@ export const validate = (options, defaultOptions=kmlDefaultOptions) => {
                 if (!isNaN(value)) {
                     validated[key] = value.toFixed(1);
                 }
+            }else if (key.endsWith('Hide')) {
+                validated[key] = value.toString().trim();
             }
         }
     }

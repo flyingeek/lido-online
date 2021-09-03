@@ -10,7 +10,7 @@ export const addFirReg = (data) => {
     const {ofp, map, mapData, kmlOptions, mapOptions} = data;
     if (!ofp || firMapIdCondition(mapOptions)) return;
     const {affine} = mapData;
-    const visibility = kmlOptions.firDisplay;
+    const visibility = kmlOptions.firDisplay && !kmlOptions.firHide.includes(mapOptions.id);
     fetch('data/fir-reg.CONF_AIRAC.geojson')
     .then(response => response.json())
     .then(data => {
@@ -62,16 +62,17 @@ export const addFirReg = (data) => {
     })
 };
 
-export function changeFirDisplay({map}, visible) {
+export function changeFirDisplay({map, kmlOptions, mapOptions}) {
+    const visibility = kmlOptions.firDisplay && !kmlOptions.firHide.includes(mapOptions.id);
     for (const layer of layers) {
         if (map.getLayer(layer)) {
-            map.setLayoutProperty(layer, 'visibility', (visible) ? 'visible': 'none');
+            map.setLayoutProperty(layer, 'visibility', (visibility) ? 'visible': 'none');
         }
     }
 }
 
 export default {
-    show: (data) => changeFirDisplay(data, true),
-    hide: (data) => changeFirDisplay(data, false),
+    show: (data) => changeFirDisplay(data),
+    hide: (data) => changeFirDisplay(data),
     add: addFirReg,
 }

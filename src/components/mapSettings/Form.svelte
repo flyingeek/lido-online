@@ -39,6 +39,7 @@
     $: isDefault = compare(kmlOptions, kmlDefaultOptions);
     $: isChanged = !compare(storedOptions, kmlOptions);
     $: isFocusDefault = (focusBackup) ? compare(focusOptionsDefault(focusBackup), kmlOptions) : false;
+    $: hideOnThisProjection = (mapOptions)  ? kmlOptions['firHide'].split(',').includes(mapOptions.id) : false;
 
     /**
      * e is a component event or a dom checkbox event
@@ -123,6 +124,17 @@
         $sidebar=false;
         //do not focus on map without checking if e.detail.target is an input field
     }
+    function toggleOnThisProjection () {
+        const projections = kmlOptions['firHide'].split(',').filter(v => v.length > 0);
+        const index = projections.indexOf(mapOptions.id);
+        if (index >= 0) {
+            projections.splice(index, 1);
+        }else{
+            projections.push(mapOptions.id);
+            projections.sort();
+        }
+        update({detail: {name: 'fir-hide', value: projections.join(',')}});
+    }
 </script>
 
 {#if $sidebar}
@@ -134,10 +146,24 @@
         <fieldset class="form-group">
             <div class="input-group checkbox-combo">
                 <label for="fir-display" class="form-control"><input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR REG
-                    {#if firMapIdCondition(mapOptions)}<svg class="deactivated eye"><use xlink:href="#eye-off-symbol"></use></svg>{/if}
+                    {#if firMapIdCondition(mapOptions)}
+                        <svg class="deactivated eye"><use xlink:href="#eye-off-symbol"></use></svg>
+                    {:else if kmlOptions['firDisplay']}
+                        {#if hideOnThisProjection}
+                            <svg class="eye" on:click={toggleOnThisProjection}><use xlink:href="#eye-off-symbol"></use></svg>
+                        {:else}
+                            <svg class="eye" on:click={toggleOnThisProjection}><use xlink:href="#eye-symbol"></use></svg>
+                        {/if}
+                    {/if}
                 </label>
             </div>
-            {#if firMapIdCondition(mapOptions)}<small class="deactivated form-text text-muted">Calque désactivé sur cette projection</small>{/if}
+            {#if firMapIdCondition(mapOptions)}
+                <small class="deactivated form-text text-muted">Calque désactivé sur cette projection</small>
+            {:else if kmlOptions['firDisplay']}
+                {#if hideOnThisProjection}
+                    <small class="form-text text-muted">Calque masqué sur cette projection</small>
+                {/if}
+            {/if}
         </fieldset>
         <fieldset class="form-group">
             <CheckboxColorCombo name="route" kmlColor={kmlOptions['routeColor']} checked={kmlOptions['routeDisplay']} on:change={update}>
@@ -253,10 +279,13 @@
             background-color: rgba(23, 162, 184, 0.1);
         }
     }
-
+    .settings :global(label[for="route-display"]) {
+        padding-right: 0;
+    }
     .getfocus{
         line-height: 1;
         margin-left: auto;
+        margin-right: auto;
         font-size: 0.8rem;
         font-weight: 500;
         display: flex;
@@ -315,9 +344,9 @@
         color: var(--bs-gray-400);
     }
     form>fieldset:first-of-type{
-        margin-right: 45px;
+        margin-right: 50px;
     }
     form>fieldset:first-of-type svg{
-        right: 48px;
+        right: 10px;
     }
 </style>

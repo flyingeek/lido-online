@@ -119,7 +119,11 @@ Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, 
 ## Réglages des calques <svg><use xlink:href="#layers-symbol"></use></svg>
 
 <figure>![layers settings help](./images/layers-settings.webp)<figcaption>Réglages des calques</figcaption></figure>La carte, en haut à droite, dispose d'un bouton pour personnaliser les calques et les couleurs. Un calque contient un type d'information, par exemple les cercles ETOPS, les FIR réglementées, les tracks, la route...
-Il est possible d'afficher ou de masquer chaque calque en utilisant la coche qui précède son nom. La plupart des calques permettent de choisir la couleur et l'opacité. Les réglages s'appliquent globalement, c'est à dire, pour toutes les projections.
+Il est possible d'afficher ou de masquer chaque calque en utilisant la coche qui précède son nom. La plupart des calques permettent de choisir la couleur et l'opacité.
+
+Les réglages s'appliquent globalement, c'est à dire, pour toutes les projections. Exception&#8239;: pour les FIR, <svg class="eye"><use xlink:href="#eye-symbol"></use></svg> permet, en plus, de masquer le calque sur la projection actuelle. Il est alors indiqué <svg class="eye"><use xlink:href="#eye-off-symbol"></use></svg> calque masqué sur cette projection.
+<br/>
+Dans un soucis de lisibilité, certains calques sont automatiquement désactivés, il est alors indiqué  <svg class="eye deactivated"><use xlink:href="#eye-off-symbol"></use></svg> ⚠️ calque désactivé sur cette projection.
 
 Pour les aéroports (le type avion est déterminé dans l'OFP), il est possible de choisir entre 4 styles:
 
@@ -131,8 +135,6 @@ Pour les aéroports (le type avion est déterminé dans l'OFP), il est possible 
 > Le statut est aussi disponible en cliquant sur un terrain (popup).
 
 Trois boutons permettent la sauvegarde, la restauration ou un retour aux valeurs par défaut. Le bouton RESTAURER permet, après avoir fait des modifications temporaires (non sauvegardées), de revenir rapidement aux réglages précédents.
-
-⚠️ Le symbole <svg class="eye deactivated"><use xlink:href="#eye-off-symbol"></use></svg> indique que le calque a été automatiquement désactivé sur la projection choisie pour des raisons de lisibilité.
 
 > Pour vous entraîner, je vous recommande de modifier la couleur des terrains en vert/rouge sur LC ou bleu/vert/rouge sur MC, et de sauvegarder votre choix.
 
@@ -234,9 +236,9 @@ __Correction d'altitude&#8239;:__ Si votre niveau de vol est différent de l'OFP
 
 ## Export KML
 
-La Page Export permet d'exporter la route et les tracks au format KML, elle dispose de ses propres réglages pour générer le KML. Pour l'export il est possible d'ajouter des repères. Les repères sont utiles pour afficher des informations textuelles dans MapsMe ou Avenza. Le bouton «COMME CARTE» permet de récupérer les couleurs choisies pour la carte.
+La Page Export permet d'exporter la route et les tracks au format KML, elle dispose de ses propres réglages pour générer le KML. Pour l'export il est possible d'ajouter des repères. Les repères sont utiles pour afficher des informations textuelles dans MapsMe ou Avenza. Le bouton [COMME CARTE] permet de récupérer les couleurs choisies pour la carte.
 
-Sur iPad, lors du téléchargement, l'export des fichiers KML affiche une page un peu particulière, utilisez le bouton <svg style="vertical-align: bottom;"><use xlink:href="#share-symbol" /></svg> pour choisir l'app qui recevra le fichier. Cliquez en haut à gauche sur OK pour revenir à OFP2MAP. Alternativement, vous pouvez utiliser , sur cette même page, « Options... » pour définir une app qui recevra les fichiers kml par défaut, puis utiliser Ouvrir dans « nom de l'app ».
+Sur iPad, lors du téléchargement, l'export des fichiers KML affiche une page un peu particulière, utilisez le bouton <svg style="vertical-align: bottom;"><use xlink:href="#share-symbol" /></svg> pour choisir l'app qui recevra le fichier. Cliquez en haut à gauche sur OK pour revenir à OFP2MAP. Alternativement, vous pouvez utiliser , sur cette même page, [Options...] pour définir une app qui recevra les fichiers kml par défaut, puis utiliser Ouvrir dans «&#8239;nom de l'app&#8239;».
 
  Un raccourci peut être lancé depuis la page Export, il recevra les fichiers KML, la route Lido et le Gramet. Le nom du raccourci est modifiable, il faut que le raccourci soit installé avant de le lancer.
 
@@ -283,6 +285,8 @@ Après une mise à jour, les dernières nouveautés d'OFP2MAP s'affichent. Le bo
 - Le site est développé en javascript à l'aide du framework SVELTE
 - La partie serveur (un proxy pour pouvoir récupérer l'image du GRAMET) est en python.
 - Eric Delord CDB 777 est l'auteur. Le code source est disponible sur GitHub pour <Link href="https://github.com/flyingeek/lido-online">l'app</Link> et <Link href="https://github.com/flyingeek/ofp2map-gramet">le proxy</Link>
+
+Vous pouvez me contacter sur l’email AF (erdelord@…) ou sur mon compte Twitter @flyingeek.
 
 L'hébergement des images est normalement fourni par alwaysdata.com (pack gratuit) mais en raison d'un blacklistage sur le réseau internet d'AF, les fonds de cartes sont à présent hébergés sur netlify. Le proxy gramet est lui dorénavant hébergé sur vercel. Le site est hébergé sur GitHub.
 
