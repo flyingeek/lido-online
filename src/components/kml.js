@@ -49,11 +49,15 @@ export const KmlGenerator = () => {
 
 
 export function updateKml(name, value) {
+  if (!name) {
+    console.error('received an empty name :', name);
+    return;
+  }
   if (name.startsWith('etops-')
     || name.startsWith('airport-')
     || name.startsWith('fir-')
     || name.endsWith('-change')
-    || name.endsWidth('-hide')
+    || name.endsWith('-hide')
     || name === 'nat-incomplete-color'
     || name === 'nat-pin-position'
     || name.startsWith('ogimet-')) return;
