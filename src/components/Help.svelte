@@ -22,7 +22,6 @@ import {wb, route} from '../stores';
 import {shareAppLink, debounce, Deferred} from './utils';
 import {onMount, tick} from "svelte";
 import blurAction from '../actions/blurAction';
-import clickOnEnterKey from '../actions/clickOnEnterKey';
 
 const version = "APP_VERSION";
 let swVersion = '';
@@ -105,7 +104,7 @@ const jumpTo = (e) => {
 const setAndJumpTo = (optionalRouteOrEvent) => {
     if (optionalRouteOrEvent) {
         if (optionalRouteOrEvent.target) {
-            optionalRouteOrEvent.target.blur();
+            if (optionalRouteOrEvent instanceof MouseEvent) optionalRouteOrEvent.target.blur();
             selected = optionalRouteOrEvent.target.dataset.id;
         }else{
             const decoded = decodeURI(optionalRouteOrEvent);
@@ -242,7 +241,7 @@ onMount(() => {
         </h1>
         <div class="toc">
             {#each toc as {id, html} (id)}
-                <h2 use:clickOnEnterKey tabindex="0" class:selected={selected === id} data-id="{id}" on:click={setAndJumpTo}>{@html html}</h2>
+                <h2 on:keydown="{(e) => e.key === "Enter" && setAndJumpTo(e)}" tabindex="0" class:selected={selected === id} data-id="{id}" on:click={setAndJumpTo}>{@html html}</h2>
             {/each}
         </div>
     </aside>

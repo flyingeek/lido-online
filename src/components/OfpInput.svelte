@@ -44,7 +44,6 @@
     import { createEventDispatcher } from 'svelte';
     import {showGramet, ofp as ofpStore, ofpStatus, selectedAircraftType, takeOffTime} from '../stores';
     import {aircraftTypes, discontinuatedAircraftTypes} from '../constants';
-    import clickOnEnterKey from '../actions/clickOnEnterKey';
     import {focusMap} from './utils';
     export let kmlOptions;
     let disabled = false;
@@ -192,6 +191,18 @@
         });
         disabled = false;
     }
+    function simulateClickOnInput(e) {
+        if (e.key === "Enter") {
+            const input = e.target.querySelector('input[type="file"]');
+            if (input) {
+                input.click();
+                return false; // preventDefault
+            }else{
+                console.error('input[type="file"] not found');
+            }
+        }
+        return true;
+    }
 
 </script>
 <form class="form-inline" on:submit|preventDefault>
@@ -201,14 +212,14 @@
             <span class="d-block d-sm-none">Choisir</span>
             <span class="d-none d-sm-block">Choisir un OFP</span>
         </span>
-        <label use:clickOnEnterKey tabindex="0" class="input-group-text btn btn-primary" for="{name}">
+        <label on:keydown="{simulateClickOnInput}" tabindex="0" class="input-group-text btn btn-primary" for="{name}">
             <span class="d-block d-sm-none">OFP…</span>
             <span class="d-none d-sm-block">Sélectionner</span>
             <input id={name} name={name} type="file" accept="application/pdf" on:change={process} disabled={disabled} on:click|once={preload} hidden>
         </label>
     </div>
     {:else}
-        <label use:clickOnEnterKey tabindex="0" class="btn btn-outline-secondary btn-sm">
+        <label on:keydown="{simulateClickOnInput}" tabindex="0" class="btn btn-outline-secondary btn-sm">
             Changer<input id={name} name={name} type="file" accept="application/pdf" on:change={process} hidden>
         </label>
     {/if}

@@ -52,7 +52,10 @@
 </script>
 <div class="input-group">
     <!-- svelte-ignore a11y-no-onchange -->
-    <select id="{name}" name="{name}" bind:value={selected} class="form-select form-select-sm" class:extend={autoSelectedId === 'mercator' && selected.id === 'mercator'} on:change use:blurAction>
+    <select id="{name}" name="{name}" bind:value={selected} 
+        class="form-select form-select-sm" class:extend={autoSelectedId === 'mercator' && selected.id === 'mercator'}
+        aria-label="Choix de la projection"
+        on:change use:blurAction>
         {#each authorizedOptions as option (option.id)}
         <option value="{option}" selected={option.id === selected.id}>
             {(option.id === autoSelectedId) ? `${option.label.toUpperCase()}`: option.label}
