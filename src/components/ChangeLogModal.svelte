@@ -5,19 +5,26 @@
     export const showChangelogOnUdate = () => {
         return (storage.getItem(store) === null) ? true : !!storage.getItem(store);
     }
-    export const resetPreviousAppVersion = () => {
-        if (sessionStorage) sessionStorage.removeItem(previousAppVersionKey);
+    export const setPreviousAppVersion = () => {
+        if (localStorage) {
+            localStorage.setItem(previousAppVersionKey, 'APP_VERSION');
+            return 'APP_VERSION';
+        }
+    };
+    export const getPreviousAppVersion = () => {
+        if (localStorage){
+            return localStorage.getItem(previousAppVersionKey);
+        }
     };
 </script>
 <script>
     import { fade } from 'svelte/transition';
     import ChangeLog from "./ChangeLog.svelte";
     import clickOutside from '../actions/clickOutsideAction';
-    import { createEventDispatcher } from 'svelte';
-    const dispatch = createEventDispatcher();
-    export let visible = false;
+
     export let title = 'CHANGELOG';
     export let version = undefined;
+    export let visible = !!version;
     let promise;
     let checked = showChangelogOnUdate();
 
@@ -33,16 +40,12 @@
     };
     export const close = () => {
         visible = false;
-        dispatch("close");
+        setPreviousAppVersion();
     };
 
     export const save = () => {
         storage.setItem(store, checked);
-        if (checked && sessionStorage) {
-            resetPreviousAppVersion(); // will get updates after this version
-        }
     }
-    if (version && checked) show();
 </script>
 
 {#if visible}

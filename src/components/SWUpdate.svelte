@@ -17,11 +17,9 @@
 <script>
     import {wb, route} from '../stores';
     import { fade } from 'svelte/transition';
-    import ChangeLogModal, {showChangelogOnUdate, resetPreviousAppVersion} from './ChangeLogModal.svelte';
+    import ChangeLogModal, {showChangelogOnUdate, getPreviousAppVersion, setPreviousAppVersion} from './ChangeLogModal.svelte';
     import {semverCompare} from './utils'; 
     let installLabel = 'Installer';
-    const getPreviousAppVersion = () => (sessionStorage)  ? sessionStorage.getItem(previousAppVersionKey) : undefined;
-    const setPreviousAppVersion = () => (sessionStorage) ? sessionStorage.setItem(previousAppVersionKey, 'APP_VERSION') : undefined;
     const isAppUpdated = () => {
         const previous = getPreviousAppVersion();
         if (!previous) return false;
@@ -55,7 +53,9 @@
             // });
             installLabel = "En cours...";
             // only set if not already set (cover multiple updates loop)
-            if (!getPreviousAppVersion()) setPreviousAppVersion();
+            if (!getPreviousAppVersion()) {
+                setPreviousAppVersion();
+            }
             $swRegistration.waiting.postMessage({type: 'SKIP_WAITING'});
             console.debug('SWUpdate: SKIP_WAITING sent');
             // in a scenario where you dismiss update and manually reload the page we need a fallback
@@ -101,7 +101,7 @@
         </div>
     </div>
 {:else if showChangeLog && !$swUpdated && $route !== "/install"}
-    <ChangeLogModal version={getPreviousAppVersion()} title="NOUVEAUTÉS" on:close={resetPreviousAppVersion}/>
+    <ChangeLogModal version={getPreviousAppVersion()} title="NOUVEAUTÉS"/>
 {/if}
 
 <style>
