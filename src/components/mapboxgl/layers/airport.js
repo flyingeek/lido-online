@@ -316,11 +316,11 @@ const etopsTextHaloWidth = ({kmlOptions:{iconTextChange: ratio}}) => {
 };
 const emergencyTextHaloWidth = adequateTextHaloWidth;
 // -------------> text-allow-overlap
-const adequateTextAllowOverlap = ({kmlOptions: {airportPin: style}}) => style === RECO;
+const adequateTextAllowOverlap = ({kmlOptions: {airportPin: style}}) => (style === RECO || style === MEDICAL);
 const etopsTextAllowOverlap = adequateTextAllowOverlap;
 const emergencyTextAllowOverlap = adequateTextAllowOverlap;
 // -------------> text-ignore-placement
-const adequateTextIgnorePlacement = ({kmlOptions: {airportPin: style}}) => style === RECO;
+const adequateTextIgnorePlacement = ({kmlOptions: {airportPin: style}}) => (style === RECO || style === MEDICAL);
 const etopsTextIgnorePlacement = adequateTextIgnorePlacement;
 const emergencyTextIgnorePlacement = adequateTextIgnorePlacement;
 
