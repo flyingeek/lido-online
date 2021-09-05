@@ -34,7 +34,7 @@ const options = [
         'mapboxOptions': {
             'style': blankStyle,
             'renderWorldCopies': false,
-            'maxZoom': 5
+            'maxZoom': 5.5
         },
         'tiles': ['CONF_NORTH_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
         'cacheZoom': 4,
@@ -53,7 +53,7 @@ const options = [
         'mapboxOptions': {
             'style': blankStyle,
             'renderWorldCopies': false,
-            'maxZoom': 5
+            'maxZoom': 5.5
         },
         'tiles': ['CONF_SOUTH_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
         'cacheZoom': 4,

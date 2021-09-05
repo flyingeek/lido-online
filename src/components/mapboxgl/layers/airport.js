@@ -55,15 +55,15 @@ const medicalFormatter = (label, options={"text-color": MEDICAL_COLOR, "font-sca
         label
     ];
 };
-const eaoFormatter = (label, options={"text-color": RECO_COLOR, "font-scale": 1.1}) => {
+const eaoFormatter = (label) => {
     return ["case", ["all", recoCCondition, eaoCondition],
         ["format",
-            '©', options,
+            '©', {"text-color": RECO_COLOR},
             label, {},
         ],
         ["case", eaoCondition,
             ["format",
-                '▶︎', options,
+                '▶︎', {"text-color": RECO_COLOR, "font-scale": 1.1},
                 label, {},
             ],
             label
@@ -555,7 +555,6 @@ export function changeAirportStyle(data) {
         map.setLayoutProperty(adequateLayer, 'text-field', adequateTextField(data));
         map.setLayoutProperty(adequateLayer, 'text-allow-overlap', adequateTextAllowOverlap(data));
         map.setLayoutProperty(adequateLayer, 'text-ignore-placement', adequateTextIgnorePlacement(data));
-        map.setPaintProperty(adequateLayer, 'text-color', adequateTextColor(data));
         map.setFilter(adequateLayer, adequateFilter(data));
     }
     if (map.getLayer(etopsLayer)) {
@@ -569,8 +568,9 @@ export function changeAirportStyle(data) {
     }
     if (map.getLayer(emergencyLayer)) {
         changeEmergencyColor(data);
-        map.setLayoutProperty(emergencyLayer, 'icon-size', emergencyIconSize(data));
         map.setLayoutProperty(emergencyLayer, 'icon-image', emergencyIconImage(data));
+        map.setLayoutProperty(emergencyLayer, 'icon-size', emergencyIconSize(data));
+        map.setLayoutProperty(emergencyLayer, 'text-field', emergencyTextField(data));
         map.setLayoutProperty(emergencyLayer, 'text-allow-overlap', emergencyTextAllowOverlap(data));
         map.setLayoutProperty(emergencyLayer, 'text-ignore-placement', emergencyTextIgnorePlacement(data));
         map.setFilter(emergencyLayer, emergencyFilter(data));
