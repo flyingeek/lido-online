@@ -16,6 +16,15 @@
             return localStorage.getItem(previousAppVersionKey);
         }
     };
+    const fetchChangelog = () => {
+        return fetch('./CHANGELOG.json').then(response => {
+            if(response.ok) {
+                return response.json();
+            } else {
+                throw new Error('CHANGELOG.json not available');
+            }
+        });
+    };
 </script>
 <script>
     import { fade } from 'svelte/transition';
@@ -24,19 +33,13 @@
 
     export let title = 'CHANGELOG';
     export let version = undefined;
-    export let visible = !!version;
-    let promise;
+    let visible = !!version;
+    let promise = (visible) ? fetchChangelog() : undefined;
     let checked = showChangelogOnUdate();
 
     export const show = async () => {
         visible = true;
-        promise = fetch('./CHANGELOG.json').then(response => {
-            if(response.ok) {
-                return response.json();
-            } else {
-                throw new Error('CHANGELOG.json not available');
-            }
-        });
+        promise = fetchChangelog();
     };
     export const close = () => {
         visible = false;
