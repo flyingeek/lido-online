@@ -276,7 +276,8 @@
     }
     :global(.mapboxgl-popup-content .security-1,
             .mapboxgl-popup-content .security-2,
-            .mapboxgl-popup-content p.status) {
+            .mapboxgl-popup-content p.status,
+            .mapboxgl-popup-content p.reco) {
         font-variant: all-small-caps;
         font-weight: bold;
         padding: 0.2em 0.4em;
@@ -337,11 +338,8 @@
         border: 1px solid red;
         margin-left: 1rem;
     }
-    :global(.mapboxgl-popup-content p.status){
+    :global(.mapboxgl-popup-content p.status, .mapboxgl-popup-content p.reco){
         color: black;
-        font-variant: all-small-caps;
-        font-weight: bold;
-        padding: 0.2em 0.4em;
         border: 1px solid;
     }
     :global(.mapboxgl-popup-content p.status-1){
@@ -363,6 +361,16 @@
         color: #aaa;
         display: block;
         margin-top: 0.3em;
+    }
+    :global(.mapboxgl-popup-content p.reco-A, .mapboxgl-popup-content p.reco-B){
+        border-color: #7800d5;
+        margin-left: 1rem;
+    }
+    :global(.mapboxgl-popup-content p.reco-C){
+        border-color: #7800d5;
+        background-color: #7800d5;
+        color: white;
+        margin-left: 1rem;
     }
     .nowebp {
         background-color: #ff0000;

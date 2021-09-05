@@ -3,7 +3,7 @@
   "version": "1.15.9",
   "type": "module",
   "config": {
-    "AIRAC": "2108k"
+    "AIRAC": "2108l"
   },
   "scripts": {
     "build": "npm run clean && rollup -c",

@@ -112,6 +112,21 @@ function parseGlobal() {
             // }
             iataResults +=  data[2].trim() + ":" + data[0].trim();
             if (!data[2].trim()) console.log(`unkwnown iata code for ${data[0]}`, data);
+            const EAO = ['BGSF', 'DAOO', 'FSIA', 'KJFK', 'LDDU', 'LEBB', 'LFKF', 'LFML', 'LFMN', 'LFTH', 'LGIR', 'LGSR', 'LIRN', 'LSZH', 'MMMX', 'MROC', 'MTPP', 'OIIE', 'OIII', 'RJTT', 'SBGL', 'SKBO', 'SVMI', 'TFFF', 'TFFR', 'TNCM'];
+            const reco = (data[33]).trim();
+            let recoCode = 0;
+            const eao = (reco === 'C') || EAO.includes(icao);
+            recoCode += (eao) ? 1 : 0;
+            // 0 -> type A
+            // 1 -> type A + EAO
+            // 2 -> type B
+            // 3 -> type B + EAO
+            // 4 -> type C
+            // 5 -> type C + EAO
+            if (reco) {
+                recoCode += (reco === 'B') ? 2 : 4;
+            }
+            if (recoCode > 0) console.log(`${icao}/${iata} reco type: ${reco}${(eao) ? ' EAO': ''}  ${recoCode}`);
             const feature = {
                 'type': 'Feature',
                 'geometry': {
@@ -125,6 +140,7 @@ function parseGlobal() {
                     cc,
                     'level': level,
                     'h': (data[48].trim() === 'H') ? 1 : 0,
+                    'r': recoCode,
                     ...order
                 }
             };

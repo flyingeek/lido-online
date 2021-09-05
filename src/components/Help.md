@@ -131,6 +131,7 @@ Pour les aéroports (le type avion est déterminé dans l'OFP), il est possible 
 - **vert/rouge** reprend le code couleur des Regional Planning Chart, il y ajoute le symbole <span style="color: #062DF8;">✚</span> pour les terrains de support médical.
 - **bleu/vert/rouge** permet de distinguer les adéquats de support médical par la couleur de l'icône.
 - **médical** n'affiche que les terrains de support médical
+- **reco&eao** n'affiche que les terrains de reconnaissance de type B et C. Les types C sont indiqués par le symbole ©. Les types B disposant d'un EAO sont indiqués par le symbole ▶︎. Ce style ne dépend pas du type avion.
 
 > Le statut est aussi disponible en cliquant sur un terrain (popup).
 
@@ -184,6 +185,8 @@ OFP2MAP peut aussi utiliser un GPS. En cliquant sur <svg><use xlink:href="#geolo
 La capacité ETOPS est determinée depuis l'OFP et les cercles sont tracés. Un drapeau <span style="background-color: var(--bs-warning); padding: 0 3px; font-size: 9px;">ETOPS</span> apparait dans le pavé d'information de l'OFP si le carburant est limitatif (20mn, soit environ 2T de marge sur 777). Pour avoir plus d'informations vous pouvez utiliser un [plugin](#_plugins).
 
 Les appuis ETOPS sont affichés avec l'icône <span class="big" style="color: #FC2403FF;">▲</span> (dans la couleur des cercles ETOPS). Les adéquats d'entrée et de sortie ETOPS avec le symbole <span class="big" style="color: #095;">▲</span> (dans la couleur des adéquats du style utilisé). La couleur des cercles des points d'entrée et de sortie est celle de la route.
+
+> Il faut cliquer sur l’icône d’un appui ETOPS pour connaître son statut et son niveau sûreté
 
 </section>
 <section id="_ephemerides">

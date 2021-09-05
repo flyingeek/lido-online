@@ -1,6 +1,6 @@
 /* global mapboxgl editolido */
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
-import {STATUS, GREENRED, MEDICAL, BLUEGREENRED} from "../../mapSettings/AirportSelector.svelte";
+import {STATUS, GREENRED, MEDICAL, BLUEGREENRED, RECO} from "../../mapSettings/AirportSelector.svelte";
 import {computeIconTextSize, computeIconSize, haloLightColor, haloTextBlur, haloTextWidth} from '../utils';
 import { countryCodeName, countryCodeEmoji } from "../../countries";
 import {get} from "svelte/store";
@@ -14,6 +14,7 @@ const layers = [emergencyLayer, adequateLayer, etopsLayer]; // in display order
 const source = `${folder}-source`;
 
 const MEDICAL_COLOR = '#062DF8';
+const RECO_COLOR = '#7800d5';
 const TEXT_COLOR = '#000';
 
 const getEtopsNames = (ofp) => {
@@ -27,6 +28,9 @@ const getEtopsNames = (ofp) => {
 
 // --------------> CONDITIONS
 const medicalCondition = ["==", 1, ["get", "h"]];
+const recoCondition = ["!=", 0, ["get", "r"]];
+const recoCCondition = ["==", 5, ["get", "r"]];
+const eaoCondition = ["in", ["get", "r"], ["literal", [1, 3, 5]]];
 const levelCondition = (level) => ["==", level, ["get", "level"]];
 const level0Condition = levelCondition(0);
 const adequateCondition = (aircraftType) => ["<", ["coalesce", ["get", `${aircraftType}`], 11], 10];
@@ -42,7 +46,7 @@ const raltCondition = (ofp) => {
 // --------------> LABELLER + FORMATTER
 const airportLabeller = (labelling) =>  (labelling === 0) ? ['get', 'name'] : ['get', 'iata'];
 const medicalDecoration = '\u200A✚'; //https://jkorpela.fi/chars/spaces.html
-const medicalFormatter = (label, options) => {
+const medicalFormatter = (label, options={"text-color": MEDICAL_COLOR, "font-scale": 1.1}) => {
     return ["case", medicalCondition,
         ["format",
             label, {},
@@ -51,24 +55,47 @@ const medicalFormatter = (label, options) => {
         label
     ];
 };
+const eaoFormatter = (label, options={"text-color": RECO_COLOR, "font-scale": 1.1}) => {
+    return ["case", ["all", recoCCondition, eaoCondition],
+        ["format",
+            '©', options,
+            label, {},
+        ],
+        ["case", eaoCondition,
+            ["format",
+                '▶︎', options,
+                label, {},
+            ],
+            label
+        ]];
+}
 
 // -------------> FILTER
 const adequateFilter = ({aircraftType, kmlOptions: {airportPin: style}}) => {
-    return (style === MEDICAL)
-        ? ["all", medicalCondition, adequateCondition(aircraftType)]
-        : adequateCondition(aircraftType);
+    if (style === MEDICAL) {
+        return ["all", medicalCondition, adequateCondition(aircraftType)];
+    }else if (style === RECO) {
+        return ["all", recoCondition, adequateCondition(aircraftType)];
+    }
+    return adequateCondition(aircraftType);
 };
 const etopsFilter = ({ofp, kmlOptions: {airportPin: style}}) => {
     const [, etopsNames] = getEtopsNames(ofp);
     const isEtops = ["in", ["get", "name"], ["literal", etopsNames]];
-    return (style === MEDICAL)
-        ? ["all", isEtops, medicalCondition]
-        : isEtops;
+    if (style === MEDICAL) {
+        return ["all", isEtops, medicalCondition];
+    }else if (style === RECO) {
+        return ["all", isEtops, recoCondition];
+    }
+    return isEtops;
 };
 const emergencyFilter = ({aircraftType, kmlOptions: {airportPin: style}}) => {
-    return (style === MEDICAL)
-        ? ["to-boolean", false]
-        : ["!", adequateCondition(aircraftType)];
+    if (style === MEDICAL) {
+        return ["to-boolean", false];
+    }else if (style === RECO) {
+        return ["all", recoCondition, ["!", adequateCondition(aircraftType)]];
+    }
+    return ["!", adequateCondition(aircraftType)];
 };
 
 // -------------> symbol-sort-key
@@ -86,45 +113,67 @@ const adequateSymbolSortKey = ({aircraftType, ofp}) => {
 // -------------> icon-color
 const adequateIconColorMap = {
     [STATUS]: (aircraftType) => ["case",
-        ["==", 9, ["get", `${aircraftType}`]], '#ea80d8',
-        ["==", 8, ["get", `${aircraftType}`]], '#ea80d8',
-        ["==", 7, ["get", `${aircraftType}`]], '#dddddd',
-        ["==", 6, ["get", `${aircraftType}`]], '#dddddd',
-        ["==", 5, ["get", `${aircraftType}`]], '#fbfe98',
-        ["==", 4, ["get", `${aircraftType}`]], '#fbfe98',
-        ["==", 3, ["get", `${aircraftType}`]], '#00b0f1',
-        ["==", 2, ["get", `${aircraftType}`]], '#00b0f1',
+        ["==", 9, ["get", `${aircraftType}`]], '#ea80d8', //status 1
+        ["==", 8, ["get", `${aircraftType}`]], '#ea80d8', //status 1
+        ["==", 7, ["get", `${aircraftType}`]], '#dbe000', //status 2 era
+        ["==", 6, ["get", `${aircraftType}`]], '#dbe000', //status 2 era
+        ["==", 5, ["get", `${aircraftType}`]], '#fbfe98', //status 2
+        ["==", 4, ["get", `${aircraftType}`]], '#fbfe98', //status 2
+        ["==", 3, ["get", `${aircraftType}`]], '#00b0f1', //status 3
+        ["==", 2, ["get", `${aircraftType}`]], '#00b0f1', //status 3
         '#000'
     ],
     [GREENRED]: () => ["case", level0Condition, '#095','#C71'],
     [BLUEGREENRED]: () => ["case", level0Condition, ["case", medicalCondition, '#0525cc', '#095'],'#C71'],
     [MEDICAL]: () => ["case", level0Condition, MEDICAL_COLOR,'#C71'],
+    [RECO]: () => RECO_COLOR,
 };
 const adequateIconColor = ({aircraftType, kmlOptions: {airportPin: style}}) => {
     return adequateIconColorMap[style](aircraftType);
 };
-const emergencyIconColor = ({ofp}) => {
-    return (ofp) ?
-        ["case", levelCondition(1), '#D70', '#B02'] :
-        '#B02';
+const emergencyIconColor = ({ofp, kmlOptions: {airportPin: style}}) => {
+    switch(style) {
+        case RECO:
+            return RECO_COLOR;
+        default:
+            return (ofp) ?
+                ["case", levelCondition(1), '#D70', '#B02'] :
+                '#B02';
+    }
+
 };
 const etopsIconColor = (data) => {
-    return ["case", raltCondition(data.ofp),
-        kml2mapColor(data.kmlOptions.etopsColor)[0],
-        adequateIconColor(data)
-    ];
+    const {ofp, kmlOptions: {airportPin: style, etopsColor}} = data;
+    switch(style) {
+        case RECO:
+            return RECO_COLOR;
+    default:
+        return ["case", raltCondition(ofp),
+            kml2mapColor(etopsColor)[0],
+            adequateIconColor(data)
+        ];
+    }
 };
 
 // -------------> icon-image
 const adequateIconImage = () => 'sdf-airport';
 const etopsIconImage = () => 'sdf-triangle';
-const emergencyIconImage = ({ofp}) => {
-    return (ofp) ? 
-        ["case", levelCondition(2),
+const emergencyIconImage = ({ofp, kmlOptions: {airportPin: style}}) => {
+    if (!ofp) return 'sdf-airport';
+    switch (style){
+        case STATUS:
+            return ["case", levelCondition(2),
             'sdf-star',
             'sdf-airport'
-        ] :
-        'sdf-airport'
+        ];
+        case RECO:
+            return "sdf-airport";
+        default:
+            return ["case", ["!=", 0, ["get", "level"]],
+            'sdf-star',
+            'sdf-airport'
+        ];
+    }
 };
 
 // -------------> icon-size
@@ -139,45 +188,47 @@ const interpolateIconSize = (size, mapOptions, magnification =1.8) => {
         maxZoom, size * magnification
     ];
 };
-const adequateIconSize = ({mapOptions, kmlOptions:{iconSizeChange: iconRatio}}) => {
-return interpolateIconSize(computeIconSize(iconRatio, 0.6), mapOptions);
+const adequateIconSize = ({mapOptions, kmlOptions:{iconSizeChange: iconRatio, airportPin: style}}) => {
+return interpolateIconSize(computeIconSize(iconRatio, (style === STATUS) ? 0.5 : 0.6), mapOptions);
 };
 const etopsIconSize = ({mapOptions, kmlOptions:{iconSizeChange: iconRatio}}) => {
 return interpolateIconSize(computeIconSize(iconRatio, 1), mapOptions);
 };
-const emergencyIconSize = ({mapOptions, kmlOptions: {iconSizeChange: iconRatio}}) => {
-return interpolateIconSize(computeIconSize(iconRatio, 0.5, 1.2), mapOptions);
+const emergencyIconSize = ({mapOptions, kmlOptions: {iconSizeChange: iconRatio, airportPin: style}}) => {
+return interpolateIconSize(computeIconSize(iconRatio, (style !== RECO) ? 0.5 : 0.6), mapOptions);
 // return (ofpLoaded) ? ["case",
 // ["==", 2, ["get", "level"]], computeIconSize(iconRatio, 0.5, 1.2),
 // computeIconSize(iconRatio, 0.4, 1.2)] : computeIconSize(iconRatio, 0.4, 1.2);
 };
 
 // -------------> icon-halo-width
-const adequateIconHaloWidth = ({ofp, kmlOptions: {airportPin: style}}) => (style === STATUS && !!ofp) ? 3 : 0;
+const adequateIconHaloWidth = ({kmlOptions: {airportPin: style}}) => (style === STATUS) ? 1 : 0;
 const etopsIconHaloWidth = adequateIconHaloWidth;
 const emergencyIconHaloWidth = () => 0;
 
 // -------------> icon-halo-color
-const adequateIconHaloColor = ({ofp}) => {
-    return (ofp) ? 
-        ["case", ["==", 0, ["get", "level"]], '#095','#D70'] :
-        '#444';
-};
+const adequateIconHaloColor = () => '#444';
 const etopsIconHaloColor = adequateIconHaloColor;
 const emergencyIconHaloColor = () => '#000';
 // -------------> text-color
-const adequateTextColor = ({ofp}) => {
+const adequateTextColor = ({ofp, kmlOptions: {airportPin: style}}) => {
     if (!ofp) return TEXT_COLOR;
-    return ["case", level0Condition,
-        TEXT_COLOR,
-        '#8d4600'
-    ];
+    switch (style){
+        case STATUS:
+            return ["case", level0Condition,
+                TEXT_COLOR,
+                '#d47200'
+            ];
+        default:
+            return TEXT_COLOR;
+    }
 };
-const etopsTextColor = ({ofp, kmlOptions:{etopsColor}}) => {
-        return ["case", raltCondition(ofp),
-            kml2mapColor(etopsColor)[0],
-            TEXT_COLOR
-        ];
+const etopsTextColor = (data) => {
+    const {ofp, kmlOptions:{etopsColor}} = data;
+    return ["case", raltCondition(ofp),
+        kml2mapColor(etopsColor)[0],
+        adequateTextColor(data)
+    ];
 };
 const emergencyTextColor = () => TEXT_COLOR;
 
@@ -191,8 +242,10 @@ const adequateTextField = ({kmlOptions: {airportPin: style, airportLabel: labell
                 label,
                 medicalFormatter(label, {"text-color": '#0525cc', "font-scale": 1.1}),
             ];
+        case RECO:
+            return eaoFormatter(label);
         default:
-            return medicalFormatter(label, {"text-color": MEDICAL_COLOR, "font-scale": 1.1});
+            return medicalFormatter(label);
     }
 };
 const etopsTextField = ({ofp, kmlOptions: {airportPin: style, airportLabel: labelling}}) => {
@@ -201,15 +254,23 @@ const etopsTextField = ({ofp, kmlOptions: {airportPin: style, airportLabel: labe
         case BLUEGREENRED:
         case MEDICAL:
             return ["case", raltCondition(ofp), // only ralts are not "blue"
-                medicalFormatter(label, {"text-color": MEDICAL_COLOR, "font-scale": 1.1}),
+                medicalFormatter(label),
                 label
             ];
+        case RECO:
+            return eaoFormatter(label);
         default:
-            return medicalFormatter(label, {"text-color": MEDICAL_COLOR, "font-scale": 1.1});
+            return medicalFormatter(label);
     }
 };
-const emergencyTextField = ({kmlOptions: {airportLabel: labelling}}) => {
-    return airportLabeller(labelling);
+const emergencyTextField = ({kmlOptions: {airportPin: style, airportLabel: labelling}}) => {
+    const label = airportLabeller(labelling);
+    switch (style){
+        case RECO:
+            return eaoFormatter(label);
+        default:
+            return label;
+    }
 };
 
 // -------------> text-size
@@ -250,6 +311,15 @@ const etopsTextHaloWidth = ({kmlOptions:{iconTextChange: ratio}}) => {
     return haloTextWidth({ratio, size: 10});
 };
 const emergencyTextHaloWidth = adequateTextHaloWidth;
+// -------------> text-allow-overlap
+const adequateTextAllowOverlap = ({kmlOptions: {airportPin: style}}) => style === RECO;
+const etopsTextAllowOverlap = adequateTextAllowOverlap;
+const emergencyTextAllowOverlap = adequateTextAllowOverlap;
+// -------------> text-ignore-placement
+const adequateTextIgnorePlacement = ({kmlOptions: {airportPin: style}}) => style === RECO;
+const etopsTextIgnorePlacement = adequateTextIgnorePlacement;
+const emergencyTextIgnorePlacement = adequateTextIgnorePlacement;
+
 
 export const changeAdequatesColor = (data) => {
     const map = data.map;
@@ -267,12 +337,19 @@ export const changeAirportETOPSColor = (data) => {
     }
     return true; // allows chaining
 };
+const changeEmergencyColor = (data) => {
+    const map = data.map;
+    if (map.getLayer(emergencyLayer)) {
+        map.setPaintProperty(emergencyLayer, 'icon-color', emergencyIconColor(data));
+        map.setPaintProperty(emergencyLayer, 'text-color', emergencyTextColor(data));
+    }
+    return true; // allows chaining
+}
 export const changeAirportETOPSDisplay = ({map}, visible) => {
     if (map.getLayer(etopsLayer) ) {
         map.setLayoutProperty(etopsLayer, 'visibility', (visible) ? 'visible': 'none');
     }
 };
-
 function changeAirportDisplay({map}, visible) {
     for (const layer of layers) {
         if (map.getLayer(layer)) {
@@ -325,6 +402,8 @@ export const addAirports = (data) => {
         emergencyOptions.layout['visibility'] = (airportDisplay) ? 'visible' : 'none';
         emergencyOptions.layout['text-field'] = emergencyTextField(data);
         emergencyOptions.layout['text-size'] = emergencyTextSize(data);
+        emergencyOptions.layout['text-allow-overlap'] = emergencyTextAllowOverlap(data);
+        emergencyOptions.layout['text-ignore-placement'] = emergencyTextIgnorePlacement(data);
         emergencyOptions.paint['icon-color'] = emergencyIconColor(data);
         emergencyOptions.paint['icon-halo-width'] = emergencyIconHaloWidth(data);
         emergencyOptions.paint['icon-halo-color'] = emergencyIconHaloColor(data);
@@ -341,6 +420,8 @@ export const addAirports = (data) => {
         adequateOptions.layout['visibility'] = (airportDisplay) ? 'visible' : 'none';
         adequateOptions.layout['text-field'] = adequateTextField(data);
         adequateOptions.layout['text-size'] = adequateTextSize(data);
+        adequateOptions.layout['text-allow-overlap'] = adequateTextAllowOverlap(data);
+        adequateOptions.layout['text-ignore-placement'] = adequateTextIgnorePlacement(data);
         adequateOptions.paint['icon-color'] = adequateIconColor(data);
         adequateOptions.paint['icon-halo-width'] = adequateIconHaloWidth(data);
         adequateOptions.paint['icon-halo-color'] = adequateIconHaloColor(data);
@@ -356,6 +437,8 @@ export const addAirports = (data) => {
         etopsOptions.layout['visibility'] = (etopsDisplay) ? 'visible' : 'none';
         etopsOptions.layout['text-field'] = etopsTextField(data);
         etopsOptions.layout['text-size'] = etopsTextSize(data);
+        etopsOptions.layout['text-allow-overlap'] = etopsTextAllowOverlap(data);
+        etopsOptions.layout['text-ignore-placement'] = etopsTextIgnorePlacement(data);
         etopsOptions.paint['icon-color'] = etopsIconColor(data);
         etopsOptions.paint['icon-halo-width'] = etopsIconHaloWidth(data);
         etopsOptions.paint['icon-halo-color'] = etopsIconHaloColor(data);
@@ -363,7 +446,6 @@ export const addAirports = (data) => {
         etopsOptions.paint['text-halo-width'] = etopsTextHaloWidth(data);
         map.addLayer(etopsOptions);
 
- 
         const addAirportPopup = function (e, {focusAfterOpen=false, closeOnMove=true, closeButton=true}={}) {
             const coordinates = e.features[0].geometry.coordinates.slice();
             const title = e.features[0].properties.title;
@@ -397,6 +479,36 @@ export const addAirports = (data) => {
                     statusNum = "1";
                     break;
             }
+            const recoCode = e.features[0].properties.r;
+            let reco, eao;
+            switch(recoCode) {
+                case 0:
+                    reco = "A";
+                    eao = false;
+                    break;
+                case 1:
+                    reco = "A";
+                    eao = true;
+                    break;
+                case 2:
+                    reco = "B";
+                    eao = false;
+                    break;
+                case 3:
+                    reco = "B";
+                    eao = true;
+                    break;
+                case 4:
+                    reco = "C";
+                    eao = false;
+                    break;
+                case 5:
+                    reco = "C";
+                    eao = true;
+                    break;
+                default:
+                    console.error('unknown recoCode: ', recoCode);
+            }
             const isMedical = e.features[0].properties.h === 1 && statusNum !== "0";
             const cc = e.features[0].properties.cc;
             let html = `<div class="airport">`
@@ -405,6 +517,7 @@ export const addAirports = (data) => {
             if (ofp) {
                 html +=  `<p class="status status-${statusNum.charAt(0)}">STATUT ${statusNum}</p>`;
                 if(security > 0) html += `<p class="security-${security}">${(security==1) ? 'ORANGE' : 'RED'}</p>`;
+                html+= `<p class="reco reco-${reco}">reco ${reco}${(eao) ? ' EAO' : ''}</p>`;
                 if(statusText) html += `<p class="status-text">${statusText}</p>`;
             }
             html += "</div>";
@@ -438,16 +551,30 @@ export function changeAirportStyle(data) {
     if (map.getLayer(adequateLayer)) {
         changeAdequatesColor(data);
         map.setPaintProperty(adequateLayer, 'icon-halo-width', adequateIconHaloWidth(data));
+        map.setLayoutProperty(adequateLayer, 'icon-size', adequateIconSize(data));
         map.setLayoutProperty(adequateLayer, 'text-field', adequateTextField(data));
+        map.setLayoutProperty(adequateLayer, 'text-allow-overlap', adequateTextAllowOverlap(data));
+        map.setLayoutProperty(adequateLayer, 'text-ignore-placement', adequateTextIgnorePlacement(data));
+        map.setPaintProperty(adequateLayer, 'text-color', adequateTextColor(data));
         map.setFilter(adequateLayer, adequateFilter(data));
     }
     if (map.getLayer(etopsLayer)) {
         changeAirportETOPSColor(data);
         map.setPaintProperty(etopsLayer, 'icon-halo-width', etopsIconHaloWidth(data));
+        map.setLayoutProperty(etopsLayer, 'icon-size', etopsIconSize(data));
         map.setLayoutProperty(etopsLayer, 'text-field', etopsTextField(data));
+        map.setLayoutProperty(etopsLayer, 'text-allow-overlap', etopsTextAllowOverlap(data));
+        map.setLayoutProperty(etopsLayer, 'text-ignore-placement', etopsTextIgnorePlacement(data));
         map.setFilter(etopsLayer, etopsFilter(data));
     }
-    if (map.getLayer(emergencyLayer)) map.setFilter(emergencyLayer, emergencyFilter(data));
+    if (map.getLayer(emergencyLayer)) {
+        changeEmergencyColor(data);
+        map.setLayoutProperty(emergencyLayer, 'icon-size', emergencyIconSize(data));
+        map.setLayoutProperty(emergencyLayer, 'icon-image', emergencyIconImage(data));
+        map.setLayoutProperty(emergencyLayer, 'text-allow-overlap', emergencyTextAllowOverlap(data));
+        map.setLayoutProperty(emergencyLayer, 'text-ignore-placement', emergencyTextIgnorePlacement(data));
+        map.setFilter(emergencyLayer, emergencyFilter(data));
+    }
 }
 
 export function changeAircraftType(data) {
@@ -457,6 +584,7 @@ export function changeAircraftType(data) {
     map.setFilter(emergencyLayer, emergencyFilter(data));
     changeAdequatesColor(data);
     changeAirportETOPSColor(data);
+    changeEmergencyColor(data);
     map.setLayoutProperty(adequateLayer, 'symbol-sort-key', adequateSymbolSortKey(data));
 }
 

@@ -3,11 +3,13 @@
     export const GREENRED = 1;
     export const MEDICAL = 2;
     export const BLUEGREENRED = 3;
+    export const RECO = 4;
     const options = [
         {label: 'statuts', id: STATUS},
         {label: 'vert/rouge', id: GREENRED},
         {label: 'bleu/vert/rouge', id: BLUEGREENRED},
         {label: 'médical', id: MEDICAL},
+        {label: 'reco & EAO', id: RECO},
     ];
     export const ICAO = 0;
     export const IATA = 1;
