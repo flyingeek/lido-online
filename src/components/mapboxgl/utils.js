@@ -76,16 +76,16 @@ export const getOpacityKmlColorExpression= (kmlcolor, overrideKmlColor, minOpaci
     const [,overrideOpacity] = (overrideKmlColor) ? kml2mapColor(overrideKmlColor) : [null, null];
     return getOpacityColorExpression(opacity, overrideOpacity, minOpacity)
 };
-export function addPoints(map, id, data, affine, kmlOptions, minZoom, maxZoom) {
+export function addPoints(map, id, data, affine, kmlOptions, minZoom, maxZoom, textSize=iconTextSizeDefault) {
     const prefix = folder2prefix(id);
     const visibility = kmlOptions[`${prefix}Display`];
     const kmlcolor = kmlOptions[`${prefix}Color`];
-    const textSize = computeIconTextSize(kmlOptions[`iconTextChange`]);
+    const computedTextSize = computeIconTextSize(kmlOptions[`iconTextChange`], textSize);
     const iconSize = computeIconSize(kmlOptions[`iconSizeChange`]);
     map.addSource(`${id}-marker-source`, featureCollection(
         geoPoints2LngLats(data, affine, (lngLat, geoPoint) => jsonPoint(lngLat, {title: geoPoint.name.replace(/00\.0/g,'')}))
     ));
-    map.addLayer(markerLayer(id, kmlcolor, visibility, textSize, iconSize, minZoom, maxZoom));
+    map.addLayer(markerLayer(id, kmlcolor, visibility, computedTextSize, iconSize, minZoom, maxZoom));
 }
 
 export function addLine(map, id, data, affineLine, kmlcolor, visibility, lineWidth, dashes) {

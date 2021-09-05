@@ -3,6 +3,7 @@ import {changeEPCircleColor} from './etops';
 import {changeMyTrackLabels} from './tracks';
 
 const folder = 'rmain';
+const iconTextSize = 9;
 
 const addRmain = (data) => {
     const {map, ofp, kmlOptions, mapData, mapOptions} = data;
@@ -15,7 +16,7 @@ const addRmain = (data) => {
     route.description = ofp.description;
     const lineWidth = computeLineWidthSize(kmlOptions['lineWidthChange']);
     addLine(map, folder, route.points, affineAndClip, kmlOptions.routeColor, true, lineWidth);
-    addPoints(map, folder, route.points, affineOrDrop, kmlOptions, minZoom, maxZoom);
+    addPoints(map, folder, route.points, affineOrDrop, kmlOptions, minZoom, maxZoom, iconTextSize);
     setTextHalo(data);
 }
 
@@ -44,7 +45,7 @@ export default {
     hide: changeDisplayGeneric.bind(null, folder, false),
     add: addRmain,
     changeLine,
-    changeIconText: (data) => changeIconTextGeneric(folder, data) && setTextHalo(data),
+    changeIconText: (data) => changeIconTextGeneric(folder, data, iconTextSize) && setTextHalo(data),
     changeLineWidth: changeLineWidthGeneric.bind(null, folder),
     changeIconSize: changeIconSizeGeneric.bind(null, folder)
 }

@@ -229,7 +229,7 @@ const adequateTextSize = ({mapOptions, kmlOptions:{iconTextChange: ratio}}) => {
     return interpolateTextSize(mapOptions, {ratio, size: 8, extraFactor: 1.15});
 };
 const etopsTextSize = ({mapOptions, kmlOptions:{iconTextChange: ratio}}) => {
-    return interpolateTextSize(mapOptions, {ratio, size: 10});
+    return interpolateTextSize(mapOptions, {ratio, size: 9});
 };
 const emergencyTextSize =adequateTextSize;
 

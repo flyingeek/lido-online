@@ -6,6 +6,8 @@ import {takeOffTime} from "../../../stores";
 const folder = 'rnat';
 const lineWidthTracks = 1;
 const minTextOpacityTracks = 0.9;
+const iconTextSize = 9;
+const labelsIconTextSize = 10;
 
 const rnatLabelLayer = (id, kmlcolor, visibility, textSize, minZoom, maxZoom) => {
     return {
@@ -90,7 +92,7 @@ function addTracks(data) {
     map.addSource(`rnat-incomplete-marker-source`, featureCollection(markers['rnat-incomplete']));
     map.addSource(`rnat-line-source`, featureCollection(lines['rnat']));
     map.addSource(`rnat-incomplete-line-source`, featureCollection(lines['rnat-incomplete']));
-    const textSize = computeIconTextSize(kmlOptions[`iconTextChange`]);
+    const textSize = computeIconTextSize(kmlOptions[`iconTextChange`], iconTextSize);
     const lineWidth = computeLineWidthSize(kmlOptions[`lineWidthChange`], lineWidthTracks);
     const iconSize = computeIconSize(kmlOptions[`iconSizeChange`]);
     map.addLayer(lineLayer('rnat', kmlcolor, visibility, lineWidth));
@@ -99,8 +101,9 @@ function addTracks(data) {
     changeMyTrackLabels(data); // text-color & text-opacity for entry/exit point
     map.setLayoutProperty("rnat-marker-layer", 'symbol-sort-key', ["case", ["==", 1, ["get", "overrideTextColor"]], 0, 1]);
     map.addLayer(markerLayer("rnat-incomplete", kmlcolor, visibility, textSize, iconSize, minZoom, maxZoom));
-    map.addLayer(rnatLabelLayer('rnat-labels', kmlcolor, visibility, textSize, minZoom, maxZoom));
-    map.addLayer(rnatLabelLayer('rnat-incomplete-labels', kmlOptions.natIncompleteColor, visibility, textSize, minZoom, maxZoom));
+    const labelsTextSize = computeIconTextSize(kmlOptions[`iconTextChange`], labelsIconTextSize);
+    map.addLayer(rnatLabelLayer('rnat-labels', kmlcolor, visibility, labelsTextSize, minZoom, maxZoom));
+    map.addLayer(rnatLabelLayer('rnat-incomplete-labels', kmlOptions.natIncompleteColor, visibility, labelsTextSize, minZoom, maxZoom));
 
     const popup = (e, {closeButton=true, focusAfterOpen=false, closeOnMove=true}={}) => {
         const coordinates = e.features[0].geometry.coordinates.slice();
@@ -202,7 +205,8 @@ function changeLine(data){
     return true; // allows chaining
 }
 function changeIconText(data) {
-    [folder, 'rnat-incomplete', 'rnat-labels', 'rnat-incomplete-labels'].forEach(folder => changeIconTextGeneric(folder, data));
+    [folder, 'rnat-incomplete'].forEach(folder => changeIconTextGeneric(folder, data, iconTextSize));
+    ['rnat-labels', 'rnat-incomplete-labels'].forEach(folder => changeIconTextGeneric(folder, data, labelsIconTextSize));
     changeMyTrackLabels(data);
 }
 export function changeMyTrackLabels(data) {
