@@ -63,7 +63,7 @@
             }
         }
         if (hasChange) {
-            kmlOptions = {...options};
+            kmlOptions = {...kmlOptions};
         }
     }
     function compare(obj1, obj2){
@@ -140,9 +140,11 @@
 {#if $sidebar}
 <div class:sidebar={$sidebar} class:focusmode={$focusMode} class="settings"  use:clickOutside on:click_outside={clickOutsideHandler} transition:fly="{{duration: 300, x: 200, y: 0}}">
     <button type="button" tabindex="0" class="btn-close float-end"  aria-label="Close" on:click={() =>  {$sidebar = !$sidebar; if (!$sidebar) focusMap();}}></button>
-    <form on:submit|preventDefault class:mt-5={!$ofp}>
-        {#if $ofp}
-        <fieldset class="form-group">
+    <form on:submit|preventDefault>
+        {#if !$ofp}
+            <p>Mode sans OFP restreint</p>
+        {:else}
+        <fieldset class="form-group spaceright">
             <div class="input-group checkbox-combo">
                 <label for="fir-display" class="form-control"><input name="fir-display" checked={kmlOptions['firDisplay']} type="checkbox" on:change={update}/>FIR REG
                     {#if firMapIdCondition(mapOptions)}
@@ -194,12 +196,13 @@
         <fieldset class="form-group">
             <CheckboxColorCombo name="etops" kmlColor={kmlOptions['etopsColor']} checked={kmlOptions['etopsDisplay']} on:change={update}>ETOPS</CheckboxColorCombo>
         </fieldset>
+        {/if}
+
         <fieldset class="form-group">
             <legend class="d-flex align-items-center">
                 <input name="airport-display" checked={kmlOptions['airportDisplay']} type="checkbox" on:change={update}/>Aéroports</legend>
             <AirportSelector selectedPin={kmlOptions['airportPin']} selectedLabel={kmlOptions['airportLabel']} on:change={update} />
         </fieldset>
-        {/if}
         <fieldset class="form-group">
             <legend>Aspect général</legend>
             <ZoomLevel name="icon-text-change" label="Labels" value={kmlOptions['iconTextChange']} min={0.8} max={2} on:change={update}/>
@@ -342,10 +345,10 @@
     :global(svg.eye.deactivated){
         color: var(--bs-gray-400);
     }
-    form>fieldset:first-of-type{
+    form>fieldset.spaceright{
         margin-right: 50px;
     }
-    form>fieldset:first-of-type svg{
+    form>fieldset.spaceright svg{
         right: 10px;
     }
 </style>

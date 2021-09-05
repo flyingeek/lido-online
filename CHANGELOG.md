@@ -3,11 +3,28 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.10] - 2021-09-05
+
+### Added
+
+- Nouveau style **reco & eao** n'affiche que les terrains de reconnaissance de type B et C. Les types C sont indiqués par le symbole ©. Les types B disposant d'un EAO sont indiqués par le symbole ▶︎. Sur ce style l'overlap des terrains est forcé. Ce style ne dépend pas du type avion.
+- La popup des terrains affiche le type de reconnaissance terrain et l'existence d'un EAO.
+
+### Changed
+
+- Styles */vert/rouge: les emergency orange sont affichés avec <span style="color: #D70;">✸</span> pour une meilleure différenciation avec les adéquats orange <span style="color: #D70; font-size: 70%;">●</span>.
+- Style statuts: le security level des adéquats est uniquement indiqué par la couleur du label ce qui permet de réduire l'outline de l'icône. Les statuts 2 ERA passent de gris à jaune plus foncé.
+- Légère réduction de la taille des labels route/etops/tracks, possible puisque le zoom sur la carte les grossit.
+
+### Fixed
+
+- le zoom sur les icônes est plus linéaire
+
 ## [1.15.9] - 2021-09-03
 
 ### Fixed
 
-- décidément j'ai du mal avec l'affichage des nouveautés, avec un comportement en production différent de la version dev. Code refait, utilisation du localStorage au lieu du sessionStorage.
+- décidément, j'ai du mal avec l'affichage des nouveautés, avec un comportement en production différent de la version dev. Code refait, utilisation du localStorage au lieu du sessionStorage.
 
 ## [1.15.8] - 2021-09-03
 

@@ -362,15 +362,16 @@
         display: block;
         margin-top: 0.3em;
     }
+    :global(.mapboxgl-popup-content :not(.no-ofp) p.reco) {
+        margin-left: 1rem;
+    }
     :global(.mapboxgl-popup-content p.reco-A, .mapboxgl-popup-content p.reco-B){
         border-color: #7800d5;
-        margin-left: 1rem;
     }
     :global(.mapboxgl-popup-content p.reco-C){
         border-color: #7800d5;
         background-color: #7800d5;
         color: white;
-        margin-left: 1rem;
     }
     .nowebp {
         background-color: #ff0000;

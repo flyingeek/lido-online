@@ -112,7 +112,7 @@ const adequateSymbolSortKey = ({aircraftType, ofp}) => {
 
 // -------------> icon-color
 const adequateIconColorMap = {
-    [STATUS]: (aircraftType) => ["case",
+    [STATUS]: ({aircraftType}) => ["case",
         ["==", 9, ["get", `${aircraftType}`]], '#ea80d8', //status 1
         ["==", 8, ["get", `${aircraftType}`]], '#ea80d8', //status 1
         ["==", 7, ["get", `${aircraftType}`]], '#dbe000', //status 2 era
@@ -123,13 +123,16 @@ const adequateIconColorMap = {
         ["==", 2, ["get", `${aircraftType}`]], '#00b0f1', //status 3
         '#000'
     ],
-    [GREENRED]: () => ["case", level0Condition, '#095','#C71'],
-    [BLUEGREENRED]: () => ["case", level0Condition, ["case", medicalCondition, '#0525cc', '#095'],'#C71'],
-    [MEDICAL]: () => ["case", level0Condition, MEDICAL_COLOR,'#C71'],
+    [GREENRED]: ({ofpLoaded}) => (ofpLoaded) ? ["case", level0Condition, '#095','#C71'] : '#095',
+    [BLUEGREENRED]: ({ofpLoaded}) => {
+        const level0color = ["case", medicalCondition, '#0525cc', '#095'];
+        return (ofpLoaded) ? ["case", level0Condition, level0color, '#C71'] : level0color;
+    },
+    [MEDICAL]: ({ofpLoaded}) => (ofpLoaded) ? ["case", level0Condition, MEDICAL_COLOR,'#C71'] : MEDICAL_COLOR,
     [RECO]: () => RECO_COLOR,
 };
-const adequateIconColor = ({aircraftType, kmlOptions: {airportPin: style}}) => {
-    return adequateIconColorMap[style](aircraftType);
+const adequateIconColor = ({ofp, aircraftType, kmlOptions: {airportPin: style}}) => {
+    return adequateIconColorMap[style]({aircraftType, ofpLoaded: !!ofp});
 };
 const emergencyIconColor = ({ofp, kmlOptions: {airportPin: style}}) => {
     switch(style) {
@@ -233,11 +236,12 @@ const etopsTextColor = (data) => {
 const emergencyTextColor = () => TEXT_COLOR;
 
 // -------------> text-field
-const adequateTextField = ({kmlOptions: {airportPin: style, airportLabel: labelling}}) => {
+const adequateTextField = ({ofp, kmlOptions: {airportPin: style, airportLabel: labelling}}) => {
     const label = airportLabeller(labelling);
     switch (style){
         case BLUEGREENRED:
         case MEDICAL:
+            if (!ofp) return label;
             return ["case", level0Condition, // only decorates level > 0
                 label,
                 medicalFormatter(label, {"text-color": '#0525cc', "font-scale": 1.1}),
@@ -511,15 +515,13 @@ export const addAirports = (data) => {
             }
             const isMedical = e.features[0].properties.h === 1 && statusNum !== "0";
             const cc = e.features[0].properties.cc;
-            let html = `<div class="airport">`
+            let html = `<div class="airport${(ofp) ? '' : ' no-ofp'}">`
             html += `<h1><span class="title">${icao}/${iata}</span><span class="flag">${countryCodeEmoji(cc)}</span><span class="cc">${countryCodeName(cc)}</span></h1>`;
             html += `<h2>${title}${(isMedical) ? ' <b>🄷</b>' : ''}</h2>`;
-            if (ofp) {
-                html +=  `<p class="status status-${statusNum.charAt(0)}">STATUT ${statusNum}</p>`;
-                if(security > 0) html += `<p class="security-${security}">${(security==1) ? 'ORANGE' : 'RED'}</p>`;
-                html+= `<p class="reco reco-${reco}">reco ${reco}${(eao) ? ' EAO' : ''}</p>`;
-                if(statusText) html += `<p class="status-text">${statusText}</p>`;
-            }
+            if (ofp) html +=  `<p class="status status-${statusNum.charAt(0)}">STATUT ${statusNum}</p>`;
+            if(ofp && security > 0) html += `<p class="security-${security}">${(security==1) ? 'ORANGE' : 'RED'}</p>`;
+            html+= `<p class="reco reco-${reco}">reco ${reco}${(eao) ? ' EAO' : ''}</p>`;
+            if(ofp && statusText) html += `<p class="status-text">${statusText}</p>`;
             html += "</div>";
             let popup = new mapboxgl.Popup({closeButton, focusAfterOpen, closeOnMove});
             popup.on('close', () => {

@@ -4,13 +4,14 @@
     export const MEDICAL = 2;
     export const BLUEGREENRED = 3;
     export const RECO = 4;
-    const options = [
-        {label: 'statuts', id: STATUS},
-        {label: 'vert/rouge', id: GREENRED},
-        {label: 'bleu/vert/rouge', id: BLUEGREENRED},
-        {label: 'médical', id: MEDICAL},
-        {label: 'reco & EAO', id: RECO},
+    export const options = [
+        {label: 'statuts', id: STATUS, ofpRequired: true},
+        {label: 'vert/rouge', id: GREENRED, ofpRequired: false},
+        {label: 'bleu/vert/rouge', id: BLUEGREENRED, ofpRequired: false},
+        {label: 'médical', id: MEDICAL, ofpRequired: false},
+        {label: 'reco & EAO', id: RECO, ofpRequired: false},
     ];
+    export const authorizedStylesWithoutOFP = options.filter(o => o.ofpRequired === false).map(o => o.id);
     export const ICAO = 0;
     export const IATA = 1;
     const labels = [
@@ -20,6 +21,7 @@
 </script>
 <script>
     import { createEventDispatcher } from 'svelte';
+    import {ofp} from '../../stores';
     import blurAction from '../../actions/blurAction';
     const dispatch = createEventDispatcher();
     export let selectedPin = STATUS;
@@ -32,7 +34,7 @@
             <!-- svelte-ignore a11y-no-onchange -->
             <select use:blurAction name="airport-pin" bind:value={selectedPin} class="form-select" on:change={(e) => {e.target.blur(); dispatch("change", {name: 'airport-pin', 'value': selectedPin})}}>
                 {#each options as option (option.id)}
-                <option value="{option.id}" selected={option.id === selectedPin}>{option.label}</option>
+                <option value="{option.id}" selected={option.id === selectedPin} disabled={!$ofp && option.ofpRequired}>{option.label}</option>
                 {/each}
             </select>
             <label for="airport-pin">Style</label>
