@@ -9,7 +9,7 @@
         {label: 'vert/rouge', id: GREENRED, ofpRequired: false},
         {label: 'bleu/vert/rouge', id: BLUEGREENRED, ofpRequired: false},
         {label: 'médical', id: MEDICAL, ofpRequired: false},
-        {label: 'reco & EAO', id: RECO, ofpRequired: false},
+        {label: 'reco & eao', id: RECO, ofpRequired: false},
     ];
     export const authorizedStylesWithoutOFP = options.filter(o => o.ofpRequired === false).map(o => o.id);
     export const ICAO = 0;
