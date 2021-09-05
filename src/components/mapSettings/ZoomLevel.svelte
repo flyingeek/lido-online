@@ -33,9 +33,9 @@
 
 <div class="input-group input-group-sm mb-2">
     <label for="{name}" class="input-group-text">{label}</label>
-    <button class="form-control" type="button" on:click={decrement}><svg class="zoom"><use xlink:href="#zoom-out-symbol"></use></svg></button>
+    <button class="form-control" type="button" on:click={decrement} disabled={value <= min}><svg class="zoom"><use xlink:href="#zoom-out-symbol"></use></svg></button>
     <div class="form-control">{value}</div>
-    <button class="form-control" type="button" on:click={increment}><svg class="zoom"><use xlink:href="#zoom-in-symbol"></use></svg></button>
+    <button class="form-control" type="button" on:click={increment} disabled={value >= max}><svg class="zoom"><use xlink:href="#zoom-in-symbol"></use></svg></button>
 </div>
 <style>
     div.form-control {

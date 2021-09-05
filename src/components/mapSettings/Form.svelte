@@ -202,7 +202,7 @@
         {/if}
         <fieldset class="form-group">
             <legend>Aspect général</legend>
-            <ZoomLevel name="icon-text-change" label="Labels" value={kmlOptions['iconTextChange']} min={0.9} max={2} on:change={update}/>
+            <ZoomLevel name="icon-text-change" label="Labels" value={kmlOptions['iconTextChange']} min={0.8} max={2} on:change={update}/>
             {#if $ofp}
             <ZoomLevel name="line-width-change" label="Lignes" value={kmlOptions['lineWidthChange']} max={3} on:change={update}/>
             {/if}
