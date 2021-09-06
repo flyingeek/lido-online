@@ -39,11 +39,11 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
     }
     const map = new mapboxgl.Map({...mapOptions.mapboxOptions, ...mapboxOptions});
     map._setCacheLimits(320, 32);
-    map.loadImage('sdf/maki-marker-sdf.png', function(error, image) {
+    map.loadImage('sdf/maki-camera-sdf.png', function(error, image) {
         if (error) {
             console.log(error);
         } else {
-            map.addImage('sdf-marker-15', image, { pixelRatio: 2, sdf: true});
+            map.addImage('sdf-camera', image, { pixelRatio: 2, sdf: true});
         }
     });
     map.loadImage('sdf/map-triangle-sdf.png', function(error, image) {

@@ -131,7 +131,7 @@ Pour les aéroports (le type avion est déterminé dans l'OFP), il est possible 
 - **vert/rouge** reprend le code couleur des Regional Planning Chart, il y ajoute le symbole <span style="color: #062DF8;">✚</span> pour les terrains de support médical, et, pour les distinguer des adéquats orange, les emergency orange sont représentés par une étoile.
 - **bleu/vert/rouge** permet de distinguer les adéquats de support médical par la couleur de l'icône.
 - **médical** n'affiche que les terrains de support médical
-- **reco & eao** n'affiche que les terrains de reconnaissance de type B et C. Les types C sont indiqués par le symbole ©, les types B disposant d'un EAO par le symbole ▶︎. Ce style ne dépend pas du type avion.
+- **reco & eao** n'affiche que les terrains de reconnaissance de type B et C. Les types C sont indiqués par le symbole ©, les types B disposant d'un EAO par 🎥
 
 > Le statut est aussi disponible en cliquant sur un terrain (popup).
 

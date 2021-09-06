@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.11] - 2021-09-06
+
+### Changed
+
+- Style reco & eao: utilisation d'une icône en forme de caméra pour les terrains disposant d'EAO + distinguo adéquat/emergency
+- Style medical: overlap des terrains forcés (similaire au style reco & eao)
+
 ## [1.15.10] - 2021-09-05
 
 ### Added
