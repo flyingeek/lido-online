@@ -9,10 +9,20 @@ import blankStyle from './blankStyle';
 // - choisir "Folder" -> Render
 const query = "(-webkit-min-device-pixel-ratio: 2), (min-device-pixel-ratio: 2), (min-resolution: 192dpi)";
 const tilesResolution = (matchMedia(query).matches) ? 256 : 512;
+
+// PROJECTION ID
+export const MERCATOR = 'mercator';
+export const NORTH = 'jb_north';
+export const SOUTH = 'jb_south';
+export const PACIFIC = 'jb_pacific';
+export const POLITICAL = 'jb_theworld';
+export const PHYSICAL = 'ed_eqe_physical_fr';
+export const VFR = 'vb_2020';
+
 const options = [
     {
         'label': 'Mercator',
-        'id': 'mercator',
+        'id': MERCATOR,
         'mapboxOptions': {
             //'style': 'mapbox://styles/flyingeek/ckc4yge17166a1ip66rkf0zhr',
             //'style': 'mapbox://styles/flyingeek/cklgh38ep0xsr17qsvlrhth1e',
@@ -27,7 +37,7 @@ const options = [
     },
     {
         'label': 'Lambert North',
-        'id': 'jb_north',
+        'id': NORTH,
         'extent': [-7441575.32982940, -5719574.16449270, 7383398.17621086, 9105399.34154755],
         //'affineTransform': [2.63206100208865, -323662.179369435, 2.63502996130431, -10626687.7639946],
         'proj4': '+proj=lcc +lat_1=30 +lat_2=65 +lat_0=47.5 +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
@@ -46,7 +56,7 @@ const options = [
     },
     {
         'label': 'Lambert South',
-        'id': 'jb_south',
+        'id': SOUTH,
         'extent': [-12613000.20107552, -12796118.19556621, 13437104.14597977, 13253986.15148908],
         'validity': [-12613903.56963206, -9420000.1608799, 13437054.51836624, 5862747.38325809],
         'proj4': '+proj=lcc +lat_1=-15 +lat_2=30 +lat_0=7.5 +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
@@ -65,7 +75,7 @@ const options = [
     },
     {
         'label': 'Lambert Pacific',
-        'id': 'jb_pacific',
+        'id': PACIFIC,
         'extent': [-8306365.14297095, -7788164.66141786, 6519185.45830619, 7037385.93985927],
         'proj4': '+proj=lcc +lat_1=-15 +lat_2=30 +lat_0=7.5 +lon_0=-140 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
         'mapboxOptions': {
@@ -83,7 +93,7 @@ const options = [
     },
     {
         'label': 'The World',
-        'id': 'jb_theworld',
+        'id': POLITICAL,
         // for wide map
         //'ratio': [16358, 10084], /* width, height, but we use affineTransform instead */
         // coefficients based on ratio
@@ -114,7 +124,7 @@ const options = [
     },
     {
         'label': '=Physique=',
-        'id': 'ed_eqe_physical_fr',
+        'id': PHYSICAL,
         // for wide map
         //"ratio": [19268, 10630],
         // coefficients based on ratio
@@ -173,7 +183,7 @@ const options = [
     // }
     ,{
         'label': atob("Q2FydGFCb3NzeQ==") + ' 2020',
-        'id': 'vb_2020',
+        'id': VFR,
         "ratio": [19449, 18352],
         'extent': [26966.11818123, -430589.86447607, 1262485.62823696, 735241.49181695],
         'proj4': "+proj=lcc +lat_1=45.89893890000052 +lat_2=47.69601440000037 +lat_0=46.8 +lon_0=2.33722917 +x_0=600000 +y_0=200000 +datum=WGS84 +units=m +no_defs ",

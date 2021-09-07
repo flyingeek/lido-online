@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Style reco & eao: utilisation d'une icône en forme de caméra pour les terrains disposant d'EAO + distinguo adéquat/emergency
 - Style medical: overlap des terrains forcés (similaire au style reco & eao)
+- ajout d'un halo léger aux icônes pour augmenter la lisibilité
 
 ## [1.15.10] - 2021-09-05
 

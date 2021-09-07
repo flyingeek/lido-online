@@ -1,7 +1,7 @@
 /* global mapboxgl editolido */
 import {kml2mapColor} from "../../mapSettings/ColorPinCombo.svelte";
 import {STATUS, GREENRED, MEDICAL, BLUEGREENRED, RECO} from "../../mapSettings/AirportSelector.svelte";
-import {computeIconTextSize, computeIconSize, haloLightColor, haloTextBlur, haloTextWidth} from '../utils';
+import {computeIconTextSize, computeIconSize, haloLightColor, haloDarkColor, haloTextBlur, haloTextWidth} from '../utils';
 import { countryCodeName, countryCodeEmoji } from "../../countries";
 import {get} from "svelte/store";
 import {aircraftType as aircraftTypeStore} from '../../../stores';
@@ -54,6 +54,7 @@ const raltCondition = (ofp) => {
         return ["to-boolean", false];
     }
 };
+const needsDarkHaloIcon = (style) => style === STATUS;
 
 // --------------> LABELLER + FORMATTER + ICONS
 const airportLabeller = (labelling) =>  (labelling === 0) ? ['get', 'name'] : ['get', 'iata'];
@@ -200,24 +201,31 @@ const interpolateIconSize = (size, mapOptions, magnification =1.8) => {
     ];
 };
 const adequateIconSize = ({mapOptions, kmlOptions:{iconSizeChange: iconRatio, airportPin: style}}) => {
-    return interpolateIconSize(computeIconSize(iconRatio, (style === STATUS) ? 0.5 : 0.6), mapOptions);
+    let size = 0.6;
+    if (needsDarkHaloIcon(style)) size = 0.5;
+    return interpolateIconSize(computeIconSize(iconRatio, size), mapOptions);
 };
-const etopsIconSize = ({mapOptions, kmlOptions:{iconSizeChange: iconRatio}}) => {
-    return interpolateIconSize(computeIconSize(iconRatio, 1), mapOptions);
+const etopsIconSize = ({mapOptions, kmlOptions:{iconSizeChange: iconRatio, airportPin: style}}) => {
+    let size = 1;
+    if (needsDarkHaloIcon(style)) size = 0.9;
+    return interpolateIconSize(computeIconSize(iconRatio, size), mapOptions);
 };
-const emergencyIconSize = ({mapOptions, kmlOptions: {iconSizeChange: iconRatio, airportPin: style}}) => {
-    return interpolateIconSize(computeIconSize(iconRatio, (style !== RECO) ? 0.5 : 0.6), mapOptions);
+const emergencyIconSize = ({mapOptions, kmlOptions:{iconSizeChange: iconRatio}}) => {
+    return interpolateIconSize(computeIconSize(iconRatio, 0.5), mapOptions); // emergency halo icon is  always light
 };
 
 // -------------> icon-halo-width
-const adequateIconHaloWidth = ({kmlOptions: {airportPin: style}}) => (style === STATUS) ? 1 : 0;
+const adequateIconHaloWidth = () => 1;
 const etopsIconHaloWidth = adequateIconHaloWidth;
-const emergencyIconHaloWidth = () => 0;
+const emergencyIconHaloWidth = adequateIconHaloWidth;
 
 // -------------> icon-halo-color
-const adequateIconHaloColor = () => '#444';
-const etopsIconHaloColor = adequateIconHaloColor;
-const emergencyIconHaloColor = () => '#000';
+const adequateIconHaloColor = ({kmlOptions: {airportPin: style}}) => {
+    if (needsDarkHaloIcon(style)) return haloDarkColor;
+    return haloLightColor;
+};
+const etopsIconHaloColor = ({kmlOptions: {airportPin: style}}) => (style === STATUS) ? haloDarkColor : haloLightColor;
+const emergencyIconHaloColor = () => haloLightColor;
 // -------------> text-color
 const adequateTextColor = ({ofp, kmlOptions: {airportPin: style}}) => {
     if (!ofp) return TEXT_COLOR;
@@ -559,6 +567,7 @@ export function changeAirportStyle(data) {
         changeAdequatesColor(data);
         map.setLayoutProperty(adequateLayer, 'icon-image', adequateIconImage(data));
         map.setPaintProperty(adequateLayer, 'icon-halo-width', adequateIconHaloWidth(data));
+        map.setPaintProperty(adequateLayer, 'icon-halo-color', adequateIconHaloColor(data));
         map.setLayoutProperty(adequateLayer, 'icon-size', adequateIconSize(data));
         map.setLayoutProperty(adequateLayer, 'text-field', adequateTextField(data));
         map.setLayoutProperty(adequateLayer, 'text-allow-overlap', adequateTextAllowOverlap(data));
@@ -569,6 +578,7 @@ export function changeAirportStyle(data) {
         changeAirportETOPSColor(data);
         map.setLayoutProperty(etopsLayer, 'icon-image', etopsIconImage(data));
         map.setPaintProperty(etopsLayer, 'icon-halo-width', etopsIconHaloWidth(data));
+        map.setPaintProperty(etopsLayer, 'icon-halo-color', etopsIconHaloColor(data));
         map.setLayoutProperty(etopsLayer, 'icon-size', etopsIconSize(data));
         map.setLayoutProperty(etopsLayer, 'text-field', etopsTextField(data));
         map.setLayoutProperty(etopsLayer, 'text-allow-overlap', etopsTextAllowOverlap(data));
@@ -579,6 +589,7 @@ export function changeAirportStyle(data) {
         changeEmergencyColor(data);
         map.setLayoutProperty(emergencyLayer, 'icon-image', emergencyIconImage(data));
         map.setPaintProperty(emergencyLayer, 'icon-halo-width', emergencyIconHaloWidth(data));
+        map.setPaintProperty(emergencyLayer, 'icon-halo-color', emergencyIconHaloColor(data));
         map.setLayoutProperty(emergencyLayer, 'icon-size', emergencyIconSize(data));
         map.setLayoutProperty(emergencyLayer, 'text-field', emergencyTextField(data));
         map.setLayoutProperty(emergencyLayer, 'text-allow-overlap', emergencyTextAllowOverlap(data));
