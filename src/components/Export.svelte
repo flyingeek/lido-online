@@ -10,7 +10,7 @@
         <div class="col-12 col-md-6 d-flex pt-2 pt-md-0">
             <form on:submit|preventDefault class="settings">
                 <fieldset class="form">
-                    <legend>Réglages pour l'export</legend>
+                    <legend>Réglages pour l'export<a class="help" href="#/help_export">?</a></legend>
                     <ExportSettings mapOptions={kmlOptions}/>
                 </fieldset>
             </form>
@@ -18,7 +18,7 @@
         <div class="col-12 col-md-6 d-flex export">
             <form on:submit|preventDefault class="settings">
                 <fieldset class="form">
-                    <legend>Export</legend>
+                    <legend>Export<a class="help" href="#/help_export">?</a></legend>
                     <fieldset class="form-group">
                         <legend>KML</legend>
                         <p>Choisissez un format (MapsMe, Avenza Maps ou Google Earth) et téléchargez le fichier KML.</p>
@@ -42,6 +42,7 @@
 <style>
     form {
         width: 100%;
+        position: relative;
     }
 
     @media (max-width: 575px){
@@ -72,5 +73,21 @@
         font-variant: none;
         border-radius: 0.2rem;
         float:none;
+    }
+    a.help {
+        background-color: #fff;
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        border-radius: 15px;
+        font-weight: 300;
+        position: absolute;
+        right: 10px;
+        top: 0;
+        line-height: 30px;
+        border: 1px solid var(--blueaf);
+        font-size: 23px;
+        color: var(--blueaf);
     }
 </style>

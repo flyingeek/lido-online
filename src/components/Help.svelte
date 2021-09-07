@@ -6,9 +6,6 @@
             case '/map':
             href = '#/help_memovisuel';
             break;
-            case '/export':
-            href = '#/help_export';
-            break;
             default:
             href = '#/help';
         }

@@ -3,13 +3,14 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.15.11] - 2021-09-06
+## [1.15.11] - 2021-09-07
 
 ### Changed
 
+- Ajout d'un halo léger aux icônes pour augmenter la lisibilité
 - Style reco & eao: utilisation d'une icône en forme de caméra pour les terrains disposant d'EAO + distinguo adéquat/emergency
 - Style medical: overlap des terrains forcés (similaire au style reco & eao)
-- ajout d'un halo léger aux icônes pour augmenter la lisibilité
+- Des boutons d'aide sur la page EXPORT sont ajoutés et renvoient sur le chapitre correspondant, le menu AIDE n'est plus contextualisé pour la page EXPORT
 
 ## [1.15.10] - 2021-09-05
 
