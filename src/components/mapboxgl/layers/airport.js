@@ -17,6 +17,17 @@ const MEDICAL_COLOR = '#062DF8';
 const RECO_COLOR = '#984fd4';
 const RECO_TEXT_COLOR = '#7800d5';
 const TEXT_COLOR = '#000';
+const BLUE_COLOR = '#0525cc';
+const GREEN_COLOR = '#095';
+const RED_COLOR = '#B02';
+const ORANGE_COLOR = '#C71';
+const ORANGE_BRIGHT_COLOR = '#D70';
+const STATUS1_COLOR = '#ea80d8';
+const STATUS2_ERA_COLOR = '#dbe000';
+const STATUS2_COLOR = '#fbfe98';
+const STATUS3_COLOR = '#00b0f1';
+
+
 
 const getEtopsNames = (ofp) => {
     const raltNames = (ofp) ? ofp.infos.ralts : [];
@@ -109,22 +120,22 @@ const adequateSymbolSortKey = ({aircraftType, ofp}) => {
 // -------------> icon-color
 const adequateIconColorMap = {
     [STATUS]: ({aircraftType}) => ["case",
-        ["==", 9, ["get", `${aircraftType}`]], '#ea80d8', //status 1
-        ["==", 8, ["get", `${aircraftType}`]], '#ea80d8', //status 1
-        ["==", 7, ["get", `${aircraftType}`]], '#dbe000', //status 2 era
-        ["==", 6, ["get", `${aircraftType}`]], '#dbe000', //status 2 era
-        ["==", 5, ["get", `${aircraftType}`]], '#fbfe98', //status 2
-        ["==", 4, ["get", `${aircraftType}`]], '#fbfe98', //status 2
-        ["==", 3, ["get", `${aircraftType}`]], '#00b0f1', //status 3
-        ["==", 2, ["get", `${aircraftType}`]], '#00b0f1', //status 3
+        ["==", 9, ["get", `${aircraftType}`]], STATUS1_COLOR,
+        ["==", 8, ["get", `${aircraftType}`]], STATUS1_COLOR,
+        ["==", 7, ["get", `${aircraftType}`]], STATUS2_ERA_COLOR,
+        ["==", 6, ["get", `${aircraftType}`]], STATUS2_ERA_COLOR,
+        ["==", 5, ["get", `${aircraftType}`]], STATUS2_COLOR,
+        ["==", 4, ["get", `${aircraftType}`]], STATUS2_COLOR,
+        ["==", 3, ["get", `${aircraftType}`]], STATUS3_COLOR,
+        ["==", 2, ["get", `${aircraftType}`]], STATUS3_COLOR,
         '#000'
     ],
-    [GREENRED]: ({ofpLoaded}) => (ofpLoaded) ? ["case", level0Condition, '#095','#C71'] : '#095',
+    [GREENRED]: ({ofpLoaded}) => (ofpLoaded) ? ["case", level0Condition, GREEN_COLOR,ORANGE_COLOR] : GREEN_COLOR,
     [BLUEGREENRED]: ({ofpLoaded}) => {
-        const level0color = ["case", medicalCondition, '#0525cc', '#095'];
-        return (ofpLoaded) ? ["case", level0Condition, level0color, '#C71'] : level0color;
+        const level0color = ["case", medicalCondition, BLUE_COLOR, GREEN_COLOR];
+        return (ofpLoaded) ? ["case", level0Condition, level0color, ORANGE_COLOR] : level0color;
     },
-    [MEDICAL]: ({ofpLoaded}) => (ofpLoaded) ? ["case", level0Condition, MEDICAL_COLOR,'#C71'] : MEDICAL_COLOR,
+    [MEDICAL]: ({ofpLoaded}) => (ofpLoaded) ? ["case", level0Condition, MEDICAL_COLOR,ORANGE_COLOR] : MEDICAL_COLOR,
     [RECO]: () => ["case", eaoCondition, RECO_TEXT_COLOR, RECO_COLOR],
 };
 const adequateIconColor = ({ofp, aircraftType, kmlOptions: {airportPin: style}}) => {
@@ -133,11 +144,11 @@ const adequateIconColor = ({ofp, aircraftType, kmlOptions: {airportPin: style}})
 const emergencyIconColor = ({ofp, kmlOptions: {airportPin: style}}) => {
     switch(style) {
         case RECO:
-            return '#B02';
+            return RED_COLOR;
         default:
             return (ofp) ?
-                ["case", levelCondition(1), '#D70', '#B02'] :
-                '#B02';
+                ["case", levelCondition(1), ORANGE_BRIGHT_COLOR, RED_COLOR] :
+                RED_COLOR;
     }
 
 };
@@ -238,7 +249,7 @@ const adequateTextField = ({ofp, kmlOptions: {airportPin: style, airportLabel: l
             if (!ofp) return label;
             return ["case", level0Condition, // only decorates level > 0
                 label,
-                medicalFormatter(label, {"text-color": '#0525cc', "font-scale": 1.1}),
+                medicalFormatter(label, {"text-color": BLUE_COLOR, "font-scale": 1.1}),
             ];
         case RECO:
             return eaoFormatter(label);
