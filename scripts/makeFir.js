@@ -1,8 +1,8 @@
 import fs from 'fs';
 import etl from 'etl';
-const unzipper = require('unzipper');
-const parser = require('fast-xml-parser');
-const mapshaper = require('mapshaper');
+import unzipper from 'unzipper';
+import parser from 'fast-xml-parser';
+import mapshaper from 'mapshaper';
 
 const outputFirReg = "data/fir-reg-orig.geojson";
 const outputFirRegOptimized = "data/fir-reg.geojson";

@@ -126,7 +126,7 @@ function parseGlobal() {
             if (reco) {
                 recoCode += (reco === 'B') ? 2 : 4;
             }
-            if (recoCode > 0) console.log(`${icao}/${iata} reco type: ${reco}${(eao) ? ' EAO': ''}  ${recoCode}`);
+            //if (recoCode > 0) console.log(`${icao}/${iata} reco type: ${reco}${(eao) ? ' EAO': ''}  ${recoCode}`);
             const feature = {
                 'type': 'Feature',
                 'geometry': {
