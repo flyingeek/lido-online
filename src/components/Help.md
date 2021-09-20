@@ -263,7 +263,7 @@ __Liste des plugins&#8239;:__
 > Pour un accès plus rapide aux plugins, je recommande d'installer OFP2MAP-MENU. Il faut ensuite le remonter dans le menu contextuel qui s'affiche en cliquant 🧩.
 > La vidéo ci-dessous montre la manip si vous êtes online.
 
-<EmbeddedVideo tabindex="-1" src="https://p169.p3.n0.cdn.getcloudapp.com/items/KouJeA4l/42ec3a9e-a573-41cb-bd34-763da10c514c.mp4?source=client" title="Utilisation\nOFP2MAP-MENU"/>
+<EmbeddedVideo tabindex="-1" src="https://p169.p3.n0.cdn.getcloudapp.com/items/KouJeA4l/42ec3a9e-a573-41cb-bd34-763da10c514c.mp4?source=client" title="Utilisation\nOFP2MAP-MENU" forcePreview={false}/>
 
 </section>
 <section id="_updates">
