@@ -3,6 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.13] - 2021-09-21
+
+### Changed
+
+- Hébergement du proxy GRAMET sur Amazon AWS pour donner plus de temps à Ogimet pour répondre lorsqu’il est saturé. Les récupérations du GRAMET devraient générer moins d’erreurs dans la tranche horaire 18 h - 20 h.
+
+### Fixed
+
+- suppression d’une station météo non reconnue par Ogimet
+
 ## [1.15.12] - 2021-09-11
 
 ### Changed
