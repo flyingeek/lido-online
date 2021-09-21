@@ -162,7 +162,7 @@ Pour afficher le Gramet, cliquez sur sa miniature dans la barre de menu. Pour af
 
 Pour mieux comprendre le GRAMET, je vous conseille son <Link href="http://www.ogimet.com/guia_gramet.phtml.en">Guide d'interprétation</Link>.
 
-> Le site ogimet est indisponible lorsqu'il met à jour ses données, cela intervient entre minuit et 3h (heure française). Par ailleurs, je suis limité à 10 secondes pour la durée d'exécution du proxy, ce délai est un peu faible lorsqu'ogimet est saturé (tranche 18h30-20h00) et cela peut entrainer des erreurs, cliquer sur <svg style="stroke: red; transform: rotate(180deg); height: 20px; width: 20px;"><use xlink:href="#info-symbol"></use></svg> vous affichera des consignes.
+> Le site ogimet est indisponible lorsqu'il met à jour ses données, cela intervient le plus souvent entre minuit et 3h (heure française), il renvoie alors une erreur "503 no grib data". Par ailleurs, ogimet est saturé  dans la tranche 18h30-20h00, et cela peut entraîner des erreurs s'il met plus de 30 secondes à répondre. Cliquer sur <svg style="stroke: red; transform: rotate(180deg); height: 20px; width: 20px;"><use xlink:href="#info-symbol"></use></svg> vous affichera des consignes.
 
 </section>
 <section id="_position">
@@ -287,11 +287,11 @@ Après une mise à jour, les dernières nouveautés d'OFP2MAP s'affichent. Le bo
 - Le GRAMET provient du site ogimet.com
 - Le site est développé en javascript à l'aide du framework SVELTE
 - La partie serveur (un proxy pour pouvoir récupérer l'image du GRAMET) est en python.
-- Eric Delord CDB 777 est l'auteur. Le code source est disponible sur GitHub pour <Link href="https://github.com/flyingeek/lido-online">l'app</Link> et <Link href="https://github.com/flyingeek/ofp2map-gramet">le proxy</Link>
+- Eric Delord CDB 777 est l'auteur. Le code source est disponible sur GitHub pour <Link href="https://github.com/flyingeek/lido-online">l'app</Link> et <Link href="https://github.com/flyingeek/ofp-gramet-aws">le proxy</Link>
 
 Vous pouvez me contacter sur l’email AF (erdelord@…) ou sur mon compte Twitter @flyingeek.
 
-L'hébergement des images est normalement fourni par alwaysdata.com (pack gratuit) mais en raison d'un blacklistage sur le réseau internet d'AF, les fonds de cartes sont à présent hébergés sur netlify. Le proxy gramet est lui dorénavant hébergé sur vercel. Le site est hébergé sur GitHub.
+L'hébergement des images est normalement fourni par alwaysdata.com (pack gratuit) mais en raison d'un blacklistage sur le réseau internet d'AF, les fonds de cartes sont à présent hébergés sur netlify. Le proxy gramet est lui dorénavant hébergé sur aws. Le site est hébergé sur GitHub.
 
 ### Liens
 

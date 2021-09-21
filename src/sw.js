@@ -124,7 +124,7 @@ registerRoute(
 
 registerRoute(
   // ({url}) => url.href.match(new RegExp("CONF_GRAMET_PROXY".replace(/\$\{[^}]+\}/g, ".+").replace(/\//g, "\\/"))),
-  ({url}) => url.origin === 'https://ofp2map-gramet.vercel.app' && url.pathname.endsWith('.png'),
+  ({url}) => url.origin === 'CONF_GRAMET_PROXY_ORIGIN' && url.pathname.endsWith('.png'),
   new StaleWhileRevalidate({
     cacheName: validCaches['gramet'],
     plugins: [

@@ -58,7 +58,7 @@ const U = {
   //'CONF_EQE_POLITICAL_FR': eqePoliticalFrId,
   'CONF_TILES_DB': 'lido-tiles',
   //'CONF_GRAMET_PROXY': "https://editolido.alwaysdata.net/proxy_gramet2/${data.proxy}/${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png",
-  'CONF_GRAMET_PROXY': "https://ofp2map-gramet.vercel.app/api/${data.proxy}__${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png",
+  'CONF_GRAMET_PROXY': "https://cjq5hglsy6.execute-api.eu-west-3.amazonaws.com/default/gramet/${data.proxy}__${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png",
   //'CONF_NORTH_TILES_BASE_URL': `https://editolido.alwaysdata.net/i/${northId}`,
   'CONF_NORTH_TILES_BASE_URL': `https://ofp2map-${northId}.netlify.app/${northId}`,
   //'CONF_SOUTH_TILES_BASE_URL': `https://editolido.alwaysdata.net/i/${southId}`,
@@ -70,6 +70,8 @@ const U = {
   'CONF_CB_TILES_BASE_URL': `https://ofp2map-${cbId}.netlify.app/${cbId}`,
   'CONF_NOAA_KP_JSON': 'https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json'
 };
+U.CONF_GRAMET_PROXY_ORIGIN = new URL(U.CONF_GRAMET_PROXY).origin;
+
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
 
 function serve() {
