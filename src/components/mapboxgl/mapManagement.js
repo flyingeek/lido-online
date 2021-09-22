@@ -101,9 +101,15 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
             let [u0, v0, u1, v1] = mercatorBounds;
             if (mapOptions.ratio) { /* this is not exact, still in progress */
                 const mercatorHeight = mercatorBounds[3] - mercatorBounds[1];
+                const mercatorWidth = mercatorBounds[2] - mercatorBounds[0];
                 const [w, h] = mapOptions.ratio;
-                const dy = (h / w) * mercatorHeight;
-                [u0, v0, u1, v1] = [mercatorBounds[0], mercatorBounds[3] - dy, mercatorBounds[2],  mercatorBounds[3]];
+                if (w > h) {
+                    const dy = (h / w) * mercatorHeight;
+                    [u0, v0, u1, v1] = [mercatorBounds[0], mercatorBounds[3] - dy, mercatorBounds[2],  mercatorBounds[3]];
+                } else if (h > w) {
+                    const dx = (w / h) * mercatorWidth;
+                    [u0, v0, u1, v1] = [mercatorBounds[0], mercatorBounds[1], mercatorBounds[0] + dx,  mercatorBounds[3]];
+                }
             }
             a = (u1 - u0) / (x1 - x0);
             b = u0 - (a * x0);

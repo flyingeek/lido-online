@@ -17,6 +17,7 @@ export const SOUTH = 'jb_south';
 export const PACIFIC = 'jb_pacific';
 export const POLITICAL = 'jb_theworld';
 export const PHYSICAL = 'ed_eqe_physical_fr';
+export const NORTHAMERICAPHYSICAL = 'ed_nam_physical_meters';
 export const VFR = 'vb_2020';
 
 const options = [
@@ -149,6 +150,34 @@ const options = [
         'cacheName': 'CONF_EQE_PHYSICAL_FR',
         'cacheAll': true,
         'interpolateMinZoom': 3,
+        'tileSize': tilesResolution
+    }
+    ,{
+        'label': 'NAM Physical',
+        'id': NORTHAMERICAPHYSICAL,
+        // auto coefficients
+        "ratio": [15930, 16495],
+        //'affineTransform': [4.618317596201544, 1414738.8994726017, 4.46515828340285, -1560989.5977597982]
+        // coefficients adjusted manually
+        //'affineTransform': [1.104, -855.8520345054567, 1.10, 9310000],
+        // coefficients using calibration
+        //'affineTransform': [1.1037, 855, 1.10, 9305000],
+        // coefficients using calibration zoom 9
+        //'affineTransform': [1.1036, -630, 1.09925, 9304530],
+        "extent": [-4642624.68806983, -4140497.45357531, 4029960.50029886, 4839684.13350200],
+        "proj4": "+proj=laea +lat_0=45 +lon_0=-95 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs",
+        // zoom6 available on netlify but to reduce size we limit to 5
+        'mapboxOptions': {
+            'style': blankStyle,
+            'renderWorldCopies': false,
+            'maxZoom': 5
+        },
+        'tiles': ['CONF_NAM_PHYSICAL_METERS_TILES_BASE_URL/{z}/{x}/{y}.webp'],
+        'matrix': [[1, 1], [2, 2], [4, 4], [8, 8], [16, 16], [31, 32], [62, 64]],
+        'cacheZoom': 5,
+        'cacheName': 'CONF_NAM_PHYSICAL_METERS',
+        'cacheAll': true,
+        'interpolateMinZoom': 2,
         'tileSize': tilesResolution
     }
     //,

@@ -16,7 +16,8 @@ const maps = {
   'theworld': 'CONF_THEWORLD',
   'mercator': 'CONF_MERCATOR',
   'eqephysicalfr': 'CONF_EQE_PHYSICAL_FR',
-  'cb202x': 'CONF_CB'
+  'cb202x': 'CONF_CB',
+  'namphysicalmeters': 'CONF_NAM_PHYSICAL_METERS'
 };
 // compute a host hash based on url origin
 // simply use first letters of url's origin
@@ -143,7 +144,7 @@ registerRoute(
   })
 );
 
-const tilesCache = new TilesCache('CONF_TILES_DB', 6, (open, evt) => {
+const tilesCache = new TilesCache('CONF_TILES_DB', 7, (open, evt) => {
     if (evt.oldVersion < 1) {
         open.result.createObjectStore(maps['theworld']);
     }
@@ -164,6 +165,9 @@ const tilesCache = new TilesCache('CONF_TILES_DB', 6, (open, evt) => {
     if (evt.oldVersion < 6) {
       open.result.deleteObjectStore('denizotjbv1');
       open.result.createObjectStore('denizotjbv2');
+    }
+    if (evt.oldVersion < 7) {
+      open.result.createObjectStore(maps['namphysicalmeters']);
     }
 });
 
@@ -187,6 +191,10 @@ registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_CB_TILES_BASE_URL' + '/[0-5]/.*')),
   tilesCache.getCacheHandler(maps['cb202x'])
 );
+registerRoute(
+  ({url}) => url.href.match(new RegExp('CONF_NAM_PHYSICAL_METERS_TILES_BASE_URL' + '/[0-5]/.*')),
+  tilesCache.getCacheHandler(maps['namphysicalmeters'])
+);
 const baseMercator = `https://api.mapbox.com/v4/${maps['mercator'].slice(0,-2)}`;
 registerRoute(
   ({url}) => url.href.match(new RegExp(baseMercator + '[^/]+/[0-6]/.*')),
@@ -207,6 +215,10 @@ registerRoute(
 );
 registerRoute(
   ({url}) => url.href.match(new RegExp('(CONF_EQE_PHYSICAL_FR_TILES_BASE_URL)/[6-9]/.*')),
+  async () => new Response('', { "status" : 404 , "statusText" : "sw says nope!"})
+);
+registerRoute(
+  ({url}) => url.href.match(new RegExp('(CONF_NAM_PHYSICAL_METERS_TILES_BASE_URL)/[6-9]/.*')),
   async () => new Response('', { "status" : 404 , "statusText" : "sw says nope!"})
 );
 registerRoute(

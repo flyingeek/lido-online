@@ -24,7 +24,7 @@
       <ul class="card-text">
         <li>trois LAMBERT conformes</li>
         <li>un ATLAS POLITIQUE</li>
-        <li>un ATLAS PHYSIQUE</li>
+        <li>deux ATLAS PHYSIQUES</li>
         <li>une carte VFR</li>
         <li>une MERCATOR (zoom x 12)</li>
       </ul>

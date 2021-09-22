@@ -30,6 +30,7 @@ const pacificId = 'pacificv1';
 const theworldId = 'theworldv2';
 const mercatorId = 'denizotjbv2';
 const eqePhysicalFrId = 'eqephysicalfrv1';
+const namPhysicalMetersId = 'namphysicalmetersv1';
 const cbId = 'cb2020v1';
 //const eqePoliticalFrId = 'eqepoliticalfrv1';
 
@@ -54,6 +55,8 @@ const U = {
   'CONF_THEWORLD': theworldId,
   'CONF_MERCATOR': mercatorId,
   'CONF_EQE_PHYSICAL_FR': eqePhysicalFrId,
+  'CONF_NAM_PHYSICAL_METERS': namPhysicalMetersId,
+
   'CONF_CB': cbId,
   //'CONF_EQE_POLITICAL_FR': eqePoliticalFrId,
   'CONF_TILES_DB': 'lido-tiles',
@@ -67,6 +70,7 @@ const U = {
   'CONF_PACIFIC_TILES_BASE_URL': `https://ofp2map-${pacificId}.netlify.app/${pacificId}`,
   'CONF_THEWORLD_TILES_BASE_URL': `https://ofp2map-${theworldId}.netlify.app/${theworldId}`,
   'CONF_EQE_PHYSICAL_FR_TILES_BASE_URL': `https://ofp2map-${eqePhysicalFrId}.netlify.app/${eqePhysicalFrId}`,
+  'CONF_NAM_PHYSICAL_METERS_TILES_BASE_URL': `https://ofp2map-${namPhysicalMetersId}.netlify.app/${namPhysicalMetersId}`,
   'CONF_CB_TILES_BASE_URL': `https://ofp2map-${cbId}.netlify.app/${cbId}`,
   'CONF_NOAA_KP_JSON': 'https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json'
 };
