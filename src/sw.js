@@ -16,6 +16,7 @@ const maps = {
   'theworld': 'CONF_THEWORLD',
   'mercator': 'CONF_MERCATOR',
   'eqephysicalfr': 'CONF_EQE_PHYSICAL_FR',
+  'eqepoliticalfr': 'CONF_EQE_POLITICAL_FR',
   'cb202x': 'CONF_CB',
   'namphysicalmeters': 'CONF_NAM_PHYSICAL_METERS'
 };
@@ -144,7 +145,7 @@ registerRoute(
   })
 );
 
-const tilesCache = new TilesCache('CONF_TILES_DB', 7, (open, evt) => {
+const tilesCache = new TilesCache('CONF_TILES_DB', 8, (open, evt) => {
     if (evt.oldVersion < 1) {
         open.result.createObjectStore(maps['theworld']);
     }
@@ -169,6 +170,9 @@ const tilesCache = new TilesCache('CONF_TILES_DB', 7, (open, evt) => {
     if (evt.oldVersion < 7) {
       open.result.createObjectStore(maps['namphysicalmeters']);
     }
+    if (evt.oldVersion < 8) {
+      open.result.createObjectStore(maps['eqepoliticalfr']);
+    }
 });
 
 registerRoute(
@@ -186,6 +190,10 @@ registerRoute(
 registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_EQE_PHYSICAL_FR_TILES_BASE_URL' + '/[0-5]/.*')),
   tilesCache.getCacheHandler(maps['eqephysicalfr'])
+);
+registerRoute(
+  ({url}) => url.href.match(new RegExp('CONF_EQE_POLITICAL_FR_TILES_BASE_URL' + '/[0-6]/.*')),
+  tilesCache.getCacheHandler(maps['eqepoliticalfr'])
 );
 registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_CB_TILES_BASE_URL' + '/[0-5]/.*')),
@@ -215,6 +223,10 @@ registerRoute(
 );
 registerRoute(
   ({url}) => url.href.match(new RegExp('(CONF_EQE_PHYSICAL_FR_TILES_BASE_URL)/[6-9]/.*')),
+  async () => new Response('', { "status" : 404 , "statusText" : "sw says nope!"})
+);
+registerRoute(
+  ({url}) => url.href.match(new RegExp('(CONF_EQE_POLITICAL_FR_TILES_BASE_URL)/[7-9]/.*')),
   async () => new Response('', { "status" : 404 , "statusText" : "sw says nope!"})
 );
 registerRoute(

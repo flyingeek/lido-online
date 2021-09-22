@@ -23,7 +23,7 @@
     <div class="card-body">
       <ul class="card-text">
         <li>trois LAMBERT conformes</li>
-        <li>un ATLAS POLITIQUE</li>
+        <li>deux ATLAS POLITIQUES</li>
         <li>deux ATLAS PHYSIQUES</li>
         <li>une carte VFR</li>
         <li>une MERCATOR (zoom x 12)</li>

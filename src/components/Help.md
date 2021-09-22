@@ -70,9 +70,13 @@ Avant d'utiliser OFP2MAP en vol, il est préférable de lire la rubrique [Mode h
 
         Un Atlas politique, c'est une projection Times. Les étiquettes sont en anglais.
 
+    - **=Politique=**
+
+        Un Atlas politique basé sur une projection Equal Earth (qui montre les continents et les pays à leur taille réelle). Les étiquettes sont en français. Cet Atlas est moins chargé que The World.
+
     - **=Physique=**
 
-        Un Atlas physique basé sur une projection Equal Earth (qui montre les continents et les pays à leur taille réelle). Les étiquettes sont en français.
+        Un Atlas physique basé sur une projection Equal Earth. Les étiquettes sont en français.
 
     - **NAM Physical**
 
@@ -113,7 +117,7 @@ Pour mettre rapidement en cache un vol, il existe à droite du sélecteur de car
 
 Le bouton affiche la progression du téléchargement&#8239;: <span class="cacheButton cacheProgress"><CircleProgress value=33/></span>, puis il disparait une fois la projection en cache. En cas d'erreur, il affiche: <span class="cacheButton cacheError"><CircleProgress value=0/></span>, et vous pouvez faire une nouvelle tentative.
 
-Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 40Mo de données. Les caches des autres projections utilisent&#8239;: 7Mo pour la NORTH, 4Mo pour la PACIFIC, 7Mo pour la SOUTH, 32Mo pour THE WORLD, 32Mo pour NAM Physical, 40Mo pour =Physique= et 40Mo pour {cbName}.
+Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 40Mo de données. Les caches des autres projections utilisent&#8239;: 7Mo pour la NORTH, 4Mo pour la PACIFIC, 7Mo pour la SOUTH, 32Mo pour THE WORLD, 32Mo pour NAM Physical, 40Mo pour =Physique=, 45Mo pour =Politique=, et 40Mo pour {cbName}.
 
 > Il faut penser à mettre en cache la Mercator à chaque vol
 
@@ -286,6 +290,7 @@ Après une mise à jour, les dernières nouveautés d'OFP2MAP s'affichent. Le bo
 
 - Les données terrains/FIR sont fournies par Olivier Ravet forum Yammer/Mapsme
 - =Physique= est une carte de Tom Patterson disponible sur <Link href="https://equal-earth.com/physical/">Equal Earth</Link>
+- =Politique= est une carte de Tom Patterson disponible sur <Link href="http://equal-earth.com">Equal Earth</Link>
 - NAM Physical est une carte de Tom Patterson disponible sur <Link href="http://www.shadedrelief.com/north-america/">Shaded Relief</Link>
 - La dernière version de la carte {cbName} est disponible sur le site <Link href="{`https://www.${cbName.toLowerCase()}.com`}">{cbName}.com</Link>
 - Les autres cartes sont de Jean-Baptiste Denizot forum Yammer/QGIS & Avenza Maps

@@ -17,6 +17,7 @@ export const SOUTH = 'jb_south';
 export const PACIFIC = 'jb_pacific';
 export const POLITICAL = 'jb_theworld';
 export const PHYSICAL = 'ed_eqe_physical_fr';
+export const POLITICALFR = 'ed_eqe_political_fr';
 export const NORTHAMERICAPHYSICAL = 'ed_nam_physical_meters';
 export const VFR = 'vb_2020';
 
@@ -124,6 +125,27 @@ const options = [
         'tileSize': tilesResolution
     },
     {
+        'label': '=Politique=',
+        'id': POLITICALFR,
+        // calibration on -30,-120/30,120
+        'affineTransform': [1.1035985722623456, -1541.9992757886648, 1.099369559054978, 9295511.039313361],
+        //'affineTransform': [1.104, -855.8520345054567, 1.10, 9310000],
+        "extent": [-18144998.39890000, -9405510.77770950, 18144670.32165249, 9729041.82040000],
+        "proj4": "+proj=eqearth +datum=WGS84 +wktext",
+        'mapboxOptions': {
+            'style': blankStyle,
+            'renderWorldCopies': false,
+            'maxZoom': 6.5
+        },
+        'tiles': ['CONF_EQE_POLITICAL_FR_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
+        'matrix': [[1, 1], [2, 2], [4, 3], [8, 5], [16, 9], [32, 17], [64, 34]],
+        'cacheZoom': 6,
+        'cacheName': 'CONF_EQE_POLITICAL_FR',
+        'cacheAll': true,
+        'interpolateMinZoom': 2,
+        'tileSize': tilesResolution
+    },
+    {
         'label': '=Physique=',
         'id': PHYSICAL,
         // for wide map
@@ -155,15 +177,7 @@ const options = [
     ,{
         'label': 'NAM Physical',
         'id': NORTHAMERICAPHYSICAL,
-        // auto coefficients
         "ratio": [15930, 16495],
-        //'affineTransform': [4.618317596201544, 1414738.8994726017, 4.46515828340285, -1560989.5977597982]
-        // coefficients adjusted manually
-        //'affineTransform': [1.104, -855.8520345054567, 1.10, 9310000],
-        // coefficients using calibration
-        //'affineTransform': [1.1037, 855, 1.10, 9305000],
-        // coefficients using calibration zoom 9
-        //'affineTransform': [1.1036, -630, 1.09925, 9304530],
         "extent": [-4642624.68806983, -4140497.45357531, 4029960.50029886, 4839684.13350200],
         "proj4": "+proj=laea +lat_0=45 +lon_0=-95 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs",
         // zoom6 available on netlify but to reduce size we limit to 5
@@ -180,36 +194,6 @@ const options = [
         'interpolateMinZoom': 2,
         'tileSize': tilesResolution
     }
-    //,
-    // {
-    //     'label': '=Politique=',
-    //     'id': 'ed_eqe_political_fr',
-    //     // for wide map
-    //     //"ratio": [19268, 10630],
-    //     //'affineTransform': [1.1037001869442906, 855.8520345054567, 1.1049451584091474, 9308847.034806727]
-    //     'affineTransform': [1.104, -855.8520345054567, 1.10, 9310000],
-    //     "extent": [-18144998.39890000, -9405510.77770950, 18144670.32165249, 9729041.82040000],
-    //     "proj4": "+proj=eqearth +datum=WGS84 +wktext",
-    //     'mapboxOptions': {
-    //         'style': blankStyle,
-    //         'renderWorldCopies': false,
-    //         'maxZoom': 6
-    //     },
-    //     'tiles': ['CONF_EQE_POLITICAL_FR_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
-    //     'matrix': [[1, 1], [2, 2], [4, 3], [8, 5], [16, 9], [32, 17], [64, 34]],
-    //     'cacheZoom': 6,
-    //     'cacheName': 'CONF_EQE_POLITICAL_FR',
-    //     'cacheAll': true,
-    //     'tileSize': tilesResolution
-    // }
-    // ,
-    // {
-    //     'label': 'JB Mercator',
-    //     'id': 'mapbox_jb_mercator',
-    //     'mapboxOptions': {
-    //         'style': 'mapbox://styles/denizotjb/ckbi1x4ae0vp11jqtfulbtll5'
-    //     }
-    // }
     ,{
         'label': atob("Q2FydGFCb3NzeQ==") + ' 2020',
         'id': VFR,
