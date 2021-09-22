@@ -3,11 +3,17 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.1] - 2021-09-22
+
+### Added
+
+- Nouvelle carte: =Politique= est une carte politique du prolifique Tom Patterson, étiquettes en français et projection Equal Earth. La carte est moins chargée que The World.
+
 ## [1.16.0] - 2021-09-22
 
 ### Added
 
-- Nouvelle carte: un atlas physique du continent Nord-Américain
+- Nouvelle carte: NAM Physical, un atlas physique du continent Nord-Américain, étiquettes en anglais, altitudes en mètres.
 
 ## [1.15.13] - 2021-09-21
 
