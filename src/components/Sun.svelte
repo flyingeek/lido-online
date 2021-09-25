@@ -101,6 +101,10 @@
     .icon{
         align-self: center;
     }
+    :global(.overlay .card-body){
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+    }
     :global(.overlay .content.bottom-bottom) { /*fix overlay misplacement*/
         top: 100%;
     }
