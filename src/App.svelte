@@ -29,7 +29,6 @@
     //$showGramet = false; // this one is set in OfpInput instead
   };
   $: isHelpRoute = helpRouteRegex.test($route); // needed because in scenario: reload, go to help, load ofp, svelte shows both map and help....
-
   onMount(() => {
         document.addEventListener("visibilitychange", checkSwOnVisibilityChange, false);
         return () => document.removeEventListener("visibilitychange", checkSwOnVisibilityChange);
@@ -127,7 +126,7 @@
     min-height: 100%;
     position: relative;
   }
-  @media (max-width: 992px), (max-height: 575px)  { /* allow scrolling long pages */
+  @media (max-width: 992px){ /* allow scrolling long pages */
     :global(html, body) {
       position: relative;
     }

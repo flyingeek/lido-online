@@ -39,22 +39,9 @@
         }
         return ofpPages.join("\n");
     };
-</script>
-<script>
-    import { createEventDispatcher } from 'svelte';
-    import {showGramet, ofp as ofpStore, ofpStatus, selectedAircraftType, takeOffTime} from '../stores';
-    import {aircraftTypes, discontinuatedAircraftTypes} from '../constants';
-    import {focusMap} from './utils';
-    export let kmlOptions;
-    let disabled = false;
-    let ready = new Deferred();
-    let name = "file";
-    let label = "Choisir un OFP";
-    let readyClass = false;
+    export const ready = new Deferred();
     let pdfWorker;
-    const dispatch = createEventDispatcher();
-
-    function preload() {
+    export function preload() {
         loader(preloadFiles, () => !!window['pdfjs-dist/build/pdf'], () => {
             const pdfjsLib = window["pdfjs-dist/build/pdf"];
             pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorkerSrc;
@@ -62,9 +49,22 @@
                     pdfWorker = new pdfjsLib.PDFWorker();
             }
             ready.resolve(true);
-            readyClass = true;
         });
     };
+
+</script>
+<script>
+    import { createEventDispatcher } from 'svelte';
+    import {showGramet, ofp as ofpStore, ofpStatus, selectedAircraftType, takeOffTime} from '../stores';
+    import {focusMap} from './utils';
+    export let kmlOptions;
+    let disabled = false;
+
+    let name = "file";
+    let label = "Choisir un OFP";
+
+    const dispatch = createEventDispatcher();
+
     const getOFP = (file) => {
         const reader = new FileReader();
         return new Promise((resolve, reject) => {
@@ -173,24 +173,6 @@
         });
         disabled = false;
     };
-    async function processAircraftType(e) {
-        disabled = true;
-        $ofpStatus = 'loading';
-        preload(); // in case click event not supported or missed
-        await ready.promise.then(() => {
-            $ofpStore = undefined;
-            try {
-                KmlGenerator(); // to have a minimum skeleton for map settings
-                $selectedAircraftType = e.target.value;
-                $ofpStatus = 'success';
-            } catch (err) {
-                console.log(err);
-                $ofpStatus = err;
-            }
-            window.location.hash = '#/map';
-        });
-        disabled = false;
-    }
     function simulateClickOnInput(e) {
         if (e.key === "Enter") {
             const input = e.target.querySelector('input[type="file"]');
@@ -223,17 +205,6 @@
             Changer<input id={name} name={name} type="file" accept="application/pdf" on:change={process} hidden>
         </label>
     {/if}
-    {#if !$ofpStore && !$selectedAircraftType}
-        <div class="footer">
-        <!-- svelte-ignore a11y-no-onchange -->
-        <select tabindex="-1" class="form-control-sm" on:click|once={preload} disabled={disabled} on:change={processAircraftType}>
-            <option value="{undefined}">pas d'ofp ?</option>
-            {#each aircraftTypes.filter(v => !discontinuatedAircraftTypes.includes(v)) as aircraft}
-            <option value={aircraft}>{aircraft}</option>
-            {/each}
-        </select>
-        </div>
-    {/if}
 </form>
 
 <style>
@@ -258,27 +229,5 @@
         80% { transform: scale(1.03); }
         95% { transform: scale(1.03); }
         100% { transform: scale(1.0); }
-    }
-    .footer {
-        position: absolute;
-        right: 5px;
-        top: calc( 100vh - 41px);
-        text-align: right;
-        display: none;
-        z-index: 1;
-    }
-    @media (min-width: 768px){
-        :global(.home .footer){
-            display: block !important;
-        }
-    }
-    select {
-        background-color: var(--blueaf);
-        border-color: var(--blueaf);
-        color: rgba(255,255,255,  0.18);
-        margin: 5px;
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
     }
 </style>

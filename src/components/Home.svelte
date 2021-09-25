@@ -1,5 +1,28 @@
 <script>
       import Logo from './Logo.svelte';
+      import {ofp as ofpStore, ofpStatus, selectedAircraftType} from '../stores';
+      import {aircraftTypes, discontinuatedAircraftTypes} from '../constants';
+      import {KmlGenerator} from './kml.js';
+      import {ready, preload} from './OfpInput.svelte';
+      let disabled = false;
+      async function processAircraftType(e) {
+        disabled = true;
+        $ofpStatus = 'loading';
+        $selectedAircraftType = e.target.value;
+        window.location.hash = '#/map'; //TODO must be here and not in the then promise below to avoid map centering issues. Why ?
+        preload(); // in case click event not supported or missed
+        await ready.promise.then(() => {
+            $ofpStore = undefined;
+            try {
+                KmlGenerator(); // to have a minimum skeleton for map settings
+                $ofpStatus = 'success';
+            } catch (err) {
+                console.log(err);
+                $ofpStatus = err;
+            }
+        });
+        disabled = false;
+    }
 </script>
 <Logo/>
 
@@ -32,7 +55,17 @@
     </div>
   </div></div>
 </div>
-
+{#if !$ofpStore && !$selectedAircraftType}
+  <div class="footer">
+  <!-- svelte-ignore a11y-no-onchange -->
+  <select tabindex="-1" class="form-control-sm" on:click|once={preload} disabled={disabled} on:change={processAircraftType}>
+      <option value="{undefined}">pas d'ofp ?</option>
+      {#each aircraftTypes.filter(v => !discontinuatedAircraftTypes.includes(v)) as aircraft}
+      <option value={aircraft}>{aircraft}</option>
+      {/each}
+  </select>
+  </div>
+{/if}
 <style>
 /* .usage {
   margin: 0 15px;
@@ -85,5 +118,20 @@ b, li {
   .feature {
     height: 100%;
   }
+}
+.footer {
+  text-align: right;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}
+select {
+  background-color: transparent;
+  border-color: transparent;
+  color: rgba(255,255,255,  0.18);
+  margin: 5px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 </style>
