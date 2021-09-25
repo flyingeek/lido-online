@@ -7,7 +7,7 @@
 </script>
 
 <div class="pinch-zoom-parent" transition:fly="{{y: maxHeight}}" data-max-height={maxHeight} use:setHeight>
-    <pinch-zoom use:setGramet={{pos: $position.gramet, fl: $position.fl}} min-scale="0.3"></pinch-zoom>
+    <pinch-zoom use:setGramet={{pos: $position.gramet, fl: $position.fl}} min-scale="0.1"></pinch-zoom>
     <svg><use xlink:href="#plane-symbol"/></svg>
     <!-- {#if (($flightProgress === 0 || $flightProgress === 100) && ogimetParams.get('tref') * 1000 > $ofp.infos.ofpOFF.getTime())}
         <div class="warning">GRAMET pour décollage maintenant</div>

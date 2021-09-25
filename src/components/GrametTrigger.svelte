@@ -105,7 +105,7 @@
     margin-right: 1rem;
     overflow: hidden;
     position: relative;
-    flex: 0 1 70px; /* a cdg-dub flight is 78px*/
+    flex: 0 1 35px; /* a cdg-dub flight is 78px*/
     border-radius: 3px;
     align-self: baseline;
     display: none;
@@ -116,9 +116,14 @@
     font-size: small;
     text-align: center;
 }
+@media (min-width: 374px){
+    .gramet-thumbnail {
+        display: block;
+    }
+}
 @media (min-width: 576px){
     .gramet-thumbnail {
-        display:block;
+        flex: 0 1 70px; /* a cdg-dub flight is 78px*/
     }
 }
 .gramet-error {
