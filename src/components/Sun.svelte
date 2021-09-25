@@ -45,7 +45,7 @@
                 {/each}
             </div>
         </div>
-        <div slot="content" style="width: 390px;" class="overlay card" let:close in:slide={{ duration: 200 }}>
+        <div slot="content" style="width: 390px; max-width: 99vw;" class="overlay card" let:close in:slide={{ duration: 200 }}>
             <h6 class="card-header">
                 <span>Éphémérides du vol</span>
                 <button type="button" class="btn-close ms-auto" aria-label="Close" on:click={close}></button></h6>
@@ -101,11 +101,26 @@
     .icon{
         align-self: center;
     }
-
     :global(.overlay .content.bottom-bottom) { /*fix overlay misplacement*/
-        left: 50%;
-        transform: translateX(-50%);
         top: 100%;
+    }
+    @media (max-width: 767px){
+        :global(.overlay .content-wrapper) { /*fix overlay misplacement*/
+            left: 0 !important;
+        }
+        :global(.overlay .content.bottom-center) { /*fix overlay misplacement*/
+            left: 0.5vw !important;
+            transform: none !important;
+        }
+        :global(.overlay) {
+            z-index: 3 !important;
+        }
+    }
+    @media (min-width: 768px){
+        :global(.overlay .content.bottom-bottom) { /*fix overlay misplacement*/
+            left: 50%;
+            transform: translateX(-50%);
+        }
     }
 
 </style>
