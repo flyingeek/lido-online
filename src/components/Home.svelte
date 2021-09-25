@@ -121,15 +121,13 @@ b, li {
 }
 .footer {
   text-align: right;
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
+  margin-top: auto;
 }
 select {
   background-color: transparent;
   border-color: transparent;
   color: rgba(255,255,255,  0.18);
-  margin: 5px;
+  margin: 0 10px 20px 0;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
