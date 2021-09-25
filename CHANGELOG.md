@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.2] - 2021-09-25
+
+### Changed
+
+- OFP2MAP fonctionne parfaitement sur un iPhone iOS 15 (testé sur iPhone 13 mini en mode portrait et paysage). Il est recommandé d'installer l'app de la même manière que sur iPad (partager puis installer sur l'écran d'accueil). Si vous aviez installé l'app sur l'iPhone sous iOS 14, comme j'ai quelques doutes sur le fonctionnement des services workers, je recommande d'effacer l'app de l'écran d'accueil et de réinstaller.
+
 ## [1.16.1] - 2021-09-22
 
 ### Added
