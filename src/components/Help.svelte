@@ -351,7 +351,7 @@ onMount(() => {
     .infos {
         display: flex;
         flex-direction: column;
-        font-size: 0.85rem;
+        font-size: 0.75rem;
     }
     .app img {
         width: 32px;
@@ -368,7 +368,7 @@ onMount(() => {
         color: rgba(0,0,0,.55);
         font-weight: 700;
         margin-left: auto;
-        max-width: 20ch;
+        max-width: 19ch;
         text-overflow: ellipsis;
     }
     .actions :global(button.reload), .actions :global(button.share){
