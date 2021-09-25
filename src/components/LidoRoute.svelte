@@ -98,7 +98,6 @@
 <style>
     .card {
         flex: 0 1 auto;
-        min-height: 1px;
         margin: 0.5rem 1rem;
     }
     span {
