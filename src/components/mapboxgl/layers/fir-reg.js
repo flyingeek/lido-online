@@ -17,6 +17,8 @@ export const addFirReg = (data) => {
         if (affine) {
             for (let i = 0; i<data.features.length; i++){
                 const points = data.features[i].geometry.coordinates[0];
+                //if we need to partly display polygons, instead of disabling fir, we could try:
+                //data.features[i].geometry.coordinates = affineAndClip(points.map(([longitude, latitude]) => ({latitude, longitude})));
                 data.features[i].geometry.coordinates = [points.map(v => affine(v))];
             }
         }
