@@ -4,6 +4,7 @@
     import OfpInfos from './OfpInfos.svelte';
     import TakeOffInput from './TakeOffInput.svelte';
     import ReloadButton from './ReloadButton.svelte';
+    import ShareAppButton from './ShareAppButton.svelte';
     import Sun from './Sun.svelte';
     import {getContextualHelpLink, helpRouteRegex} from './Help.svelte';
     import { focusMap } from './utils';
@@ -57,6 +58,7 @@
     </li>
     {#if navigator.standalone === true || 'process.env.NODE_ENV' === '"development"'}
     <li class="nav-item reload">
+      {#if navigator.share}<ShareAppButton/>{/if}
       <ReloadButton/>
     </li>
     {/if}

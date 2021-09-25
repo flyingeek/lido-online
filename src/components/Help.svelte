@@ -16,10 +16,11 @@
 import Helpmarkup from './Help.md';
 import ChangeLogModal from './ChangeLogModal.svelte';
 import {wb, route} from '../stores';
-import {shareAppLink, debounce, Deferred} from './utils';
+import {debounce, Deferred} from './utils';
 import {onMount, tick} from "svelte";
 import blurAction from '../actions/blurAction';
 import ReloadButton from './ReloadButton.svelte';
+import ShareAppButton from "./ShareAppButton.svelte";
 
 const version = "APP_VERSION";
 let swVersion = '';
@@ -217,10 +218,10 @@ onMount(() => {
             </div>
             <div class="actions">
                 {#if ((navigator.standalone === true && navigator.share) || 'process.env.NODE_ENV' === '"development"')}
-                    <button tabindex="0" class="share btn btn-outline-secondary btn-sm" on:click={shareAppLink}><svg><use xlink:href="#share-symbol" /></svg><!-- Partager --></button>
+                    <ShareAppButton/>
                 {/if}
                 {#if navigator.standalone === true || 'process.env.NODE_ENV' === '"development"'}
-                <ReloadButton/>
+                    <ReloadButton/>
                 {/if}
                 <button tabindex="0" class="changelog btn btn-outline-secondary btn-sm" on:click={modal.show}><!-- CHANGELOG --></button>
             </div>
@@ -239,6 +240,7 @@ onMount(() => {
     </aside>
     <div bind:this={scrollingElement} class="scrollContainer">
         <div class="markdown">
+            <button tabindex="0" class="changelog btn btn-outline-secondary btn-sm" on:click={modal.show}><!-- CHANGELOG --></button>
             <Helpmarkup/>
         </div>
     </div>
@@ -324,10 +326,12 @@ onMount(() => {
     :global(img#memovisuel) {
         max-height: calc(100vh - 80px + 15px); /* 15px is for the top black part */
     }
-    :global(.markdown figure){
-        width: 300px;
-        margin-left: 1rem;
-        float: right;
+    @media (min-width: 576px) {
+        :global(.markdown figure){
+            width: 300px;
+            margin-left: 1rem;
+            float: right;
+        }
     }
     :global(.markdown figcaption){
         text-align: center;
@@ -347,23 +351,18 @@ onMount(() => {
     .infos {
         display: flex;
         flex-direction: column;
+        font-size: 0.85rem;
     }
     .app img {
         width: 32px;
         height: 32px;
         border-radius: 5px;
     }
-    .share::before{
-        content: "Partager";
-    }
-    .share svg {
-        display: none;
-    }
     .changelog::before{
         content: "Changelog";
     }
     select.toc {
-        display: none;
+        display: inline-block;
         width: auto;
         text-transform: uppercase;
         color: rgba(0,0,0,.55);
@@ -372,15 +371,32 @@ onMount(() => {
         max-width: 20ch;
         text-overflow: ellipsis;
     }
-    .actions :global(button.reload){
+    .actions :global(button.reload), .actions :global(button.share){
             display: none;
     }
-    @media (min-width: 768px) {
-        select.toc {
+    .actions .changelog {
+        display: none;
+    }
+    .markdown .changelog {
+        margin: 5px 0 10px 0;
+    }
+    @media (min-width: 576px) {
+        .actions .changelog {
             display: inline-block;
         }
-        .actions :global(button.reload){
+        .markdown .changelog {
+            display: none;
+        }
+        .infos {
+            font-size: 1rem;
+        }
+    }
+    @media (min-width: 768px) {
+        .actions :global(button.reload), .actions :global(button.share){
             display: inline;
+        }
+        .actions {
+            margin-left: 1rem;
         }
     }
     /**
@@ -477,22 +493,12 @@ onMount(() => {
         .infos {
             display: inline-flex;
         }
-
-        .share::before{
-            content: "Partager l'App";
-        }
         .changelog::after{
             content: "\1F4E3"; /* 📣 */
             margin-left: 1ch;
             display: inline-block;
             /* -webkit-transform: scaleX(-1);
             transform: scaleX(-1); */
-        }
-        .share svg {
-            display: inline-block;
-            width: calc(1rem * 1.2);
-            height: calc(1rem * 1.2);
-            margin-bottom: 3px;
         }
         .actions button.changelog{
             text-transform: none;
