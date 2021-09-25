@@ -45,7 +45,7 @@
       </Navbar>
       <SWUpdate prompt={!!$ofp}/>
       {#if ($ofp || $aircraftType) && $ofpStatus === 'success'}
-        <Page hidden={$route !== '/map'}>
+        <Page hidden={$route !== '/map'} overflowY="hidden">
           <Map id="map" bind:kmlOptions ofp={$ofp} on:save={() => setHistory(kmlOptions, $route)}/>
         </Page>
       {/if}
@@ -64,7 +64,7 @@
           <Home />
         </Page>
       {:else if isHelpRoute}
-        <Page  maxWidth="1400px"><Help /></Page>
+        <Page  maxWidth="1400px" overflowY="hidden"><Help /></Page>
       {:else if !(($ofp || $aircraftType) && $route === '/map')}
         <!-- redirect -->
         { redirect($route) || ''}
@@ -125,14 +125,7 @@
     max-width: 100%;
     min-height: 100%;
     position: relative;
-  }
-  @media (max-width: 992px){ /* allow scrolling long pages */
-    :global(html, body) {
-      position: relative;
-    }
-    main.home, main.gramet, main.export {
-      display:block;
-    }
+    --max-height-without-navbar: calc(100vh - calc(2.375rem + 2px));
   }
   @media (min-width: 1400px) {
     main {

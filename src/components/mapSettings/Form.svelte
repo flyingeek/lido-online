@@ -270,7 +270,7 @@
         border-left: 1px solid rgba(255,255,255,0.2);
         padding: 5px;
         z-index: 2;
-        max-height: calc(100vh - calc(2.375rem + 2px));
+        max-height: var(--max-height-without-navbar);
         overflow-y: auto;
     }
     @supports ( backdrop-filter: blur(4px) ) or ( -webkit-backdrop-filter: blur(4px) ) {
