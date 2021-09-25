@@ -3,6 +3,7 @@
     import GrametTrigger from './GrametTrigger.svelte';
     import OfpInfos from './OfpInfos.svelte';
     import TakeOffInput from './TakeOffInput.svelte';
+    import ReloadButton from './ReloadButton.svelte';
     import Sun from './Sun.svelte';
     import {getContextualHelpLink, helpRouteRegex} from './Help.svelte';
     import { focusMap } from './utils';
@@ -54,6 +55,11 @@
       <a class="nav-link" href="{contextualHelpLink.href}" on:click={collapse}>
       <span>AIDE{#if contextualHelpLink.name}<small class="d-none d-lg-inline-block text-small-caps">/{contextualHelpLink.name}</small>{/if}</span></a>
     </li>
+    {#if navigator.standalone === true || 'process.env.NODE_ENV' === '"development"'}
+    <li class="nav-item reload">
+      <ReloadButton/>
+    </li>
+    {/if}
   </ul>
   </div>
 </nav>
@@ -101,6 +107,10 @@
       margin-right: 0;
       padding-left: 10px;
     }
+    li.reload {
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
     @media (min-width: 630px){
         li {
           margin-right: 10px;
@@ -118,6 +128,9 @@
     @media (min-width: 768px){
       li {
         padding-left: 0;
+      }
+      li.reload {
+        display: none;
       }
       .nav-item.active {
         border-bottom: 2px solid var(--bs-pink);

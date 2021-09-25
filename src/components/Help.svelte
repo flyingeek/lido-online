@@ -19,18 +19,13 @@ import {wb, route} from '../stores';
 import {shareAppLink, debounce, Deferred} from './utils';
 import {onMount, tick} from "svelte";
 import blurAction from '../actions/blurAction';
+import ReloadButton from './ReloadButton.svelte';
 
 const version = "APP_VERSION";
 let swVersion = '';
 const updateVersion = (_wb) => {
     return (_wb) ? _wb.messageSW({type: 'GET_VERSION'}).then(v => swVersion = v) : '';
 }
-const reload = () => {
-    window.location.hash = '#/';
-    console.log('reload page');
-    window.location.reload();
-};
-
 $: updateVersion($wb);
 let scrollingElement, tocSelectElement, scrollingElementScrolling;
 const toc = [];
@@ -225,7 +220,7 @@ onMount(() => {
                     <button tabindex="0" class="share btn btn-outline-secondary btn-sm" on:click={shareAppLink}><svg><use xlink:href="#share-symbol" /></svg><!-- Partager --></button>
                 {/if}
                 {#if navigator.standalone === true || 'process.env.NODE_ENV' === '"development"'}
-                    <button class="reload btn btn-outline-secondary btn-sm" on:click={reload}><!-- Recharger --></button>
+                <ReloadButton/>
                 {/if}
                 <button tabindex="0" class="changelog btn btn-outline-secondary btn-sm" on:click={modal.show}><!-- CHANGELOG --></button>
             </div>
@@ -358,9 +353,6 @@ onMount(() => {
         height: 32px;
         border-radius: 5px;
     }
-    .reload::before{
-        content: "Recharger";
-    }
     .share::before{
         content: "Partager";
     }
@@ -380,9 +372,15 @@ onMount(() => {
         max-width: 20ch;
         text-overflow: ellipsis;
     }
+    .actions :global(button.reload){
+            display: none;
+    }
     @media (min-width: 768px) {
         select.toc {
             display: inline-block;
+        }
+        .actions :global(button.reload){
+            display: inline;
         }
     }
     /**
@@ -463,7 +461,7 @@ onMount(() => {
         .actions button:not(.reload):focus{
             box-shadow: none;
         }
-        .actions button.reload{
+        .actions :global(button.reload){
             position: absolute;
             bottom: 1rem;
             margin-left: 0;
@@ -479,9 +477,7 @@ onMount(() => {
         .infos {
             display: inline-flex;
         }
-        .reload::before{
-            content: "Recharger l'App";
-        }
+
         .share::before{
             content: "Partager l'App";
         }
