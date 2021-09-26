@@ -55,7 +55,7 @@
     <Overlay  position="bottom-center" style="margin-right: 0 !important;" isOpen={grametUpdateAvailable}>
         <div slot="parent" class="d-none"></div>
         <div slot="content" let:close style="width: 290px;">
-            <div class="overlay card" style="left: calc(-1rem - 35px); max-width: 290px; top: 20px;">
+            <div class="card" style="left: calc(-1rem - 35px); max-width: 290px; top: 20px;">
                 <div class="card-header">
                     <span>Nouveau GRAMET disponible</span>
                     <button type="button" class="btn-close ms-auto" aria-label="Close" on:click={close}></button>
@@ -73,7 +73,7 @@
         </button>
     
         <div slot="content" let:close style="width: 350px;">
-            <div class="overlay card" style="position: absolute">
+            <div class="card" style="position: absolute">
                 <div class="card-header">
                     <span>😱: Erreur de récupération du Gramet</span>
                     <button type="button" class="btn-close ms-auto" aria-label="Close" on:click={close}></button>

@@ -45,7 +45,7 @@
                 {/each}
             </div>
         </div>
-        <div slot="content" style="width: 390px; max-width: 99vw;" class="overlay card" let:close in:slide={{ duration: 200 }}>
+        <div slot="content" style="width: 390px; max-width: 99vw;" class="card" let:close in:slide={{ duration: 200 }}>
             <h6 class="card-header">
                 <span>Éphémérides du vol</span>
                 <button type="button" class="btn-close ms-auto" aria-label="Close" on:click={close}></button></h6>
@@ -117,7 +117,7 @@
             transform: none !important;
         }
         :global(.overlay) {
-            z-index: 3 !important;
+            z-index: 3 !important;/*above mapboxgl controls*/
         }
     }
     @media (min-width: 768px){
