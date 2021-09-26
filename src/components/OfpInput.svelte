@@ -141,37 +141,39 @@
             reader.readAsArrayBuffer(file);
         });
     };
-    async function process(e) {
+    function process(e) {
         disabled = true;
         $showGramet = false; // must be set here and not in App.svelte (why ?)
         preload(); // in case click event not supported or missed
-
-        await ready.promise.then(() => {
-            const file = e.target.files[0];
-            const form = e.target.closest('form');
-            if (file) {
-                $ofpStatus = 'loading';
-                //label = e.target.value.split(/([\\/])/g).pop();
-                dispatch('change', label);
-                window.location.hash = '#/map'; //TODO must be here and not in the then promise below to avoid map centering issues. Why ?
-                getOFP(file).then((ofp) => {
-                    $ofpStore = ofp;
-                    $selectedAircraftType = undefined;
-                    $ofpStatus = 'success';
-                    $takeOffTime = new Date(ofp.infos.ofpOFF.getTime());
-                    form.blur();
-                    e.target.blur();
-                    focusMap();
-                }).catch((err) => {
-                    $ofpStatus = err;
-                    $ofpStore = undefined;
-                    console.trace(err);
-                }).finally(() => {
-                    form.reset(); 
-                });
-            }
+        const target = e.target;
+        const file = target.files[0];
+        //label = target.value.split(/([\\/])/g).pop();
+        const form = target.closest('form');
+        if (!file) {
+            disabled = false;
+            return;
+        }
+        ready.promise.then(() => {
+            $ofpStatus = 'loading';
+            dispatch('change');
+            window.location.hash = '#/map'; //TODO must be here and not in the then promise below to avoid map centering issues. Why ?
+            return getOFP(file).then((ofp) => {
+                $ofpStore = ofp;
+                $selectedAircraftType = undefined;
+                $ofpStatus = 'success';
+                $takeOffTime = new Date(ofp.infos.ofpOFF.getTime());
+            }).catch((err) => {
+                $ofpStatus = err;
+                $ofpStore = undefined;
+                console.trace(err);
+            }).finally(() => {
+                form.blur();
+                form.reset(); 
+                target.blur();
+                focusMap();
+                disabled = false;
+            });
         });
-        disabled = false;
     };
     function simulateClickOnInput(e) {
         if (e.key === "Enter") {

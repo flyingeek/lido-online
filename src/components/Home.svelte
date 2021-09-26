@@ -1,28 +1,27 @@
 <script>
-      import Logo from './Logo.svelte';
-      import {ofp as ofpStore, ofpStatus, selectedAircraftType} from '../stores';
-      import {aircraftTypes, discontinuatedAircraftTypes} from '../constants';
-      import {KmlGenerator} from './kml.js';
-      import {ready, preload} from './OfpInput.svelte';
-      let disabled = false;
-      async function processAircraftType(e) {
-        disabled = true;
-        $ofpStatus = 'loading';
-        $selectedAircraftType = e.target.value;
-        window.location.hash = '#/map'; //TODO must be here and not in the then promise below to avoid map centering issues. Why ?
-        preload(); // in case click event not supported or missed
-        await ready.promise.then(() => {
-            $ofpStore = undefined;
-            try {
-                KmlGenerator(); // to have a minimum skeleton for map settings
-                $ofpStatus = 'success';
-            } catch (err) {
-                console.log(err);
-                $ofpStatus = err;
-            }
-        });
-        disabled = false;
-    }
+  import Logo from './Logo.svelte';
+  import {ofp as ofpStore, ofpStatus, selectedAircraftType} from '../stores';
+  import {aircraftTypes, discontinuatedAircraftTypes} from '../constants';
+  import {KmlGenerator} from './kml.js';
+  import {ready, preload} from './OfpInput.svelte';
+  let disabled = false;
+  function processAircraftType(e) {
+    disabled = true;
+    $ofpStatus = 'loading';
+    $selectedAircraftType = e.target.value;
+    preload(); // in case click event not supported or missed
+    ready.promise.then(() => {
+      $ofpStore = undefined;
+      KmlGenerator(); // to have a minimum skeleton for map settings
+      $ofpStatus = 'success';
+    }).catch(err => {
+      console.log(err);
+      $ofpStatus = err;
+    }).then(() => {
+      disabled = false;
+      window.location.hash = '#/map';
+    });
+  }
 </script>
 <Logo/>
 
