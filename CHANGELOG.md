@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - *plugin* [OFP2MAP-FAA WIPs v3](https://www.icloud.com/shortcuts/7e37cedd78d944bf8ceffb7477e356ec) affiche explicitement qu'il n'a pas trouvé d'infos pour un terrain dans le PDF de résultats.
 
-## Fixed
+### Fixed
 
 - Régression CSS dans l'aide corrigée
 
