@@ -1,5 +1,5 @@
 <script>
-    import {onDestroy, tick} from 'svelte';
+    import {onDestroy} from 'svelte';
     import Overlay from 'svelte-overlay';
     import {grametThumbAction, grametStatus, grametResponseStatus} from '../actions/grametAction';
     import Link from '../components/Link.svelte';
@@ -15,8 +15,9 @@
         $grametStatus = 'reload';
         $showGramet = false;
         grametUpdateAvailable = false;
-        await tick;
-        $grametStatus = 'loading';
+        setTimeout(() => { //TODO a better way ? await tick() does not work...
+            if ($grametStatus === 'reload') $grametStatus = 'loading';
+        }, 100);
         focusMap();
     };
     const grametSourceUpdate = async (event) => {
@@ -35,7 +36,7 @@
             navigator.serviceWorker.addEventListener('message', grametSourceUpdate);
     }
     onDestroy(() => {
-        //console.log('destroy gramet trigger');
+        console.log('destroy gramet trigger');
         if (navigator && navigator.serviceWorker){
             navigator.serviceWorker.removeEventListener('message', grametSourceUpdate);
         }
@@ -95,7 +96,7 @@
         </div>
     </Overlay>
 {:else if ($grametStatus === 'reload')}
-    <div class="gramet-thumbnail updating"><p>↻</p><p>Mise à jour</p></div>
+    <div class="gramet-thumbnail updating"><p>…</p></div>
 {/if}
 
 
@@ -112,10 +113,13 @@
     display: none;
     cursor: pointer;
 }
+.gramet-thumbnail.updating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .gramet-thumbnail.updating p {
     margin: 0;
-    font-size: small;
-    text-align: center;
 }
 @media (min-width: 374px){
     .gramet-thumbnail {
