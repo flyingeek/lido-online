@@ -272,6 +272,7 @@
         z-index: 2;
         max-height: var(--max-height-without-navbar);
         overflow-y: auto;
+        overflow-x: hidden;
     }
     @supports ( backdrop-filter: blur(4px) ) or ( -webkit-backdrop-filter: blur(4px) ) {
         .settings {
