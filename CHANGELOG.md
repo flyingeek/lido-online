@@ -3,6 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.3] - 2021-09-26
+
+### Changed
+
+- *plugin* [OFP2MAP-FAA WIPs v3](https://www.icloud.com/shortcuts/7e37cedd78d944bf8ceffb7477e356ec) affiche explicitement qu'il n'a pas trouvé d'infos pour un terrain dans le PDF de résultats.
+
+## Fixed
+
+- Régression CSS dans l'aide corrigée
+
 ## [1.16.2] - 2021-09-25
 
 ### Changed
