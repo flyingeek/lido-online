@@ -182,16 +182,27 @@
     </p>
     </a>
 </div>
-
+<div class="pluginonly">
+    {#if (fuelMarginTime < 20)}<p class="etops">ETOPS</p>{/if}
+    <a class="details" href="{shareURL}" class:cursor-pointer={(navigator && navigator.share)} on:click={shareOFP}>
+        {#if (navigator && navigator.share)}<span class="plugin">🧩</span>{/if}
+    </a>
+</div>
 <style>
-    .infos{
-        display: none;
-        margin-right: 1rem;
+    .infos, .pluginonly{
         font-size: small;
         flex-direction: row;
         max-height: 38px;
         cursor: none;
         align-items: center;
+    }
+    .pluginonly{
+        display: flex;
+        margin-right: 0.5rem;
+    }
+    .infos{
+        display: none;
+        margin-right: 1rem;
     }
     .details{
         display: flex;
@@ -205,6 +216,9 @@
     @media (min-width: 500px){
         .infos {
             display: flex;
+        }
+        .pluginonly {
+            display: none;
         }
     }
     p{

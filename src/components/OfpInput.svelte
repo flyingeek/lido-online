@@ -203,8 +203,10 @@
         </label>
     </div>
     {:else}
-        <label on:keydown="{simulateClickOnInput}" tabindex="0" class="btn btn-outline-secondary btn-sm">
-            Changer<input id={name} name={name} type="file" accept="application/pdf" on:change={process} hidden>
+        <label on:keydown="{simulateClickOnInput}" tabindex="0" class="input-group-text btn btn-outline-secondary btn-sm">
+            <span class="d-block d-sm-none">OFP…</span>
+            <span class="d-none d-sm-block">Changer</span>
+            <input id={name} name={name} type="file" accept="application/pdf" on:change={process} hidden>
         </label>
     {/if}
 </form>
