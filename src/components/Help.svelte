@@ -457,6 +457,7 @@ onMount(() => {
             flex-direction: column;
             align-items: stretch;
             margin-top: 1rem;
+            margin-left: 0;
             row-gap: 0.25rem;
         }
         .actions button:not(.reload){
@@ -470,11 +471,11 @@ onMount(() => {
             line-height: 1.2;
             text-align: left;
         }
-        .actions button:not(.reload):hover, .actions button:not(.reload):active{
+        .actions :global(button:not(.reload):hover), .actions :global(button:not(.reload):active){
             color: var(--bs-gray);
             background-color: transparent;
         }
-        .actions button:not(.reload):focus{
+        .actions :global(button:not(.reload):focus){
             box-shadow: none;
         }
         .actions :global(button.reload){
