@@ -3,6 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.4] - 2021-09-27
+
+### Changed
+
+- La barre de menu affiche le bouton plugin sur un iPhone en mode portrait
+
+### Fixed
+
+- La vignette du GRAMET est reconstruite en cas de changement d'orientation (utile sur iPhone)
+
 ## [1.16.3] - 2021-09-26
 
 ### Changed
