@@ -11,7 +11,7 @@
         if ($grametStatus === 'success') $showGramet = !$showGramet;
         if (!$showGramet) focusMap();
     }
-    const reload = async () => {
+    const reload = () => {
         $grametStatus = 'reload';
         $showGramet = false;
         grametUpdateAvailable = false;
