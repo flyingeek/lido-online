@@ -5,8 +5,8 @@
         "description": "NOAA Aurora Forecast 30-90mn et prévisions à 3 jours."
     },
     "OFP2MAP-ETOPS": {
-        "version": 4,
-        "url": "https://www.icloud.com/shortcuts/271499bbcfea414eaa7d2d6ec96ae235",
+        "version": 5,
+        "url": "https://www.icloud.com/shortcuts/365323227837445c9bd68e2be056e094",
         "description": "Affiche un cartouche ETOPS actualisé."
     },
     "OFP2MAP-FAA WIPs": {

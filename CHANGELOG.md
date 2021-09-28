@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.6] - 2021-09-28
+
+### Fixed
+
+- *plugin* [OFP2MAP-ETOPS v5](https://www.icloud.com/shortcuts/365323227837445c9bd68e2be056e094) modifie la regex qui n'affichait pas l'EXP dans certains cas. Sous iOS15, ce plugin demande d'autoriser le partage vers (null), c'est un bug d'iOS, vous pouvez cliquer sur "Autoriser". De plus même, en choisissant "Toujours Autoriser", iOS15 ne mémorise pas votre choix :-(.
+
 ## [1.16.5] - 2021-09-28
 
 ### Fixed
