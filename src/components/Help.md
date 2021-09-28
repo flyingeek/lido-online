@@ -106,6 +106,8 @@ Pour partager le lien vers OFP2MAP, utilisez le bouton situé en haut sur cette 
 
 À noter que parfois, des bugs d'affichage peuvent apparaître&#8239;:  lorsque l'on retourne sur l'app, l'app est zoomée, il faut alors juste dézoomer en utilisant un pinch de deux doigts sur la barre de menu. Il est aussi possible de tuer l'app,  même en mode déconnecté, pour la relancer.
 
+> Sur un iPhone, sous iOS15, il est recommandé d'installer OFP2MAP sur l'écran d'accueil
+
 </section>
 <section id="_offline">
 
