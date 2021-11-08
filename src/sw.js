@@ -129,6 +129,7 @@ registerRoute(
   ({url}) => url.origin === 'CONF_GRAMET_PROXY_ORIGIN' && url.pathname.endsWith('.png'),
   new StaleWhileRevalidate({
     cacheName: validCaches['gramet'],
+    fetchOptions: {cache: 'default'},
     plugins: [
       new CacheableResponsePlugin({
         statuses: [200],
