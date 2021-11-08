@@ -154,7 +154,7 @@
 <div id={id} use:mapResizeAction={map}></div>
 <div class="mapmenu">
     <div class="projection">
-        <MapProjectionSelect bind:selected={selectedProjection} ofp={ofp} on:change={projectionChange}></MapProjectionSelect>
+        <MapProjectionSelect bind:selected={selectedProjection} ofp={ofp} on:change={projectionChange} disabled={cacheValue >= 0}></MapProjectionSelect>
         {#if (selectedProjection && window.indexedDB)}
         <div class="cacheButton"
             class:cacheError={cacheError}
@@ -165,7 +165,9 @@
         </div>
         {/if}
     </div>
-    {#if selectedProjection && selectedProjection.subLabel}
+    {#if cacheValue >= 0}
+        <div class="projection-info"><small>Veuillez patienter...</small></div>
+    {:else if selectedProjection && selectedProjection.subLabel}
         <div class="projection-info"><small>{selectedProjection.subLabel}</small></div>
     {/if}
     {#if (!supportWebP && mapData && mapData.mapOptions && mapData.mapOptions.tiles && mapData.mapOptions.tiles[0].endsWith('.webp'))}

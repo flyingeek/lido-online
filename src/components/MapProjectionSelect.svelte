@@ -7,6 +7,7 @@
     export let name = 'map-style';
     export let ofp;
     export let selected = options[0];
+    export let disabled;
     let autoSelectedId = selected.id;
     const authorizedOptions = (ofp) ? options : options.filter(o => (!o.id.startsWith('vb_') && o.id !== 'jb_theworld'));
 
@@ -55,7 +56,7 @@
     <select id="{name}" name="{name}" bind:value={selected} 
         class="form-select form-select-sm" class:extend={autoSelectedId === 'mercator' && selected.id === 'mercator'}
         aria-label="Choix de la projection"
-        on:change use:blurAction>
+        on:change use:blurAction {disabled}>
         {#each authorizedOptions as option (option.id)}
         <option value="{option}" selected={option.id === selected.id}>
             {(option.id === autoSelectedId) ? `${option.label.toUpperCase()}`: option.label}
