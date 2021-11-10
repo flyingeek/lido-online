@@ -1,5 +1,5 @@
 <script>
-    import {onDestroy} from 'svelte';
+    import {onDestroy, tick} from 'svelte';
     import Overlay from 'svelte-overlay';
     import {grametThumbAction, grametStatus, grametResponseStatus} from '../actions/grametAction';
     import Link from '../components/Link.svelte';
@@ -15,10 +15,16 @@
         $grametStatus = 'reload';
         $showGramet = false;
         grametUpdateAvailable = false;
-        setTimeout(() => { //TODO a better way ? await tick() does not work...
+        tick().then(() => {
             if ($grametStatus === 'reload') $grametStatus = 'loading';
-        }, 100);
+        });
         focusMap();
+    };
+    const orientationChange = (e) => {
+        //filter ios orientationchange events (fired 3 times when app going in the background)
+        if (document && document.visibilityState === 'visible') {
+            reload();
+        }
     };
     const grametSourceUpdate = async (event) => {
         if (event.data.meta === 'workbox-broadcast-update' && event.data.type === 'CACHE_UPDATED') {
@@ -42,8 +48,8 @@
         }
     });
 </script>
-<svelte:window on:orientationchange={reload}/>
-{#if $grametStatus !== 'error' && $grametStatus !== 'reload'}
+<svelte:window on:orientationchange={orientationChange}/>
+{#if $grametStatus !== 'error'}
     <div class="gramet-thumbnail" class:open={$showGramet} use:grametThumbAction={{ofp: $ofp, pos: $position.gramet, fl: $position.fl}} on:click={toggleGramet}>
         <svg id="gt-plane" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <circle cx="50" cy="50" r="50"/>
@@ -66,7 +72,7 @@
             </div>
         </div>
     </Overlay>
-{:else if ($grametStatus !== 'reload')}
+{:else}
     <Overlay  position="bottom-center" on:close={focusMap}>
         <button slot="parent" class="btn btn-light" let:toggle on:click={toggle}>
             <svg class="gramet-error"><use xlink:href="#info-symbol"/></svg>
@@ -95,8 +101,6 @@
             </div>
         </div>
     </Overlay>
-{:else if ($grametStatus === 'reload')}
-    <div class="gramet-thumbnail updating"><p>…</p></div>
 {/if}
 
 
@@ -113,14 +117,7 @@
     display: none;
     cursor: pointer;
 }
-.gramet-thumbnail.updating {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.gramet-thumbnail.updating p {
-    margin: 0;
-}
+
 @media (min-width: 374px){
     .gramet-thumbnail {
         display: block;

@@ -1,5 +1,6 @@
 <script>
     import {aircraftType, ofp, route} from '../stores';
+    import {grametStatus} from '../actions/grametAction';
     import GrametTrigger from './GrametTrigger.svelte';
     import OfpInfos from './OfpInfos.svelte';
     import TakeOffInput from './TakeOffInput.svelte';
@@ -30,7 +31,7 @@
   <slot></slot>
   {#if ($ofp) }
     <OfpInfos/>
-    {#if $route === '/map'}<TakeOffInput/><GrametTrigger/><Sun/>{/if}
+    {#if $route === '/map'}<TakeOffInput/>{#if $grametStatus != 'reload'}<GrametTrigger/>{/if}<Sun/>{/if}
   {/if}
   <label class="navbar-toggler" for="menu"><span class="navbar-toggler-icon"></span></label>
   <!-- end of items in reverse order -->
