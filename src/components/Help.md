@@ -174,7 +174,7 @@ Pour afficher le Gramet, cliquez sur sa miniature dans la barre de menu. Pour af
 
 Pour mieux comprendre le GRAMET, je vous conseille son <Link href="http://www.ogimet.com/guia_gramet.phtml.en">Guide d'interprétation</Link>.
 
-> Le site ogimet est indisponible lorsqu'il met à jour ses données, cela intervient le plus souvent entre minuit et 3h (heure française), il renvoie alors une erreur "503 no grib data". Par ailleurs, ogimet est saturé  dans la tranche 18h30-20h00, et cela peut entraîner des erreurs s'il met plus de 30 secondes à répondre. Cliquer sur <svg style="stroke: red; transform: rotate(180deg); height: 20px; width: 20px;"><use xlink:href="#info-symbol"></use></svg> vous affichera des consignes.
+> Le site ogimet est indisponible lorsqu'il met à jour ses données, cela intervient le plus souvent entre minuit et 6h (heure française), il renvoie alors une erreur "503 no grib data". Par ailleurs, ogimet est saturé  dans la tranche 18h30-20h00, et cela peut entraîner des erreurs s'il met plus de 30 secondes à répondre. Cliquer sur <svg style="stroke: red; transform: rotate(180deg); height: 20px; width: 20px;"><use xlink:href="#info-symbol"></use></svg> vous affichera des consignes.
 
 </section>
 <section id="_position">

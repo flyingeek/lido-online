@@ -90,7 +90,7 @@
                     <p>Erreur construction route GRAMET: Station "<code>{$grametResponseStatus.text}</code>" non reconnue par ogimet,
                     merci de me remonter l'information pour que je corrige l'application. Inutile de réessayer.</p>
                 {:else if $grametResponseStatus.text === "no grib data"}
-                    <p>Le serveur ogimet indique qu'il est indisponible (no grib data). Sa mise à jour débute normalement à 00:00z et c'est long...</p>
+                    <p>Le serveur ogimet indique qu'il est indisponible (no grib data). Sa mise à jour débute normalement à 00:00z et peut durer jusqu'à 05:00z...</p>
                 {:else}
                     <p>A certaines heures le site ogimet est saturé, il faut essayer 2 ou 3 fois en temporisant de 30 secondes à chaque essai.</p>
                     {#if $grametResponseStatus.status !== 0}
