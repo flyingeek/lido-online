@@ -16,7 +16,7 @@ OFP2MAP est une application PWA (ou Web Application), elle peut être lancée so
 
 L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au plus 21 stations météo) est transmise à l'hébergeur du proxy (voir plus bas) puis à Ogimet.com pour récupérer le Gramet. L'app ne collecte aucune donnée.
 
-Avant d'utiliser OFP2MAP en vol, il est préférable de lire la rubrique [Mode hors ligne](#_offline). Ensuite le mémo visuel devrait vous permettre de vous débrouiller. Vos retours seront appréciés pour faire évoluer l'app.
+Avant d'utiliser OFP2MAP en vol, il est préférable de lire la rubrique [Mode hors ligne](#_offline). Ensuite le mémo visuel devrait vous permettre de vous débrouiller. Vos retours seront appréciés pour faire évoluer l'app. En cas de problèmes, merci de m'envoyer l'OFP concerné par mail.
 
 </section>
 
@@ -104,7 +104,7 @@ OFP2MAP ne peut être lancé que depuis l'écran d'accueil, l'application se lan
 
 Pour partager le lien vers OFP2MAP, utilisez le bouton situé en haut sur cette page, ou le lien situé sous le logo sur la page d'accueil, puis utilisez AirDrop. {#if navigator.standalone !== true}Pour mémoire, dans un navigateur, il suffit de partager l'url ou <Link href="http://flyingeek.github.io/lido-online/index.html">ce lien</Link>.{/if}
 
-À noter que parfois, des bugs d'affichage peuvent apparaître&#8239;:  lorsque l'on retourne sur l'app, l'app est zoomée, il faut alors juste dézoomer en utilisant un pinch de deux doigts sur la barre de menu. Il est aussi possible de tuer l'app,  même en mode déconnecté, pour la relancer.
+À noter que parfois, des bugs d'affichage peuvent apparaître&#8239;:  lorsque l'on retourne sur l'app, l'app est zoomée, il faut alors juste dézoomer en utilisant un pinch de deux doigts sur la barre de menu. Il est aussi possible de fermer (tuer) l'app,  même en mode déconnecté, pour la relancer.
 
 > Sur un iPhone, sous iOS15, il est recommandé d'installer OFP2MAP sur l'écran d'accueil
 
@@ -120,6 +120,8 @@ Pour mettre rapidement en cache un vol, il existe à droite du sélecteur de car
 Le bouton affiche la progression du téléchargement&#8239;: <span class="cacheButton cacheProgress"><CircleProgress value=33/></span>, puis il disparait une fois la projection en cache. En cas d'erreur, il affiche: <span class="cacheButton cacheError"><CircleProgress value=0/></span>, et vous pouvez faire une nouvelle tentative.
 
 Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 40Mo de données. Les caches des autres projections utilisent&#8239;: 7Mo pour la NORTH, 4Mo pour la PACIFIC, 7Mo pour la SOUTH, 32Mo pour THE WORLD, 32Mo pour NAM Physical, 40Mo pour =Physique=, 45Mo pour =Politique=, et 40Mo pour {cbName}.
+
+Si vous êtes connecté à un réseau limité (4G AF, Wifi en vol), le cache peut ne pas se charger, dans ce cas, désactivez temporairement le réseau, fermez (tuez) l'application et rechargez l'OFP.
 
 > Il faut penser à mettre en cache la Mercator à chaque vol
 
@@ -297,7 +299,7 @@ Après une mise à jour, les dernières nouveautés d'OFP2MAP s'affichent. Le bo
 - La dernière version de la carte {cbName} est disponible sur le site <Link href="{`https://www.${cbName.toLowerCase()}.com`}">{cbName}.com</Link>
 - Les autres cartes sont de Jean-Baptiste Denizot forum Yammer/QGIS & Avenza Maps
 - Le GRAMET provient du site ogimet.com
-- Le site est développé en javascript à l'aide du framework SVELTE
+- Le site est développé en javascript à l'aide du framework SVELTE, les principales librairies utilisées sont PDFJS (conversion pdf en texte), Mapbox (moteur de carte), proj4js (transformation de cooordonnées), Workbox (service workers).
 - La partie serveur (un proxy pour pouvoir récupérer l'image du GRAMET) est en python.
 - Eric Delord CDB 777 est l'auteur. Le code source est disponible sur GitHub pour <Link href="https://github.com/flyingeek/lido-online">l'app</Link> et <Link href="https://github.com/flyingeek/ofp-gramet-aws">le proxy</Link>
 
