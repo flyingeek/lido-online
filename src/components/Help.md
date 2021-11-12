@@ -293,14 +293,12 @@ Après une mise à jour, les dernières nouveautés d'OFP2MAP s'affichent. Le bo
 ## Crédits 🙏
 
 - Les données terrains/FIR sont fournies par Olivier Ravet forum Yammer/Mapsme
-- =Physique= est une carte de Tom Patterson disponible sur <Link href="https://equal-earth.com/physical/">Equal Earth</Link>
-- =Politique= est une carte de Tom Patterson disponible sur <Link href="http://equal-earth.com">Equal Earth</Link>
-- NAM Physical est une carte de Tom Patterson disponible sur <Link href="http://www.shadedrelief.com/north-america/">Shaded Relief</Link>
+- <Link href="https://equal-earth.com/physical/">=Physique=</Link>, <Link href="http://equal-earth.com">=Politique=</Link> et <Link href="http://www.shadedrelief.com/north-america/">NAM Physical</Link> sont des cartes mises dans le domaine public par Tom Patterson.
 - La dernière version de la carte {cbName} est disponible sur le site <Link href="{`https://www.${cbName.toLowerCase()}.com`}">{cbName}.com</Link>
-- Les autres cartes sont de Jean-Baptiste Denizot forum Yammer/QGIS & Avenza Maps
+- Les autres cartes sont de Jean-Baptiste Denizot (OPL 777) forum Yammer/QGIS & Avenza Maps
 - Le GRAMET provient du site ogimet.com
-- Le site est développé en javascript à l'aide du framework SVELTE, les principales librairies utilisées sont PDFJS (conversion pdf en texte), Mapbox (moteur de carte), proj4js (transformation de cooordonnées), Workbox (service workers).
-- La partie serveur (un proxy pour pouvoir récupérer l'image du GRAMET) est en python.
+- Le site est développé en javascript à l'aide du framework SVELTE, les principales librairies utilisées sont PDFJS (conversion pdf en texte), MapboxGL (moteur de carte), proj4js (transformation de cooordonnées), Workbox (service workers).
+- La partie serveur (un simple proxy pour pouvoir récupérer l'image du GRAMET) est en python.
 - Eric Delord CDB 777 est l'auteur. Le code source est disponible sur GitHub pour <Link href="https://github.com/flyingeek/lido-online">l'app</Link> et <Link href="https://github.com/flyingeek/ofp-gramet-aws">le proxy</Link>
 
 Vous pouvez me contacter sur l’email AF (erdelord@…) ou sur mon compte Twitter @flyingeek.
