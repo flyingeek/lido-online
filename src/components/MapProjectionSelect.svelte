@@ -64,7 +64,7 @@
         {/each}
     </select>
     {#if selected.id==='mercator'}
-        <label for="{name}">🔎&nbsp;{$mapZoom.toFixed(1)}</label>
+        <label for="{name}">{$mapZoom.toFixed(1)}</label>
     {/if}
 </div>
 <style>
@@ -75,7 +75,7 @@
         transform: translate(0, -50%);
         background-color: var(--bs-gray-100);
         font-size: small;
-        min-width: 48px;
+        min-width: 30px;
         z-index: 3; /* same as .input-group:focus*/
     }
     select {
@@ -85,6 +85,6 @@
         background-color: var(--bs-gray-100);
     }
     select.extend{
-        padding-right: 4rem !important;
+        padding-right: 3.5rem !important;
     }
 </style>

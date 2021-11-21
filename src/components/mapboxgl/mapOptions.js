@@ -23,7 +23,7 @@ export const VFR = 'vb_2020';
 
 const options = [
     {
-        'label': 'Mercator',
+        'label': 'Mercator 🔎',
         'id': MERCATOR,
         'mapboxOptions': {
             //'style': 'mapbox://styles/flyingeek/ckc4yge17166a1ip66rkf0zhr',
