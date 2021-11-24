@@ -3,6 +3,20 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.12] - 2021-11-24
+
+### Deprecated
+
+- Raccourcis pour IOS15 manque de stabilité, les conversions de texte en JSON sont très lentes. Seules les valeurs utilisées par les plugins actuels restent dans l'export, le rawText n'est plus exporté, [OFP2MAP-ETOPS v6](https://www.icloud.com/shortcuts/75e470e51e9442768298dd16b73d8e84) est modifié en conséquence, l'ancienne version ne peut plus fonctionner.
+
+### Changed
+
+- [OFP2MAP-PLANE FINDER v3](https://www.icloud.com/shortcuts/c3f12a087f7247ec8693af535a1c098b) n'utilise plus de conversion du texte en json pour être plus réactif.
+- [OFP2MAP-PLUGIN v3](https://www.icloud.com/shortcuts/6dd90c3c7a6f465da371997cbdd28430) contient un avertissement sur la désactivation du champ rawText.
+- mapboxgl est en version 1.13.2 pour une meilleure compatibilité avec ios15
+- le symbole de la loupe est associé à la carte Mercator dans le sélecteur de projection
+
+
 ## [1.16.11] - 2021-11-12
 
 ### Fixed
