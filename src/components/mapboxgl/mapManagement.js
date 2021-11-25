@@ -35,27 +35,11 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
         'center': [0, 49],
         'zoom': 2,
         'attributionControl': true,
-        'customAttribution': customAttribution()
+        'customAttribution': customAttribution(),
+        'trackResize': false //otherwise we have frozen map on reactivation (ios15)
     }
-    //include webgl2 in mapboxgl
-    // if (mapboxgl.Map.prototype._setupPainter.toString().indexOf("webgl2") == -1) {
-    //     console.log('patching to use webgl2')
-    //     let _setupPainter_old = mapboxgl.Map.prototype._setupPainter;
-    //     mapboxgl.Map.prototype._setupPainter = function() {
-    //         let getContext_old = this._canvas.getContext;
-    //         this._canvas.getContext = function(name, attrib) {
-    //             attrib.preserveDrawingBuffer = true;
-    //             console.log(attrib)
-    //             return 	getContext_old.apply(this, ["webgl2", attrib]) ||
-    //                 getContext_old.apply(this, ['webgl', attrib]) ||
-    //                 getContext_old.apply(this, ['experimental-webgl', attrib]);
-    //         }
-    //         _setupPainter_old.apply(this);
-    //         this._canvas.getContext = getContext_old;
-    //     };
-    // }
     const map = new mapboxgl.Map({...mapOptions.mapboxOptions, ...mapboxOptions});
-    map._setCacheLimits(320, 32);
+    //map._setCacheLimits(320, 32);
     map.loadImage('sdf/maki-camera-sdf.png', function(error, image) {
         if (error) {
             console.log(error);
