@@ -4,8 +4,7 @@
   import {aircraftTypes, discontinuatedAircraftTypes} from '../constants';
   import {KmlGenerator} from './kml.js';
   import {ready, preload} from './OfpInput.svelte';
-  import Link from './Link.svelte';
-  import {runningOnIpadUsingIOS15} from './utils';
+
   let disabled = false;
   function processAircraftType(e) {
     disabled = true;
@@ -26,13 +25,6 @@
   }
 </script>
 <Logo/>
-{#if runningOnIpadUsingIOS15}
-<div class="row"><div class="col-12 alert-container">
-<div class="alert alert-warning" role="alert">
-  Merci de lire le paragraphe sur la manip à réaliser pour corriger le <Link href="#/help_bugios15">BUG IOS 15</Link>
-</div></div>
-</div>
-{/if}
 <div class="row cards">
   <div class="col-12 col-lg-4">
     <div class="card feature usage">
@@ -138,10 +130,5 @@ select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-}
-.alert-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 </style>
