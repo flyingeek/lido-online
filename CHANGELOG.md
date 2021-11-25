@@ -3,9 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.14] - 2021-11-25
+
+### Fixed
+
+- J'ai pu contourner le bug IOS15/PilotPad. Si vous aviez fait la manip demandée dans la version précédente, vous pouvez réactiver l'option expérimentale WebGL via Metal: Depuis l'app **Réglages**, choisissez **Safari** dans la colonne de gauche, puis à droite en bas, choisir "**Avancé**", puis "**Experimental features**" et mettre sur ON le réglage "**WebGL via Metal**". Il faut ensuite quitter (tuer) OFP2MAP et le relancer. (Vous pouvez alternativement redémarrer l'iPad)
+
 ## [1.16.13] - 2021-11-25
 
-Sur PilotPad et sous IOS 15, un bug oblige la modifification des réglages de Safari (désactiver l'option expérimentale WebGL via Metal). L'aide dans la rubrique [BUG IOS 15](#/help_bugios15) décrit la manip à réaliser. Si vous ne faites pas la manipulation, OFP2MAP fonctionne, mais pendant 5 secondes, tout est figé, lorsque l'application revient au premier plan.
+~~Sur PilotPad et sous IOS 15, un bug oblige la modifification des réglages de Safari (désactiver l'option expérimentale WebGL via Metal). L'aide dans la rubrique BUG IOS 15 décrit la manip à réaliser. Si vous ne faites pas la manipulation, OFP2MAP fonctionne, mais pendant 5 secondes, tout est figé, lorsque l'application revient au premier plan.~~
 
 ## [1.16.12] - 2021-11-24
 
