@@ -4,6 +4,8 @@
   import {aircraftTypes, discontinuatedAircraftTypes} from '../constants';
   import {KmlGenerator} from './kml.js';
   import {ready, preload} from './OfpInput.svelte';
+  import Link from './Link.svelte';
+  import {runningOnIpadUsingIOS15} from './utils';
   let disabled = false;
   function processAircraftType(e) {
     disabled = true;
@@ -24,8 +26,14 @@
   }
 </script>
 <Logo/>
-
-<div class="row">
+{#if runningOnIpadUsingIOS15}
+<div class="row"><div class="col-12 alert-container">
+<div class="alert alert-warning" role="alert">
+  Merci de lire le paragraphe sur la manip à réaliser pour corriger le <Link href="#/help_bugios15">BUG IOS 15</Link>
+</div></div>
+</div>
+{/if}
+<div class="row cards">
   <div class="col-12 col-lg-4">
     <div class="card feature usage">
       <div class="card-header">Facile à utiliser</div>
@@ -100,7 +108,7 @@
 /* .feature.ogimet .card-header {
   background-color: var(--bs-yellow);
 } */
-.row {
+.cards{
   margin-bottom: 1rem; /* for no ofp prompt */
   padding: 0 1rem 1rem 1rem;
 }
@@ -111,7 +119,7 @@ b, li {
   white-space: nowrap;
 }
 @media (min-width: 992px){
-  .row {
+  .cards {
     margin-top: 2rem;
   }
   .feature {
@@ -130,5 +138,10 @@ select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
+}
+.alert-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 </style>

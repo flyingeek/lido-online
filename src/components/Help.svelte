@@ -434,7 +434,7 @@ onMount(() => {
             color: var(--bs-gray-600);
             font-size: 1rem;
             cursor: pointer;
-            padding: 5px 5px 5px 13px;
+            padding: 4px 5px 4px 13px;
             margin-left: -5px;
             border-left: 3px solid transparent;
             border-right: 3px solid transparent;

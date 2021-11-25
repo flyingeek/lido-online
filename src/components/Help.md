@@ -109,6 +109,15 @@ Pour partager le lien vers OFP2MAP, utilisez le bouton situé en haut sur cette 
 > Sur un iPhone, sous iOS15, il est recommandé d'installer OFP2MAP sur l'écran d'accueil
 
 </section>
+<section id="_bugios15">
+
+## BUG IOS 15 sur PilotPad
+
+OFP2MAP apparait figé lors de sa réactivation au premier plan pendant 5 secondes. La seule solution pour le moment est de modifier les réglages de Safari: Depuis l'app __Réglages__, choisissez __Safari__ dans la colonne de gauche, puis à droite en bas, choisir "__Avancé__", puis "__Experimental features__" et mettre sur OFF le réglage "__WebGL via Metal__". Il faut ensuite quitter (tuer) OFP2MAP et le relancer. (Vous pouvez alternativement redémarrer l'iPad). Pour info, ce bug n'est pas présent sur mon iphone 13 mini.
+
+Comme il n'est pas possible de détecter si la manip a été effectuée, l'alerte sur la page d'accueil reste affichée, même si vous avez modifié le réglage.
+
+</section>
 <section id="_offline">
 
 ## Mode hors ligne <span class="cacheButton"><CircleProgress value=0/></span>

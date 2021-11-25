@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.13] - 2021-11-25
+
+Sur PilotPad et sous IOS 15, un bug oblige la modifification des réglages de Safari (désactiver l'option expérimentale WebGL via Metal). L'aide dans la rubrique [BUG IOS 15](#/help_bugios15) décrit la manip à réaliser. Si vous ne faites pas la manipulation, OFP2MAP fonctionne, mais pendant 5 secondes, tout est figé, lorsque l'application revient au premier plan.
+
 ## [1.16.12] - 2021-11-24
 
 ### Deprecated

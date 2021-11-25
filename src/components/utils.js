@@ -7,6 +7,7 @@ export class Deferred {
     }
 }
 export const runningOnIpad = (navigator.platform === "iPad")||(navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+export const runningOnIpadUsingIOS15 = runningOnIpad && /Version\/15/i.test(navigator.userAgent);
 export const usingChromeOnIOS = /CriOS/i.test(navigator.userAgent) && /iphone|ipod|ipad/i.test(navigator.userAgent);
 export const usingSafari = /Safari\//i.test(navigator.userAgent) && !(/(Chrome\/|Chromium\/)/i.test(navigator.userAgent));
 export const supportsHover = matchMedia('(hover: hover)').matches;
