@@ -230,8 +230,8 @@ const addDutiesMeta = (duties, {base, flightTypeAircraft, baseTZ, flightTypePNT,
     return enhancedDuties;
 }
 export const pairingData = (ofp) => {
-    const results = {};
-    if (!ofp) return results;
+    //const results = {};
+    if (!ofp) return {};
     let pairing = {};
     let duties = [];
     let scheduledTSV;
@@ -239,7 +239,7 @@ export const pairingData = (ofp) => {
     let pilotCount, pncCount;
     try {
         const pairingText = editolido.extract(ofp.text, 'CREW PAIRING', 'Generated');
-        console.log(pairingText);
+        //console.log(pairingText);
         pattern = /TSV\s+-\s+(\d{2}):(\d{2})/u;
         match = pattern.exec(pairingText);
         scheduledTSV = (match) ? parseInt(match[2], 10) + parseInt(match[1], 10) * 60 : 0; //in minutes
@@ -263,12 +263,12 @@ export const pairingData = (ofp) => {
             const [tzh, tzm] = tzOFP.split('h');
             return (tzm) ? `${tzh}.${(parseFloat(tzm)/6).toFixed(0)}` : tzh;
         }
-        pattern = new RegExp(String.raw`>\s${ofp.infos.depIATA}\s\(([-+h0-9]+)\)`, "u");
-        match = pattern.exec(pairingText);
-        results.depTZ = (match) ? tzDec(match[1]) : '';
-        pattern = new RegExp(String.raw`>\s${ofp.infos.destIATA}\s\(([-+h0-9]+)\)`, "u");
-        match = pattern.exec(pairingText);
-        results.destTZ = (match) ? tzDec(match[1]) : '';
+        //pattern = new RegExp(String.raw`>\s${ofp.infos.depIATA}\s\(([-+h0-9]+)\)`, "u");
+        //match = pattern.exec(pairingText);
+        //results.depTZ = (match) ? tzDec(match[1]) : '';
+        //pattern = new RegExp(String.raw`>\s${ofp.infos.destIATA}\s\(([-+h0-9]+)\)`, "u");
+        //match = pattern.exec(pairingText);
+        //results.destTZ = (match) ? tzDec(match[1]) : '';
         pattern = /OPERATION VERSION\s(.+?)\s\d+\sNB PAX/u;
         match = pattern.exec(pairingText);
         const aircraftOpsVersion = (match) ? match[1] : '';
@@ -346,7 +346,7 @@ export const pairingData = (ofp) => {
         pairing.flightTypeAircraft = (['220', '318', '319', '320', '321'].includes(pairing.aircraftType)) ? "MC" : "LC";
         pairing.isCargo = (pairing.aircraftType === '77F' || aircraftOpsVersion === '1P' || pncCount === 0); //TODO
         //console.log(getMeridians(base, parseFloat(pairing.baseTZ), duties))
-
+        duties = addDutiesMeta(duties, pairing);
     } catch (err) {
         if (!(err instanceof editolido.StringExtractException)) {
             console.error(err);
@@ -354,11 +354,11 @@ export const pairingData = (ofp) => {
         duties = [];
     }
     //console.log(ofp.infos);
-    duties = addDutiesMeta(duties, pairing);
 
-    results.pairing = pairing;
-    results.pairing.duties = duties; 
-    const duty = duties.filter(duty => duty.legs.reduce((a, v) => v.isOFP || a, false)).pop();
+
+    //results.pairing = pairing;
+    //results.pairing.duties = duties; 
+    const duty = duties.filter(duty => duty.legs.reduce((a, v) => v.isOFP || a, false)).pop() || {};
 
     //results.scheduledTSV = scheduledTSV; //deprecated
     // if (duty) {
@@ -371,15 +371,15 @@ export const pairingData = (ofp) => {
     //     //     }
     //     // }
     // }
-    results.duty = duty;
+    //results.duty = duty;
     //return results;
     return { 'duty': {
         ...duty,
         'rules': pairing.flightTypeAircraft,
         'legs': {
-            'count': duty.legs.length,
-            'countFTL': easaNumberOfLegs(duty.legs),
-            'countAF': afNumberOfLegs(duty.legs)
+            'count': (duty.legs) ?  duty.legs.length : 0,
+            'countFTL': (duty.legs) ? easaNumberOfLegs(duty.legs) : 0,
+            'countAF': (duty.legs) ? afNumberOfLegs(duty.legs) : 0
         },
         'isCargo': pairing.isCargo,
         pilotCount,
