@@ -284,9 +284,10 @@ const addDutiesMeta = (duties, {base, flightTypeAircraft, baseTZ, flightTypePNT,
                     retardPNC = {};
                     retardPNC.value = 360 - 30 * Math.ceil(Math.max((duty.scheduledBlockTime - 360), 0) / 60);
                     retardPNC.textValue = minutesToHHMM(retardPNC.value);
+                    console.log(duty.legs.length, duty.scheduledBlockTime)
                     if (duty.legs.length === 1 && duty.scheduledBlockTime > 870) {
                         retardPNC.textValue = RETARD_PNC_TSVMAX_1730;
-                    }else if (duty.scheduledBlockTime > 570) {
+                    }else if (duty.legs.length > 1 && duty.scheduledBlockTime > 570) {
                         retardPNC.textValue = RETARD_PNC_TSVMAX_1500;
                     }else{
                         retardPNC.OUT = new Date(duty.OUT.getTime() + retardPNC.value * 60000);
