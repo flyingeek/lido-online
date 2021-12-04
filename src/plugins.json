@@ -14,6 +14,11 @@
         "url": "https://www.icloud.com/shortcuts/7e37cedd78d944bf8ceffb7477e356ec",
         "description": "Affiche la carte des travaux sol sur les terrains US"
     },
+    "OFP2MAP-FTL": {
+        "version": 1,
+        "url": "https://www.icloud.com/shortcuts/1a5c7e8a5e3741b0b7d719fc8ea6f9aa",
+        "description": "Calcul en réalisation des limitations TSV et des repos PNC"
+    },
     "OFP2MAP-MENU": {
         "version": 2,
         "url": "https://www.icloud.com/shortcuts/2db576c98d8d48d095bf751f56b54f56",

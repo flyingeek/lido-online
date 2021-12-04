@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.16] - 2021-12-04
+
+### Added
+
+- *plugin* [OFP2MAP-FTL v1](https://www.icloud.com/shortcuts/1a5c7e8a5e3741b0b7d719fc8ea6f9aa) Calcul en réalisation des limitations TSV et des repos PNC
+
 ## [1.16.15] - 2021-12-02
 
 ### Changed

@@ -55,7 +55,7 @@
     // };
     // note that if $ofp.infos.tripFuel = 0 (bad ofp parsing), fuelMarginTime will be infinity => no alert
     $: fuelMarginTime = $ofp.infos.minFuelMarginETOPS / ($ofp.infos.tripFuel/$ofp.infos.flightTime);
-    //$: console.log(pairingData($ofp));
+    $: console.log(pairingData($ofp));//.steps.join('\n'));
 
     // const etopsMarkdown = (altnETOPSPoints) => {
     //     const results = [];
@@ -189,7 +189,7 @@
             Object.entries(ofp.infos).filter(([key, val])=> !excluded.includes(key))
         );
         //const filteredText = ofp.text.match(/^(?:.+?)Main OFP(.+?)--ROUTE\/FL/s);
-        const pairing = pairingData(ofp)
+        const duty = pairingData(ofp);
         const shareData = {
             'title': 'OFP2MAP',
             'text': JSON.stringify({
@@ -199,9 +199,11 @@
                 "altnETOPS": ofp.infos.ralts,
                 "etopsData": etopsData(ofp, takeOffTime),
                 //'route': getOfpRouteExport(ofp),
-                ...pairing,
+                "pairing": {
+                    duty 
+                },
                 //deprecated from 07/08/21
-                "scheduledTSV": (pairing && pairing.duty) ? pairing.duty.scheduledTSV : 0,
+                "scheduledTSV": (duty) ? duty.scheduledTSV : 0,
                 //'registration': ofp.infos.aircraftRegistration,
                 //'ralts': ofp.infos.ralts,
                 //'etopsOutput': etopsMarkdown(etopsList(ofp, takeOffTime)), //TODO when removing, delete ref to etopsMarkdown, etopsList, etopsData
