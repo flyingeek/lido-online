@@ -4,7 +4,7 @@
     import {focusMap} from './utils';
     export let name="take-off";
 
-    const ofpTakeOff = new Date($ofp.infos.ofpOFF.getTime());
+    $: ofpTakeOff = new Date($ofp.infos.ofpOFF.getTime());
     //console.log($takeOffTime, $ofp)
     const hm2input = (hours, minutes) => `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 
