@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.17] - 2021-12-07
+
+### Fixed
+
+- Champ de saisie de l'heure de décollage pouvait ne pas s'actualiser au changement d'OFP
+
 ## [1.16.16] - 2021-12-04
 
 ### Added
