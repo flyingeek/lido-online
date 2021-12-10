@@ -7,7 +7,7 @@
     "OFP2MAP-ETOPS": {
         "version": 6,
         "url": "https://www.icloud.com/shortcuts/75e470e51e9442768298dd16b73d8e84",
-        "description": "Affiche un cartouche ETOPS actualisé."
+        "description": "Affiche un cartouche ETOPS actualisé. Il est recommandé de ne plus utiliser ce plugin, Pilot\u00A0Mission/FlightLog/ETOPS fait la même chose."
     },
     "OFP2MAP-FAA WIPs": {
         "version": 3,
@@ -15,8 +15,8 @@
         "description": "Affiche la carte des travaux sol sur les terrains US"
     },
     "OFP2MAP-FTL": {
-        "version": 1,
-        "url": "https://www.icloud.com/shortcuts/1a5c7e8a5e3741b0b7d719fc8ea6f9aa",
+        "version": 2,
+        "url": "https://www.icloud.com/shortcuts/52ac3c7d94a34a4d8899b5a918a13b98",
         "description": "Calcul en réalisation des limitations TSV et des repos PNC"
     },
     "OFP2MAP-MENU": {

@@ -55,7 +55,7 @@
     // };
     // note that if $ofp.infos.tripFuel = 0 (bad ofp parsing), fuelMarginTime will be infinity => no alert
     $: fuelMarginTime = $ofp.infos.minFuelMarginETOPS / ($ofp.infos.tripFuel/$ofp.infos.flightTime);
-    $: console.log(pairingData($ofp));//.steps.join('\n'));
+    //$: console.log(pairingData($ofp));//.steps.join('\n'));
 
     // const etopsMarkdown = (altnETOPSPoints) => {
     //     const results = [];
@@ -189,6 +189,10 @@
             Object.entries(ofp.infos).filter(([key, val])=> !excluded.includes(key))
         );
         //const filteredText = ofp.text.match(/^(?:.+?)Main OFP(.+?)--ROUTE\/FL/s);
+        let filteredText = '';
+        // try{
+        //     filteredText = ofp.text.match(/FUEL FROM EEP.+?-----/s)[0];
+        // }catch(e){}
         const duty = pairingData(ofp);
         const shareData = {
             'title': 'OFP2MAP',
@@ -199,9 +203,7 @@
                 "altnETOPS": ofp.infos.ralts,
                 "etopsData": etopsData(ofp, takeOffTime),
                 //'route': getOfpRouteExport(ofp),
-                "pairing": {
-                    duty 
-                },
+                'pairing' : {duty},
                 //deprecated from 07/08/21
                 "scheduledTSV": (duty) ? duty.scheduledTSV : 0,
                 //'registration': ofp.infos.aircraftRegistration,
@@ -210,7 +212,7 @@
                 //'ofp2map-takeoff': takeOffTime,
                 //end of deprecated
                 plugins,
-                rawText: ''//(filteredText) ? filteredText[1] : ofp.text
+                rawText: filteredText
             })//.replace(/"(?:lati|longi)tude":"([0-9.]+)"/gu, (_, p1) => p1)
         }
 

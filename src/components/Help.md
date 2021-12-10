@@ -194,7 +194,7 @@ OFP2MAP peut aussi utiliser un GPS. En cliquant sur <svg><use xlink:href="#geolo
 
 ## ETOPS
 
-La capacité ETOPS est determinée depuis l'OFP et les cercles sont tracés. Un drapeau <span style="background-color: var(--bs-warning); padding: 0 3px; font-size: 9px;">ETOPS</span> apparait dans le pavé d'information de l'OFP si le carburant est limitatif (20mn, soit environ 2T de marge sur 777). Pour avoir plus d'informations vous pouvez utiliser un [plugin](#_plugins).
+La capacité ETOPS est determinée depuis l'OFP et les cercles sont tracés. Un drapeau <span style="background-color: var(--bs-warning); padding: 0 3px; font-size: 9px;">ETOPS</span> apparait dans le pavé d'information de l'OFP si le carburant est limitatif (20mn, soit environ 2T de marge sur 777). Pour avoir plus d'informations, consultez Pilot&#xA0;Mission/FlightLog/ETOPS.
 
 Les appuis ETOPS sont affichés avec l'icône <span class="big" style="color: #FC2403FF;">▲</span> (dans la couleur des cercles ETOPS). Les adéquats d'entrée et de sortie ETOPS avec le symbole <span class="big" style="color: #095;">▲</span> (dans la couleur des adéquats du style utilisé). La couleur des cercles des points d'entrée et de sortie est celle de la route.
 
