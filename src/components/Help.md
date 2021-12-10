@@ -181,7 +181,7 @@ Pour mieux comprendre le GRAMET, je vous conseille son <Link href="http://www.og
 
 ## Position avion <svg style="transform: scale(1.4,1.4); margin-left:5px;"><use xlink:href="#takeoff-symbol"></use></svg><svg style="transform: scale(1.4,1.4); margin-left:8px;"><use xlink:href="#geolocate-symbol"></use></svg>
 
-L'avion dans la barre de menu <svg><use xlink:href="#takeoff-symbol"></use></svg> permet d'afficher la position estimée <svg style="color: var(--plane-color)"><use xlink:href="#location-symbol"></use></svg> sur la route en prenant en compte les estimées de l'OFP. En cas d'erreur lors de reconnaissance des waypoints, la position sera basée sur un simple ratio horaire, merci de me transmettre l'OFP dans ce cas (ce sera signalé par un avion rouge dans la barre de menu et par l'absence des éphémérides). L'heure de décollage est modifiable et permet d'ajuster la position estimée à la minute près.
+L'avion dans la barre de menu <svg><use xlink:href="#takeoff-symbol"></use></svg> permet d'afficher ou de masquer la position estimée <svg style="color: var(--plane-color)"><use xlink:href="#location-symbol"></use></svg> sur la route en prenant en compte les estimées de l'OFP. En cas d'erreur lors de reconnaissance des waypoints, la position sera basée sur un simple ratio horaire, merci de me transmettre l'OFP dans ce cas (ce sera signalé par un avion rouge dans la barre de menu et par l'absence des éphémérides). L'heure de décollage est modifiable et permet d'ajuster la position estimée à la minute près.
 
 La position estimée est affichée en permanence sur le GRAMET, la miniature du GRAMET et les timelines des éphémérides. Pour un OFP ancien, la position estimée sera toujours la destination.
 

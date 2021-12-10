@@ -3,6 +3,17 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.18] - 2021-12-10
+
+### Deprecated
+
+- Le plugin OFP2MAP-ETOPS sera prochainement supprimé, Pilot Mission/FlightLog/ETOPS fait la même chose à présent.
+
+### Changed
+
+- Par défaut la position estimée est affichée sur la carte (c’est pour ceux qui ne lisent pas l’aide).
+- Le plugin [OFP2MAP-FTL v2](https://www.icloud.com/shortcuts/52ac3c7d94a34a4d8899b5a918a13b98) est amélioré: sortie au format PDF, fuseaux horaires plus précis, quelques bugs corrigés. La v1 ne fonctionne plus donc mise à jour impérative.
+
 ## [1.16.17] - 2021-12-07
 
 ### Fixed
