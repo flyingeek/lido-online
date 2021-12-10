@@ -1,4 +1,5 @@
 //const Papa = require('papaparse');
+import got from 'got';
 import Papa from 'papaparse';
 import fs from 'fs';
 import { countryCodeEmoji, countryCodeName } from '../src/components/countries.js';
@@ -11,6 +12,10 @@ const dataPath = `data/Global${airac}.csv`;
 const output = "../lidojs/src/modules/airports.json";
 const iataOutput = "../lidojs/src/modules/iata2icao.json";
 const geojson = "data/airports.geojson";
+
+const gistURL = "https://github.com/mborsetti/airportsdata/raw/main/airportsdata/airports.csv";
+const tzOutput = "../lidojs/src/modules/timezones.json";
+const airportsdataTZ = {};
 
 const iata2countryData = JSON.parse(fs.readFileSync('data/iata2country.json'));
 const iata2cc = (iata) => {
@@ -32,6 +37,8 @@ function parseGlobal() {
     let counter = 0;
     const results = {};
     let iataResults = "";
+    let timezones = {};
+    let timezonesIndex = 1; // '00' means timezone is missing
     const geojsonResults = [];
     //const icaoCountries = {};
     Papa.parse(file, {
@@ -110,7 +117,21 @@ function parseGlobal() {
             // if (longitude >= -30 && longitude <= 40 && latitude >=25) {
             //     icaoCountries[icao.substring(0, 2)] = true;
             // }
-            iataResults +=  data[2].trim() + ":" + data[0].trim();
+            let tzRef;
+            let tz = airportsdataTZ[icao];
+            if (tz) {
+                if (tz in timezones) {
+                    tzRef = timezones[tz];
+                } else {
+                    tzRef = timezonesIndex.toString(36).padStart(2, "0");
+                    timezones[tz] = tzRef;
+                    timezonesIndex++;
+                }
+            }else{
+                console.log(`missing time zone for ${icao}`);
+                tzRef = '00';
+            }
+            iataResults +=  data[2].trim() + ":" + data[0].trim() + tzRef;
             if (!data[2].trim()) console.log(`unkwnown iata code for ${data[0]}`, data);
             const EAO = ['BGSF', 'DAOO', 'FSIA', 'KJFK', 'LDDU', 'LEBB', 'LFKF', 'LFML', 'LFMN', 'LFTH', 'LGIR', 'LGSR', 'LIRN', 'LSZH', 'MMMX', 'MROC', 'MTPP', 'OIIE', 'OIII', 'RJTT', 'SBGL', 'SKBO', 'SVMI', 'TFFF', 'TFFR', 'TNCM'];
             const reco = (data[33]).trim();
@@ -165,6 +186,15 @@ function parseGlobal() {
                     console.log(`Saved ${counter} airports in ${iataOutput}`);
                 }
             });
+            const reversedTz = Object.assign({}, ...Object.entries(timezones).map(([a,b]) => ({ [b]: a })));
+            fs.writeFile(tzOutput, JSON.stringify(reversedTz),
+                (err) => {
+                    if (err) {
+                        throw err;
+                    }else{
+                        console.log(`Saved ${Object.keys(reversedTz).length} timezones! in ${tzOutput}`);
+                    }
+            });
             const collection = {
                 "type": "FeatureCollection",
                 "features": geojsonResults
@@ -179,4 +209,10 @@ function parseGlobal() {
         }
     });
 }
-parseGlobal();
+Papa.parse(got.stream(gistURL), {
+    "step": row => {
+        const [icao,,,,,,,,, tz] = row.data;
+        airportsdataTZ[icao] = tz;
+    },
+    "complete": parseGlobal
+});
