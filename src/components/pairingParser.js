@@ -187,6 +187,15 @@ const getDutyWithFTL = ([duties, acclimatizationStep], {base, flightTypeAircraft
     addStep(`Le TSV FTL se termine au bloc réel ${manex("07.02.Définitions")}`);
     addStep(`TSV FTL: ${minutesToHHMM(duty.FDP)} ${manex("07.02.Définitions")}`);
 
+    addStep(`nombre de tronçons du SV au sens FTL: ${easaNumberOfLegs(duty.legs)} ${manex("07.05.05")}`);
+    const maxTSVFTL = {
+        'PEQ2': {},
+        'PEQ3': {'value': maxFDPWithRest(duty.legs, 3, preOperational)},
+        'PEQ4': {'value': maxFDPWithRest(duty.legs, 4, preOperational)}
+    };
+    if(preOperational) addStepLC(`<b>PEQ3/PEQ4 PRE considéré comme opérationnel</b>`);
+    addStepLC(`TSV MAX FTL PEQ3: ${decimalToHHMM(maxTSVFTL.PEQ3.value)} ${manex("07.05.04.C")}`);
+    addStepLC(`TSV MAX FTL PEQ4: ${decimalToHHMM(maxTSVFTL.PEQ4.value)} ${manex("07.05.04.C")}`);
     if (duty.acclimatization.value === 'Base'){
         addStep(`Equipage acclimaté à la base ${duty.depIATA} (${mayWrap(`GMT${duty.reportingFTL.tz}`, 'b', !duty.acclimatization.safeTZ)}) ${manex("07.02.Définitions")}`);
     }else if (duty.acclimatization.value === '±2') {
@@ -195,54 +204,42 @@ const getDutyWithFTL = ([duties, acclimatizationStep], {base, flightTypeAircraft
         if (acclimatizationStep) addStep(acclimatizationStep);
         addStep(`ACCLIMATATION: "${duty.acclimatization.value}"${(duty.acclimatization.value !== 'X') ? ' fuseau GMT' + duty.acclimatization.tz + ' (' + duty.acclimatization.iata + ')': ''} ${manex("07.02.Définitions")}`);
     }
-
-    addStep(`nombre de tronçons du SV au sens FTL: ${easaNumberOfLegs(duty.legs)} ${manex("07.05.05")}`);
-    let maxFDP_PEQ2;
     if (duty.acclimatization.value === 'X') {
         const sgrf = false;
-        maxFDP_PEQ2 = matchInTable([easaNumberOfLegs(duty.legs), sgrf], FDP_EASA_BASE_UNKNOWN_ACCLIMATIZATION_DATA)
+        maxTSVFTL.PEQ2 = matchInTable([easaNumberOfLegs(duty.legs), sgrf], FDP_EASA_BASE_UNKNOWN_ACCLIMATIZATION_DATA);
         addStep(`<b>accord spécifique SGRF: NON</b> -> ajouter 1h au TSV MAX FTL PEQ2 si OUI`)
-        addStep(`TSV MAX FTL PEQ2: ${decimalToHHMM(maxFDP_PEQ2.value)} ${manex("07.05.04.A.b")}`);
+        addStep(`TSV MAX FTL PEQ2: ${decimalToHHMM(maxTSVFTL.PEQ2.value)} ${manex("07.05.04.A.b")}`);
     }else{
         const refDate = new Date(duty.reportingFTL.value.getTime() + (parseFloat(duty.acclimatization.tz) * 3600000));
         const refTime = refDate.getUTCHours() + (refDate.getUTCMinutes() / 60);
-        maxFDP_PEQ2 = matchInTable([easaNumberOfLegs(duty.legs), refTime], FDP_EASA_BASE_ACCLIMATED_DATA);
+        maxTSVFTL.PEQ2 = matchInTable([easaNumberOfLegs(duty.legs), refTime], FDP_EASA_BASE_ACCLIMATED_DATA);
         addStep(`Heure de référence FTL: ${dateToHHMM(refDate)}`)
-        addStep(`TSV MAX FTL PEQ2: ${decimalToHHMM(maxFDP_PEQ2.value)} ${manex("07.05.04.A.a")}`);
+        addStep(`TSV MAX FTL PEQ2: ${decimalToHHMM(maxTSVFTL.PEQ2.value)} ${manex("07.05.04.A.a")}`);
     }
-    const maxTSVFTL = {
-        'PEQ2': {'value': maxFDP_PEQ2.value},
-        'PEQ3': {'value': maxFDPWithRest(duty.legs, 3, preOperational)},
-        'PEQ4': {'value': maxFDPWithRest(duty.legs, 4, preOperational)}
-    };
-    if(preOperational) addStepLC(`<b>PEQ3/PEQ4 PRE considéré comme opérationnel</b>`);
-    addStepLC(`TSV MAX FTL PEQ3: ${decimalToHHMM(maxTSVFTL.PEQ3.value)} ${manex("07.05.04.C")}`);
-    addStepLC(`TSV MAX FTL PEQ4: ${decimalToHHMM(maxTSVFTL.PEQ4.value)} ${manex("07.05.04.C")}`);
-
-    const refAFTZ = computeRefTimeTZAF(flightTypeAircraft, flightTypePNT, baseTZ, base, (duty.reportingAF.value.getTime() - duties[0].reportingAF.value.getTime())/3600000, duty, steps);
-    addStep(`Fuseau de référence AF: GMT${refAFTZ} ${manex("07.08.01.A")}`);
-
-    const refDateAF = new Date(duty.reportingAF.value.getTime() + (parseFloat(refAFTZ) * 3600000));
-    addStep(`Heure de référence AF: ${dateToHHMM(refDateAF)} ${manex("07.08.01.A")}`);
-    const refTimeAF = refDateAF.getUTCHours() + (refDateAF.getUTCMinutes() / 60);
-    addStep(`nombre de tronçons du SV au sens AF: ${afNumberOfLegs(duty.legs)} ${manex("07.08.03 & 07.08.05.D")}`);
     let layoverRestTimeHours;
     if (previousDuty) {
         const previousEndTSVAFTime = previousDuty.IN.getTime() + (15 * 60000); // 15 because previous duty can not be the last duty
         layoverRestTimeHours = (duty.reportingAF.value.getTime() - previousEndTSVAFTime) / 3600000;
-        addStep(`<b>Durée du repos en escale: ${decimalToHHMM(layoverRestTimeHours)}</b> -> TSV MAX AF ≤ repos`);
+        addStep(`<b>Durée du repos en escale: ${decimalToHHMM(layoverRestTimeHours)}</b> -> sinon, vérifier TSV MAX AF ≤ repos`);
     }else{
         layoverRestTimeHours = 100; //big enough number
     }
     const maxTSVAF = {
-        'PEQ2': {'value': computeMaxTSVAF_PEQ2(duty.legs, flightTypeAircraft, refTimeAF, layoverRestTimeHours).value},
+        'PEQ2': {},
         'PEQ3': {'value': maxTSVWithRest(duty.legs, 3, isCargo)},
         'PEQ4': {'value': maxTSVWithRest(duty.legs, 4, isCargo)}
     };
-    addStep(`TSV MAX AF PEQ2: ${decimalToHHMM(maxTSVAF.PEQ2.value)} ${(flightTypeAircraft === "LC") ? manex("07.08.05.B") : manex("07.08.03.B")}`);
+    addStep(`nombre de tronçons du SV au sens AF: ${afNumberOfLegs(duty.legs)} ${manex("07.08.03 & 07.08.05.D")}`);
     addStepLC(`<b>Vol Cargo: ${(isCargo) ? "OUI" : "NON"}</b>`);
     addStepLC(`TSV MAX AF PEQ3 (LC): ${decimalToHHMM(maxTSVAF.PEQ3.value)} ${manex("07.08.05.C")}`);
     addStepLC(`TSV MAX AF PEQ4 (LC): ${decimalToHHMM(maxTSVAF.PEQ4.value)} ${manex("07.08.05.C")}`);
+    const refAFTZ = computeRefTimeTZAF(flightTypeAircraft, flightTypePNT, baseTZ, base, (duty.reportingAF.value.getTime() - duties[0].reportingAF.value.getTime())/3600000, duty, steps);
+    const refDateAF = new Date(duty.reportingAF.value.getTime() + (parseFloat(refAFTZ) * 3600000));
+    const refTimeAF = refDateAF.getUTCHours() + (refDateAF.getUTCMinutes() / 60);
+    maxTSVAF.PEQ2 = computeMaxTSVAF_PEQ2(duty.legs, flightTypeAircraft, refTimeAF, layoverRestTimeHours);
+    addStep(`Fuseau de référence AF: GMT${refAFTZ} ${manex("07.08.01.A")}`);
+    addStep(`Heure de référence AF: ${dateToHHMM(refDateAF)} ${manex("07.08.01.A")}`);
+    addStep(`TSV MAX AF PEQ2: ${decimalToHHMM(maxTSVAF.PEQ2.value)} ${(flightTypeAircraft === "LC") ? manex("07.08.05.B") : manex("07.08.03.B")}`);
 
     const latestIN_AF = (peq) => new Date(duty.reportingAF.value.getTime() + (maxTSVAF[peq].value * 3600000) - (((courrierCroise) ? 75 : 15) * 60000));
     const latestIN_FTL = (peq) => new Date(duty.reportingFTL.value.getTime() + (maxTSVFTL[peq].value * 3600000));
@@ -250,18 +247,17 @@ const getDutyWithFTL = ([duties, acclimatizationStep], {base, flightTypeAircraft
         const IN_AF = latestIN_AF(peq);
         const IN_FTL = latestIN_FTL(peq);
         return (IN_FTL <= IN_AF)
-                ? {'rule': 'FTL', 'value': maxTSVFTL[peq].value, 'IN': IN_FTL}
-                : {'rule': 'AF', 'value': maxTSVAF[peq].value, 'IN': IN_AF};
+                ? {'rule': 'FTL', 'value': maxTSVFTL[peq].value, 'IN': IN_FTL, 'isForbidden': IN_FTL.getTime() < duty.IN.getTime()}
+                : {'rule': 'AF', 'value': maxTSVAF[peq].value, 'IN': IN_AF, 'isForbidden': IN_AF.getTime() < duty.IN.getTime()};
     };
     const maxTSV_PEQ2 = maxTSV('PEQ2');
     const maxTSV_PEQ3 = maxTSV('PEQ3');
     const maxTSV_PEQ4 = maxTSV('PEQ4');
-    const PEQ2_FORBIDDEN = maxTSV_PEQ2.IN.getTime() < duty.IN.getTime();
     const getReposPNC = maxTSV => matchInTable([preOperational, (maxTSV.rule === 'FTL') ? maxTSV.value : (maxTSV.IN.getTime() - duty.reportingFTL.value.getTime()) / 3600000], FDP_EASA_PNC_PRE_REST).value;
-    maxTSV_PEQ2.reposPNC = (flightTypeAircraft !== "LC" || PEQ2_FORBIDDEN) ? '' : '00:00';
+    maxTSV_PEQ2.reposPNC = 0;
     addStepLC(`Calculs des repos en vol FTL pour le PNC au TSV MAX`);
-    maxTSV_PEQ3.reposPNC =  minutesToHHMM(getReposPNC(maxTSV_PEQ3));
-    maxTSV_PEQ4.reposPNC =  minutesToHHMM(getReposPNC(maxTSV_PEQ4));
+    maxTSV_PEQ3.reposPNC =  getReposPNC(maxTSV_PEQ3);
+    maxTSV_PEQ4.reposPNC =  getReposPNC(maxTSV_PEQ4);
     
     const FDP_PNC_REST = (duty.FDP /60 > maxTSVFTL.PEQ2.value)
                             ? matchInTable([preOperational, duty.FDP/60], FDP_EASA_PNC_PRE_REST)
@@ -294,7 +290,7 @@ const getDutyWithFTL = ([duties, acclimatizationStep], {base, flightTypeAircraft
     }
     const blockTimeOFP = duty.legs[duty.legs.length - 1].blockTimeOFP;
     if (blockTimeOFP) { // on last leg perform departure computations
-        addStep(`Dernière étape du SV, butées départ calculées avec le bloc: ${minutesToHHMM(blockTimeOFP)}`);
+        addStep(`Dernière étape du SV, butées départ calculées avec le bloc OFP: ${minutesToHHMM(blockTimeOFP)}`);
         maxTSV_PEQ2.OUT = new Date(maxTSV_PEQ2.IN.getTime() - (blockTimeOFP * 60000));
         maxTSV_PEQ3.OUT = new Date(maxTSV_PEQ3.IN.getTime() - (blockTimeOFP * 60000));
         maxTSV_PEQ4.OUT = new Date(maxTSV_PEQ4.IN.getTime() - (blockTimeOFP * 60000));
@@ -493,21 +489,21 @@ export const pairingData = (ofp) => {
         'destIATA': duty.destIATA,
         'maxTSV_PEQ2': {
             'rule': duty.maxTSV_PEQ2.rule,
-            'textIN': (duty.maxTSV_PEQ2.IN.getTime() < duty.IN.getTime()) ? FORBIDDEN : dateToHHMM(duty.maxTSV_PEQ2.IN) + 'z',
+            'textIN': (duty.maxTSV_PEQ2.isForbidden) ? FORBIDDEN : dateToHHMM(duty.maxTSV_PEQ2.IN) + 'z',
             'textOUT': diff_formula(duty.maxTSV_PEQ2, duty),
-            'reposPNC': duty.maxTSV_PEQ2.reposPNC
+            'reposPNC': (pairing.flightTypeAircraft !== "LC" || duty.maxTSV_PEQ2.isForbidden) ? '' : minutesToHHMM(duty.maxTSV_PEQ2.reposPNC),
         },
         'maxTSV_PEQ3': {
             'rule': duty.maxTSV_PEQ3.rule,
-            'textIN': (duty.maxTSV_PEQ3.IN.getTime() < duty.IN.getTime()) ? FORBIDDEN : dateToHHMM(duty.maxTSV_PEQ3.IN) + 'z',
+            'textIN': (duty.maxTSV_PEQ3.isForbidden) ? FORBIDDEN : dateToHHMM(duty.maxTSV_PEQ3.IN) + 'z',
             'textOUT': diff_formula(duty.maxTSV_PEQ3, duty),
-            'reposPNC': duty.maxTSV_PEQ3.reposPNC,
+            'reposPNC': (duty.maxTSV_PEQ3.isForbidden) ? '' : minutesToHHMM(duty.maxTSV_PEQ3.reposPNC),
         },
         'maxTSV_PEQ4': {
             'rule': duty.maxTSV_PEQ4.rule,
-            'textIN': (duty.maxTSV_PEQ4.IN.getTime() < duty.IN.getTime()) ? FORBIDDEN : dateToHHMM(duty.maxTSV_PEQ4.IN) + 'z',
+            'textIN': (duty.maxTSV_PEQ4.isForbidden) ? FORBIDDEN : dateToHHMM(duty.maxTSV_PEQ4.IN) + 'z',
             'textOUT': diff_formula(duty.maxTSV_PEQ4, duty),
-            'reposPNC': duty.maxTSV_PEQ4.reposPNC,
+            'reposPNC': (duty.maxTSV_PEQ4.isForbidden) ? '' : minutesToHHMM(duty.maxTSV_PEQ4.reposPNC),
         },
         //pilotCount,
         //pncCount,
