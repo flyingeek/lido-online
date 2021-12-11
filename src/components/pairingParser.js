@@ -75,7 +75,6 @@ const addDutyMeta = (duty, flightTypeAircraft, base) => {
         for (const leg of duty.legs.slice(1)) {
             if (leg.destIATA === firstLeg.depIATA || leg.destIATA === 'ORY' && firstLeg.depIATA === 'CDG' || leg.destIATA === 'CDG' && firstLeg.depIATA === 'ORY') {
                 firstLeg.depTZ = leg.destTZ;
-                duty.depTZ = firstLeg.depTZ;
                 break;
             }
         }
@@ -123,6 +122,7 @@ const addDutyMeta = (duty, flightTypeAircraft, base) => {
     return duty;
 }
 
+//for better understanding, see https://www.easa.europa.eu/faq/47576
 const addAcclimatization = (duties) => {
     let previousReportingFTL, previousDepIATA, previousAcclimatizationValue;
     const dutiesWithAcclimatization = [];
@@ -187,7 +187,7 @@ const getDutyWithFTL = ([duties, acclimatizationStep], {base, flightTypeAircraft
     addStep(`Le TSV FTL se termine au bloc réel ${manex("07.02.Définitions")}`);
     addStep(`TSV FTL: ${minutesToHHMM(duty.FDP)} ${manex("07.02.Définitions")}`);
 
-    addStep(`nombre de tronçons du SV au sens FTL: ${easaNumberOfLegs(duty.legs)} ${manex("07.05.05")}`);
+    addStep(`nombre de tronçons du SV au sens FTL: ${ftlNumberOfLegs(duty.legs)} ${manex("07.05.05")}`);
     const maxTSVFTL = {
         'PEQ2': {},
         'PEQ3': {'value': maxFDPWithRest(duty.legs, 3, preOperational)},
@@ -206,13 +206,13 @@ const getDutyWithFTL = ([duties, acclimatizationStep], {base, flightTypeAircraft
     }
     if (duty.acclimatization.value === 'X') {
         const sgrf = false;
-        maxTSVFTL.PEQ2 = matchInTable([easaNumberOfLegs(duty.legs), sgrf], FDP_EASA_BASE_UNKNOWN_ACCLIMATIZATION_DATA);
+        maxTSVFTL.PEQ2 = matchInTable([ftlNumberOfLegs(duty.legs), sgrf], FDP_EASA_BASE_UNKNOWN_ACCLIMATIZATION_DATA);
         addStep(`<b>accord spécifique SGRF: NON</b> -> ajouter 1h au TSV MAX FTL PEQ2 si OUI`)
         addStep(`TSV MAX FTL PEQ2: ${decimalToHHMM(maxTSVFTL.PEQ2.value)} ${manex("07.05.04.A.b")}`);
     }else{
         const refDate = new Date(duty.reportingFTL.value.getTime() + (parseFloat(duty.acclimatization.tz) * 3600000));
         const refTime = refDate.getUTCHours() + (refDate.getUTCMinutes() / 60);
-        maxTSVFTL.PEQ2 = matchInTable([easaNumberOfLegs(duty.legs), refTime], FDP_EASA_BASE_ACCLIMATED_DATA);
+        maxTSVFTL.PEQ2 = matchInTable([ftlNumberOfLegs(duty.legs), refTime], FDP_EASA_BASE_ACCLIMATED_DATA);
         addStep(`Heure de référence FTL: ${dateToHHMM(refDate)}`)
         addStep(`TSV MAX FTL PEQ2: ${decimalToHHMM(maxTSVFTL.PEQ2.value)} ${manex("07.05.04.A.a")}`);
     }
@@ -310,8 +310,8 @@ const getDutyWithFTL = ([duties, acclimatizationStep], {base, flightTypeAircraft
         addStepLC(`<b class="warning">Vérifiez les conditions des vols BEY pour le retard PNC</b>${manex("07.09.06.B.b")}`);
         retardPNC.textOUT = wrap(retardPNC.textOUT,'span.warning');
     }
-    steps.push(`Il est possible d'ajouter au TSV MAX une marge de 2h en PEQ2 et 3h en PEQ3/PEQ4 ${manex("07.06.07.B")}`);
-    steps.push(`<b>La REGUL PN a toujours raison</b> (même s'il faut parfois insister...)`);
+    addStep(`Il est possible d'ajouter au TSV MAX une marge de 2h en PEQ2 et 3h en PEQ3/PEQ4 ${manex("07.06.07.B")}`);
+    addStep(`<b>La REGUL PN a toujours raison</b> (même s'il faut parfois insister...)`);
     return {...duty, reposPNC, 'retardPNC': retardPNC || '', maxTSV_PEQ2, maxTSV_PEQ3, maxTSV_PEQ4, maxTSVFTL, maxTSVAF};
 };
 
@@ -511,6 +511,7 @@ export const pairingData = (ofp) => {
         scheduledTSV // deprecated
     }
 }
+
 const computeAcclimatization = (previousReporting, previousDepIATA, previousAcclimatizationValue, {reportingFTL,depIATA}, steps) => {
     const ellapsedTimeMn = (reportingFTL.value.getTime() - previousReporting.value.getTime()) /60000;
     const meridians = Math.abs(parseFloat(reportingFTL.tz) - parseFloat(previousReporting.tz));
@@ -586,7 +587,7 @@ const EASA_ACCLIMATIZATION = {
     ],
     //"dataDisplay": v => v,
 };
-const easaNumberOfLegs = (legs) => legs.length - ((legs.length > 0 && legs[0].isMEP) ? 1 : 0); //MANEX 07.05.05
+const ftlNumberOfLegs = (legs) => legs.length - ((legs.length > 0 && legs[0].isMEP) ? 1 : 0); //MANEX 07.05.05
 const afNumberOfLegs = (legs) => legs.length - ((legs.length > 0 && legs[legs.length-1].isMEP) ? 1 : 0); //MANEX 07.08.03 & 07.08.05.D
 const FDP_EASA_BASE_ACCLIMATED_DATA = {
     //"title": "Table MANEX 07.05.04.A",
@@ -667,11 +668,11 @@ const flightRestTimePNCAF = (flightTime) => { //MANEX 07.09.05.F
     }
 };
 const maxFDPWithRest = (legs, numberOfPilots, preUsable=true) => {
-    const numberOfLegs = easaNumberOfLegs(legs);
+    const numberOfLegs = ftlNumberOfLegs(legs);
     let hasOneSectorOf9hours = false;
     const reducer = (p, leg) => Math.max(p, leg.blockTime);
     if (numberOfLegs === 2) {
-        if (numberOfLegs < legs.length) {
+        if (numberOfLegs < legs.length) { //first is a MEP
             hasOneSectorOf9hours = legs.slice(1).reduce(reducer, 0) >= 540;
         }else{
             hasOneSectorOf9hours = legs.reduce(reducer, 0) >= 540;
@@ -746,17 +747,23 @@ const maxTSVWithRest = (legs, numberOfPilots, isCargo=false, steps) => { // MANE
 
 const computeMaxTSVAF_PEQ2 = (legs, flightTypeAircraft, refTime, previousRest) => {
     const numberOfLegs = afNumberOfLegs(legs);
+    const result = (interpolatedValue) => ({
+        "value": Math.min(interpolatedValue, previousRest),
+        "legs": numberOfLegs,
+        refTime,
+        "type": flightTypeAircraft 
+    });
     if (flightTypeAircraft === "LC") {
-        return {"value": Math.min(interpolate(refTime, (numberOfLegs <= 3) ? AF_LC_1_OR_2_OR_3_LEGS : AF_LC_4_LEGS), previousRest), "legs": numberOfLegs, refTime, "type": flightTypeAircraft};
+        return result(interpolate(refTime, (numberOfLegs <= 3) ? AF_LC_1_OR_2_OR_3_LEGS : AF_LC_4_LEGS));
     }else{
         if (numberOfLegs <= 2) {
-            return {"value": Math.min(interpolate(refTime, AF_MC_1_OR_2_LEGS), previousRest), "legs": numberOfLegs, refTime, "type": flightTypeAircraft};
+            return result(interpolate(refTime, AF_MC_1_OR_2_LEGS));
         }else if (numberOfLegs === 3) {
-            return {"value": Math.min(interpolate(refTime, AF_MC_3_LEGS), previousRest), "legs": numberOfLegs, refTime, "type": flightTypeAircraft};
+            return result(interpolate(refTime, AF_MC_3_LEGS));
         }else if (numberOfLegs === 4) {
-            return {"value": Math.min(interpolate(refTime, AF_MC_4_LEGS), previousRest), "legs": numberOfLegs, refTime, "type": flightTypeAircraft};
+            return result(interpolate(refTime, AF_MC_4_LEGS));
         }else if (numberOfLegs === 5) {
-            return {"value": Math.min(interpolate(refTime, AF_MC_5_LEGS), previousRest), "legs": numberOfLegs, refTime, "type": flightTypeAircraft};
+            return result(interpolate(refTime, AF_MC_5_LEGS));
         }
     }
 };
