@@ -226,8 +226,8 @@ const getDutyWithFTL = ([duties, acclimatizationStep], {base, flightTypeAircraft
     }
     const maxTSVAF = {
         'PEQ2': {},
-        'PEQ3': {'value': maxTSVWithRest(duty.legs, 3, isCargo)},
-        'PEQ4': {'value': maxTSVWithRest(duty.legs, 4, isCargo)}
+        'PEQ3': {'value': maxTSVWithRest(duty.legs, 3, isCargo, steps)},
+        'PEQ4': {'value': maxTSVWithRest(duty.legs, 4, isCargo, steps)}
     };
     addStep(`nombre de tronçons du SV au sens AF: ${afNumberOfLegs(duty.legs)} ${manex("07.08.03 & 07.08.05.D")}`);
     addStepLC(`<b>Vol Cargo: ${(isCargo) ? "OUI" : "NON"}</b>`);
@@ -691,7 +691,7 @@ const maxFDPWithRest = (legs, numberOfPilots, preUsable=true) => {
         }
     }
 };
-const maxTSVWithRest = (legs, numberOfPilots, isCargo=false) => { // MANEX 07.08.05.C
+const maxTSVWithRest = (legs, numberOfPilots, isCargo=false, steps) => { // MANEX 07.08.05.C
     const numberOfLegs = afNumberOfLegs(legs);
     if (!isCargo) {
         if (numberOfPilots >= 4 && numberOfLegs === 1) {
@@ -704,24 +704,39 @@ const maxTSVWithRest = (legs, numberOfPilots, isCargo=false) => { // MANEX 07.08
         }
     } else { // cargo
         if (numberOfPilots >= 4) {
-            return (numberOfLegs === 1) ? 18 : (numberOfLegs === 2 ) ? 17.5 : 0;
-        }
-        if (numberOfLegs === 1 || (numberOfLegs === 2 && legs.length > 0 && legs[0].blockTime <= 90)) {
-            return 16.5;
-        }else if (numberOfLegs === 2 && legs.length > 0 && legs[0].depIATA === legs[legs.length - 1].destIATA ){ // AR
-            return 14;
-        }else if (numberOfLegs === 2){ // not AR
-            if (legs.length > 0 && legs[0].depIATA === 'MEX' && legs[0].blockTime <= 210) { //retour MEX, première étable moins de 3h30
-                return 16.5;
+            if (numberOfLegs === 1) {
+                //steps.push(`Le SV est un cargo mono-tronçon en PEQ2 doublé`);
+                return 18;
+            }else if (numberOfLegs === 2 && legs[0].depIATA !== legs[legs.length - 1].destIATA){
+                //steps.push(`Le SV est un cargo bi-tronçons (pas d'aller-retour) en PEQ2 doublé`);
+                return 17.5;
             }
-            return 15;
-        }else if (numberOfLegs === 3 && legs.length > 0){
-            const localTimeOfDepartureDate = new Date(legs[0].OUT.getTime() + (parseFloat(legs[0].depTZ) * 3600000));
-            const localTimeOfDeparture = localTimeOfDepartureDate.getUTCHours() + (localTimeOfDepartureDate.getUTCMinutes() / 60);
-            if (localTimeOfDeparture <= 10.5) {
-                const blockTimeCondition = legs.reduce((p, leg) => (p || leg.blockTime >= 330), false); //au moins une étape de plus de 5h30
-                if (blockTimeCondition) {
-                    return 14.5; // cargo tri tronçons afrique (TODO: Afrique non testé)
+        }else if (numberOfPilots === 3) {
+            if (numberOfLegs === 1){
+                //steps.push(`Le SV est un cargo mono-tronçon en PEQ2 reforcé`);
+                return 16.5;
+            }else if (numberOfLegs === 2 && legs[0].blockTime <= 90) {
+                //steps.push(`Le SV est un cargo bi-tronçons (première étape <= 1h30) en PEQ2 reforcé`);
+                return 16.5;
+            }else if (numberOfLegs === 2 && legs[0].depIATA === legs[legs.length - 1].destIATA ){ // AR
+                //steps.push(`Le SV est un cargo aller-retour`);
+                return 14;
+            }else if (numberOfLegs === 2) { // not AR
+                if (legs[0].depIATA === 'MEX' && legs[0].blockTime <= 210 && ['CDG', 'ORY'].includes(legs[legs.length - 1].destIATA)) { //retour MEX, première étable moins de 3h30
+                    //steps.push(`Le SV est un cargo bi-tronçons retour MEX ${manex('07.08.05.C.a')}`);
+                    return 16.5;
+                }
+                //steps.push(`Le SV est un cargo bi-tronçons (pas d'aller-retour)`);
+                return 15;
+            }else if (numberOfLegs === 3){
+                const localTimeOfDepartureDate = new Date(legs[0].OUT.getTime() + (parseFloat(legs[0].depTZ) * 3600000));
+                const localTimeOfDeparture = localTimeOfDepartureDate.getUTCHours() + (localTimeOfDepartureDate.getUTCMinutes() / 60);
+                if (localTimeOfDeparture <= 10.5) {
+                    const blockTimeCondition = legs.reduce((p, leg) => (p || leg.blockTime >= 330), false); //au moins une étape de plus de 5h30
+                    if (blockTimeCondition) {
+                        steps.push(`<b>PEQ3: Le SV est considéré comme un cargo tri-tronçons Afrique</b> ${manex('07.08.05.C.a')}`);
+                        return 14.5; // (TODO: Afrique non testé)
+                    }
                 }
             }
         }
