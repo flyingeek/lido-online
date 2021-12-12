@@ -119,6 +119,9 @@
                 tilesMissing = [];
                 cacheMaxValue = 0;
                 cacheValue = -1;
+            }else{
+                tilesMissing = await findMissingCacheTiles(ofp, mapData);
+                cacheError = true;
             }
         }finally{
             cacheButtonDisabled = false;
