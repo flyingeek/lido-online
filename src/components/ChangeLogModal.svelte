@@ -30,14 +30,16 @@
     import { fade } from 'svelte/transition';
     import ChangeLog from "./ChangeLog.svelte";
     import clickOutside from '../actions/clickOutsideAction';
+    import {noop} from './utils';
 
     export let title = 'CHANGELOG';
     export let version = undefined;
+    export let setHelpLinks = null;
     let visible = !!version;
-    let promise = (visible) ? fetchChangelog() : undefined;
-    let checked = showChangelogOnUdate();
-
-    export const show = async () => {
+    let promise;
+    let checked;
+    export const show = () => {
+        checked = showChangelogOnUdate();
         visible = true;
         promise = fetchChangelog();
     };
@@ -45,15 +47,15 @@
         visible = false;
         setPreviousAppVersion();
     };
-
     export const save = () => {
         storage.setItem(store, checked);
     }
+    if (visible) show();
 </script>
 
 {#if visible}
     <div class="modal" tabindex="-1" role="dialog" in:fade>
-        <div class="modal-dialog modal-xl modal-dialog-centered" role="document" use:clickOutside  on:click_outside={close}>
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document" use:clickOutside  on:click_outside={(!version) ? close : noop}>
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{title}
@@ -68,7 +70,7 @@
                     {#await promise}
                     <p>chargement...</p>
                     {:then data}
-                    <ChangeLog {data} {version}/>
+                    <ChangeLog {data} {version} {setHelpLinks}/>
                     {/await}
                 </div>
             </div>

@@ -66,12 +66,25 @@
     export const badgeTextColor = (category) => badgeTextColors[category.toUpperCase()] || 'text-dark';
 </script>
 <script>
+    import { onMount } from 'svelte';
     export let data;
+    export let setHelpLinks = null;
     export let limit = undefined;
     export let version = undefined;
+    let changelogElement;
+    onMount(() => {
+        let removeHelpLinksHandler;
+        if (setHelpLinks) {
+            removeHelpLinksHandler = setHelpLinks(changelogElement);
+        }
+            
+        return () => {
+            if (setHelpLinks) removeHelpLinksHandler();
+        }
+    });
 </script>
 
-<ul class="markdown">
+<ul bind:this={changelogElement} class="markdown">
 {#each filterChangeLog(data, {version, limit}) as [title, section]}
     {#if title !== "raw"}
         <li>

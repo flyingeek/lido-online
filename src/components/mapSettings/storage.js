@@ -90,7 +90,7 @@ export const validate = (options, defaultOptions=kmlDefaultOptions) => {
 };
 
 
-export const setHistory = (kmlOptions, route, name="Mon OFP2MAP") => {
+export const setHistory = (kmlOptions, name="Mon OFP2MAP") => {
     const options = {};
     const includedStores = ["optionsKML", "shortcut", "downloadType"];
     for (const [key, store] of Object.entries(stores)) {
@@ -120,7 +120,7 @@ export const setHistory = (kmlOptions, route, name="Mon OFP2MAP") => {
         window.location.origin +
         window.location.pathname +
         (query ? "?" + query : "") +
-        '#' + route;
+        window.location.hash;
     window.history.replaceState(options, name, permalink);
 };
 

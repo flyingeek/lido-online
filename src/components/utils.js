@@ -11,6 +11,7 @@ export const runningOnIpadUsingIOS15 = runningOnIpad && /Version\/15/i.test(navi
 export const usingChromeOnIOS = /CriOS/i.test(navigator.userAgent) && /iphone|ipod|ipad/i.test(navigator.userAgent);
 export const usingSafari = /Safari\//i.test(navigator.userAgent) && !(/(Chrome\/|Chromium\/)/i.test(navigator.userAgent));
 export const supportsHover = matchMedia('(hover: hover)').matches;
+export const noop = () => {};
 
 export function debounce(func, wait, immediate) {
     let timeout;

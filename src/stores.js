@@ -139,6 +139,7 @@ export const route = readable('/', set => {
             if (metaContent) meta.setAttribute('content', metaContent + ',maximum-scale=1'); 
         } else {
             if (metaContent) meta.setAttribute('content', metaContent.replace(',maximum-scale=1', ''));
+            if (route.startsWith('/help_')) route = '/help';
         }
         set(route);
         checkSWUpdate();
@@ -150,7 +151,6 @@ export const route = readable('/', set => {
         window.removeEventListener('hashchange', hashchange);
     };
 });
-export const isHelpRoute = derived(route, $route => $route === '/help' || ($route && $route.startsWith('/help')));
 
 export const flightProgress = derived(
     [ofp, simulate, takeOffTime, showPlaneOnMap, visible],

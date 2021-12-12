@@ -7,7 +7,7 @@
     import ReloadButton from './ReloadButton.svelte';
     import ShareAppButton from './ShareAppButton.svelte';
     import Sun from './Sun.svelte';
-    import {getContextualHelpLink, helpRouteRegex} from './Help.svelte';
+    import {getContextualHelpLink} from './Help.svelte';
     import { focusMap } from './utils';
 
     let menuCheckBox;
@@ -53,7 +53,7 @@
       <span>EXPORT</span></a>
     </li>
     {/if}
-    <li class="nav-item" class:active={$route.match(helpRouteRegex)}>
+    <li class="nav-item" class:active={$route === '/help'}>
       <a class="nav-link" href="{contextualHelpLink.href}" on:click={collapse}>
       <span>AIDE{#if contextualHelpLink.name}<small class="d-none d-lg-inline-block text-small-caps">/{contextualHelpLink.name}</small>{/if}</span></a>
     </li>

@@ -1,5 +1,4 @@
 <script context="module">
-    export const helpRouteRegex = /^\/help_?/u;
     export const getContextualHelpLink = (route) => {
         let name = "", href;
         switch (route) {
@@ -15,7 +14,7 @@
 <script>
 import Helpmarkup from './Help.md';
 import ChangeLogModal from './ChangeLogModal.svelte';
-import {wb, route} from '../stores';
+import {wb} from '../stores';
 import {debounce, Deferred} from './utils';
 import {onMount, tick} from "svelte";
 import blurAction from '../actions/blurAction';
@@ -28,16 +27,33 @@ const updateVersion = (_wb) => {
     return (_wb) ? _wb.messageSW({type: 'GET_VERSION'}).then(v => swVersion = v) : '';
 }
 $: updateVersion($wb);
-let scrollingElement, tocSelectElement, scrollingElementScrolling;
+let scrollingElement, scrollingElementScrolling;
 const toc = [];
 let tocNodeList;
 let selected;
+let requested;
 let observer;
 let modal;
 let imageMapSelector = '#memovisuel';
 
-
-$: setAndJumpTo($route);
+const setHelpLinks = (element, selector='a[href^="#/help"], area[href^="#/help"]') => {
+    const handler = (e) => {
+        let hash = e.target.hash;
+        if (!hash) {
+            const element = e.target.closest('a');
+            if (element) hash = element.hash;
+        }
+        if (hash) {
+            e.preventDefault();
+            setAndJumpTo(hash.slice(1));
+        }
+    }
+    const source = element || document;
+    source.querySelectorAll(selector).forEach(elt => elt.addEventListener('click', handler));
+    return () => {
+        source.querySelectorAll(selector).forEach(elt => elt.removeEventListener('click', handler));
+    }
+}
 
 const scrollEndCondition = (element) => {
     const relativeOffset = element.offsetTop  - scrollingElement.offsetTop;
@@ -66,14 +82,13 @@ function scrollTo(element, callback) {
         };
     }
 }
-// called from:
-// - the toc select menu
-// - setAndJumpTo (without arguments)
+
 const jumpTo = (e) => {
     if (!selected || !tocNodeList) return;
     if (e) e.target.blur(); // the toc select
+    requested = selected;
     const element = document.getElementById(selected);
-    if (element) {
+    if (element && window.location.hash === '#' + selected) {
         if (!scrollEndCondition(element)) {
             observer.disconnect();
             scrollingElementScrolling = scrollTo(element, () => {
@@ -84,16 +99,18 @@ const jumpTo = (e) => {
                     });
                 }
                 scrollingElementScrolling.reset();
+                requested = undefined;
             });
             //if (scrollingElementScrolling) console.log('scrollingElementScrolling set');
         }else{
+            requested = undefined;
             if (scrollingElementScrolling) scrollingElementScrolling.reset();
         }
+    }else{
+        window.location.hash = '#' + selected;
     }
 };
-// called from:
-// - onMount with the route
-// - the expanded toc menu
+
 const setAndJumpTo = (optionalRouteOrEvent) => {
     if (optionalRouteOrEvent) {
         if (optionalRouteOrEvent.target) {
@@ -101,8 +118,9 @@ const setAndJumpTo = (optionalRouteOrEvent) => {
             selected = optionalRouteOrEvent.target.dataset.id;
         }else{
             const decoded = decodeURI(optionalRouteOrEvent);
+            if (decoded.startsWith('#')) decoded = decoded.slice(1);
             if (decoded.startsWith('/help')){
-                const id = decoded.replace('/help_', '_'); //we use a _ prefix in section
+                const id = decoded;
                 if (toc && toc.map(v => v.id).includes(id)) {
                     selected = id;
                     modal.close(); // in case we are reading the changelog
@@ -149,6 +167,15 @@ const resizeImageMap = () => {
         });
     });
 };
+
+//handles popstate event to allow navigation using back button in history
+const popstate = () => {
+    const newSelection = document.location.hash.slice(1); //without #
+    if (selected !== newSelection && newSelection.startsWith('/help')){
+        setAndJumpTo(newSelection);
+    }
+};
+
 onMount(() => {
     tocNodeList = scrollingElement.querySelectorAll('.markdown section[id]');
     const observerRegistry = new Map();
@@ -162,53 +189,49 @@ onMount(() => {
                 break;
             }
         }
-        if (first) selected = first;
+        if (first) {
+            selected = first;
+            if (!requested) window.history.replaceState(undefined, undefined, '#' + selected);
+            if (requested === selected) {
+                window.location.hash = '#' + selected;
+                requested = undefined;
+            }
+        }
     }, {
         root: scrollingElement,
         rootMargin: '0px',
         threshold: 0
     });
-    //observe all of our markdown sections
-    tocNodeList.forEach((elt) => {
-        const h2 = elt.querySelector('h2:first-of-type')
-        toc.push({id: elt.id, label: h2.innerText, html: h2.innerHTML});
-        observer.observe(elt);
-    });
-    //console.log(toc)
-
-    //remap all internal links
-    const remapper = (e) => {
-        e.preventDefault();
-        const url = new URL(e.target.href);
-        setAndJumpTo(url.hash.replace('#_', '/help_'));
-    }
-    const remapperQueryExpression = 'a[href^="#_"], area[href^="#_"]';
-    document.querySelectorAll(remapperQueryExpression).forEach(elt => elt.addEventListener('click', remapper));
-
-    // clicking on help link or navbar triggers a scrollToTop like function
-    const jumpToTopQueryExpression  = '.navbar-nav, .nav-link[href="#/help"]';
-    document.querySelectorAll(jumpToTopQueryExpression).forEach(elt => elt.addEventListener('click', setAndJumpTo));
-
+    const removeHelpLinkHandlerContent = setHelpLinks(scrollingElement);
+    const removeHelpLinkHandlerNav = setHelpLinks(document.querySelector('nav.navbar'));
     // we have to resize the image's map on load and on resize
     imagesOnLoadPromise(imageMapSelector).then(() => {
         resizeImageMap();
+        tick().then(() => {
+            //observe all of our markdown sections
+            tocNodeList.forEach((elt) => {
+                const h2 = elt.querySelector('h2:first-of-type')
+                toc.push({id: elt.id, label: h2.innerText, html: h2.innerHTML});
+                observer.observe(elt);
+            });
+            setAndJumpTo(window.location.hash.slice(1));
+        }); // tick avoid bad positionning in Safari
     }).catch((err) => console.error(err));
 
-    tick().then(() => setAndJumpTo($route)); // tick avoid bad positionning in Safari
 
     return () => {
         observer.disconnect();
-        document.querySelectorAll(jumpToTopQueryExpression).forEach(elt => elt.removeEventListener('click', setAndJumpTo));
-        document.querySelectorAll(remapperQueryExpression).forEach(elt => elt.removeEventListener('click', remapper));
+        removeHelpLinkHandlerContent();
+        removeHelpLinkHandlerNav();
         if (scrollingElementScrolling) scrollingElementScrolling.reset();
         tocNodeList = undefined;
         observer = undefined;
     }
 });
 </script>
-<svelte:window on:resize={debounce(resizeImageMap, 500)}/>
+<svelte:window on:resize={debounce(resizeImageMap, 500)} on:popstate={popstate}/>
 
-<ChangeLogModal bind:this={modal} />
+<ChangeLogModal bind:this={modal} {setHelpLinks}/>
 <div class="help">
     <aside>
         <h1>
@@ -226,7 +249,7 @@ onMount(() => {
                 <button tabindex="0" class="changelog btn btn-outline-secondary btn-sm" on:click={modal.show}><!-- CHANGELOG --></button>
             </div>
             <!-- svelte-ignore a11y-no-onchange -->
-            <select bind:this={tocSelectElement} class="toc form-select form-select-sm" bind:value="{selected}" on:change={jumpTo} use:blurAction>
+            <select class="toc form-select form-select-sm" bind:value="{selected}" on:change={jumpTo} use:blurAction>
                 {#each toc as {id, label} (id)}
                     <option value={id} selected={id === selected}>{label}</option>
                 {/each}
@@ -261,14 +284,14 @@ onMount(() => {
     h1, .scrollContainer {
         background-color: white;
     }
-    :global(#_memovisuel){
+    :global(section[id="/help_memovisuel"]){
         margin-bottom: 1rem;
     }
-    :global(#_memovisuel h2:first-of-type){
+    :global(section[id="/help_memovisuel"] h2:first-of-type){
         position: relative;
         padding-bottom: 1rem;
     }
-    :global(#_memovisuel h2:first-of-type::after){
+    :global(section[id="/help_memovisuel"] h2:first-of-type::after){
         content: "\24D8\00A0Vous pouvez cliquer sur les zones"; /* ⓘ + nbsp;*/ 
         font-size: small;
         background-color: var(--bs-teal);
@@ -289,6 +312,7 @@ onMount(() => {
     }
     .scrollContainer {
         -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
         overflow-y: scroll;
         flex: 1 1 auto;
         height: 0;
@@ -444,7 +468,7 @@ onMount(() => {
             color: black;
             border-left-color: var(--bs-pink);
         }
-        :global(h2[data-id="_memovisuel"]::before){
+        :global(h2[data-id="/help_memovisuel"]::before){
             content: "★";
             color: var(--bs-yellow);
             margin-left: -11px;

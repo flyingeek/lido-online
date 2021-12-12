@@ -7,7 +7,7 @@
   import Navbar from "./components/Navbar.svelte";
   import OfpInput from './components/OfpInput.svelte';
   import Page from "./components/Page.svelte";
-  import Help, {helpRouteRegex} from "./components/Help.svelte";
+  import Help from "./components/Help.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
   import {storage, stores, validate, setHistory, storeSettingsFromURL} from "./components/mapSettings/storage.js";
   import {swDismiss, sidebar, route, checkSwOnVisibilityChange, ofp, ofpStatus, aircraftType} from "./stores.js";
@@ -21,14 +21,13 @@
 
   if (storage.getItem(stores.optionsKML) === null) storeSettingsFromURL(window.location.search);
   let kmlOptions = validate(storage.getItem(stores.optionsKML) || {}); //include default
-  setHistory(kmlOptions, $route);
+  setHistory(kmlOptions);
 
   const ofpChange = () =>{
     $sidebar = false;
     $swDismiss = false;
     //$showGramet = false; // this one is set in OfpInput instead
   };
-  $: isHelpRoute = helpRouteRegex.test($route); // needed because in scenario: reload, go to help, load ofp, svelte shows both map and help....
   onMount(() => {
         document.addEventListener("visibilitychange", checkSwOnVisibilityChange, false);
         return () => document.removeEventListener("visibilitychange", checkSwOnVisibilityChange);
@@ -46,7 +45,7 @@
       <SWUpdate prompt={!!$ofp}/>
       {#if ($ofp || $aircraftType) && $ofpStatus === 'success'}
         <Page hidden={$route !== '/map'} overflowY="hidden">
-          <Map id="map" bind:kmlOptions ofp={$ofp} on:save={() => setHistory(kmlOptions, $route)}/>
+          <Map id="map" bind:kmlOptions ofp={$ofp} on:save={() => setHistory(kmlOptions)}/>
         </Page>
       {/if}
 
@@ -56,14 +55,14 @@
         <Page><p class="ofpError">😱: {$ofpStatus}</p></Page>
       {:else if ($route === '/export') && $ofpStatus === 'success'}
         <Page maxWidth="1400px">
-          <Export {kmlOptions} on:save={() => setHistory(kmlOptions, $route)} />
+          <Export {kmlOptions} on:save={() => setHistory(kmlOptions)} />
           <LidoRoute />
         </Page>
       {:else if $route === '/'}
         <Page maxWidth="1400px">
           <Home />
         </Page>
-      {:else if isHelpRoute}
+      {:else if $route === '/help'}
         <Page  maxWidth="1400px" overflowY="hidden"><Help /></Page>
       {:else if !(($ofp || $aircraftType) && $route === '/map')}
         <!-- redirect -->
