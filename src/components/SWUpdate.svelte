@@ -64,7 +64,7 @@
                 window.location.reload();
             }, 5000);//secure a reload after 5s
         }else{ /* update probably done in another tab */
-            console.log($wb, $swRegistration, $swRegistration.waiting);
+            console.log($wb, $swRegistration, ($swRegistration) ? $swRegistration.waiting : '');
             console.debug('SWUpdate: no waiting reg reload');
             window.location.reload();
         }
