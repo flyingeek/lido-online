@@ -301,7 +301,7 @@ Après une mise à jour, les dernières nouveautés d'OFP2MAP s'affichent. Le bo
 - La partie serveur (un simple proxy pour pouvoir récupérer l'image du GRAMET) est en python.
 - Eric Delord CDB 777 est l'auteur. Le code source est disponible sur GitHub pour <Link href="https://github.com/flyingeek/lido-online">l'app</Link> et <Link href="https://github.com/flyingeek/ofp-gramet-aws">le proxy</Link>
 
-Vous pouvez me contacter sur l’email AF (erdelord@…) ou sur mon compte Twitter @flyingeek.
+Vous pouvez me contacter sur l’email AF (erdelord@…), sur le canal Team/MyConcorde, sur les forums Yammer mentionnés, ou sur mon compte Twitter @flyingeek.
 
 L'hébergement des images est normalement fourni par alwaysdata.com (pack gratuit) mais en raison d'un blacklistage sur le réseau internet d'AF, les fonds de cartes sont à présent hébergés sur netlify. Le proxy gramet est lui dorénavant hébergé sur aws. Le site est hébergé sur GitHub.
 

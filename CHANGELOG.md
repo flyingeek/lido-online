@@ -3,6 +3,18 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [1.16.19] - 2021-12-12
+
+### Fixed
+
+- Si la connexion est interrompue pendant le chargement du cache des cartes, affiche l'erreur à la fin.
+- Refactoring de l'aide pour rendre les liens directs plus robustes. Hélas, celà ne corrige pas les liens du mémo visuel qui parfois ne fonctionnent pas sous ios15.
+
+### Changed
+
+- Les étapes du calculs d'OFP2MAP-FTL ont été réordonnées pour mieux indiquer les paramètres utilisés à chaque étape.
+
 ## [1.16.18] - 2021-12-10
 
 ### Deprecated
