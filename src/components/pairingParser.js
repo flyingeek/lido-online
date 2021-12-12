@@ -199,7 +199,7 @@ const getDutyWithFTL = ([duties, acclimatizationStep], {base, flightTypeAircraft
     if (duty.acclimatization.value === 'Base'){
         addStep(`Equipage acclimaté à la base ${duty.depIATA} (${mayWrap(`GMT${duty.reportingFTL.tz}`, 'b', !duty.acclimatization.safeTZ)}) ${manex("07.02.Définitions")}`);
     }else if (duty.acclimatization.value === '±2') {
-        addStep(`méridiens traversés <= 2 => équipage acclimaté ${duty.acclimatization.iata} (${mayWrap(`GMT${duty.reportingFTL.tz}`, 'b', !duty.acclimatization.safeTZ)})  ${manex("07.02.Définitions")}`);
+        addStep(`méridiens traversés <= 2 -> équipage acclimaté ${duty.acclimatization.iata} (${mayWrap(`GMT${duty.reportingFTL.tz}`, 'b', !duty.acclimatization.safeTZ)})  ${manex("07.02.Définitions")}`);
     }else{
         if (acclimatizationStep) addStep(acclimatizationStep);
         addStep(`ACCLIMATATION: "${duty.acclimatization.value}"${(duty.acclimatization.value !== 'X') ? ' fuseau GMT' + duty.acclimatization.tz + ' (' + duty.acclimatization.iata + ')': ''} ${manex("07.02.Définitions")}`);
