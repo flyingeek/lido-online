@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Si la connexion est interrompue pendant le chargement du cache des cartes, affiche l'erreur à la fin.
 - Refactoring de l'aide pour rendre les liens directs plus robustes. Hélas, celà ne corrige pas les liens du mémo visuel qui parfois ne fonctionnent pas sous ios15.
+- Corrige l'arrondi sur les TSV AF pour éviter des décalages d'une minute dans les résultats affichés.
 
 ### Changed
 

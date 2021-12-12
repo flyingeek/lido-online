@@ -42,7 +42,7 @@ const reportingObject = (duty, minutesOffset) => {
 };
 
 const decimalToHHMM = (v) => `${Math.floor(v).toString().padStart(2,0)}:${((v - Math.floor(v)) * 60).toFixed(0).padStart(2,0)}`;
-const minutesToHHMM = (v) => `${Math.floor(v/60).toString().padStart(2,0)}:${((v/60 - Math.floor(v/60)) * 60).toFixed(0).padStart(2,0)}`;
+const minutesToHHMM = (v) => `${Math.floor(v/60).toString().padStart(2,0)}:${(v - Math.floor(v/60) * 60).toFixed(0).padStart(2,0)}`;
 const dateToHHMM = (v) => `${v.getUTCHours().toString().padStart(2,0)}:${v.getUTCMinutes().toString().padStart(2,0)}`;
 /* output latest out calculation */
 const diff_formula = (maxTSV, duty) => {
@@ -747,12 +747,15 @@ const maxTSVWithRest = (legs, numberOfPilots, isCargo=false, steps) => { // MANE
 
 const computeMaxTSVAF_PEQ2 = (legs, flightTypeAircraft, refTime, previousRest) => {
     const numberOfLegs = afNumberOfLegs(legs);
-    const result = (interpolatedValue) => ({
-        "value": Math.min(interpolatedValue, previousRest),
-        "legs": numberOfLegs,
-        refTime,
-        "type": flightTypeAircraft 
-    });
+    const result = (interpolatedValue) => {
+        interpolatedValue = Math.floor(interpolatedValue * 60) / 60; //prevents rounding problems in results
+        return {
+            "value": Math.min(interpolatedValue, previousRest),
+            "legs": numberOfLegs,
+            refTime,
+            "type": flightTypeAircraft 
+        };
+    };
     if (flightTypeAircraft === "LC") {
         return result(interpolate(refTime, (numberOfLegs <= 3) ? AF_LC_1_OR_2_OR_3_LEGS : AF_LC_4_LEGS));
     }else{
