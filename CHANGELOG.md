@@ -3,6 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.20] - 2021-12-14
+
+IOS v15.2 est là! La vitesse d'execution des plugins est revenue à la normale, du coup, retour aux anciennes versions. Si vous êtes encore sous IOS v15.1, vous pouvez différer la mise à jour de ces plugins.
+
+### Changed
+
+- [OFP2MAP-MENU v3](https://www.icloud.com/shortcuts/ee982ff186cb4e34854e47b961397451) demande de choisir le dossier des plugins à l'installation. Pour la plupart d'entre vous, le dossier "Tous les raccourcis" est parfaitement adapté. Si jamais vous aviez plus de 96 raccourcis, il faudrait alors placer les plugins dans un dossier séparé: en effet, il est impossible de récupérer plus de 96 raccourcis sous iOS 15.2.
+- [OFP2MAP-ETOPS v7](https://www.icloud.com/shortcuts/c3bd42f263bf4f02869959e8d9815ea1) est identique à la v5
+- [OFP2MAP-PLUGIN v4](https://www.icloud.com/shortcuts/21d47d9f925b45d8a40bfd81e237ab2f) est identique à la v2
 
 ## [1.16.19] - 2021-12-12
 

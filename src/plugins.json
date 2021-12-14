@@ -5,8 +5,8 @@
         "description": "NOAA Aurora Forecast 30-90mn et prévisions à 3 jours."
     },
     "OFP2MAP-ETOPS": {
-        "version": 6,
-        "url": "https://www.icloud.com/shortcuts/75e470e51e9442768298dd16b73d8e84",
+        "version": 7,
+        "url": "https://www.icloud.com/shortcuts/c3bd42f263bf4f02869959e8d9815ea1",
         "description": "Affiche un cartouche ETOPS actualisé. Il est recommandé de ne plus utiliser ce plugin, Pilot\u00A0Mission/FlightLog/ETOPS fait la même chose."
     },
     "OFP2MAP-FAA WIPs": {
@@ -20,8 +20,8 @@
         "description": "Calcul en réalisation des limitations TSV et des repos PNC"
     },
     "OFP2MAP-MENU": {
-        "version": 2,
-        "url": "https://www.icloud.com/shortcuts/2db576c98d8d48d095bf751f56b54f56",
+        "version": 3,
+        "url": "https://www.icloud.com/shortcuts/ee982ff186cb4e34854e47b961397451",
         "description": "Menu affichant l'ensemble des plugins installés, utile pour un accès rapide."
     },
     "OFP2MAP-PLANE FINDER": {
@@ -30,8 +30,8 @@
         "description": "Recherche l'avion avec flightaware.com."
     },
     "OFP2MAP-PLUGIN": {
-        "version": 3,
-        "url": "https://www.icloud.com/shortcuts/6dd90c3c7a6f465da371997cbdd28430",
+        "version": 4,
+        "url": "https://www.icloud.com/shortcuts/21d47d9f925b45d8a40bfd81e237ab2f",
         "description": "Modèle à dupliquer pour coder un plugin, permet de visualiser les données disponibles."
     }
 }

@@ -321,9 +321,12 @@ export const pairingData = (ofp) => {
     let pairing = {};
     let duties = [];
     let steps = [];
+    let tzdb = {};
     let scheduledTSV;
     let pattern, match;
+    let aircraftType;
     let pncCount;
+    let pilotCount;
     let dutyWithFTL;
     try {
         const pairingText = editolido.extract(ofp.text, 'CREW PAIRING', 'Generated');
@@ -344,7 +347,7 @@ export const pairingData = (ofp) => {
         pattern = /CABIN VERSION[^(]+\((\d+)[^/]+\/\s*(\d+)\s*PNC/u;
         match = pattern.exec(pairingText);
         if (match) {
-            //pilotCount = parseFloat(match[1]);
+            pilotCount = parseFloat(match[1]);
             pncCount = parseFloat(match[2]);
         }
         const tzDec = (tzOFP) => { // +5h30 -> +5.5
@@ -367,8 +370,8 @@ export const pairingData = (ofp) => {
         //let flightTypePNC = "MC";
         let flightTypePNT = "MC1";
         let base = undefined;
-        pairing.aircraftType = (ofp.infos) ? ofp.infos.aircraftType : '???';
-        pairing.flightTypeAircraft = (['220', '318', '319', '320', '321'].includes(pairing.aircraftType)) ? "MC" : "LC";
+        aircraftType = (ofp.infos) ? ofp.infos.aircraftType : '???';
+        pairing.flightTypeAircraft = (['220', '318', '319', '320', '321'].includes(aircraftType)) ? "MC" : "LC";
         for (match of pairingText.matchAll(pattern)) {
             //console.log(match)
             const m = parseInt(match[2], 10); // 1-12
@@ -442,11 +445,11 @@ export const pairingData = (ofp) => {
         }else{
             steps.push(`<span class="error">base ${base} -> l'OFP ne contient pas la rotation complète ou erreur d'analyse.</span>`);
         }
-        if (!pairing.aircraftType || pairing.aircraftType === '???') steps.push(`<span class="error">Type avion inconnu</span>`);
-        steps.push(`type avion ${pairing.aircraftType} -> règles ${pairing.flightTypeAircraft}`);
+        if (!aircraftType || aircraftType === '???') steps.push(`<span class="error">Type avion inconnu</span>`);
+        steps.push(`type avion ${aircraftType} -> règles ${pairing.flightTypeAircraft}`);
         if (pairing.flightTypeAircraft === "LC") {
-            pairing.isCargo = (pairing.aircraftType === '77F' || (['P001', 'J001', 'W001', 'Y001', '1P', '1J', '1W', '1Y'].includes(aircraftOpsVersion) && pncCount === 0));
-            steps.push(`${pairing.aircraftType} LC / config ${aircraftOpsVersion} / ${pncCount} PNC -> vol ${(pairing.isCargo) ? 'CARGO' : 'PAX'}`);
+            pairing.isCargo = (aircraftType === '77F' || (['P001', 'J001', 'W001', 'Y001', '1P', '1J', '1W', '1Y'].includes(aircraftOpsVersion) && pncCount === 0));
+            steps.push(`${aircraftType} LC / config ${aircraftOpsVersion} / ${pncCount} PNC -> vol ${(pairing.isCargo) ? 'CARGO' : 'PAX'}`);
         }else{
             pairing.isCargo = false;
         }
@@ -459,56 +462,62 @@ export const pairingData = (ofp) => {
     }
     const FORBIDDEN = 'interdit';
     const duty = dutyWithFTL;
+    duties.map(d => tzdb[d.depIATA] = editolido.iata2tz(d.depIATA));
     return {
-        //...duty,
-        'scheduledBlockTime': duty.scheduledBlockTime,
-        'isCargo': pairing.isCargo,
-        'retardPNC': (duty.retardPNC) ? {'textOUT': duty.retardPNC.textOUT} : '',
-        'rules': pairing.flightTypeAircraft,
-        'reposPNC': {
-            'AF': {'textValue': minutesToHHMM(flightRestTimePNCAF((ofp.infos.ofpON - ofp.infos.ofpOFF) / 60000))},
-            'FTL': {'textValue': FDP_EASA_PNC_PRE_REST.dataDisplay(duty.reposPNC.FTL.value)}
-        },
-        'title': (duty.legs) ? duty.legs.reduce((a, leg) => a + '-' + leg.destIATA, duty.depIATA || '') : '',
-        'textOUT': dateToHHMM(duty.OUT),
-        'reportingAF': {'textValue': duty.reportingAF.textValue},
-        'reportingFTL': {'textValue': duty.reportingFTL.textValue},
-        'textIN': dateToHHMM(duty.IN),
-        'textTSVAF': minutesToHHMM(duty.TSVAF),
-        'textFDP': minutesToHHMM(duty.FDP),
-        'maxTSVAF': {
-            'PEQ2': {'textValue': decimalToHHMM(duty.maxTSVAF.PEQ2.value)},
-            'PEQ3': {'textValue': decimalToHHMM(duty.maxTSVAF.PEQ3.value)},
-            'PEQ4': {'textValue': decimalToHHMM(duty.maxTSVAF.PEQ4.value)},
-        },
-        'maxTSVFTL': {
-            'PEQ2': {'textValue': decimalToHHMM(duty.maxTSVFTL.PEQ2.value)},
-            'PEQ3': {'textValue': decimalToHHMM(duty.maxTSVFTL.PEQ3.value)},
-            'PEQ4': {'textValue': decimalToHHMM(duty.maxTSVFTL.PEQ4.value)},
-        },
-        'destIATA': duty.destIATA,
-        'maxTSV_PEQ2': {
-            'rule': duty.maxTSV_PEQ2.rule,
-            'textIN': (duty.maxTSV_PEQ2.isForbidden) ? FORBIDDEN : dateToHHMM(duty.maxTSV_PEQ2.IN) + 'z',
-            'textOUT': diff_formula(duty.maxTSV_PEQ2, duty),
-            'reposPNC': (pairing.flightTypeAircraft !== "LC" || duty.maxTSV_PEQ2.isForbidden) ? '' : minutesToHHMM(duty.maxTSV_PEQ2.reposPNC),
-        },
-        'maxTSV_PEQ3': {
-            'rule': duty.maxTSV_PEQ3.rule,
-            'textIN': (duty.maxTSV_PEQ3.isForbidden) ? FORBIDDEN : dateToHHMM(duty.maxTSV_PEQ3.IN) + 'z',
-            'textOUT': diff_formula(duty.maxTSV_PEQ3, duty),
-            'reposPNC': (duty.maxTSV_PEQ3.isForbidden) ? '' : minutesToHHMM(duty.maxTSV_PEQ3.reposPNC),
-        },
-        'maxTSV_PEQ4': {
-            'rule': duty.maxTSV_PEQ4.rule,
-            'textIN': (duty.maxTSV_PEQ4.isForbidden) ? FORBIDDEN : dateToHHMM(duty.maxTSV_PEQ4.IN) + 'z',
-            'textOUT': diff_formula(duty.maxTSV_PEQ4, duty),
-            'reposPNC': (duty.maxTSV_PEQ4.isForbidden) ? '' : minutesToHHMM(duty.maxTSV_PEQ4.reposPNC),
-        },
-        //pilotCount,
-        //pncCount,
-        'steps': steps.map(step => wrap(step, 'li')).join('\n'),
-        scheduledTSV // deprecated
+        ...pairing,
+        pilotCount,
+        pncCount,
+        tzdb,
+        //'dutyIndex': duties.findIndex(d => d.legs.reduce((a, leg) => a || leg.isOFP, false)),
+        scheduledTSV,
+        'duty': {
+            //...duty,
+            'scheduledBlockTime': duty.scheduledBlockTime,
+            'isCargo': pairing.isCargo,
+            'retardPNC': (duty.retardPNC) ? {'textOUT': duty.retardPNC.textOUT} : '',
+            'rules': pairing.flightTypeAircraft,
+            'reposPNC': {
+                'AF': {'textValue': minutesToHHMM(flightRestTimePNCAF((ofp.infos.ofpON - ofp.infos.ofpOFF) / 60000))},
+                'FTL': {'textValue': FDP_EASA_PNC_PRE_REST.dataDisplay(duty.reposPNC.FTL.value)}
+            },
+            'title': (duty.legs) ? duty.legs.reduce((a, leg) => a + '-' + leg.destIATA, duty.depIATA || '') : '',
+            'textOUT': dateToHHMM(duty.OUT),
+            'reportingAF': {'textValue': duty.reportingAF.textValue},
+            'reportingFTL': {'textValue': duty.reportingFTL.textValue},
+            'textIN': dateToHHMM(duty.IN),
+            'textTSVAF': minutesToHHMM(duty.TSVAF),
+            'textFDP': minutesToHHMM(duty.FDP),
+            'maxTSVAF': {
+                'PEQ2': {'textValue': decimalToHHMM(duty.maxTSVAF.PEQ2.value)},
+                'PEQ3': {'textValue': decimalToHHMM(duty.maxTSVAF.PEQ3.value)},
+                'PEQ4': {'textValue': decimalToHHMM(duty.maxTSVAF.PEQ4.value)},
+            },
+            'maxTSVFTL': {
+                'PEQ2': {'textValue': decimalToHHMM(duty.maxTSVFTL.PEQ2.value)},
+                'PEQ3': {'textValue': decimalToHHMM(duty.maxTSVFTL.PEQ3.value)},
+                'PEQ4': {'textValue': decimalToHHMM(duty.maxTSVFTL.PEQ4.value)},
+            },
+            'destIATA': duty.destIATA,
+            'maxTSV_PEQ2': {
+                'rule': duty.maxTSV_PEQ2.rule,
+                'textIN': (duty.maxTSV_PEQ2.isForbidden) ? FORBIDDEN : dateToHHMM(duty.maxTSV_PEQ2.IN) + 'z',
+                'textOUT': diff_formula(duty.maxTSV_PEQ2, duty),
+                'reposPNC': (pairing.flightTypeAircraft !== "LC" || duty.maxTSV_PEQ2.isForbidden) ? '' : minutesToHHMM(duty.maxTSV_PEQ2.reposPNC),
+            },
+            'maxTSV_PEQ3': {
+                'rule': duty.maxTSV_PEQ3.rule,
+                'textIN': (duty.maxTSV_PEQ3.isForbidden) ? FORBIDDEN : dateToHHMM(duty.maxTSV_PEQ3.IN) + 'z',
+                'textOUT': diff_formula(duty.maxTSV_PEQ3, duty),
+                'reposPNC': (duty.maxTSV_PEQ3.isForbidden) ? '' : minutesToHHMM(duty.maxTSV_PEQ3.reposPNC),
+            },
+            'maxTSV_PEQ4': {
+                'rule': duty.maxTSV_PEQ4.rule,
+                'textIN': (duty.maxTSV_PEQ4.isForbidden) ? FORBIDDEN : dateToHHMM(duty.maxTSV_PEQ4.IN) + 'z',
+                'textOUT': diff_formula(duty.maxTSV_PEQ4, duty),
+                'reposPNC': (duty.maxTSV_PEQ4.isForbidden) ? '' : minutesToHHMM(duty.maxTSV_PEQ4.reposPNC),
+            },
+            'steps': steps.map(step => wrap(step, 'li')).join('\n'),
+        }
     }
 }
 

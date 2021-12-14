@@ -116,20 +116,20 @@
     //     }
     //     return results;
     // };
-    // const getOfpRouteExport = (ofp) => {
-    //     if (ofp.timeMatrix.length > 0) {
-    //         return ofp.timeMatrix.map(([p, sum, fl]) => ({
-    //             "name": p.name,
-    //             "tte": sum,
-    //             fl,
-    //             "latitude":  p.latitude.toFixed(6),
-    //             "longitude":  p.longitude.toFixed(6)}));
-    //     }
-    //     return ofp.route.points.map(p => ({
-    //         "name": p.name,
-    //         "latitude":  p.latitude.toFixed(6),
-    //         "longitude":  p.longitude.toFixed(6)}));
-    // };
+    const getOfpRouteExport = (ofp) => {
+        if (ofp.timeMatrix.length > 0) {
+            return ofp.timeMatrix.map(([p, sum, fl]) => ({
+                "name": p.name,
+                "tte": sum,
+                fl,
+                "latitude":  p.latitude.toFixed(6),
+                "longitude":  p.longitude.toFixed(6)}));
+        }
+        return ofp.route.points.map(p => ({
+            "name": p.name,
+            "latitude":  p.latitude.toFixed(6),
+            "longitude":  p.longitude.toFixed(6)}));
+    };
     function* etopsParser(ofp, realOFF){ 
         const etopsSummaryMatches = ofp.text.match(/FUEL FROM EEP(.+?)-----/s);
         const etopsSummary = (etopsSummaryMatches) ? etopsSummaryMatches[1]: '';
@@ -188,12 +188,12 @@
         const filteredInfos = Object.fromEntries(
             Object.entries(ofp.infos).filter(([key, val])=> !excluded.includes(key))
         );
-        //const filteredText = ofp.text.match(/^(?:.+?)Main OFP(.+?)--ROUTE\/FL/s);
-        let filteredText = '';
+        const filteredText = (ofp.text.match(/^(?:.+?)Main OFP(?:.+?)--ROUTE\/FL/s).pop()||'') + '\n\n' + ofp.infos.rawFPL;
+        //let filteredText = '';
         // try{
         //     filteredText = ofp.text.match(/FUEL FROM EEP.+?-----/s)[0];
         // }catch(e){}
-        const duty = pairingData(ofp);
+        const pairing = pairingData(ofp);
         const shareData = {
             'title': 'OFP2MAP',
             'text': JSON.stringify({
@@ -201,11 +201,12 @@
                 lidoFPL: ofp.lidoRoute(false).join(' '),
                 'realOFF': takeOffTime,
                 "altnETOPS": ofp.infos.ralts,
+                'route': getOfpRouteExport(ofp),
+                pairing,
+                //deprecated from 14/12/2021
                 "etopsData": etopsData(ofp, takeOffTime),
-                //'route': getOfpRouteExport(ofp),
-                'pairing' : {duty},
                 //deprecated from 07/08/21
-                "scheduledTSV": (duty) ? duty.scheduledTSV : 0,
+                "scheduledTSV": (pairing) ? pairing.scheduledTSV||0 : 0,
                 //'registration': ofp.infos.aircraftRegistration,
                 //'ralts': ofp.infos.ralts,
                 //'etopsOutput': etopsMarkdown(etopsList(ofp, takeOffTime)), //TODO when removing, delete ref to etopsMarkdown, etopsList, etopsData
