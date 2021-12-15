@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.21] - 2021-12-15
+
+### Changed
+
+- [OFP2MAP-FTL v3](https://www.icloud.com/shortcuts/1cd8abf189a24452a66d43f02d5388c6) améliore la présentation
+
 ## [1.16.20] - 2021-12-14
 
 IOS v15.2 est là! La vitesse d'execution des plugins est revenue à la normale, du coup, retour aux anciennes versions. Si vous êtes encore sous IOS v15.1, vous pouvez différer la mise à jour de ces plugins.
