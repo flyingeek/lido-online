@@ -3,6 +3,25 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.22] - 2021-12-27
+
+### Added
+
+- le dernier OFP est automatiquement rechargé dans OFP2MAP pendant sa période de validité (date actuelle < heure bloc arrivée). L'OFP, la projection utilisée et l'heure de décollage sont rechargés.
+
+### Changed
+
+- [OFP2MAP-FTL v4](https://www.icloud.com/shortcuts/5e75b070441f49d397283253bd1f5947) devient un plugin autonome, les seules informations précalculées par la librairie lidojs sont le type de courrier AF (qui dépend de la distance des étapes et des fuseaux de référence traversés) et les fuseaux horaires nécessaires aux autres calculs (tzdb). Cette version corrige le calcul du type de courrier AF: la version précédente utilisait les fuseaux horaires traversés au lieu des fuseaux de référence traversés.
+- AIRAC 2113
+
+### Fixed
+
+- station météo ogimet 41274 désactivée
+
+### Deprecated
+
+- Comme annoncé le 14 décembre, la v6 du plugin ETOPS ne fonctionne plus, il faut installer [OFP2MAP-ETOPS v7](https://www.icloud.com/shortcuts/c3bd42f263bf4f02869959e8d9815ea1). Pour rappel ce plugin n'est plus recommandé, Pilot Mission fait la même chose.
+
 ## [1.16.21] - 2021-12-15
 
 ### Changed

@@ -264,7 +264,7 @@ Sur iPad, lors du téléchargement, l'export des fichiers KML affiche une page u
 
 Depuis le pavé d'informations du vol dans la barre de menu, il est possible de lancer un plugin. Les plugins sont des raccourcis qui doivent être installés au préalable.
 
-Installer le premier plugin est un peu compliqué&#8239;: Il faut au préalable autoriser les raccourcis non fiables dans Réglages/Raccourcis (et ce après avoir lancé au moins un raccourci "fiable" depuis la Galerie).
+Installer le premier plugin est un peu compliqué&#8239;: Il faut au préalable autoriser les raccourcis non fiables dans Réglages/Raccourcis (et ce après avoir lancé au moins un raccourci "fiable" depuis la Galerie). Par ailleurs si l'application Raccourcis n'était pas installé sur votre iPad, il faut en plus redémarrer l'iPad après avoir fait la manip.
 
 __Liste des plugins&#8239;:__
 
