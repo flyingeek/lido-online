@@ -1,40 +1,43 @@
-/* globals editolido */
 const parisBase = ['CDG', 'ORY'];
-// const getFlightTypePNC = (departure, destination) => {
-//     if (departure.longitude >= -30 && departure.longitude <= 40 && departure.latitude >=25 
-//         && destination.longitude >= -30 && destination.longitude <= 40 && destination.latitude >=25) {
-//         return "MC";
-//     }
-//     return "LC";
-// };
-const getFlightTypePNT = (distance) => {
-    if (distance <= 2100) {
-        return "MC1";
-    } else if (distance <=3000) {
-        return "MC2";
-    }
-    return "LC"
-};
+const months3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const isBase = (base, iata) => {
     if (base === 'PAR') return parisBase.includes(iata);
     return base === iata;
 };
-const getMeridians = (base, baseTZ, duties) => {
-    const meridians = [];
-    for (const duty of duties) {
-        const lastLeg = duty.legs[duty.legs.length - 1];
-        //console.log(lastLeg, parseFloat(lastLeg.destTZ) - baseTZ, isBase(lastLeg.destIATA), lastLeg.destIATA)
-        if (!isBase(base, lastLeg.destIATA)) {
-            meridians.push(Math.abs(parseFloat(lastLeg.destTZ) - baseTZ));
-        }
+/** return timezone offset "-2" "+5.5" for iata at a date like "2021-08-12T14:25Z" or undefined */
+function tzOffsetLite(iata, isoString, tzdb) {
+    const timeZone = tzdb[iata];
+    if (!timeZone) return undefined;
+    let event = new Date(Date.parse(isoString));
+    // British English uses day/month/year order and 24-hour time without AM/PM
+    // eslint-disable-next-line init-declarations
+    let loc;
+    try {
+        loc = event.toLocaleString("en-GB", {timeZone});
+    } catch (e) {
+        return undefined;
     }
-    return Math.max(meridians);
-};
-const reportingObject = (duty, minutesOffset) => {
+    const re = /(\d\d)\/(\d\d)\/(\d\d\d\d), (\d\d):(\d\d):\d\d/u
+    const match = re.exec(loc);
+    if (match !== null) {
+        const [, day, month, year, hour, minute] = match;
+        const baseIsoString = `${year}-${month}-${day}T${hour}:${minute}`;
+        const baseEvent = new Date(Date.parse(baseIsoString + "Z"));
+        const offset = (baseEvent - event)/3600000;
+        if (offset === 0) {
+            return "+0";
+        }
+        let res = (offset >= 0) ? '+' : '';
+        res += offset.toFixed(1)
+        return (res.endsWith('.0')) ? res.slice(0, -2) : res;
+    }
+    return undefined
+}
+const reportingObject = (duty, minutesOffset, tzdb) => {
     const obj = {
         'value': new Date(duty.legs[0].OUT.getTime() - (minutesOffset * 60000))
     };
-    let computedTZ = editolido.tzOffset(duty.depIATA, obj.value.toISOString());
+    let computedTZ = tzOffsetLite(duty.depIATA, obj.value.toISOString(), tzdb);
     obj.tz = computedTZ || duty.depTZ;
     obj.safeTZ = !!computedTZ;
     obj.textValue = dateToHHMM(obj.value);
@@ -67,7 +70,7 @@ const mayWrap = (text, emmetTag, condition) => {
 const wrap = (text, emmetTag) => mayWrap(text, emmetTag, true);
 const manex = ref => wrap(`MANEX ${ref}`, 'cite')
 
-const addDutyMeta = (duty, flightTypeAircraft, base) => {
+const addDutyMeta = (duty, flightTypeAircraft, base, tzdb) => {
     if (!Array.isArray(duty.legs) || duty.legs.length <= 0) return duty;
     const firstLeg = duty.legs[0];
     const lastLeg = duty.legs[duty.legs.length - 1];
@@ -113,8 +116,8 @@ const addDutyMeta = (duty, flightTypeAircraft, base) => {
     duty.depTZ = firstLeg.depTZ;
     duty.depIATA = firstLeg.depIATA;
     duty.firstLegIsMEP = firstLeg.isMEP;
-    duty.reportingFTL = reportingObject(duty, deltaFTL);
-    duty.reportingAF = reportingObject(duty, deltaAF);
+    duty.reportingFTL = reportingObject(duty, deltaFTL, tzdb);
+    duty.reportingAF = reportingObject(duty, deltaAF, tzdb);
     duty.IN = lastLeg.IN;
     duty.destIATA = lastLeg.destIATA;
     //duty.destTZ = lastLeg.destTZ;
@@ -315,169 +318,121 @@ const getDutyWithFTL = ([duties, acclimatizationStep], {base, flightTypeAircraft
     return {...duty, reposPNC, 'retardPNC': retardPNC || '', maxTSV_PEQ2, maxTSV_PEQ3, maxTSV_PEQ4, maxTSVFTL, maxTSVAF};
 };
 
-export const pairingData = (ofp) => {
-    //const results = {};
-    if (!ofp) return {};
-    let pairing = {};
+export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flightTypePNT, tzdb, ofpOUT, blockTime: blockTimeOFP, flightTime}) => {
+    let base, baseTZ, isCargo = false;
     let duties = [];
     let steps = [];
-    let tzdb = {};
     let scheduledTSV;
     let pattern, match;
-    let aircraftType;
     let pncCount;
     let pilotCount;
-    let dutyWithFTL;
-    try {
-        const pairingText = editolido.extract(ofp.text, 'CREW PAIRING', 'Generated');
-        //console.log(pairingText);
-        pattern = /TSV\s+-\s+(\d{2}):(\d{2})/u;
-        match = pattern.exec(pairingText);
-        scheduledTSV = (match) ? parseInt(match[2], 10) + parseInt(match[1], 10) * 60 : 0; //in minutes
-        pattern = /DATE\s:\s(\d+)\.(\S{3})\.(\d{4})/u;
-        match = pattern.exec(pairingText);
-        let month, year; // for pairing start
-        if (match) {
-            year = parseInt(match[3], 10);
-            month = editolido.months3.indexOf(match[2]) + 1; // 1-12
-            if (month <= 0) throw new Error('could not extract pairing month');
-        } else {
-            throw new Error('could not extract pairing month/year');
-        }
-        pattern = /CABIN VERSION[^(]+\((\d+)[^/]+\/\s*(\d+)\s*PNC/u;
-        match = pattern.exec(pairingText);
-        if (match) {
-            pilotCount = parseFloat(match[1]);
-            pncCount = parseFloat(match[2]);
-        }
-        const tzDec = (tzOFP) => { // +5h30 -> +5.5
-            const [tzh, tzm] = tzOFP.split('h');
-            return (tzm) ? `${tzh}.${(parseFloat(tzm)/6).toFixed(0)}` : tzh;
-        }
-        //pattern = new RegExp(String.raw`>\s${ofp.infos.depIATA}\s\(([-+h0-9]+)\)`, "u");
-        //match = pattern.exec(pairingText);
-        //results.depTZ = (match) ? tzDec(match[1]) : '';
-        //pattern = new RegExp(String.raw`>\s${ofp.infos.destIATA}\s\(([-+h0-9]+)\)`, "u");
-        //match = pattern.exec(pairingText);
-        //results.destTZ = (match) ? tzDec(match[1]) : '';
-        pattern = /OPERATION VERSION\s(.+?)\s\d+\sNB PAX/u;
-        match = pattern.exec(pairingText);
-        const aircraftOpsVersion = (match) ? match[1] : '';
-        pattern = /(\d{2})\/(\d{2})\s\S+(\sX)?\s(\S{3})\s>\s(\S{3})\s\(([-+\dh]+)\)\s(\d{2}):(\d{2})\s(?:\d{2}:\d{2})\s(\d{2}):(\d{2})/gu;
-        // eslint-disable-next-line init-declarations
-        let previousDestTZ;
-        let duty = {"legs": []};
-        //let flightTypePNC = "MC";
-        let flightTypePNT = "MC1";
-        let base = undefined;
-        aircraftType = (ofp.infos) ? ofp.infos.aircraftType : '???';
-        pairing.flightTypeAircraft = (['220', '318', '319', '320', '321'].includes(aircraftType)) ? "MC" : "LC";
-        for (match of pairingText.matchAll(pattern)) {
-            //console.log(match)
-            const m = parseInt(match[2], 10); // 1-12
-            const d = parseInt(match[1], 10);
-            const isMep = !!match[3];
-            const y = (m < month) ? year + 1 : year;
-            const scheduledOut = new Date(Date.UTC(y, m - 1, d, parseInt(match[7], 10), parseInt(match[8], 10))); // month must be 0-11
-            const blockTime = parseInt(match[10], 10) + parseInt(match[9], 10) * 60;
-            const scheduledIN = new Date(scheduledOut.getTime() + 60000 * blockTime);
-            const depIATA = match[4];
-            const destIATA = match[5];
-            const departure = editolido.iata2GeoPoint(depIATA);
-            if (!base) base = (parisBase.includes(depIATA)) ? 'PAR' : depIATA;
-            const destTZ = tzDec(match[6]);
-            const depTZ = editolido.tzOffset(depIATA, `${y}-${match[2]}-${match[1]}T${match[7]}:${match[8]}Z`) || previousDestTZ;
-            const arrival = editolido.iata2GeoPoint(destIATA);
-            const groundDistance = Math.round(departure.distanceTo(arrival, editolido.rad_to_nm));
-            // if (flightTypePNC !== "LC" && getFlightTypePNC(departure, arrival) === "LC") {
-            //     flightTypePNC = "LC";
-            // }
-            if (flightTypePNT !== "LC") {
-                const distanceType = getFlightTypePNT(groundDistance);
-                if (distanceType === "LC" || (distanceType === "MC2" && flightTypePNT === "MC1")){
-                    flightTypePNT = distanceType;
-                }
-            }
-            if (duty.legs.length !== 0 && scheduledOut - duty.legs[duty.legs.length - 1].IN > 36000000) { // more than 10 hours
-                duties.push(addDutyMeta(duty, pairing.flightTypeAircraft, base));
-                duty = {"legs": []};
-            }
-            const isOFP = scheduledOut.toISOString() === ofp.infos.ofpOUT.toISOString();
-            duty.legs.push({
-                //"depPoint": {"latitude": departure.latitude.toFixed(6), "longitude": departure.longitude.toFixed(6)},
-                //"depICAO": departure.name,
-                "depIATA": depIATA,
-                //"destPoint": {"latitude": arrival.latitude.toFixed(6), "longitude": arrival.longitude.toFixed(6)},
-                "destIATA": destIATA,
-                //"destICAO": arrival.name,
-                //"groundDistance": groundDistance,
-                "destTZ": destTZ,
-                "depTZ": depTZ,
-                "OUT": scheduledOut,
-                "IN": scheduledIN,
-                "blockTime": blockTime,
-                "blockTimeOFP": (isOFP) ? ofp.infos.blockTime : undefined,
-                "isOFP": isOFP,
-                "isMEP": isMep,
-            });
-            previousDestTZ = destTZ;
-        }
-        if (duty.legs.length > 0) duties.push(addDutyMeta(duty, pairing.flightTypeAircraft, base));
-        pairing.base = base;
-        try{
-            pairing.baseTZ = duties[0].reportingAF.tz;
-        }catch(e){
-            pairing.baseTZ = previousDestTZ;
-        }
-        if (duties.length > 0 && duties[0].depTZ === undefined && duties[0].legs.length > 0) {
-            console.debug('depTz set via last flight of pairing');
-            duties[0].legs[0].depTZ = previousDestTZ;
-            duties[0].depTZ = previousDestTZ;
-        }
-        pairing.flightTypePNT = (flightTypePNT === "MC2" && getMeridians(base, parseFloat(pairing.baseTZ), duties) >= 4) ? "LC" : flightTypePNT;
-        //pairing.flightTypePNC = flightTypePNC;
-        steps.push(`<b>la rotation satisfait au MANEX 07.05.04.A ou 07.05.04.C (standard ou avec repos en vol)</b>`);
-        if (['PAR', 'TLS', 'MRS', 'NCE', 'PTP'].includes(base)){
-            steps.push(`base ${base}`);
-            if (!Array.isArray(duties) || !duty || !Array.isArray(duty.legs) || duties.length === 0 || duty.legs.length === 0 || (duties.length === 1 && duty.legs.length === 1)){
-                steps.push(`<span class="error">L'OFP ne contient pas la rotation complète ou erreur d'analyse.</span>`);
-            }
-        }else{
-            steps.push(`<span class="error">base ${base} -> l'OFP ne contient pas la rotation complète ou erreur d'analyse.</span>`);
-        }
-        if (!aircraftType || aircraftType === '???') steps.push(`<span class="error">Type avion inconnu</span>`);
-        steps.push(`type avion ${aircraftType} -> règles ${pairing.flightTypeAircraft}`);
-        if (pairing.flightTypeAircraft === "LC") {
-            pairing.isCargo = (aircraftType === '77F' || (['P001', 'J001', 'W001', 'Y001', '1P', '1J', '1W', '1Y'].includes(aircraftOpsVersion) && pncCount === 0));
-            steps.push(`${aircraftType} LC / config ${aircraftOpsVersion} / ${pncCount} PNC -> vol ${(pairing.isCargo) ? 'CARGO' : 'PAX'}`);
-        }else{
-            pairing.isCargo = false;
-        }
-        dutyWithFTL = getDutyWithFTL(addAcclimatization(duties), pairing, steps);
-    } catch (err) {
-        if (!(err instanceof editolido.StringExtractException)) {
-            console.error(err);
-        }
-        return {};
+    pattern = /TSV\s+-\s+(\d{2}):(\d{2})/u;
+    match = pattern.exec(pairingText);
+    scheduledTSV = (match) ? parseInt(match[2], 10) + parseInt(match[1], 10) * 60 : 0; //in minutes
+    pattern = /DATE\s:\s(\d+)\.(\S{3})\.(\d{4})/u;
+    match = pattern.exec(pairingText);
+    let month, year; // for pairing start
+    if (match) {
+        year = parseInt(match[3], 10);
+        month = months3.indexOf(match[2]) + 1; // 1-12
+        if (month <= 0) throw new Error('could not extract pairing month');
+    } else {
+        throw new Error('could not extract pairing month/year');
     }
+    pattern = /CABIN VERSION[^(]+\((\d+)[^/]+\/\s*(\d+)\s*PNC/u;
+    match = pattern.exec(pairingText);
+    if (match) {
+        pilotCount = parseFloat(match[1]);
+        pncCount = parseFloat(match[2]);
+    }
+    const tzDec = (tzOFP) => { // +5h30 -> +5.5
+        const [tzh, tzm] = tzOFP.split('h');
+        return (tzm) ? `${tzh}.${(parseFloat(tzm)/6).toFixed(0)}` : tzh;
+    }
+    pattern = /OPERATION VERSION\s(.+?)\s\d+\sNB PAX/u;
+    match = pattern.exec(pairingText);
+    const aircraftOpsVersion = (match) ? match[1] : '';
+    pattern = /(\d{2})\/(\d{2})\s\S+(\sX)?\s(\S{3})\s>\s(\S{3})\s\(([-+\dh]+)\)\s(\d{2}):(\d{2})\s(?:\d{2}:\d{2})\s(\d{2}):(\d{2})/gu;
+    // eslint-disable-next-line init-declarations
+    let previousDestTZ;
+    let duty = {"legs": []};
+    for (match of pairingText.matchAll(pattern)) {
+        //console.log(match)
+        const m = parseInt(match[2], 10); // 1-12
+        const d = parseInt(match[1], 10);
+        const isMep = !!match[3];
+        const y = (m < month) ? year + 1 : year;
+        const scheduledOut = new Date(Date.UTC(y, m - 1, d, parseInt(match[7], 10), parseInt(match[8], 10))); // month must be 0-11
+        const blockTime = parseInt(match[10], 10) + parseInt(match[9], 10) * 60;
+        const scheduledIN = new Date(scheduledOut.getTime() + 60000 * blockTime);
+        const depIATA = match[4];
+        const destIATA = match[5];
+        if (!base) base = (parisBase.includes(depIATA)) ? 'PAR' : depIATA;
+        const destTZ = tzDec(match[6]);
+        const depTZ = tzOffsetLite(depIATA, `${y}-${match[2]}-${match[1]}T${match[7]}:${match[8]}Z`, tzdb) || previousDestTZ;
+
+        if (duty.legs.length !== 0 && scheduledOut - duty.legs[duty.legs.length - 1].IN > 36000000) { // more than 10 hours
+            duties.push(addDutyMeta(duty, flightTypeAircraft, base, tzdb));
+            duty = {"legs": []};
+        }
+        const isOFP = scheduledOut.toISOString() === ofpOUT.toISOString();
+        duty.legs.push({
+            "depIATA": depIATA,
+            "destIATA": destIATA,
+            "destTZ": destTZ,
+            "depTZ": depTZ,
+            "OUT": scheduledOut,
+            "IN": scheduledIN,
+            "blockTime": blockTime,
+            "blockTimeOFP": (isOFP) ? blockTimeOFP : undefined,
+            "isOFP": isOFP,
+            "isMEP": isMep,
+        });
+        previousDestTZ = destTZ;
+    }
+    if (duty.legs.length > 0) duties.push(addDutyMeta(duty, flightTypeAircraft, base, tzdb));
+    try{
+        baseTZ = duties[0].reportingAF.tz;
+    }catch(e){
+        baseTZ = previousDestTZ;
+    }
+    if (duties.length > 0 && duties[0].depTZ === undefined && duties[0].legs.length > 0) {
+        console.debug('depTz set via last flight of pairing');
+        duties[0].legs[0].depTZ = previousDestTZ;
+        duties[0].depTZ = previousDestTZ;
+    }
+    steps.push(`<b>la rotation satisfait au MANEX 07.05.04.A ou 07.05.04.C (standard ou avec repos en vol)</b>`);
+    if (['PAR', 'TLS', 'MRS', 'NCE', 'PTP'].includes(base)){
+        steps.push(`base ${base}`);
+        if (!Array.isArray(duties) || !duty || !Array.isArray(duty.legs) || duties.length === 0 || duty.legs.length === 0 || (duties.length === 1 && duty.legs.length === 1)){
+            steps.push(`<span class="error">L'OFP ne contient pas la rotation complète ou erreur d'analyse.</span>`);
+        }
+    }else{
+        steps.push(`<span class="error">base ${base} -> l'OFP ne contient pas la rotation complète ou erreur d'analyse.</span>`);
+    }
+    if (!aircraftType || aircraftType === '???') steps.push(`<span class="error">Type avion inconnu</span>`);
+    steps.push(`type avion ${aircraftType} -> règles ${flightTypeAircraft}`);
+    if (flightTypeAircraft === "LC") {
+        isCargo = (aircraftType === '77F' || (['P001', 'J001', 'W001', 'Y001', '1P', '1J', '1W', '1Y'].includes(aircraftOpsVersion) && pncCount === 0));
+        steps.push(`${aircraftType} LC / config ${aircraftOpsVersion} / ${pncCount} PNC -> vol ${(isCargo) ? 'CARGO' : 'PAX'}`);
+    }
+    duty = getDutyWithFTL(addAcclimatization(duties), {base, flightTypeAircraft, baseTZ, flightTypePNT, isCargo}, steps);
     const FORBIDDEN = 'interdit';
-    const duty = dutyWithFTL;
-    duties.map(d => tzdb[d.depIATA] = editolido.iata2tz(d.depIATA));
     return {
-        ...pairing,
+        base,
+        baseTZ,
         pilotCount,
         pncCount,
-        tzdb,
         //'dutyIndex': duties.findIndex(d => d.legs.reduce((a, leg) => a || leg.isOFP, false)),
         scheduledTSV,
         'duty': {
             //...duty,
             'scheduledBlockTime': duty.scheduledBlockTime,
-            'isCargo': pairing.isCargo,
+            'isCargo': isCargo,
             'retardPNC': (duty.retardPNC) ? {'textOUT': duty.retardPNC.textOUT} : '',
-            'rules': pairing.flightTypeAircraft,
+            'rules': flightTypeAircraft,
             'reposPNC': {
-                'AF': {'textValue': minutesToHHMM(flightRestTimePNCAF((ofp.infos.ofpON - ofp.infos.ofpOFF) / 60000))},
+                'AF': {'textValue': minutesToHHMM(flightRestTimePNCAF(flightTime))},
                 'FTL': {'textValue': FDP_EASA_PNC_PRE_REST.dataDisplay(duty.reposPNC.FTL.value)}
             },
             'title': (duty.legs) ? duty.legs.reduce((a, leg) => a + '-' + leg.destIATA, duty.depIATA || '') : '',
@@ -502,7 +457,7 @@ export const pairingData = (ofp) => {
                 'rule': duty.maxTSV_PEQ2.rule,
                 'textIN': (duty.maxTSV_PEQ2.isForbidden) ? FORBIDDEN : dateToHHMM(duty.maxTSV_PEQ2.IN) + 'z',
                 'textOUT': diff_formula(duty.maxTSV_PEQ2, duty),
-                'reposPNC': (pairing.flightTypeAircraft !== "LC" || duty.maxTSV_PEQ2.isForbidden) ? '' : minutesToHHMM(duty.maxTSV_PEQ2.reposPNC),
+                'reposPNC': (flightTypeAircraft !== "LC" || duty.maxTSV_PEQ2.isForbidden) ? '' : minutesToHHMM(duty.maxTSV_PEQ2.reposPNC),
             },
             'maxTSV_PEQ3': {
                 'rule': duty.maxTSV_PEQ3.rule,
