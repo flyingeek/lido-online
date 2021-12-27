@@ -3,7 +3,7 @@
     import {createMap, token} from './mapboxgl/mapManagement';
     import {updateMapLayers} from './mapboxgl/layersManagement';
     import {online, showGramet, simulate, aircraftType, showPlaneOnMap, route} from "../stores.js";
-    import {promiseTimeout, fetchSimultaneously, focusMap} from './utils';
+    import {promiseTimeout, fetchSimultaneously, focusMap, savePreviousMapProjection} from './utils';
     import { createEventDispatcher, onMount, onDestroy, tick} from 'svelte';
     import {get} from 'svelte/store';
     import {findMissingCacheTiles} from '../tilesCache';
@@ -66,6 +66,7 @@
         if (map) map.remove();
 
         showPlaneOnMap.set(false); // dom element will be removed by createMap
+        savePreviousMapProjection(selectedProjection.id);
         mapData = createMap(id, selectedProjection, ofp, kmlOptions, $aircraftType, afterMapLoad);
         focusMap();
         map = mapData.map;
@@ -142,7 +143,7 @@
 
     onMount(() => {
         mapboxgl.accessToken = token;
-        mapData = createMap(id, selectedProjection, ofp, kmlOptions, $aircraftType, afterMapLoad, true); //initialLoad = true
+        mapData = createMap(id, selectedProjection, ofp, kmlOptions, $aircraftType, afterMapLoad, !ofp.reloaded); //initialLoad = true, reloaded = false
         showPlaneOnMap.reset();
         map = mapData.map;
     });

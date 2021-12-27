@@ -1,7 +1,7 @@
 <script>
     import {ofp, simulate, takeOffTime, showPlaneOnMap} from '../stores';
     import blurAction from '../actions/blurAction';
-    import {focusMap} from './utils';
+    import {focusMap, savePrevious, previousOFPExpirationKey, previousTakeOFFKey} from './utils';
     export let name="take-off";
 
     $: ofpTakeOff = new Date($ofp.infos.ofpOFF.getTime());
@@ -36,6 +36,8 @@
             newTakeOff = new Date(newTakeOff.getTime() - (1440 * 60000)); // -1 day
         }
         $takeOffTime = newTakeOff;
+        savePrevious(previousOFPExpirationKey, newTakeOff.getTime() + ($ofp.infos.flightTime * 60000) + ($ofp.infos.taxiTimeIN * 60000));
+        savePrevious(previousTakeOFFKey, newTakeOff.getTime());
         if (newTakeOff.toISOString() !== ofpTakeOff.toISOString()) {
             e.target.classList.add("changed");
         }else{

@@ -12,6 +12,11 @@ export const usingChromeOnIOS = /CriOS/i.test(navigator.userAgent) && /iphone|ip
 export const usingSafari = /Safari\//i.test(navigator.userAgent) && !(/(Chrome\/|Chromium\/)/i.test(navigator.userAgent));
 export const supportsHover = matchMedia('(hover: hover)').matches;
 export const noop = () => {};
+export const previousOFPKey = 'previousOFP';
+export const previousOFPUIDKey = 'previousOFPUID';
+export const previousOFPExpirationKey = 'previousOFPExpiration';
+export const previousMapProjectionKey = 'previousMapProjectionId';
+export const previousTakeOFFKey = 'previousOFP2MAPTakeOFF';
 
 export function debounce(func, wait, immediate) {
     let timeout;
@@ -311,4 +316,58 @@ export const focusMap = (evenIfHidden= false) => {
         document.querySelector("#map canvas.mapboxgl-canvas") :
         document.querySelector("page:not(.d-none)>#map canvas.mapboxgl-canvas");
     if (canvas) canvas.focus();
+};
+
+const ofpUID = (ofp) => `${ofp.infos.flightNo}_${ofp.infos.depICAO}_${ofp.infos.destICAO}_${ofp.infos.flightNo}_${ofp.infos.ofpOUT.toISOString()}_${ofp.infos.ofp.replace('/','-')}}`;
+
+const getPrevious = (key, ofp) => {
+    if (localStorage) {
+        const previousKey = localStorage.getItem(key);
+        const previousOFPUID = localStorage.getItem(previousOFPUIDKey);
+        const previousExpiration = localStorage.getItem(previousOFPExpirationKey);
+        if (previousKey && previousExpiration && parseInt(previousExpiration, 10) > Date.now() && previousOFPUID === ofpUID(ofp)) {
+            return previousKey;
+        }
+    }
+    return null;
+};
+export const savePrevious = (key, value) => {
+    if (localStorage && key) {
+        localStorage.setItem(key, value);
+    }
+};
+export const savePreviousMapProjection = value => savePrevious(previousMapProjectionKey, value);
+export const getPreviousMapProjection = ofp => getPrevious(previousMapProjectionKey, ofp);
+export const savePreviousTakeOFF = value => savePrevious(previousTakeOFFKey, value);
+export const getPreviousTakeOFF = ofp => {
+    const timestampString = getPrevious(previousTakeOFFKey, ofp);
+    if (timestampString) {
+        return parseInt(timestampString, 10);
+    }
+    return null;
+};
+export const getPreviousOFPText = () => {
+    if (localStorage) {
+        const previousExpiration = localStorage.getItem(previousOFPExpirationKey);
+        if (previousExpiration && parseInt(previousExpiration, 10) > Date.now()) {
+            return localStorage.getItem(previousOFPKey);
+        }
+    }
+    return null;
+};
+export const savePreviousOFP = (ofp) => {
+    if (localStorage) {
+        localStorage.setItem(previousOFPUIDKey, ofpUID(ofp));
+        localStorage.setItem(previousOFPKey, ofp.text);
+        localStorage.setItem(previousOFPExpirationKey, ofp.infos.ofpIN.getTime());
+        localStorage.setItem(previousTakeOFFKey, ofp.infos.ofpOFF.getTime());
+    }
+};
+export const deletePreviousOFP = () => {
+    if (localStorage) {
+        localStorage.removeItem(previousOFPUIDKey);
+        localStorage.removeItem(previousOFPKey);
+        localStorage.removeItem(previousOFPExpirationKey);
+        localStorage.removeItem(previousTakeOFFKey);
+    }
 };

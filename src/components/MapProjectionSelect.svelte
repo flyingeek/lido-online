@@ -4,6 +4,7 @@
     import options from './mapboxgl/mapOptions';
     import blurAction from '../actions/blurAction';
     import {onMount} from 'svelte';
+    import { getPreviousMapProjection, savePreviousMapProjection} from './utils';
     export let name = 'map-style';
     export let ofp;
     export let selected = options[0];
@@ -49,6 +50,12 @@
             }
         }
         autoSelectedId = selected.id;
+        const previousSavedId = getPreviousMapProjection(ofp);
+        if (previousSavedId) {
+            selected = options.filter(o => o.id === previousSavedId).pop() || selected;
+        }else{
+            savePreviousMapProjection(selected.id);
+        }
     });
 </script>
 <div class="input-group">

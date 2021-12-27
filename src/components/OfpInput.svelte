@@ -54,9 +54,9 @@
 
 </script>
 <script>
-    import { createEventDispatcher } from 'svelte';
+    import { createEventDispatcher, onMount } from 'svelte';
     import {showGramet, ofp as ofpStore, ofpStatus, selectedAircraftType, takeOffTime} from '../stores';
-    import {focusMap} from './utils';
+    import {focusMap, savePreviousOFP, deletePreviousOFP, getPreviousOFPText, getPreviousTakeOFF} from './utils';
     export let kmlOptions;
     let disabled = false;
 
@@ -81,41 +81,9 @@
                             try {
                                 //console.timeLog('start');
                                 const ofp = new editolido.Ofp("_PDFJS_" + text);
-                                const wmoGrid = new editolido.GeoGridIndex();
-                                wmoGrid.data = window['WMO'];
-                                const data = editolido.ogimetData(ofp, wmoGrid);
-                                data.proxyImg = `CONF_GRAMET_PROXY`;
-                                data.route.description = data.wmo.join(' ');
-                                ofp.ogimetData = data;
-                                let sum = 0;
-                                let averageFL = ofp.infos.averageFL;
-                                const distanceMatrix = ofp.route.segments.map(([p1, p2]) => {
-                                    sum += p1.distanceTo(p2);
-                                    return [p2, sum, averageFL];
-                                });
-                                distanceMatrix.unshift([ofp.route.points[0], 0]);
-                                ofp.distanceMatrix = distanceMatrix;
-                                let timeMatrix = [];
-                                try{
-                                    timeMatrix = ofp.wptNamesEET(ofp.route.points);
-                                }catch(err){
-                                    console.error(err);
-                                }
-                                if (timeMatrix.length === 0) {
-                                    document.body.style.setProperty('--plane-halo-color', 'red');
-                                } else {
-                                    document.body.style.setProperty('--plane-halo-color', 'var(--plane-color)');
-                                }
-                                ofp.timeMatrix = timeMatrix;
-                                ofp.departure =  ofp.route.points[0];
-                                ofp.arrival = ofp.route.points[ofp.route.points.length - 1];
-
-                                //console.log(timeMatrix)
-                                //console.timeLog('start');
                                 try {
-                                    KmlGenerator();
-                                    generateKML(ofp, kmlOptions);
-                                    //console.timeEnd('start')
+                                    ofpPostInit(ofp);
+                                    savePreviousOFP(ofp);
                                     resolve(ofp);
                                 } catch (err) {
                                     console.log(text);
@@ -165,6 +133,7 @@
             }).catch((err) => {
                 $ofpStatus = err;
                 $ofpStore = undefined;
+                deletePreviousOFP();
                 console.trace(err);
             }).finally(() => {
                 form.blur();
@@ -172,6 +141,41 @@
                 target.blur();
                 focusMap();
                 disabled = false;
+            });
+        });
+    };
+    function reload(text) {
+        $showGramet = false; // must be set here and not in App.svelte (why ?)
+        preload();
+        ready.promise.then(() => {
+            $ofpStatus = 'loading';
+            dispatch('change');
+            window.location.hash = '#/map';//TODO must be here and not in the then promise below to avoid map centering issues. Why ?
+            return new Promise((resolve, reject) => {
+                setTimeout( () => {
+                    try {
+                        const ofp = new editolido.Ofp(text);
+                        ofpPostInit(ofp);
+                        ofp.reloaded = true;
+                        resolve(ofp);
+                    }catch(err) {
+                        reject(err);
+                    }
+                }, 100);//TODO uses setTimeout to avoid map centering issues
+            }).then(ofp => {
+                $ofpStore = ofp;
+                $selectedAircraftType = undefined;
+                $ofpStatus = 'success';
+                const previousTakeOFF = getPreviousTakeOFF(ofp);
+                $takeOffTime = (previousTakeOFF) ? new Date(previousTakeOFF) : new Date(ofp.infos.ofpOFF.getTime());
+            }).catch(err => {
+                console.log(text);
+                $ofpStatus = err;
+                $ofpStore = undefined;
+                deletePreviousOFP();
+                console.trace(err);
+            }).finally(() => {
+                focusMap();
             });
         });
     };
@@ -187,7 +191,43 @@
         }
         return true;
     }
-
+    function ofpPostInit(ofp) {
+        const wmoGrid = new editolido.GeoGridIndex();
+        wmoGrid.data = window['WMO'];
+        const data = editolido.ogimetData(ofp, wmoGrid);
+        data.proxyImg = `CONF_GRAMET_PROXY`;
+        data.route.description = data.wmo.join(' ');
+        ofp.ogimetData = data;
+        let sum = 0;
+        let averageFL = ofp.infos.averageFL;
+        const distanceMatrix = ofp.route.segments.map(([p1, p2]) => {
+            sum += p1.distanceTo(p2);
+            return [p2, sum, averageFL];
+        });
+        distanceMatrix.unshift([ofp.route.points[0], 0]);
+        ofp.distanceMatrix = distanceMatrix;
+        let timeMatrix = [];
+        try{
+            timeMatrix = ofp.wptNamesEET(ofp.route.points);
+        }catch(err){
+            console.error(err);
+        }
+        if (timeMatrix.length === 0) {
+            document.body.style.setProperty('--plane-halo-color', 'red');
+        } else {
+            document.body.style.setProperty('--plane-halo-color', 'var(--plane-color)');
+        }
+        ofp.timeMatrix = timeMatrix;
+        ofp.departure =  ofp.route.points[0];
+        ofp.arrival = ofp.route.points[ofp.route.points.length - 1];
+        ofp.reloaded = false;
+        KmlGenerator();
+        generateKML(ofp, kmlOptions);
+    }
+    onMount(() => {
+        const ofpText = getPreviousOFPText();
+        if (ofpText) reload(ofpText);
+    });
 </script>
 <form class="form-inline" on:submit|preventDefault>
     {#if (!$ofpStore)}
