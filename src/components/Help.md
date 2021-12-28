@@ -82,6 +82,10 @@ Avant d'utiliser OFP2MAP en vol, il est préférable de lire la rubrique [Mode h
 
         Un Atlas physique du continent Nord-Américain. Les étiquettes sont en anglais, les altitudes sont en mètres. C'est une projection azimutale de Lambert centrée sur 45N095W.
 
+    - **Artic**
+
+        Une carte physique basée sur une projection azimutale équivalente de Lambert centrée sur le pôle nord
+
     - **{cbName} 2020**
 
         Une carte VFR qui couvre France/Belgique/Luxembourg/Suisse. {window.atob("VmluY2VudCBCb3NzeQ==")} a autorisé son utilisation. La dernière version est disponible sur <Link href="{`https://www.${cbName.toLowerCase()}.com`}">{cbName}.com</Link>.
@@ -119,7 +123,7 @@ Pour mettre rapidement en cache un vol, il existe à droite du sélecteur de car
 
 Le bouton affiche la progression du téléchargement&#8239;: <span class="cacheButton cacheProgress"><CircleProgress value=33/></span>, puis il disparait une fois la projection en cache. En cas d'erreur, il affiche: <span class="cacheButton cacheError"><CircleProgress value=0/></span>, et vous pouvez faire une nouvelle tentative.
 
-Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 40Mo de données. Les caches des autres projections utilisent&#8239;: 7Mo pour la NORTH, 4Mo pour la PACIFIC, 7Mo pour la SOUTH, 32Mo pour THE WORLD, 32Mo pour NAM Physical, 40Mo pour =Physique=, 45Mo pour =Politique=, et 40Mo pour {cbName}.
+Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 40Mo de données. Les caches des autres projections utilisent&#8239;: 7Mo pour la NORTH, 4Mo pour la PACIFIC, 7Mo pour la SOUTH, 32Mo pour THE WORLD, 32Mo pour NAM Physical, 40Mo pour =Physique=, 45Mo pour =Politique=, 14Mo pour Artic, et 40Mo pour {cbName}.
 
 Si vous êtes connecté à un réseau limité (4G AF, Wifi en vol), le cache peut ne pas se charger, dans ce cas, désactivez temporairement le réseau, fermez (tuez) l'application et rechargez l'OFP.
 
@@ -294,6 +298,7 @@ Après une mise à jour, les dernières nouveautés d'OFP2MAP s'affichent. Le bo
 
 - Les données terrains/FIR sont fournies par Olivier Ravet forum Yammer/Mapsme
 - <Link href="https://equal-earth.com/physical/">=Physique=</Link>, <Link href="http://equal-earth.com">=Politique=</Link> et <Link href="http://www.shadedrelief.com/north-america/">NAM Physical</Link> sont des cartes mises dans le domaine public par Tom Patterson.
+- Artic est une carte de <Link href="https://maps.lib.utexas.edu/maps/polar.html">The Perry-Castañeda Library</Link>
 - La dernière version de la carte {cbName} est disponible sur le site <Link href="{`https://www.${cbName.toLowerCase()}.com`}">{cbName}.com</Link>
 - Les autres cartes sont de Jean-Baptiste Denizot (OPL 777) forum Yammer/QGIS & Avenza Maps
 - Le GRAMET provient du site ogimet.com

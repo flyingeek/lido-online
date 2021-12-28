@@ -33,6 +33,7 @@ const eqePhysicalFrId = 'eqephysicalfrv1';
 const namPhysicalMetersId = 'namphysicalmetersv1';
 const cbId = 'cb2020v1';
 const eqePoliticalFrId = 'eqepoliticalfrv1';
+const articId = 'articv1';
 
 // All URL, local or remote
 const U = {
@@ -58,6 +59,7 @@ const U = {
   'CONF_NAM_PHYSICAL_METERS': namPhysicalMetersId,
   'CONF_CB': cbId,
   'CONF_EQE_POLITICAL_FR': eqePoliticalFrId,
+  'CONF_ARTIC': articId,
   'CONF_TILES_DB': 'lido-tiles',
   'CONF_GRAMET_PROXY': "https://cjq5hglsy6.execute-api.eu-west-3.amazonaws.com/default/gramet/${data.proxy}__${data.route.name.replace(/[^a-z0-9\\-_]/giu, '_')}.png",
   'CONF_NORTH_TILES_BASE_URL': `https://ofp2map-${northId}.netlify.app/${northId}`,
@@ -68,6 +70,7 @@ const U = {
   'CONF_NAM_PHYSICAL_METERS_TILES_BASE_URL': `https://ofp2map-${namPhysicalMetersId}.netlify.app/${namPhysicalMetersId}`,
   'CONF_CB_TILES_BASE_URL': `https://ofp2map-${cbId}.netlify.app/${cbId}`,
   'CONF_EQE_POLITICAL_FR_TILES_BASE_URL': `https://ofp2map-${eqePoliticalFrId}.netlify.app/${eqePoliticalFrId}`,
+  'CONF_ARTIC_TILES_BASE_URL': `https://ofp2map-${articId}.netlify.app/${articId}`,
   'CONF_NOAA_KP_JSON': 'https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json'
 };
 U.CONF_GRAMET_PROXY_ORIGIN = new URL(U.CONF_GRAMET_PROXY).origin;

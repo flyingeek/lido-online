@@ -1,4 +1,4 @@
-export const firMapIdCondition = (mapOptions) => (mapOptions && (mapOptions.id === 'jb_pacific' || mapOptions.id === 'ed_nam_physical_meters' || mapOptions.id.startsWith('vb_')));
+export const firMapIdCondition = (mapOptions) => (mapOptions && (mapOptions.id === 'jb_pacific' || mapOptions.id === 'ed_nam_physical_meters' || mapOptions.id.startsWith('vb_') || mapOptions.id === 'ed_artic'));
 const folder = 'fir-reg';
 const lineLayer = `${folder}-line-layer`;
 const orangeStripeLayer = `${folder}-orange-stripe-layer`;

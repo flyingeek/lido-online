@@ -49,6 +49,7 @@
         <li>deux ATLAS PHYSIQUES</li>
         <li>une carte VFR</li>
         <li>une MERCATOR (zoom x 12)</li>
+        <li>cartes Artique et Amérique Nord</li>
       </ul>
       <p class="card-text">Export KML compatible Mapsme, Avenza et Google Earth.</p>
     </div>
