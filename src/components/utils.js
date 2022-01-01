@@ -361,6 +361,7 @@ export const savePreviousOFP = (ofp) => {
         localStorage.setItem(previousOFPKey, ofp.text);
         localStorage.setItem(previousOFPExpirationKey, ofp.infos.ofpIN.getTime());
         localStorage.setItem(previousTakeOFFKey, ofp.infos.ofpOFF.getTime());
+        localStorage.removeItem(previousMapProjectionKey);
     }
 };
 export const deletePreviousOFP = () => {
@@ -369,5 +370,6 @@ export const deletePreviousOFP = () => {
         localStorage.removeItem(previousOFPKey);
         localStorage.removeItem(previousOFPExpirationKey);
         localStorage.removeItem(previousTakeOFFKey);
+        localStorage.removeItem(previousMapProjectionKey);
     }
 };
