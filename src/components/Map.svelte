@@ -143,7 +143,7 @@
 
     onMount(() => {
         mapboxgl.accessToken = token;
-        mapData = createMap(id, selectedProjection, ofp, kmlOptions, $aircraftType, afterMapLoad, !ofp.reloaded); //initialLoad = true, reloaded = false
+        mapData = createMap(id, selectedProjection, ofp, kmlOptions, $aircraftType, afterMapLoad, (ofp) ? !ofp.reloaded : true); //initialLoad = true, reloaded = false
         showPlaneOnMap.reset();
         map = mapData.map;
     });
