@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.2] - 2022-01-03
+
+### Fixed
+
+- copyright des cartes n'était pas à jour pour NAM Physical et Artic
+- le code de rechargement automatique de l'ofp empêchait le fonctionnement d'OFP2MAP sans ofp.
+
 ## [1.17.1] - 2022-01-02
 
 ### Fixed
