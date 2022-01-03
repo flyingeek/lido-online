@@ -128,6 +128,7 @@ const options = [
     {
         'label': '=Politique=',
         'id': POLITICALFR,
+        'copyright': 'equal-earth.com',
         // calibration on -30,-120/30,120
         'affineTransform': [1.1035985722623456, -1541.9992757886648, 1.099369559054978, 9295511.039313361],
         //'affineTransform': [1.104, -855.8520345054567, 1.10, 9310000],
@@ -149,6 +150,7 @@ const options = [
     {
         'label': '=Physique=',
         'id': PHYSICAL,
+        'copyright': 'equal-earth.com',
         // for wide map
         //"ratio": [19268, 10630],
         // coefficients based on ratio
@@ -178,6 +180,7 @@ const options = [
     ,{
         'label': 'NAM Physical',
         'id': NORTHAMERICAPHYSICAL,
+        'copyright': 'shadedrelief.com',
         "ratio": [15930, 16495],
         "extent": [-4642624.68806983, -4140497.45357531, 4029960.50029886, 4839684.13350200],
         "proj4": "+proj=laea +lat_0=45 +lon_0=-95 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs",
@@ -198,6 +201,7 @@ const options = [
     ,{
         'label': 'Artic',
         'id': ARTIC,
+        'copyright': 'Perry-Castañeda Library',
         "ratio": [6486, 5619],
         "extent": [-3402191.57410000, -2914604.22852291, 3372208.41558015, 2954244.60620000],
         "proj4": "+proj=laea +lat_0=90 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs ",
@@ -212,12 +216,13 @@ const options = [
         'cacheZoom': 5,
         'cacheName': 'CONF_ARTIC',
         'cacheAll': true,
-        'interpolateMinZoom': 3,
+        'interpolateMinZoom': 1,
         'tileSize': tilesResolution
     }
     ,{
         'label': atob("Q2FydGFCb3NzeQ==") + ' 2020',
         'id': VFR,
+        'copyright': atob("Q2FydGFCb3NzeQ==") + '.com',
         "ratio": [19449, 18352],
         'extent': [26966.11818123, -430589.86447607, 1262485.62823696, 735241.49181695],
         'proj4': "+proj=lcc +lat_1=45.89893890000052 +lat_2=47.69601440000037 +lat_0=46.8 +lon_0=2.33722917 +x_0=600000 +y_0=200000 +datum=WGS84 +units=m +no_defs ",

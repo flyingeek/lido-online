@@ -5,6 +5,7 @@ import {loadMapLayers} from './layersManagement';
 import {focusMode, sidebar, showPlaneOnMap, mapZoom} from '../../stores';
 import times from './pj_times';
 import eqearth from './pj_eqearth';
+import {firMapIdCondition} from './layers/fir-reg';
 
 export const token = 'MAPBOX_TOKEN';
 
@@ -19,13 +20,10 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
     if (!window.proj4.Proj.projections.get('times')) window.proj4.Proj.projections.add(times);
     if (!window.proj4.Proj.projections.get('eqearth')) window.proj4.Proj.projections.add(eqearth);
     const customAttribution = () => {
-        const airportsAttribution = 'Airports/FIR © Olivier Ravet';
-        if (mapOptions.id.startsWith('ed_eqe')) {
-            return `© equal-earth.com - ${airportsAttribution}`;
-        } else if (mapOptions.id.startsWith('jb_') || mapOptions.id.startsWith('ed_')) {
+        const airportsAttribution = (!firMapIdCondition(mapOptions)) ? 'Airports/FIR © Olivier Ravet' : 'Airports © Olivier Ravet';
+        if (mapOptions.copyright) return `© ${mapOptions.copyright} - ${airportsAttribution}`;
+        if (mapOptions.id.startsWith('jb_') || mapOptions.id.startsWith('ed_')) {
             return `Yammer/QGIS & Avenza maps - ${airportsAttribution}`;
-        } else if (mapOptions.id.startsWith('vb_')) {
-            return `© ${window.atob("Q2FydGFCb3NzeQ==")}.com - Airports © Olivier Ravet`;
         } else{
             return `Yammer/Maps.me - ${airportsAttribution}`;
         }
