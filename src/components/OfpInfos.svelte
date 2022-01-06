@@ -51,8 +51,13 @@
         const filteredInfos = Object.fromEntries(
             Object.entries(ofp.infos).filter(([key, val])=> !excluded.includes(key))
         );
-        const filteredText = (ofp.text.match(/^(?:.+?)Main OFP(?:.+?)--ROUTE\/FL/s).pop()||'') + '\n\n' + ofp.infos.rawFPL;
-
+        let filteredText;
+        try {
+            filteredText = (ofp.text.match(/^(?:.+?)Main OFP(?:.+?)(?:--ROUTE\/FL)/s).pop()||'') + '\n\n' + ofp.infos.rawFPL;
+        }catch(err){
+            console.error(err);
+            filteredText = ofp.text;
+        }
         const shareData = {
             'title': 'OFP2MAP',
             'text': JSON.stringify({
