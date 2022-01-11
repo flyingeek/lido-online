@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.3] - 2022-01-22
+
+### Fixed
+
+- [OFP2MAP-FTL v5](https://www.icloud.com/shortcuts/5593ae084b214ae5942e0927a6497a36) corrige le TSV MAX AF sur MC: Seuls les repos minorés entrainent une limitation du TSV MAX AF (max = temps de repos en escale - 1h. ref: MANEX 07.08.03.D).
+
 ## [1.17.2] - 2022-01-03
 
 ### Fixed

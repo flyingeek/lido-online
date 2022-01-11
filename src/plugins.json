@@ -15,8 +15,8 @@
         "description": "Affiche la carte des travaux sol sur les terrains US"
     },
     "OFP2MAP-FTL": {
-        "version": 4,
-        "url": "https://www.icloud.com/shortcuts/5e75b070441f49d397283253bd1f5947",
+        "version": 5,
+        "url": "https://www.icloud.com/shortcuts/5593ae084b214ae5942e0927a6497a36",
         "description": "Calcul en réalisation des limitations TSV (AF & FTL) et des repos PNC"
     },
     "OFP2MAP-MENU": {
