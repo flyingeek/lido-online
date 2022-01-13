@@ -15,7 +15,6 @@
     $: arrivalSun = ($ofp && $landingTime) ? sunStateAndRising($landingTime, $ofp.arrival, 0) : '';
     $: isMoonVisible = ($position && estimatedDate) ? moonState(estimatedDate, $position.map, $position.fl).state : '';
 
-
     const stateAsText = (point, date, {state, isRising}) => {
         if (!point || !date) return '';
         if (state === 'day') {
@@ -85,14 +84,14 @@
                     <td class="color {event.type}-color"></td>
                     <td>{format(event.date)}</td>
                     <td>FL{event.fl}</td>
-                {:else if i===0}
+                {:else if $landingTime && event.date >= $landingTime}
+                    <td colspan="4">Atterrissage {stateAsText($ofp.arrival, $landingTime, arrivalSun)}</td>
+                {:else}
                     <td colspan="4">{_(event.type)} en montée
                         {#if event.type.startsWith('civil')}
                             <span class:rise={event.type==='civilDawn'}>{civilIcon}</span>
                         {/if}
                     </td>
-                {:else}
-                    <td colspan="4">Atterrissage {stateAsText($ofp.arrival, $landingTime, arrivalSun)}</td>
                 {/if}
             </tr>
             {:else}
@@ -114,8 +113,10 @@
                     <td class="color"></td>
                     <td>{format(event.date)}</td>
                     <td>FL{event.fl}</td>
+                {:else if $landingTime && event.date >= $landingTime}
+                    <td colspan="4">{_(event.type)} en descente <Moon position={event.position} type={event.type} date={event.date}>{moonEmoji}</Moon></td>
                 {:else}
-                    <td colspan="4">{_(event.type)} en {(i === 0) ? 'montée' : 'descente'} <Moon position={event.position} type={event.type} date={event.date}>{moonEmoji}</Moon></td>
+                    <td colspan="4">{_(event.type)} en montée <Moon position={event.position} type={event.type} date={event.date}>{moonEmoji}</Moon></td>
                 {/if}
             </tr>
             {:else}
