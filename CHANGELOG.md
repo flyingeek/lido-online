@@ -3,7 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.17.3] - 2022-01-22
+## [1.17.4] - 2022-01-14
+
+### Fixed
+
+- Le point OFP N5928W10155 et le point de coordonnées N5928W10155.4 sont considérés comme identique pour l'extraction des estimées, il s'agit à priori d'un bug Lido qui aurait du utiliser le point 5AN01.
+
+## [1.17.3] - 2022-01-12
 
 ### Fixed
 
