@@ -32,37 +32,40 @@ const transformer = (json) => {
         };
         return obj;
     }
+    const parsePlacemark = (obj, converter) => {
+        const name = obj.description || obj.name;
+        let coordinates;
+        if (!name) console.log(obj);
+        try {
+            coordinates = obj.LineString.coordinates;
+        } catch (err) {
+            coordinates = obj.Polygon.outerBoundaryIs.LinearRing.coordinates;
+        }
+        if (converter) return converter({name, coordinates});
+        return {name, coordinates};
+    }
     for (let folder of json.kml.Document.Folder) {
         let type = 'FIR-REG';
-        let coordinates = [];
-        let name;
         if (folder.name.startsWith('FIRS-ROUGES')) {
             type = 'FIR-RED';
             const getData = (src) => {
                 for (let obj of src) {
-                    name = obj.Placemark.description || obj.Placemark.name;
-                    if (!name) console.log(obj);
-                    try {
-                        coordinates = obj.Placemark.LineString.coordinates;
-                    } catch (err) {
-                        coordinates = obj.Placemark.Polygon.outerBoundaryIs.LinearRing.coordinates;
-                    }
-                    features.push(feature(name, type, coordinates));
+                    features.push(parsePlacemark(obj.Placemark, ({name, coordinates}) => feature(name, type, coordinates)));
                 }
             };
             if (folder.Folder !== undefined) {
                 getData(folder.Folder.Document);
             }
+            if (folder.Folder !== undefined) {
+                getData(folder.Folder.Document);
+            }
+            if (folder.Placemark !== undefined) {
+                features.push(parsePlacemark(folder.Placemark, ({name, coordinates}) => feature(name, type, coordinates)));
+            }
             getData(folder.Document);
         } else {
             for (let obj of folder.Placemark) {
-                name = obj.name;
-                try {
-                    coordinates = obj.LineString.coordinates;
-                } catch (err) {
-                    coordinates = obj.Polygon.outerBoundaryIs.LinearRing.coordinates
-                }
-                features.push(feature(name, type, coordinates));
+                features.push(parsePlacemark(obj, ({name, coordinates}) => feature(name, type, coordinates)));
             }
         }
     }
@@ -80,7 +83,7 @@ fs.createReadStream(zipPath)
             const json = parser.parse(content.toString(), []);
             await fs.promises.writeFile(outputFirReg, JSON.stringify(transformer(json)), (err) => {
                 if (err) {
-                  throw err;
+                    throw err;
                 }
             });
             mapshaper.runCommands('-i ' + outputFirReg + ' -simplify keep-shapes weighted 15% -o ' + outputFirRegOptimized + ' format=geojson');
