@@ -53,6 +53,7 @@ function parseGlobal() {
                 return;
             }
             if (data[0].trim() === "OACI") return;
+            if (data[0].trim() === "HEAX" && data[2].trim() === '---') return;
             //console.log(data[0], data[1], data[3], data[4], data[18], data[29], data[47]);
 
             let order = {}; // first
@@ -128,8 +129,29 @@ function parseGlobal() {
                     timezonesIndex++;
                 }
             }else{
-                console.log(`missing time zone for ${icao}`);
-                tzRef = '00';
+                switch (icao) {
+                    case 'DTNH':
+                        tzRef = timezones["Africa/Tunis"];
+                        break;
+                    case 'FVRG':
+                        tzRef = timezones["Africa/Harare"];
+                        break;
+                    case 'GQNO':
+                        tzRef = timezones["Africa/Nouakchott"];
+                        break;
+                    case 'HSSK':
+                        tzRef = timezones["Africa/Khartoum"];
+                        break;
+                    case 'SBSG':
+                        tzRef = timezones["America/Recife"];
+                        break;
+                    case 'UCFM':
+                        tzRef = timezones["Asia/Bishkek"];
+                        break;
+                    default:
+                        console.log(`missing time zone for ${icao}`);
+                        tzRef = '00';
+                }
             }
             iataResults +=  data[2].trim() + ":" + data[0].trim() + tzRef;
             if (!data[2].trim()) console.log(`unkwnown iata code for ${data[0]}`, data);
