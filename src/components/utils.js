@@ -321,12 +321,18 @@ export const focusMap = (evenIfHidden= false) => {
 const ofpUID = (ofp) => `${ofp.infos.flightNo}_${ofp.infos.depICAO}_${ofp.infos.destICAO}_${ofp.infos.flightNo}_${ofp.infos.ofpOUT.toISOString()}_${ofp.infos.ofp.replace('/','-')}}`;
 
 const getPrevious = (key, ofp) => {
+    if (ofp === undefined) {
+        console.trace('ofp parameter missing');
+        return null;
+    }
     if (localStorage) {
         const previousKey = localStorage.getItem(key);
         const previousOFPUID = localStorage.getItem(previousOFPUIDKey);
         const previousExpiration = localStorage.getItem(previousOFPExpirationKey);
-        if (previousKey && previousExpiration && parseInt(previousExpiration, 10) > Date.now() && previousOFPUID === ofpUID(ofp)) {
-            return previousKey;
+        if (previousKey && previousExpiration && parseInt(previousExpiration, 10) > Date.now()) {
+            if (ofp === null || (!!ofp && previousOFPUID === ofpUID(ofp))) {
+                return previousKey;
+            }
         }
     }
     return null;
@@ -337,26 +343,20 @@ export const savePrevious = (key, value) => {
     }
 };
 export const savePreviousMapProjection = value => savePrevious(previousMapProjectionKey, value);
-export const getPreviousMapProjection = ofp => getPrevious(previousMapProjectionKey, ofp);
+export const getPreviousMapProjection = ofp => (ofp) ? getPrevious(previousMapProjectionKey, ofp) : null;
 export const savePreviousTakeOFF = value => savePrevious(previousTakeOFFKey, value);
 export const getPreviousTakeOFF = ofp => {
-    const timestampString = getPrevious(previousTakeOFFKey, ofp);
+    const timestampString = (ofp) ? getPrevious(previousTakeOFFKey, ofp) : null;
     if (timestampString) {
         return parseInt(timestampString, 10);
     }
     return null;
 };
 export const getPreviousOFPText = () => {
-    if (localStorage) {
-        const previousExpiration = localStorage.getItem(previousOFPExpirationKey);
-        if (previousExpiration && parseInt(previousExpiration, 10) > Date.now()) {
-            return localStorage.getItem(previousOFPKey);
-        }
-    }
-    return null;
+    return getPrevious(previousOFPKey, null);
 };
 export const savePreviousOFP = (ofp) => {
-    if (localStorage) {
+    if (localStorage && ofp) {
         localStorage.setItem(previousOFPUIDKey, ofpUID(ofp));
         localStorage.setItem(previousOFPKey, ofp.text);
         localStorage.setItem(previousOFPExpirationKey, ofp.infos.ofpIN.getTime());
