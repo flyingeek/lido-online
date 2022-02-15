@@ -15,8 +15,7 @@
 import Helpmarkup from './Help.md';
 import ChangeLogModal from './ChangeLogModal.svelte';
 import {wb} from '../stores';
-import {debounce, Deferred} from './utils';
-import {onMount, tick} from "svelte";
+import {onMount} from "svelte";
 import blurAction from '../actions/blurAction';
 import ReloadButton from './ReloadButton.svelte';
 import ShareAppButton from "./ShareAppButton.svelte";
@@ -34,7 +33,6 @@ let selected;
 let requested;
 let observer;
 let modal;
-let imageMapSelector = '#memovisuel';
 
 const setHelpLinks = (element, selector='a[href^="#/help"], area[href^="#/help"]') => {
     const handler = (e) => {
@@ -135,38 +133,6 @@ const setAndJumpTo = (optionalRouteOrEvent) => {
         jumpTo();
     }
 }
-const imagesOnLoadPromise = (selector) => {
-    const promises = [];
-    document.querySelectorAll(selector).forEach((img) => {
-        if (!img.complete) {
-            const d = new Deferred();
-            img.onload = () => d.resolve(img);
-            img.onerror = () =>  d.resolve(img);
-            if (!img.complete) {
-                promises.push(d.promise);
-            }
-        }
-    });
-    //console.log(Promise.all(promises));
-    return Promise.all(promises);
-};
-
-const resizeImageMap = () => {
-    document.querySelectorAll(imageMapSelector).forEach((img) => {
-        const xScale = img.clientWidth/img.naturalWidth;
-        const yScale = img.clientHeight/img.naturalHeight;
-        const px = parseFloat(window.getComputedStyle(img).getPropertyValue('padding-left'));
-        const py = parseFloat(window.getComputedStyle(img).getPropertyValue('padding-top'));
-        document.querySelectorAll(`map[name="${img.useMap.substring(1)}"] area`).forEach((area) => {
-            if(!area.dataset.coords) area.dataset.coords = area.coords;
-            const coords = area.dataset.coords
-                .split(',')
-                .map((v, i) => ((i % 2 === 0) ? xScale * Number(v) + px : yScale * Number(v) + py).toFixed(0))
-                .join(',');
-                area.coords = coords;
-        });
-    });
-};
 
 //handles popstate event to allow navigation using back button in history
 const popstate = () => {
@@ -204,20 +170,13 @@ onMount(() => {
     });
     const removeHelpLinkHandlerContent = setHelpLinks(scrollingElement);
     const removeHelpLinkHandlerNav = setHelpLinks(document.querySelector('nav.navbar'));
-    // we have to resize the image's map on load and on resize
-    imagesOnLoadPromise(imageMapSelector).then(() => {
-        resizeImageMap();
-        tick().then(() => {
-            //observe all of our markdown sections
-            tocNodeList.forEach((elt) => {
-                const h2 = elt.querySelector('h2:first-of-type')
-                toc.push({id: elt.id, label: h2.innerText, html: h2.innerHTML});
-                observer.observe(elt);
-            });
-            setAndJumpTo(window.location.hash.slice(1));
-        }); // tick avoid bad positionning in Safari
-    }).catch((err) => console.error(err));
-
+    //observe all of our markdown sections
+    tocNodeList.forEach((elt) => {
+        const h2 = elt.querySelector('h2:first-of-type')
+        toc.push({id: elt.id, label: h2.innerText, html: h2.innerHTML});
+        observer.observe(elt);
+    });
+    setAndJumpTo(window.location.hash.slice(1));
 
     return () => {
         observer.disconnect();
@@ -229,7 +188,7 @@ onMount(() => {
     }
 });
 </script>
-<svelte:window on:resize={debounce(resizeImageMap, 500)} on:popstate={popstate}/>
+<svelte:window on:popstate={popstate}/>
 
 <ChangeLogModal bind:this={modal} {setHelpLinks}/>
 <div class="help">
