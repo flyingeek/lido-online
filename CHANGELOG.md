@@ -3,6 +3,17 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.6] - 2022-02-15
+
+### Fixed
+
+- L'extraction des tracks pouvaient planter
+- Bug potentiel lors du rechargement de l'OFP corrigé
+
+### Changed
+
+- Aide sur les plugins modifiée avec un lien vers un tutoriel vidéo pour autoriser les raccourcis "non fiables"
+
 ## [1.17.5] - 2022-01-27
 
 ### Changed
