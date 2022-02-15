@@ -3,6 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.7] - 2022-02-15
+
+### Fixed
+
+- Les liens des zones du mémo visuel refonctionnent parfaitement. (utilisation d'un SVG pour résoudre les problèmes que j'avais sous iOS15)
+
+### Changed
+
+- [OFP2MAP-FTL v6](https://www.icloud.com/shortcuts/bcc6585f63a94b85be846ad488c53a63) affiche en plus l'heure de fin des TSV AF et FTL
+
 ## [1.17.6] - 2022-02-15
 
 ### Fixed
