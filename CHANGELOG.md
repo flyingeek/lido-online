@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- L'extraction des tracks pouvaient planter
+- L'extraction des tracks pouvait planter
 - Bug potentiel lors du rechargement de l'OFP corrigé
 
 ### Changed
