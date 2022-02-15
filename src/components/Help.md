@@ -211,7 +211,7 @@ Les appuis ETOPS sont affichés avec l'icône <span class="big" style="color: #F
 
 <figure>![éphémerides exemple](./images/ephemerides.webp)<figcaption>Exemple avec aurore boréale prévue</figcaption></figure>
 
-Un clic sur le widget révèle les éphémérides avec 2 timelines. La première synthétise le jour et la nuit le long du vol ainsi que les zones favorables à l'observation des aurores boréales. La seconde montre les prévisions de Kp. Le Kp permet de prédire les aurores boréales. Entre ces deux timelines, la Lune est un objet dynamique: l'angle des cornes va se modifier en fonction de la position estimée et cet angle est également calculé pour les levers et les couchers. Pour le soleil, l'aube nautique est indiquée, car ce n'est pas tout à fait la nuit: en vol l'horizon est partiellement discernable, et au sol on distingue encore le relief.
+Les éphémérides du vol utilisent uniquement la position estimée (réglée par l'heure de décollage). Un clic sur le widget révèle les éphémérides avec 2 timelines. La première synthétise le jour et la nuit le long du vol ainsi que les zones favorables à l'observation des aurores boréales. La seconde montre les prévisions de Kp. Le Kp permet de prédire les aurores boréales. Entre ces deux timelines, la Lune est un objet dynamique: l'angle des cornes va se modifier en fonction de la position estimée et cet angle est également calculé pour les levers et les couchers. Pour le soleil, l'aube nautique est indiquée, car ce n'est pas tout à fait la nuit: en vol l'horizon est partiellement discernable, et au sol on distingue encore le relief.
 
 Le symbole du widget est dynamique:
 
@@ -266,9 +266,13 @@ Sur iPad, lors du téléchargement, l'export des fichiers KML affiche une page u
 
 ## Plugins 🧩
 
-Depuis le pavé d'informations du vol dans la barre de menu, il est possible de lancer un plugin. Les plugins sont des raccourcis qui doivent être installés au préalable.
+ Il est possible de lancer un plugin depuis le pavé d'informations du vol dans la barre de menu. Les plugins sont des raccourcis qui doivent être installés au préalable.
 
-Installer le premier plugin est un peu compliqué&#8239;: Il faut au préalable autoriser les raccourcis non fiables dans Réglages/Raccourcis (et ce après avoir lancé au moins un raccourci "fiable" depuis la Galerie). Par ailleurs si l'application Raccourcis n'était pas installé sur votre iPad, il faut en plus redémarrer l'iPad après avoir fait la manip.
+Installer le premier plugin est un peu compliqué&#8239;: Il faut au préalable autoriser les raccourcis non fiables dans Réglages/Raccourcis (et ce après avoir lancé au moins un raccourci "fiable" depuis la Galerie). Vous pouvez consultez ce <Link href="https://www.youtube.com/watch?v=Y7QdgkLEMtI">tutoriel vidéo</Link> pour vous aider. Par ailleurs si l'application Raccourcis n'était pas installé sur votre iPad, il faudrait en plus redémarrer l'iPad après avoir fait la manip.
+
+Ensuite, c'est facile, il suffit d'installer le raccourci désiré en cliquant sur son lien, puis vous revenez sur OFP2MAP, cliquez sur 🧩 et faites défiler pour sélectionner le plugin.
+
+OFP2MAP-ETOPS et OFP2MAP-FTL fonctionnent en mode offline. Les autres plugins nécessitent d'être connecté. Vous pouvez sauvegarder leurs résultats au format PDF en utilisant <svg style="vertical-align: bottom;"><use xlink:href="#share-symbol" /></svg>.
 
 __Liste des plugins&#8239;:__
 

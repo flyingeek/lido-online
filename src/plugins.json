@@ -2,7 +2,7 @@
     "OFP2MAP-AURORA": {
         "version": 3,
         "url": "https://www.icloud.com/shortcuts/0da61ab87f40469db1842622b4d951ff",
-        "description": "NOAA Aurora Forecast 30-90mn et prévisions à 3 jours."
+        "description": "NOAA Aurora Forecast 30-90mn et prévisions à 3 jours. Ce plugin affiche la prévision à court terme sur une carte, et une prévision à long terme (source différente de celle de l'app). Il permet de valider les prévisions de Kp affichées dans les éphémérides."
     },
     "OFP2MAP-ETOPS": {
         "version": 7,
