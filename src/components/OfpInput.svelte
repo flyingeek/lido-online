@@ -82,6 +82,7 @@
                                 //console.timeLog('start');
                                 const ofp = new editolido.Ofp("_PDFJS_" + text);
                                 try {
+                                    //console.log(ofp.text);
                                     ofpPostInit(ofp);
                                     savePreviousOFP(ofp);
                                     resolve(ofp);
