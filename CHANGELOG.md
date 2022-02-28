@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.8] - 2022-02-28
+
+### Changed
+
+- AIRAC 2202
+
 ## [1.17.7] - 2022-02-15
 
 ### Fixed
@@ -129,7 +135,7 @@ IOS v15.2 est là! La vitesse d'execution des plugins est revenue à la normale,
 
 ### Added
 
-- *plugin* [OFP2MAP-FTL v1](https://www.icloud.com/shortcuts/1a5c7e8a5e3741b0b7d719fc8ea6f9aa) Calcul en réalisation des limitations TSV et des repos PNC
+- _plugin_ [OFP2MAP-FTL v1](https://www.icloud.com/shortcuts/1a5c7e8a5e3741b0b7d719fc8ea6f9aa) Calcul en réalisation des limitations TSV et des repos PNC
 
 ## [1.16.15] - 2021-12-02
 
@@ -160,7 +166,6 @@ IOS v15.2 est là! La vitesse d'execution des plugins est revenue à la normale,
 - [OFP2MAP-PLUGIN v3](https://www.icloud.com/shortcuts/6dd90c3c7a6f465da371997cbdd28430) contient un avertissement sur la désactivation du champ rawText.
 - mapboxgl est en version 1.13.2 pour une meilleure compatibilité avec ios15
 - le symbole de la loupe est associé à la carte Mercator dans le sélecteur de projection
-
 
 ## [1.16.11] - 2021-11-12
 
@@ -200,7 +205,7 @@ IOS v15.2 est là! La vitesse d'execution des plugins est revenue à la normale,
 
 ### Fixed
 
-- *plugin* [OFP2MAP-ETOPS v5](https://www.icloud.com/shortcuts/365323227837445c9bd68e2be056e094) modifie la regex qui n'affichait pas l'EXP dans certains cas. Sous iOS15, ce plugin demande d'autoriser le partage vers (null), c'est un bug d'iOS, vous pouvez cliquer sur "Autoriser". De plus même, en choisissant "Toujours Autoriser", iOS15 ne mémorise pas votre choix :-(.
+- _plugin_ [OFP2MAP-ETOPS v5](https://www.icloud.com/shortcuts/365323227837445c9bd68e2be056e094) modifie la regex qui n'affichait pas l'EXP dans certains cas. Sous iOS15, ce plugin demande d'autoriser le partage vers (null), c'est un bug d'iOS, vous pouvez cliquer sur "Autoriser". De plus même, en choisissant "Toujours Autoriser", iOS15 ne mémorise pas votre choix :-(.
 
 ## [1.16.5] - 2021-09-28
 
@@ -223,7 +228,7 @@ IOS v15.2 est là! La vitesse d'execution des plugins est revenue à la normale,
 
 ### Changed
 
-- *plugin* [OFP2MAP-FAA WIPs v3](https://www.icloud.com/shortcuts/7e37cedd78d944bf8ceffb7477e356ec) affiche explicitement qu'il n'a pas trouvé d'infos pour un terrain dans le PDF de résultats.
+- _plugin_ [OFP2MAP-FAA WIPs v3](https://www.icloud.com/shortcuts/7e37cedd78d944bf8ceffb7477e356ec) affiche explicitement qu'il n'a pas trouvé d'infos pour un terrain dans le PDF de résultats.
 
 ### Fixed
 
@@ -281,7 +286,7 @@ IOS v15.2 est là! La vitesse d'execution des plugins est revenue à la normale,
 
 ### Changed
 
-- Styles */vert/rouge: les emergency orange sont affichés avec <span style="color: #D70;">✸</span> pour une meilleure différenciation avec les adéquats orange <span style="color: #D70; font-size: 70%;">●</span>.
+- Styles \*/vert/rouge: les emergency orange sont affichés avec <span style="color: #D70;">✸</span> pour une meilleure différenciation avec les adéquats orange <span style="color: #D70; font-size: 70%;">●</span>.
 - Style statuts: le security level des adéquats est uniquement indiqué par la couleur du label ce qui permet de réduire l'outline de l'icône. Les statuts 2 ERA passent de gris à jaune plus foncé.
 - Légère réduction de la taille des labels route/etops/tracks, possible puisque le zoom sur la carte les grossit.
 
@@ -356,7 +361,6 @@ IOS v15.2 est là! La vitesse d'execution des plugins est revenue à la normale,
 - Lors du zoom sur la carte, les icônes et les étiquettes sont grossies, du coup c'est bien plus lisible et agréable. Si vous aviez modifié les tailles par défaut des icônes et des labels (1.0), il faudra peut être les réajuster.
 - Styles statuts et vert/rouge: retour en arrière pour les terrains de support médical: l'étiquette redevient noire. Le symbole ✚ reste bleu, il est légérement plus grand. La carte semble ainsi moins chargée à grande échelle.
 
-
 ## [1.15.2] - 2021-08-23
 
 ### Changed
@@ -381,7 +385,7 @@ IOS v15.2 est là! La vitesse d'execution des plugins est revenue à la normale,
 
 - les réglages des calques sont simplifiés: il n'est plus possible d'utiliser des repères sur la carte. Le calque FIR-REG est remonté en première ligne, le tout me laisse de la place pour de nouvelles options. Les repères sont toujours disponibles pour l'export.
 - le framework CSS (Bootstrap) a été mis à jour, merci de me remonter les éventuels problèmes d'affichage.
-- *plugin* [OFP2MAP-FAA WIPs v2](https://www.icloud.com/shortcuts/17bd4ab2ebec430596137173b131ce38) ajoute les dégagements s'ils publient une carte.
+- _plugin_ [OFP2MAP-FAA WIPs v2](https://www.icloud.com/shortcuts/17bd4ab2ebec430596137173b131ce38) ajoute les dégagements s'ils publient une carte.
 
 ### Added
 
@@ -412,7 +416,7 @@ IOS v15.2 est là! La vitesse d'execution des plugins est revenue à la normale,
 
 - Le changement de couleur ETOPS n'était pas "réactif" pour la couleur des terrains ETOPS.
 - Le paramètre d'épaisseur des lignes n'était pris en compte au chargement de l'OFP
-- Safari ne sélectionne plus le texte des boutons de zoom  lors de clics répétitifs (dans aspect général)
+- Safari ne sélectionne plus le texte des boutons de zoom lors de clics répétitifs (dans aspect général)
 
 ## [1.14.2] - 2021-08-17
 
@@ -440,15 +444,15 @@ IOS v15.2 est là! La vitesse d'execution des plugins est revenue à la normale,
 - les aéroports de support médical sont prioritaires pour l'affichage à petite échelle
 - ajout de l'Airbus 220 même si je ne suis pas sur de la codification de son type dans l'OFP
 - pour les vols sur track océanique, une popup affiche les détails du point d'entrée
-- *plugin* [OFP2MAP-FAA WIPs v1](https://www.icloud.com/shortcuts/6f341a7550d149a4be6c9ddacd6345bd) affiche le plan des travaux au sol sur les terrains US
+- _plugin_ [OFP2MAP-FAA WIPs v1](https://www.icloud.com/shortcuts/6f341a7550d149a4be6c9ddacd6345bd) affiche le plan des travaux au sol sur les terrains US
 
 ### Changed
 
 - couleur des tracks par défaut proche de la couleur des graticules, aucun pin par défaut pour les tracks, pensez à modifier le repère des tracks dans les réglages d'export pour conserver (à l'export) la visibilité du nom des tracks.
 - modification de la présentation des tracks inspirée par eWAS: affichage des points d'entrée et de sortie, la lettre du track est affichée le long de la ligne du track. A l'export en raison des limitations des logiciels, l'aspect reste inchangé.
 - popup des tracks modifiée, si le vol a lieu sur un track, le point d'entrée et de sortie affichent l'ETO en fonction de l'heure de décollage choisie
-- *plugin* [OFP2MAP-ETOPS v4](https://www.icloud.com/shortcuts/271499bbcfea414eaa7d2d6ec96ae235): mise en évidence du ΔFUEL si proche des limitations (même condition que le flag ETOPS d'OFP2MAP)
-- *plugin* [OFP2MAP-AURORA v3](https://www.icloud.com/shortcuts/0da61ab87f40469db1842622b4d951ff): indique la version du plugin dans les résultats
+- _plugin_ [OFP2MAP-ETOPS v4](https://www.icloud.com/shortcuts/271499bbcfea414eaa7d2d6ec96ae235): mise en évidence du ΔFUEL si proche des limitations (même condition que le flag ETOPS d'OFP2MAP)
+- _plugin_ [OFP2MAP-AURORA v3](https://www.icloud.com/shortcuts/0da61ab87f40469db1842622b4d951ff): indique la version du plugin dans les résultats
 
 ### Fixed
 
@@ -465,7 +469,7 @@ IOS v15.2 est là! La vitesse d'execution des plugins est revenue à la normale,
 ### Changed
 
 - AIRAC 2108
-- *plugin* [OFP2MAP-ETOPS v3](https://www.icloud.com/shortcuts/c8216ddf7e7446edab5577632d501232): meilleure présentation
+- _plugin_ [OFP2MAP-ETOPS v3](https://www.icloud.com/shortcuts/c8216ddf7e7446edab5577632d501232): meilleure présentation
 
 ## [1.13.4] - 2021-08-11
 
