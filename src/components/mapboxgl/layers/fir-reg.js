@@ -1,4 +1,4 @@
-export const firMapIdCondition = (mapOptions) => (mapOptions && (mapOptions.id === 'jb_pacific' || mapOptions.id === 'ed_nam_physical_meters' || mapOptions.id.startsWith('vb_') || mapOptions.id === 'ed_artic'));
+export const firMapIdCondition = (mapOptions) => (mapOptions && (mapOptions.id === 'jb_pacific1' || mapOptions.id === 'ed_nam_physical_meters1' || mapOptions.id.startsWith('1vb_') || mapOptions.id === 'ed_artic1'));
 const folder = 'fir-reg';
 const lineLayer = `${folder}-line-layer`;
 const orangeStripeLayer = `${folder}-orange-stripe-layer`;
@@ -9,17 +9,16 @@ const source = `${folder}-source`;
 export const addFirReg = (data) => {
     const {ofp, map, mapData, kmlOptions, mapOptions} = data;
     if (!ofp || firMapIdCondition(mapOptions)) return;
-    const {affine} = mapData;
+    const {affineAndClip} = mapData;
     const visibility = kmlOptions.firDisplay && !kmlOptions.firHide.includes(mapOptions.id);
     fetch('data/fir-reg.CONF_AIRAC.geojson')
     .then(response => response.json())
     .then(data => {
-        if (affine) {
+        if (affineAndClip) {
             for (let i = 0; i<data.features.length; i++){
                 const points = data.features[i].geometry.coordinates[0];
-                //if we need to partly display polygons, instead of disabling fir, we could try:
-                //data.features[i].geometry.coordinates = affineAndClip(points.map(([longitude, latitude]) => ({latitude, longitude})));
-                data.features[i].geometry.coordinates = [points.map(v => affine(v))];
+                data.features[i].geometry.coordinates = affineAndClip(points.map(([longitude, latitude]) => ({latitude, longitude})));
+                //data.features[i].geometry.coordinates = [points.map(v => affine(v))];
             }
         }
         map.addSource(source, {
