@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.9] - 2022-03-25
+
+### Changed
+
+- AIRAC 2203
+- L'étendue des zones interdites pose problème pour le rendu. L'algorithme a été modifié mais il subsiste des incohérences mineures sur the World et la Lambert Sud. Le calque FIR est désactivé sur le fond Artic.
+
 ## [1.17.8] - 2022-02-28
 
 ### Changed
