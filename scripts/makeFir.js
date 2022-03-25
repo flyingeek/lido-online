@@ -87,7 +87,9 @@ const transformer = (json) => {
           );
         }
       }
-      getData(folder.Document);
+      if (folder.Document !== undefined) {
+        getData(folder.Document);
+      }
     } else {
       for (let obj of folder.Placemark) {
         features.push(
