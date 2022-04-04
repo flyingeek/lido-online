@@ -173,7 +173,7 @@ const getDutyWithFTL = ([duties, acclimatizationStep], {base, flightTypeAircraft
     addStep(`SV débute par une MEP: ${(duty.firstLegIsMEP) ? "OUI" : "NON"}`);
     addStep(`début TSV FTL: ${dateToHHMM(duty.reportingFTL.value)}z ${manex("07.05.01 & 07.05.05")}`);
     addStep(`début TSV AF: ${dateToHHMM(duty.reportingAF.value)}z ${manex("07.08.01")}`);
-    
+
     duty.FDP = (duty.IN.getTime() - duty.reportingFTL.value.getTime()) / 60000;
     duty.TSVAF = (duty.IN.getTime() + (15 * 60000) - duty.reportingAF.value.getTime()) / 60000; //MANEX 07.08.01.A
 
@@ -261,11 +261,11 @@ const getDutyWithFTL = ([duties, acclimatizationStep], {base, flightTypeAircraft
     addStepLC(`Calculs des repos en vol FTL pour le PNC au TSV MAX`);
     maxTSV_PEQ3.reposPNC =  getReposPNC(maxTSV_PEQ3);
     maxTSV_PEQ4.reposPNC =  getReposPNC(maxTSV_PEQ4);
-    
+
     const FDP_PNC_REST = (duty.FDP /60 > maxTSVFTL.PEQ2.value)
                             ? matchInTable([preOperational, duty.FDP/60], FDP_EASA_PNC_PRE_REST)
                             : {"value" : 0};
-    
+
     addStepLC(`Le repos PNC en vol AF est basé sur le temps de vol OFP`);
     addStepLC(`Le repos PNC en vol FTL est basé sur le <b>TSV FTL PNC supposé identique à celui du CDB</b>`);
     const ofpLeg = duty.legs.filter(leg => leg.isOFP).pop();
@@ -635,14 +635,14 @@ const maxFDPWithRest = (legs, numberOfPilots, preUsable=true) => {
     const numberOfLegs = ftlNumberOfLegs(legs);
     let hasOneSectorOf9hours = false;
     const reducer = (p, leg) => Math.max(p, leg.blockTime);
-    if (numberOfLegs === 2) {
+    if (numberOfLegs <= 2) {
         if (numberOfLegs < legs.length) { //first is a MEP
             hasOneSectorOf9hours = legs.slice(1).reduce(reducer, 0) >= 540;
         }else{
             hasOneSectorOf9hours = legs.reduce(reducer, 0) >= 540;
         }
     }
-    if (numberOfLegs === 2 && hasOneSectorOf9hours) {
+    if (numberOfLegs <= 2 && hasOneSectorOf9hours) {
         if (numberOfPilots === 3) {
             return (preUsable) ? 17 : 16;
         }else if (numberOfPilots >= 4) {
@@ -717,7 +717,7 @@ const computeMaxTSVAF_PEQ2 = (legs, flightTypeAircraft, refTime, previousRest) =
             "value": Math.min(interpolatedValue, previousRest),
             "legs": numberOfLegs,
             refTime,
-            "type": flightTypeAircraft 
+            "type": flightTypeAircraft
         };
     };
     if (flightTypeAircraft === "LC") {
