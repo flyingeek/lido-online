@@ -1,6 +1,6 @@
 {
   "name": "lido-svelte",
-  "version": "1.17.9",
+  "version": "1.17.10",
   "type": "module",
   "config": {
     "AIRAC": "2203"
@@ -50,7 +50,7 @@
     "workbox-build": "^6.1.1"
   },
   "dependencies": {
-    "@flyingeek/lidojs": "^1.6.32",
+    "@flyingeek/lidojs": "^1.6.34",
     "sirv-cli": "^1.0.0",
     "svelte-overlay": "^1.4.1",
     "workbox-window": "^6.1.1"
