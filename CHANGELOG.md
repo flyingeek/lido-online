@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.10] - 2022-04-04
+
+### Fixed
+
+- Lido utilise un nouveau format de nom des waypoints, cette version généralise le correctif de la v1.17.4 pour la récupération des estimées.
+- [OFP2MAP-FTL v7](https://www.icloud.com/shortcuts/1fc3d479d1fd42629a617f83da76f2e6) corrige le calcul des limitations FTL en autorisant l'extension du TSV de 1h sur les vols mono-tronçons de plus de 9h en équipage renforcé. L'extension n'était appliquée qu'aux vols bi-tronçons. [Manex 07.05.04.C]
+
 ## [1.17.9] - 2022-03-25
 
 ### Changed
