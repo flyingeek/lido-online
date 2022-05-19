@@ -58,7 +58,7 @@ function parseGlobal() {
 
             let order = {}; // first
             let isDest = 0;
-            
+
             for (let i = 51; i <=63; i++) {
                 if (data[i].trim().startsWith('DES')) {
                     isDest = 1;
@@ -120,6 +120,31 @@ function parseGlobal() {
             // }
             let tzRef;
             let tz = airportsdataTZ[icao];
+            if (!tz) {
+              switch (icao) {
+                    case 'DTNH':
+                        tz = "Africa/Tunis";
+                        break;
+                    case 'FVRG':
+                        tz = "Africa/Harare";
+                        break;
+                    case 'GQNO':
+                        tz = "Africa/Nouakchott";
+                        break;
+                    case 'HSSK':
+                        tz = "Africa/Khartoum";
+                        break;
+                    case 'SBSG':
+                        tz = "America/Recife";
+                        break;
+                    case 'UCFM':
+                        tz = "Asia/Bishkek";
+                        break;
+                    case 'BKPR':
+                        tz = "Europe/Zagreb";
+                        break;
+                }
+            }
             if (tz) {
                 if (tz in timezones) {
                     tzRef = timezones[tz];
@@ -129,29 +154,8 @@ function parseGlobal() {
                     timezonesIndex++;
                 }
             }else{
-                switch (icao) {
-                    case 'DTNH':
-                        tzRef = timezones["Africa/Tunis"];
-                        break;
-                    case 'FVRG':
-                        tzRef = timezones["Africa/Harare"];
-                        break;
-                    case 'GQNO':
-                        tzRef = timezones["Africa/Nouakchott"];
-                        break;
-                    case 'HSSK':
-                        tzRef = timezones["Africa/Khartoum"];
-                        break;
-                    case 'SBSG':
-                        tzRef = timezones["America/Recife"];
-                        break;
-                    case 'UCFM':
-                        tzRef = timezones["Asia/Bishkek"];
-                        break;
-                    default:
-                        console.log(`missing time zone for ${icao}`);
-                        tzRef = '00';
-                }
+              console.log(`missing time zone for ${icao}`);
+              tzRef = '00';
             }
             iataResults +=  data[2].trim() + ":" + data[0].trim() + tzRef;
             if (!data[2].trim()) console.log(`unkwnown iata code for ${data[0]}`, data);
