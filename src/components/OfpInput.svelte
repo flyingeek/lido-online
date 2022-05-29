@@ -138,7 +138,7 @@
                 console.trace(err);
             }).finally(() => {
                 form.blur();
-                form.reset(); 
+                form.reset();
                 target.blur();
                 focusMap();
                 disabled = false;
@@ -233,7 +233,7 @@
 <form class="form-inline" on:submit|preventDefault>
     {#if (!$ofpStore)}
     <div class="input-group" class:blink={!$ofpStore}>
-        <span class="input-group-text">
+        <span class="input-group-text" on:click={e => simulateClickOnInput({key: "Enter", target: e.target.closest('div').querySelector('label')})}>
             <span class="d-block d-sm-none">Choisir</span>
             <span class="d-none d-sm-block">Choisir un OFP</span>
         </span>
