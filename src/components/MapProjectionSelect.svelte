@@ -33,7 +33,7 @@
         if (selected.id === options[0].id && ofp) {
             const dep = ofp.route.points[0];
             const dest = ofp.route.points[ofp.route.points.length - 1];
-            const cbMapOption = options.find(o => o.id === 'vb_2020');
+            const cbMapOption = options.find(o => o.id === 'vb_2022');
             const northOption = options.find(o => o.id === 'jb_north');
             if (isInBounds(cbMapOption, dep, dest)){
                 selected = cbMapOption;
@@ -60,7 +60,7 @@
 </script>
 <div class="input-group">
     <!-- svelte-ignore a11y-no-onchange -->
-    <select id="{name}" name="{name}" bind:value={selected} 
+    <select id="{name}" name="{name}" bind:value={selected}
         class="form-select form-select-sm" class:extend={autoSelectedId === 'mercator' && selected.id === 'mercator'}
         aria-label="Choix de la projection"
         on:change use:blurAction {disabled}>

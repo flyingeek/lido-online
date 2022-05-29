@@ -3,6 +3,18 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.18.0] - 2022-05-29
+
+### Changed
+
+- {CBNAME} édition 2022 **Attention il faut remettre la {CBNAME} en cache**.
+- Bootstrap CSS mis à jour en v5.1.3
+- il est possible de charger l'OFP en cliquant sur "Choisir un OFP" et non plus seulement "Sélectionner".
+
+### Fixed
+
+- surlignage manquant dans le popup d'entrée du track corrigé
+
 ## [1.17.12] - 2022-05-19
 
 ### Changed

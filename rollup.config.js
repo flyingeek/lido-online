@@ -31,7 +31,7 @@ const theworldId = 'theworldv2';
 const mercatorId = 'denizotjbv2';
 const eqePhysicalFrId = 'eqephysicalfrv1';
 const namPhysicalMetersId = 'namphysicalmetersv1';
-const cbId = 'cb2020v1';
+const cbId = 'cb2022v1';
 const eqePoliticalFrId = 'eqepoliticalfrv1';
 const articId = 'articv1';
 
@@ -186,7 +186,7 @@ export default [{
       verbose: true
     }),
     copy({
-      targets: [{ 
+      targets: [{
         src: 'src/index.html',
         dest: 'public',
         transform: (contents) => Mustache.render(contents.toString(), U)

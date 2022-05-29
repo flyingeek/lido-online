@@ -34,7 +34,7 @@ const validCaches ={
   'airports': 'lido-data',
   'fir-reg': 'lido-fir',
   'noaa': 'lido-noaa',
-  'gramet': 'lido-gramet2', // if you change here, you must also change in GrametTrigger.svelte 
+  'gramet': 'lido-gramet2', // if you change here, you must also change in GrametTrigger.svelte
   //'north': 'lido-' + hostId('CONF_NORTH_TILES_BASE_URL') + maps['north'],
   //'south': 'lido-' + hostId('CONF_SOUTH_TILES_BASE_URL') + maps['south'],
   //'pacific': 'lido-' + hostId('CONF_PACIFIC_TILES_BASE_URL') + maps['pacific'],
@@ -74,7 +74,7 @@ registerRoute(
 );
 
 registerRoute(
-  ({url}) => url.origin === 'https://api.mapbox.com' && ( 
+  ({url}) => url.origin === 'https://api.mapbox.com' && (
     (url.pathname.startsWith('/styles/') || url.pathname.startsWith('/fonts/')) ||
     url.pathname === '/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2.json' ||
     url.pathname === '/v4/denizotjb.6nts91f3.json' ||
@@ -147,7 +147,7 @@ registerRoute(
   })
 );
 
-const tilesCache = new TilesCache('CONF_TILES_DB', 9, (open, evt) => {
+const tilesCache = new TilesCache('CONF_TILES_DB', 10, (open, evt) => {
     if (evt.oldVersion < 1) {
         open.result.createObjectStore(maps['theworld']);
     }
@@ -163,7 +163,7 @@ const tilesCache = new TilesCache('CONF_TILES_DB', 9, (open, evt) => {
       open.result.createObjectStore(maps['eqephysicalfr']);
     }
     if (evt.oldVersion < 5) {
-      open.result.createObjectStore(maps['cb202x']);
+      open.result.createObjectStore('cb2020v1');
     }
     if (evt.oldVersion < 6) {
       open.result.deleteObjectStore('denizotjbv1');
@@ -177,6 +177,10 @@ const tilesCache = new TilesCache('CONF_TILES_DB', 9, (open, evt) => {
     }
     if (evt.oldVersion < 9) {
       open.result.createObjectStore(maps['artic']);
+    }
+    if (evt.oldVersion < 10) {
+      open.result.deleteObjectStore('cb2020v1');
+      open.result.createObjectStore(maps['cb202x']);
     }
 });
 
@@ -294,9 +298,9 @@ const isOldCache = (cacheName) => {
   return deprecatedCaches.includes(cacheName);
 };
 /**
- * check entries of a cache to find 
+ * check entries of a cache to find
  * old entry (not present in thirdPartyUrls or lidoUrls)
- * @param {Request} request 
+ * @param {Request} request
  * @returns {Boolean} true if should be removed from cache
  */
 const isOldRequest = (request) => {

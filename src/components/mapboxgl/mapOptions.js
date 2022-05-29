@@ -20,7 +20,7 @@ export const PHYSICAL = 'ed_eqe_physical_fr';
 export const POLITICALFR = 'ed_eqe_political_fr';
 export const NORTHAMERICAPHYSICAL = 'ed_nam_physical_meters';
 export const ARTIC = "ed_artic";
-export const VFR = 'vb_2020';
+export const VFR = 'vb_2022';
 
 const options = [
     {
@@ -220,20 +220,19 @@ const options = [
         'tileSize': tilesResolution
     }
     ,{
-        'label': atob("Q2FydGFCb3NzeQ==") + ' 2020',
+        'label': atob("Q2FydGFCb3NzeQ==") + ' 2022',
         'id': VFR,
         'copyright': atob("Q2FydGFCb3NzeQ==") + '.com',
-        "ratio": [19449, 18352],
-        'extent': [26966.11818123, -430589.86447607, 1262485.62823696, 735241.49181695],
+        "ratio": [29173, 27529],
+        'extent': [26979.23194704, -430635.24167577, 1262481.71772459, 735242.38253052],
         'proj4': "+proj=lcc +lat_1=45.89893890000052 +lat_2=47.69601440000037 +lat_0=46.8 +lon_0=2.33722917 +x_0=600000 +y_0=200000 +datum=WGS84 +units=m +no_defs ",
-        //'proj4': '+proj=lcc +lat_0=46.8 +lon_0=2.33722917 +lat_1=45.8989389000005 +lat_2=47.6960144000004 +x_0=600000 +y_0=200000 +datum=WGS84 +units=m +no_defs +type=crs',
         'mapboxOptions': {
             'style': blankStyle,
             'renderWorldCopies': false,
             'maxZoom': 5
         },
         'tiles': ['CONF_CB_TILES_BASE_URL/{z}/{x}/{y}.webp'],
-        'matrix': [[1, 1], [2, 2], [4, 4], [8, 8], [16, 16], [32, 31], [64, 61]],
+        'matrix': [[1, 1], [2, 2], [4, 4], [8, 8], [16, 16], [32, 31]],
         'cacheName': 'CONF_CB',
         'cacheZoom': 5,
         'cacheAll': true,

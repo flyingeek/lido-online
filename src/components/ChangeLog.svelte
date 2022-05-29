@@ -24,12 +24,14 @@
             //.replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
             .replace(/\*\*(.+?)\*\*/gim, '<b>$1</b>')
             .replace(/\*(.+?)\*/gim, '<i>$1</i>')
+            .replace(/_(.+?)_/gim, '<i>$1</i>')
             .replace(/~~(.+?)~~/gim, '<s>$1</s>')
             //.replace(/\*(.*)\*/gim, '<i>$1</i>')
             //.replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' />")
             .replace(/\[(.+?)\]\((#.*?)\)/gim, "<a href='$2'>$1</a>")
             .replace(/\[(.+?)\]\((.*?)\)/gim, "<a href='$2' rel='noreferrer' target='_blank'>$1</a>")
             .replace(/^$/g, '<br />')
+            .replace(/\{CBNAME\}/g, window.atob("Q2FydGFCb3NzeQ=="))
 
         return htmlText.trim();
     }
@@ -77,7 +79,7 @@
         if (setHelpLinks) {
             removeHelpLinksHandler = setHelpLinks(changelogElement);
         }
-            
+
         return () => {
             if (setHelpLinks) removeHelpLinksHandler();
         }
@@ -105,7 +107,7 @@
         </li>
     {/if}
 {/each}
-</ul> 
+</ul>
 
 <style>
     ul{
