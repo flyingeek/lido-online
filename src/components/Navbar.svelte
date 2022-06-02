@@ -39,7 +39,7 @@
   <!-- collapsable menu -->
   <ul class="navbar-nav collapse navbar-collapse" id="navbarToggler">
     <li class="nav-item" class:active={$route === '/'}>
-      <a class="nav-link" href="#/" on:click={collapse}><strong class="d-none">OFP2MAP </strong><svg><use xlink:href="#home-symbol"/></svg>{#if 'process.env.NODE_ENV' === '"development"'}<sup>dev</sup>{/if}</a>
+      <a class="nav-link" href="#/" on:click={collapse} style="text-decoration: none; position: relative"><strong class="d-none d-lg-inline  ofp2map">OFP2MAP</strong><svg class="d-xxl-none d-xl-none d-lg-none"><use xlink:href="#home-symbol"/></svg>{#if 'process.env.NODE_ENV' === '"development"'}<sup>dev</sup>{/if}</a>
     </li>
     {#if $ofp|| $aircraftType || $route === '/map'}
     <li class="nav-item" class:active={$route === '/map'}>
@@ -78,10 +78,12 @@
         border-radius: 3px;
         font-weight: normal;
         font-size: xx-small;
-        top: -10px;
-        left: -3px;
+        position: absolute;
+        top: 5px;
+        right: -10px;
         display: inline-block;
         line-height: 1em;
+        /* display: none; */
     }
     svg {
       width: 20px;
@@ -153,5 +155,11 @@
     }
     .nav-link {
       outline-offset: -3px;
+    }
+    .ofp2map {
+      text-decoration: none !important;
+      font-size: 0.875em;
+      font-weight: 600;
+      letter-spacing: 1px;
     }
 </style>
