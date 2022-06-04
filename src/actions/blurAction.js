@@ -1,7 +1,7 @@
 import {focusMap} from '../components/utils';
 
 export default function blurAction(node) {
-    // const observer = new IntersectionObserver((entries) => { 
+    // const observer = new IntersectionObserver((entries) => {
     //     entries.forEach(entry => {
     //     if(entry.intersectionRatio!==1){
     //         node.blur();
