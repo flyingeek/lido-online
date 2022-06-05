@@ -3,6 +3,7 @@
     export let src;
     export let title;
     export let figcaption = "";
+    export let topcaption = "";
     export let forcePreview = true;
     export let tabindex = 0;
     const symbols = /[\r\n%#()<>?[\\\]^`{|}]/g;
@@ -32,6 +33,7 @@
 </script>
 {#if $online}
     <figure>
+    {#if topcaption}<figcaption>{topcaption}</figcaption>{/if}
     <!-- svelte-ignore a11y-media-has-caption -->
     <video {tabindex} controls style="background-image: url({svgThumbnailAsStyle(...title.split('\\n'))});" {poster}>
         <source src="{url}" type="video/mp4">

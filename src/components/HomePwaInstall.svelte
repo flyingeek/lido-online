@@ -25,7 +25,7 @@
                     <li>Faites défiler, choisir&#8239;: <em>Sur l'écran d'accueil</em> <svg style="width:22px;height:22px;"><use xlink:href="#add2home-symbol" /></svg></li>
                     <li>Lancez l'application depuis l'écran d'accueil</li>
                 </ol>
-                <EmbeddedVideo tabindex="-1" src="https://p169.p3.n0.cdn.getcloudapp.com/items/kpu8dmyD/79d52aaf-7dac-4799-b835-d1028a060eca.mp4?source=client" title="Installation\nOFP2MAP" forcePreview={false} figcaption="🎥 Installation d'OFP2MAP"/>
+                <EmbeddedVideo tabindex="-1" src="https://p169.p3.n0.cdn.getcloudapp.com/items/kpu8dmyD/79d52aaf-7dac-4799-b835-d1028a060eca.mp4?source=client" title="Installation\nOFP2MAP" forcePreview={false} topcaption="Tuto vidéo ⇩"/>
             {/if}
         </div>
     </div>
