@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - OFP2MAP affiché dans la barre de menu en mode landscape
+- Le bouton de mise en cache de la projection reste affiché même sans connection (pour rappeler que la carte n'a pas été téléchargée).
 
 ### Added
 

@@ -176,7 +176,7 @@ Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, 
 
 Si vous êtes connecté à un réseau limité (4G AF, Wifi en vol), le cache peut ne pas se charger, dans ce cas, désactivez temporairement le réseau, fermez (tuez) l'application et rechargez l'OFP.
 
-> Il faut penser à mettre en cache la Mercator à chaque vol
+> Il faut penser à mettre en cache la Mercator à chaque vol et il n'est pas possible d'utiliser la 4G AF ou le Wifi PN en vol.
 
 </section>
 <section id="/help_reglages_des_calques">
@@ -274,7 +274,7 @@ __Précision des calculs&#8239;:__ si vous avez bien recalé la position estimé
 __Correction d'altitude&#8239;:__ Si votre niveau de vol est différent de l'OFP, appliquez une correction de 15s/1000ft pour le soleil. Exemple: FL OFP 400, FL réel 360, il faut ajouter 1min pour le lever, et soustraire 1min pour le coucher.
 
 <details>
-    <summary tabindex="-1">Cliquez ici pour afficher un rappel sur la chronologie des événements astronomiques</summary>
+    <summary tabindex="-1"><b>Cliquez ici</b> pour afficher un rappel sur la chronologie des événements astronomiques</summary>
     <p>Pour le soleil:</p>
     <table class="table">
         <thead><tr><th>Angle</th><th>▲ Soleil levant</th><th>▼ Soleil couchant</th></tr></thead>
@@ -298,7 +298,10 @@ __Correction d'altitude&#8239;:__ Si votre niveau de vol est différent de l'OFP
             <tr><td></td><td>Dernier croissant</td><td>🌘</td><td>🌒</td></tr>
         </tbody>
     </table>
-</details><!-- no space here otherwise menu will select the wrong item when going to export -->
+</details>
+
+> Les éphémérides utilisent uniquement la position estimée. Si l'avion est rouge, les éphémérides ne s'affichent pas et il faut m'envoyer l'OFP par mail.
+
 </section>
 <section id="/help_export">
 

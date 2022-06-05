@@ -2,7 +2,7 @@
     import FormSettings from "./mapSettings/Form.svelte";
     import {createMap, token} from './mapboxgl/mapManagement';
     import {updateMapLayers} from './mapboxgl/layersManagement';
-    import {online, showGramet, simulate, aircraftType, showPlaneOnMap, route} from "../stores.js";
+    import {showGramet, simulate, aircraftType, showPlaneOnMap, route} from "../stores.js";
     import {promiseTimeout, fetchSimultaneously, focusMap, savePreviousMapProjection} from './utils';
     import { createEventDispatcher, onMount, onDestroy, tick} from 'svelte';
     import {get} from 'svelte/store';
@@ -163,7 +163,7 @@
         <div class="cacheButton"
             class:cacheError={cacheError}
             class:cacheProgress={cacheValue >= 0||cacheMaxValue > 0}
-            class:hidden={!ofp || mapIsCached|| !$online || caches[selectedProjection.id]===true}
+            class:hidden={!ofp || mapIsCached || caches[selectedProjection.id]===true}
             on:click={(cacheButtonDisabled) ? () => false : cacheMap}>
             <CircleProgress value={(cacheValue>=0) ? cacheValue : 0} max={cacheMaxValue}></CircleProgress>
         </div>
