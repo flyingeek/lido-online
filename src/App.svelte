@@ -36,7 +36,7 @@
 
 <main class="container {$route.substr(1) || 'home'}">
   <div class="content">
-    {#if ($route === '/install' || (navigator && navigator.standalone === false && runningOnIpad))}
+    {#if ($route === '/install')}
       <HomePwaInstall/>
     {:else}
       <Navbar>
@@ -94,6 +94,7 @@
     --bs4-cyan: #17a2b8;
     --bs4-info: #17a2b8;
   }
+
   .content{
     background-color: var(--blueaf);
     /*noinspection CssUnknownTarget*/background-image: url("../svg/worldmap.svg");
@@ -113,6 +114,16 @@
   }
   main.help >.content {
     background-position-x: center;
+  }
+  main.install >.content {
+    /* background-position-x: center; */
+    max-height: 100vh;
+    overflow: hidden;
+  }
+  @media (orientation: portrait) {
+    main.install >.content {
+        background-position-x: center;
+    }
   }
   main {
     display: flex;

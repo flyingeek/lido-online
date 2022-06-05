@@ -1,6 +1,6 @@
 import { writable, readable, derived } from 'svelte/store';
 import {aircraftTypes} from "./constants";
-import {binarysearch} from "./components/utils";
+import {binarysearch, runningOnIpad} from "./components/utils";
 
 export const previousAppVersionKey = 'previousAppVersion';
 export function resetable(resetValue) {
@@ -136,10 +136,11 @@ export const route = readable('/', set => {
         let route = window.location.hash.substr(1) || "/";
         if (route === '/map') {
             sidebar.set(false);
-            if (metaContent) meta.setAttribute('content', metaContent + ',maximum-scale=1'); 
+            if (metaContent) meta.setAttribute('content', metaContent + ',maximum-scale=1');
         } else {
             if (metaContent) meta.setAttribute('content', metaContent.replace(',maximum-scale=1', ''));
             if (route.startsWith('/help_')) route = '/help';
+            if (navigator && navigator.standalone === false && runningOnIpad) route = '/install';
         }
         set(route);
         checkSWUpdate();
@@ -168,10 +169,10 @@ export const flightProgress = derived(
                     clearInterval(interval);
                     interval = undefined;
                     //console.log('fp: last update', value);
-                    simulate.set(-1); 
+                    simulate.set(-1);
                 }
             };
-            
+
             if ($simulate >= 0) {
                 //console.log('start of simulated session');
                 let value = $simulate;
