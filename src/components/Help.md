@@ -2,7 +2,7 @@
     import Link from '../components/Link.svelte';
     import CircleProgress from '../components/CircleProgress.svelte';
     import EmbeddedVideo from '../components/EmbeddedVideo.svelte';
-    import {ofp} from '../stores.js';
+    import {ofp, online} from '../stores.js';
     import plugins from "../plugins.json";
     $: ogimetURL = ($ofp) ? $ofp.ogimetData.url: 'http://www.ogimet.com';
     const cbName = window.atob("Q2FydGFCb3NzeQ==");
@@ -100,7 +100,7 @@ Avant d'utiliser OFP2MAP en vol, il est préférable de lire la rubrique [Mode h
 
 ## Utilisation
 
-1. Dans Pilot Mission, onglet **Dossier de vol**, affichez le PDF nommé **Dossier de vol OFP**. Sur la gauche, cliquez sur le carré avec une flèche vers le haut. Choisissez **Enregistrer dans Fichiers**. Dans l'app, c'est cet OFP qu'il faut ensuite sélectionner.
+1. Dans Pilot Mission, onglet **Dossier de vol**, affichez le PDF nommé **Dossier de vol OFP**. Sur la gauche, cliquez sur le carré avec une flèche vers le haut. Choisissez **Enregistrer dans Fichiers**. Dans l'app, c'est cet OFP qu'il faut ensuite sélectionner. {#if $online}<Link href="https://p169.p3.n0.cdn.getcloudapp.com/items/yAu14Y4x/23c3a918-e425-4d89-a53d-7f450449013b.mp4">Tutoriel&nbsp;vidéo</Link>.{/if}
 
 2. La carte par défaut dépend de la distance: {cbName}, puis Mercator jusqu'à 1500nm puis Lambert. Il est possible sur la carte, en haut à gauche, de basculer sur d'autres projections&#8239;:
     - **Mercator**
@@ -183,7 +183,7 @@ Si vous êtes connecté à un réseau limité (4G AF, Wifi en vol), le cache peu
 
 ## Réglages des calques <svg><use xlink:href="#layers-symbol"></use></svg>
 
-<figure>![layers settings help](./images/layers-settings.webp)<figcaption>Réglages des calques</figcaption></figure>La carte, en haut à droite, dispose d'un bouton pour personnaliser les calques et les couleurs. Un calque contient un type d'information, par exemple les cercles ETOPS, les FIR réglementées, les tracks, la route...
+<figure class="right">![layers settings help](./images/layers-settings.webp)<figcaption>Réglages des calques</figcaption></figure>La carte, en haut à droite, dispose d'un bouton pour personnaliser les calques et les couleurs. Un calque contient un type d'information, par exemple les cercles ETOPS, les FIR réglementées, les tracks, la route...
 Il est possible d'afficher ou de masquer chaque calque en utilisant la coche qui précède son nom. La plupart des calques permettent de choisir la couleur et l'opacité.
 
 Les réglages s'appliquent globalement, c'est à dire, pour toutes les projections. Exception&#8239;: pour les FIR, <svg class="eye"><use xlink:href="#eye-symbol"></use></svg> permet, en plus, de masquer le calque sur la projection actuelle. Il est alors indiqué <svg class="eye"><use xlink:href="#eye-off-symbol"></use></svg> calque masqué sur cette projection.
@@ -258,7 +258,7 @@ Les appuis ETOPS sont affichés avec l'icône <span class="big" style="color: #F
 
 ## Éphémérides ☀️🌘🔭
 
-<figure>![éphémerides exemple](./images/ephemerides.webp)<figcaption>Exemple avec aurore boréale prévue</figcaption></figure>
+<figure class="right">![éphémerides exemple](./images/ephemerides.webp)<figcaption>Exemple avec aurore boréale prévue</figcaption></figure>
 
 Les éphémérides du vol utilisent uniquement la position estimée (réglée par l'heure de décollage). Un clic sur le widget révèle les éphémérides avec 2 timelines. La première synthétise le jour et la nuit le long du vol ainsi que les zones favorables à l'observation des aurores boréales. La seconde montre les prévisions de Kp. Le Kp permet de prédire les aurores boréales. Entre ces deux timelines, la Lune est un objet dynamique: l'angle des cornes va se modifier en fonction de la position estimée et cet angle est également calculé pour les levers et les couchers. Pour le soleil, l'aube nautique est indiquée, car ce n'est pas tout à fait la nuit: en vol l'horizon est partiellement discernable, et au sol on distingue encore le relief.
 
@@ -315,13 +315,10 @@ Sur iPad, lors du téléchargement, l'export des fichiers KML affiche une page u
 
 ## Plugins 🧩
 
- Il est possible de lancer un plugin depuis le pavé d'informations du vol dans la barre de menu. Les plugins sont des raccourcis qui doivent être installés au préalable.
+Il est possible de lancer un plugin depuis le pavé d'informations du vol dans la barre de menu. Les plugins sont des raccourcis qui doivent être installés au préalable. Si vous avez supprimé l'application Raccourcis, installez là depuis l'App Store et redémarrez votre iPad. Pour installer un plugin,
+cliquez sur le raccourci désiré, puis vous revenez sur OFP2MAP, cliquez sur 🧩 et faites défiler pour sélectionner le plugin.
 
-Installer le premier plugin est un peu compliqué&#8239;: Il faut au préalable autoriser les raccourcis non fiables dans Réglages/Raccourcis (et ce après avoir lancé au moins un raccourci "fiable" depuis la Galerie). Vous pouvez consultez ce <Link href="https://www.youtube.com/watch?v=Y7QdgkLEMtI">tutoriel vidéo</Link> pour vous aider. Par ailleurs si l'application Raccourcis n'était pas installé sur votre iPad, il faudrait en plus redémarrer l'iPad après avoir fait la manip.
-
-Ensuite, c'est facile, il suffit d'installer le raccourci désiré en cliquant sur son lien, puis vous revenez sur OFP2MAP, cliquez sur 🧩 et faites défiler pour sélectionner le plugin.
-
-OFP2MAP-ETOPS et OFP2MAP-FTL fonctionnent en mode offline. Les autres plugins nécessitent d'être connecté. Vous pouvez sauvegarder leurs résultats au format PDF en utilisant <svg style="vertical-align: bottom;"><use xlink:href="#share-symbol" /></svg>.
+<EmbeddedVideo tabindex="-1" src="https://p169.p3.n0.cdn.getcloudapp.com/items/yAu14LGP/55eed601-f463-4eee-8d47-87d290d3ceb2.mp4" title="Installation\nPLUGIN" forcePreview={false} figcaption="🎥 Installation d'un plugin"/>
 
 __Liste des plugins&#8239;:__
 
@@ -329,10 +326,11 @@ __Liste des plugins&#8239;:__
     - <Link href="{url}">{name} v{version}</Link> {description}
 {/each}
 
-> Pour un accès plus rapide aux plugins, je recommande d'installer OFP2MAP-MENU. Il faut ensuite le remonter dans le menu contextuel qui s'affiche en cliquant 🧩.
-> La vidéo ci-dessous montre la manip si vous êtes online.
+OFP2MAP-ETOPS et OFP2MAP-FTL fonctionnent en mode offline. Les autres plugins nécessitent d'être connecté. Vous pouvez sauvegarder leurs résultats au format PDF en utilisant <svg style="vertical-align: bottom;"><use xlink:href="#share-symbol" /></svg>.
 
-<EmbeddedVideo tabindex="-1" src="https://p169.p3.n0.cdn.getcloudapp.com/items/KouJeA4l/42ec3a9e-a573-41cb-bd34-763da10c514c.mp4?source=client" title="Utilisation\nOFP2MAP-MENU" forcePreview={false}/>
+> Pour un accès plus rapide aux plugins, je recommande d'installer OFP2MAP-MENU. Il faut ensuite le remonter dans le menu contextuel qui s'affiche en cliquant 🧩.
+
+<EmbeddedVideo tabindex="-1" src="https://p169.p3.n0.cdn.getcloudapp.com/items/KouJeA4l/42ec3a9e-a573-41cb-bd34-763da10c514c.mp4" title="Utilisation\nOFP2MAP-MENU" forcePreview={false} figcaption="🎥 plugin OFP2MAP-MENU"/>
 
 </section>
 <section id="/help_updates">

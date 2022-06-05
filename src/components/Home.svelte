@@ -1,9 +1,10 @@
 <script>
   import Logo from './Logo.svelte';
-  import {ofp as ofpStore, ofpStatus, selectedAircraftType} from '../stores';
+  import {ofp as ofpStore, ofpStatus, selectedAircraftType, online} from '../stores';
   import {aircraftTypes, discontinuatedAircraftTypes} from '../constants';
   import {KmlGenerator} from './kml.js';
   import {ready, preload} from './OfpInput.svelte';
+  import Link from './Link.svelte';
 
   let disabled = false;
   function processAircraftType(e) {
@@ -31,6 +32,7 @@
       <div class="card-header">Facile à utiliser</div>
       <div class="card-body">
         <p class="card-text">Dans <b>Pilot Mission</b>, onglet <b>Dossier de vol</b>, affichez le PDF nommé <b>Dossier de vol OFP</b>. Sur la gauche, cliquez sur le carré avec une flèche vers le haut. Choisissez <b>Enregistrer dans Fichiers</b>. Dans l'app, c'est cet OFP qu'il faut sélectionner.</p>
+        {#if $online}<p><Link href="https://p169.p3.n0.cdn.getcloudapp.com/items/yAu14Y4x/23c3a918-e425-4d89-a53d-7f450449013b.mp4">Tutoriel&nbsp;vidéo</Link></p>{/if}
       </div>
     </div>
   </div>

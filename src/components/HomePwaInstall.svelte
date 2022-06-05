@@ -1,12 +1,13 @@
 <script>
     import Logo from './Logo.svelte';
     import SWUpdate from './SWUpdate.svelte';
+    import EmbeddedVideo from './EmbeddedVideo.svelte';
     import {usingChromeOnIOS, usingSafari} from './utils';
     const requiredNavigator =  usingSafari && !usingChromeOnIOS;
 </script>
 
 <Logo/>
-<div class="prompt-container">
+<div class="prompt-container" id="install-prompt-container">
     <div class="prompt">
         <div class="icon-container">
             <img src="./images/ofp2map-icons/icon-128x128.png" alt="OFP2MAP">
@@ -24,6 +25,7 @@
                     <li>Faites défiler, choisir&#8239;: <em>Sur l'écran d'accueil</em> <svg style="width:22px;height:22px;"><use xlink:href="#add2home-symbol" /></svg></li>
                     <li>Lancez l'application depuis l'écran d'accueil</li>
                 </ol>
+                <EmbeddedVideo tabindex="-1" src="https://p169.p3.n0.cdn.getcloudapp.com/items/kpu8dmyD/79d52aaf-7dac-4799-b835-d1028a060eca.mp4?source=client" title="Installation\nOFP2MAP" forcePreview={false} figcaption="🎥 Installation d'OFP2MAP"/>
             {/if}
         </div>
     </div>
@@ -31,15 +33,14 @@
 <SWUpdate/>
 <style>
     .prompt-container {
-        align-items: center;
+        /* align-items: center; */
         box-sizing: border-box;
-        display: flex;
-        height: 100%;
-        justify-content: center;
-        padding: 30px;
-        position: fixed;
+        /* display: flex; */
+        /* height: 100%; */
+        /* justify-content: center; */
+        padding: 0 30px 50px 30px;
         width: 100%;
-        margin-top: 3em;
+        overflow-y: auto;
     }
     .prompt{
         background: #FFF;
@@ -51,6 +52,8 @@
         max-width: 640px;
         position: relative;
         text-align: center;
+        margin: 0 auto;
+        padding-top: 1px;
         z-index: 1;
     }
     .icon-container{
@@ -79,7 +82,7 @@
         display: flex;
         font-size: 16px;
         justify-content: center;
-        margin: 0;
+        margin: 0 0 2rem 0;
         line-height: 35px;
         text-align: left;
         flex-direction: column;

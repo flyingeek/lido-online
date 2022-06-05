@@ -124,7 +124,7 @@ const setAndJumpTo = (optionalRouteOrEvent) => {
                     modal.close(); // in case we are reading the changelog
                 }
             }
-        } 
+        }
     }
     if (!selected && toc && toc.length > 0) {
         selected = toc[0].id;
@@ -251,7 +251,7 @@ onMount(() => {
         padding-bottom: 1rem;
     }
     :global(section[id="/help_memovisuel"] h2:first-of-type::after){
-        content: "\24D8\00A0Vous pouvez cliquer sur les zones"; /* ⓘ + nbsp;*/ 
+        content: "\24D8\00A0Vous pouvez cliquer sur les zones"; /* ⓘ + nbsp;*/
         font-size: small;
         background-color: var(--bs-teal);
         position: absolute;
@@ -310,7 +310,7 @@ onMount(() => {
         max-height: calc(100vh - 80px + 15px); /* 15px is for the top black part */
     }
     @media (min-width: 576px) {
-        :global(.markdown figure){
+        :global(.markdown figure.right){
             width: 300px;
             margin-left: 1rem;
             float: right;
@@ -408,7 +408,7 @@ onMount(() => {
             display: block;
             flex: 0 0 auto;
         }
-        
+
         aside h1 {
             flex-direction: column;
             align-items: stretch;
