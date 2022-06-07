@@ -5,6 +5,7 @@ import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import {BroadcastUpdatePlugin} from 'workbox-broadcast-update';
 import {ExpirationPlugin} from 'workbox-expiration';
 import {TilesCache} from './tilesCache';
+import { appBuildVersion } from './constants';
 
 //import { openDB, deleteDB, wrap, unwrap } from 'idb';
 
@@ -347,6 +348,8 @@ self.addEventListener('message', (event) => {
       self.skipWaiting();
   } else if (event.data && event.data.type === 'GET_VERSION') {
       event.ports[0].postMessage(SW_VERSION);
+  } else if (event.data && event.data.type === 'GET_BUILD_VERSION') {
+      event.ports[0].postMessage(appBuildVersion);
   } else if (event.data && event.data.type === 'CLIENTS_CLAIM') {
       self.clients.claim();
   }

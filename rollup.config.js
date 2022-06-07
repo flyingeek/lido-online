@@ -76,6 +76,19 @@ const U = {
 U.CONF_GRAMET_PROXY_ORIGIN = new URL(U.CONF_GRAMET_PROXY).origin;
 
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
+let buildStamp = '';
+function setBuildStamp () {
+  const now = new Date()
+  const year = now.getUTCFullYear() % 100
+  const month = now.getUTCMonth() + 1
+  const day = now.getUTCDate()
+  // Count 20 seconds intervals elapsed since midnight
+  const counter = parseInt((now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds()) / 20)
+  // Format the stamp as YYMMDDCCC
+  buildStamp = `${year.toString().padStart(2,'0')}${month.toString().padStart(2,'0')}${day.toString().padStart(2,'0')}${counter.toString(16).padStart(3,'0')}`;
+  console.log(`building ${version}/${buildStamp}`);
+  return buildStamp;
+}
 
 function serve() {
   let server;
@@ -112,6 +125,7 @@ export default [{
     replace({...U, ...{
         'MAPBOX_TOKEN': (!production) ? process.env.MAPBOX_TOKEN : 'pk.eyJ1IjoiZmx5aW5nZWVrIiwiYSI6ImNrYXpmZzhuYjBpczUycW1pZzZ1b2Z4NjAifQ.5S-VzSXpJkui8NDMlTU51Q',
         'APP_VERSION': version,
+        'APP_BUILD_TIMESTAMP': setBuildStamp(),
         'preventAssignment': true
     }}),
     svelte({
@@ -262,6 +276,7 @@ export default [{
       'process.env.NODE_ENV': JSON.stringify('production'),
       'CONF_LIDOJS_VERSION': lidojsPkg.version,
       'APP_VERSION': version,
+      'APP_BUILD_TIMESTAMP': buildStamp,
       'preventAssignment': true
     }}),
     commonjs(),
