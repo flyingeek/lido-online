@@ -321,7 +321,7 @@ Sur iPad, lors du téléchargement, l'export des fichiers KML affiche une page u
 Il est possible de lancer un plugin depuis le pavé d'informations du vol dans la barre de menu. Les plugins sont des raccourcis qui doivent être installés au préalable. Si vous avez supprimé l'application Raccourcis, installez là depuis l'App Store et redémarrez votre iPad. Pour installer un plugin,
 cliquez sur le raccourci désiré, puis vous revenez sur OFP2MAP, cliquez sur 🧩 et faites défiler pour sélectionner le plugin.
 
-<EmbeddedVideo tabindex="-1" src="https://p169.p3.n0.cdn.getcloudapp.com/items/yAu14LGP/55eed601-f463-4eee-8d47-87d290d3ceb2.mp4" title="Installation\nPLUGIN" forcePreview={false} figcaption="🎥 Installation d'un plugin"/>
+<EmbeddedVideo tabindex="-1" src="https://p169.p3.n0.cdn.getcloudapp.com/items/yAu14LGP/55eed601-f463-4eee-8d47-87d290d3ceb2.mp4" title="Installation\nPLUGIN" forcePreview={false} figcaption="🎥 Installation d'un plugin (internet requis)"/>
 
 __Liste des plugins&#8239;:__
 
@@ -333,7 +333,7 @@ OFP2MAP-ETOPS et OFP2MAP-FTL fonctionnent en mode offline. Les autres plugins n�
 
 > Pour un accès plus rapide aux plugins, je recommande d'installer OFP2MAP-MENU. Il faut ensuite le remonter dans le menu contextuel qui s'affiche en cliquant 🧩.
 
-<EmbeddedVideo tabindex="-1" src="https://p169.p3.n0.cdn.getcloudapp.com/items/KouJeA4l/42ec3a9e-a573-41cb-bd34-763da10c514c.mp4" title="Utilisation\nOFP2MAP-MENU" forcePreview={false} figcaption="🎥 plugin OFP2MAP-MENU"/>
+<EmbeddedVideo tabindex="-1" src="https://p169.p3.n0.cdn.getcloudapp.com/items/KouJeA4l/42ec3a9e-a573-41cb-bd34-763da10c514c.mp4" title="Utilisation\nOFP2MAP-MENU" forcePreview={false} figcaption="🎥 plugin OFP2MAP-MENU (internet requis)"/>
 
 </section>
 <section id="/help_updates">

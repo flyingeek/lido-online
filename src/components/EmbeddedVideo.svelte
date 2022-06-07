@@ -1,5 +1,4 @@
 <script>
-    import {online} from '../stores.js';
     export let src;
     export let title;
     export let figcaption = "";
@@ -31,7 +30,7 @@
     }
     url.searchParams.set('dnd',1); // do not track
 </script>
-{#if $online}
+
     <figure>
     {#if topcaption}<figcaption>{topcaption}</figcaption>{/if}
     <!-- svelte-ignore a11y-media-has-caption -->
@@ -40,7 +39,7 @@
     </video>
     {#if figcaption}<figcaption>{figcaption}</figcaption>{/if}
     </figure>
-{/if}
+
 <style>
     video {
         background-position: center 50px;
