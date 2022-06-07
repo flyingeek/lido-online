@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.18.2] - 2022-06-07
+
+### Changed
+
+- [OFP2MAP-FTL v8](https://www.icloud.com/shortcuts/1733d6e947864162ab5b5df7eb2a0700) précise que le plugin ne connait pas la compo PEQ: c'est le nombre de pilotes qui est surligné. Exemple: 3 PNT mais aucune suppléance, la compo réglementaire est PEQ2 mais pourtant c'est PEQ3 qui est surligné. Pour la butée TSV PNC, la butée FTL est la même que les PNT si le SV est identique et il n'y a pas de butée AF à proprement dit mais des repos additionnels qui sont accordés, une mention RADD est donc ajoutée.
+
 ## [1.18.1] - 2022-06-05
 
 ### Changed
