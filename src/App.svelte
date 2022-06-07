@@ -12,7 +12,6 @@
   import {storage, stores, validate, setHistory, storeSettingsFromURL} from "./components/mapSettings/storage.js";
   import {swDismiss, sidebar, route, checkSwOnVisibilityChange, ofp, ofpStatus, aircraftType} from "./stores.js";
   import HomePwaInstall from './components/HomePwaInstall.svelte';
-  import {runningOnIpad} from './components/utils';
 
   const redirect = (requestedRoute) => {
     console.log(`unknown route ${requestedRoute}, redirecting to #/`, !!$ofp, $ofpStatus);

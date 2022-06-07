@@ -39,7 +39,11 @@
   <!-- collapsable menu -->
   <ul class="navbar-nav collapse navbar-collapse" id="navbarToggler">
     <li class="nav-item" class:active={$route === '/'}>
-      <a class="nav-link" href="#/" on:click={collapse} style="text-decoration: none; position: relative"><strong class="d-none d-lg-inline  ofp2map">OFP2MAP</strong><svg class="d-xxl-none d-xl-none d-lg-none"><use xlink:href="#home-symbol"/></svg>{#if 'process.env.NODE_ENV' === '"development"'}<sup>dev</sup>{/if}</a>
+      <a class="nav-link" href="#/" on:click={collapse} style="text-decoration: none; position: relative">
+        <strong class="d-none d-lg-inline  ofp2map">OFP2MAP</strong>
+        <svg class="d-xxl-none d-xl-none d-lg-none"><use xlink:href="#home-symbol"/></svg>
+        {#if 'process.env.NODE_ENV' === '"development"'}<sup>dev</sup>{/if}
+    </a>
     </li>
     {#if $ofp|| $aircraftType || $route === '/map'}
     <li class="nav-item" class:active={$route === '/map'}>
