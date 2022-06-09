@@ -12,7 +12,7 @@ export const token = 'MAPBOX_TOKEN';
 export const key = {};
 
 export const mapControlHTML = focusMode => (
-    (focusMode) 
+    (focusMode)
     ? '<svg><use xlink:href="#single-layer-symbol"/></svg>'
     : '<svg><use xlink:href="#layers-symbol"/></svg>');
 
@@ -85,7 +85,28 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
     window.proj4.defs('WGS84', "+proj=longlat +datum=WGS84");
     //https://epsg.io/3857
     window.proj4.defs("EPSG:3857","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
-    let affine, affineAndClamp, affineOrDrop, affineAndClip;
+    let affine, affineAndClamp, affineOrDrop;
+    const optionalAnteMeridianSplitter = (data) => {
+      if (data.length === 0) return [];
+      let lines = [];
+      if (mapOptions.allow180Crossing) {
+        lines = [data];
+      } else {
+        let subline = [];
+        for (let i = 0; i < data.length; i++) {
+          const diffLng = (i > 0) ? data[i].longitude - data[i - 1].longitude : 0;
+          if (Math.abs(diffLng) > 180) { // cross 180 boundary => new segment
+            if (subline.length) lines.push(subline);
+            subline = [data[i]];
+          } else {
+            subline.push(data[i]);
+          }
+        }
+        if (subline.length) lines.push(subline);
+      }
+      return lines.map(l => l.map(g => [g.longitude, g.latitude]));
+    }
+    let affineAndClip = optionalAnteMeridianSplitter;
     let affine2xy = (lngLat) => window.proj4('WGS84', 'EPSG:3857', lngLat);
     let xy2wgs84 = (xy) => window.proj4('EPSG:3857', 'WGS84', xy);
     let reverseLngLat = (lngLat) => window.proj4('EPSG:3857', 'WGS84', window.proj4('WGS84', 'EPSG:3857', lngLat));
@@ -142,8 +163,13 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
         }
         affineAndClip = (data) => {
             if (data.length === 0) return [];
-            const points = data.map(g => customXY([g.longitude, g.latitude]));
-            return lineclip(points, mapOptions.extent).map(l => l.map(XY => customXY2wgs84(XY)));
+            let lines = optionalAnteMeridianSplitter(data);
+            const results = [];
+            for (let i = 0; i < lines.length; i++) {
+              const points = lines[i].map(customXY);
+              results.push(lineclip(points, mapOptions.extent).map(l => l.map(XY => customXY2wgs84(XY))));
+            }
+            return results.flat();
         }
     }
     let bbox = undefined;
@@ -234,9 +260,9 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
                 map.off('click', calibrate);
             }
         }
-        
+
     };
-    //patch for logitech combo touch azerty 
+    //patch for logitech combo touch azerty
     const patchKeyboard = (e) => {
         let patchEvent;
         if(e.keyCode === 187 && (e.key === '-' || e.key === '_')) {
@@ -276,7 +302,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
         });
         if (geolocateControlElt) geolocateControlElt.addEventListener('click', focusMap);
         geolocateControl.on('trackuserlocationstart', hidePlane);
-        
+
         // if (ofp) addToSWCache([ofp.ogimetData.proxyImg], 'lido-gramet2');
         //fetch(ofp.ogimetData.proxyImg); // add to cache
         if (onLoadCb) onLoadCb(map, mapOptions);

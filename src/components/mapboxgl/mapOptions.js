@@ -92,6 +92,7 @@ const options = [
         'cacheAll': true,
         'tileSize': tilesResolution,
         'interpolateMinZoom': 3,
+        'allow180Crossing': true,
         'subLabel': 'recommandée au sud du 30N'
     },
     {
@@ -196,6 +197,7 @@ const options = [
         'cacheName': 'CONF_NAM_PHYSICAL_METERS',
         'cacheAll': true,
         'interpolateMinZoom': 2,
+        'allow180Crossing': true,
         'tileSize': tilesResolution
     }
     ,{
@@ -217,6 +219,7 @@ const options = [
         'cacheName': 'CONF_ARTIC',
         'cacheAll': true,
         'interpolateMinZoom': 1,
+        'allow180Crossing': true,
         'tileSize': tilesResolution
     }
     ,{
