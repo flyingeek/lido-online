@@ -7,7 +7,7 @@
                 if (result.state == "granted" || result.state == "prompt") {
                     copyPermission = true;
                 }
-            });
+            }).catch(() => console.log('clipboard-write permission rejected'));
         }catch(err) {
             console.log(err);
         }
