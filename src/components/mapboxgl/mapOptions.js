@@ -36,7 +36,8 @@ const options = [
         'cacheName': 'CONF_MERCATOR',
         'interpolateMinZoom': 2,
         'interpolateMaxZoom': 7, // overrides maxboxOptions.maxZoom for interpolate expression
-        'cacheZoom': 6
+        'cacheZoom': 6,
+        'routeCacheZoom': 7, // change sw.js if outside 7-10
     },
     {
         'label': 'Lambert North',

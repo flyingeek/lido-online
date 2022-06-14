@@ -148,7 +148,7 @@ registerRoute(
   })
 );
 
-const tilesCache = new TilesCache('CONF_TILES_DB', 10, (open, evt) => {
+const tilesCache = new TilesCache('CONF_TILES_DB', 11, (open, evt) => {
     if (evt.oldVersion < 1) {
         open.result.createObjectStore(maps['theworld']);
     }
@@ -182,6 +182,9 @@ const tilesCache = new TilesCache('CONF_TILES_DB', 10, (open, evt) => {
     if (evt.oldVersion < 10) {
       open.result.deleteObjectStore('cb2020v1');
       open.result.createObjectStore(maps['cb202x']);
+    }
+    if (evt.oldVersion < 11) {
+      open.result.createObjectStore('denizotjbv2_hd');
     }
 });
 
@@ -221,6 +224,10 @@ const baseMercator = `https://api.mapbox.com/v4/${maps['mercator'].slice(0,-2)}`
 registerRoute(
   ({url}) => url.href.match(new RegExp(baseMercator + '[^/]+/[0-6]/.*')),
   tilesCache.getCacheHandler(maps['mercator'])
+);
+registerRoute(
+  ({url}) => url.href.match(new RegExp(baseMercator + '[^/]+/([7-9]|10)/\\d+/\\d+\\.vector.pbf\\.*')), // Zoom 7-10 cached programmatically only
+  tilesCache.getReadOnlyCacheHandler(maps['mercator']+'_hd')
 );
 registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_PACIFIC_TILES_BASE_URL' + '/[0-4]/.*')),

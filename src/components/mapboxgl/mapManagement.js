@@ -80,6 +80,7 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
             map.addImage('stripe-red', image, { pixelRatio: 2, sdf: true});
         }
     });
+    // map.showTileBoundaries = true;
     // definitions from epsg.io
     //https://epsg.io/4326
     window.proj4.defs('WGS84', "+proj=longlat +datum=WGS84");

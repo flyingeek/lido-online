@@ -6,7 +6,7 @@
     import {promiseTimeout, fetchSimultaneously, focusMap, savePreviousMapProjection} from './utils';
     import { createEventDispatcher, onMount, onDestroy, tick} from 'svelte';
     import {get} from 'svelte/store';
-    import {findMissingCacheTiles} from '../tilesCache';
+    import {findMissingCacheTiles, purgeHDCache} from '../tilesCache';
     import CircleProgress from "./CircleProgress.svelte";
     import AircraftType from "./AircraftType.svelte";
     import MapPlane from "./MapPlane.svelte";
@@ -107,11 +107,16 @@
             try {
                 await promiseTimeout(4000, fetch(`./manifest.json?dummy=${Date.now()}`, {cache: "no-store"}));
             } catch (err) {
-                console.error(err);
+                console.log('offline mode detected');
                 cacheButtonDisabled = false;
                 cacheError = true;
                 cacheValue = -1;
                 return false;
+            }
+            if (selectedProjection.id === 'mercator') {
+                await purgeHDCache();
+                tilesMissing = await findMissingCacheTiles(ofp, mapData);
+                cacheMaxValue = tilesMissing.length;
             }
             await fetchSimultaneously(tilesMissing, () => cacheValue++);
             if (cacheValue>=cacheMaxValue){
