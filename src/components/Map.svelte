@@ -21,34 +21,41 @@
     let mapData;
     let selectedProjection;
     let aircraftTypeSelectElement;
+    const caches = {};
 
     let cacheMaxValue, cacheValue, cacheError, tilesMissing;
+    const resetTilesMissing = () => {
+        tilesMissing = (selectedProjection) ? caches[selectedProjection.id] : undefined;
+    }
     const initCacheMap = () => {
         cacheMaxValue = 0;
         cacheValue = -1;
         cacheError = false;
-        tilesMissing = [];
+        resetTilesMissing();
     };
 
     let settings;
-    $: mapIsCached = tilesMissing !== undefined && tilesMissing.length === 0;
+    $: mapIsCached = tilesMissing === true || (Array.isArray(tilesMissing) && tilesMissing.length === 0);
     $: {
         if ($route === '/map') {
             tick().then(focusMap);
         }
     }
-    const caches = {};
-
 
     export let id = 'map';
 
     async function afterMapLoad(){
         initCacheMap();
         if (!!ofp) {
-            try {
-                tilesMissing = await findMissingCacheTiles(ofp, mapData);
-            } catch (err){
-                console.error(`Could not find missing cache tiles`, err);
+            if (tilesMissing === undefined) {
+                try {
+                    tilesMissing = await findMissingCacheTiles(ofp, mapData);
+                    if (Array.isArray(tilesMissing) && selectedProjection){
+                        caches[selectedProjection.id] = tilesMissing.length === 0;
+                    }
+                } catch (err){
+                    console.error(`Could not find missing cache tiles`, err);
+                }
             }
         }
         //console.log(tilesMissing);
@@ -70,6 +77,7 @@
         mapData = createMap(id, selectedProjection, ofp, kmlOptions, $aircraftType, afterMapLoad);
         focusMap();
         map = mapData.map;
+        resetTilesMissing();
         setTimeout(async () => {
             await tick;
             showPlaneOnMap.set(showPlaneState);
@@ -102,7 +110,7 @@
         cacheButtonDisabled = true;
         cacheValue = 0;
         try {
-            cacheMaxValue = tilesMissing.length; // set the progress class
+            cacheMaxValue = 1; // set the progress class
             cacheError = false; //remove error class
             try {
                 await promiseTimeout(4000, fetch(`./manifest.json?dummy=${Date.now()}`, {cache: "no-store"}));
@@ -116,8 +124,10 @@
             if (selectedProjection.id === 'mercator') {
                 await purgeHDCache();
                 tilesMissing = await findMissingCacheTiles(ofp, mapData);
-                cacheMaxValue = tilesMissing.length;
+            } else if (!Array.isArray(tilesMissing)) {
+                tilesMissing = await findMissingCacheTiles(ofp, mapData);
             }
+            cacheMaxValue = tilesMissing.length;
             await fetchSimultaneously(tilesMissing, () => cacheValue++);
             if (cacheValue>=cacheMaxValue){
                 caches[selectedProjection.id] = true;
@@ -128,6 +138,8 @@
             }else{
                 tilesMissing = await findMissingCacheTiles(ofp, mapData);
                 cacheError = true;
+                caches[selectedProjection.id] = false;
+                caches=caches;
             }
         }finally{
             cacheButtonDisabled = false;
@@ -165,13 +177,17 @@
     <div class="projection">
         <MapProjectionSelect bind:selected={selectedProjection} ofp={ofp} on:change={projectionChange} disabled={cacheValue >= 0}></MapProjectionSelect>
         {#if (selectedProjection && window.indexedDB)}
-        <div class="cacheButton"
-            class:cacheError={cacheError}
-            class:cacheProgress={cacheValue >= 0||cacheMaxValue > 0}
-            class:hidden={!ofp || mapIsCached || caches[selectedProjection.id]===true}
-            on:click={(cacheButtonDisabled) ? () => false : cacheMap}>
-            <CircleProgress value={(cacheValue>=0) ? cacheValue : 0} max={cacheMaxValue}></CircleProgress>
-        </div>
+            {#if tilesMissing === undefined}
+            <div class="lds-dual-ring"></div>
+            {:else}
+            <div class="cacheButton"
+                class:cacheError={cacheError}
+                class:cacheProgress={cacheValue >= 0||cacheMaxValue > 0}
+                class:hidden={!ofp || mapIsCached || caches[selectedProjection.id]===true}
+                on:click={(cacheButtonDisabled) ? () => false : cacheMap}>
+                <CircleProgress value={(cacheValue>=0) ? cacheValue : 0} max={cacheMaxValue}></CircleProgress>
+            </div>
+            {/if}
         {/if}
     </div>
     {#if cacheValue >= 0}
@@ -225,6 +241,28 @@
     }
     .cacheButton {
         margin-left: 10px;
+    }
+    .lds-dual-ring {
+        display: inline-block;
+    }
+    .lds-dual-ring:after {
+        content: " ";
+        display: block;
+        width: 25px;
+        height: 25px;
+        margin: 0px 0px 0px 10px;
+        border-radius: 50%;
+        border: 3px solid var(--bs-gray-500);
+        border-color: var(--bs-gray-500) transparent var(--bs-gray-500) transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+    }
+    @keyframes lds-dual-ring {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
     }
     :global(.cacheButton) {
         display: inline-block;
