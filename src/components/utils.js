@@ -227,9 +227,9 @@ export async function fetchSimultaneously(urls, fetchCallback) {
     const maxSimultaneouslyRequests = 5;
     let currentRequests = 0;
     let i = 0;
-
+    const controller = new AbortController();
+    const signal = controller.signal;
     return await new Promise((resolve, reject) => {
-
         const fetcher = setInterval(async () => {
             if (queue.filter(url => url).length === 0) {
                 clearInterval(fetcher);
@@ -246,10 +246,11 @@ export async function fetchSimultaneously(urls, fetchCallback) {
 
             currentRequests++;
             try {
-                await fetch(url);
+                await fetch(url, {signal});
                 if (fetchCallback) fetchCallback();
             } catch(err) {
               clearInterval(fetcher);
+              controller.abort();
               reject(err);
             }
             currentRequests--;
