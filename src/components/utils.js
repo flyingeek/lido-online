@@ -223,7 +223,7 @@ export const getBounds = (points, affineAndClamp, result=[Infinity, Infinity, -I
 }
 
 export async function fetchSimultaneously(urls, fetchCallback) {
-    const queue = urls.filter(url => url);
+    const queue = urls;
     const maxSimultaneouslyRequests = 5;
     let currentRequests = 0;
     let i = 0;
@@ -231,7 +231,7 @@ export async function fetchSimultaneously(urls, fetchCallback) {
     return await new Promise(resolve => {
 
         const fetcher = setInterval(async () => {
-            if (queue.length === 0) {
+            if (queue.filter(url => url).length === 0) {
                 clearInterval(fetcher);
                 resolve();
             }
