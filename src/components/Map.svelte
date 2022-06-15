@@ -112,15 +112,8 @@
         try {
             cacheMaxValue = 1; // set the progress class
             cacheError = false; //remove error class
-            try {
-                await promiseTimeout(4000, fetch(`./manifest.json?dummy=${Date.now()}`, {cache: "no-store"}));
-            } catch (err) {
-                console.log('offline mode detected');
-                cacheButtonDisabled = false;
-                cacheError = true;
-                cacheValue = -1;
-                return false;
-            }
+            await promiseTimeout(4000, fetch(`./manifest.json?dummy=${Date.now()}`, {cache: "no-store"}));
+            // console.log('online mode confirmed')
             if (selectedProjection.id === 'mercator') {
                 await purgeHDCache();
                 tilesMissing = await findMissingCacheTiles(ofp, mapData);
@@ -128,22 +121,23 @@
                 tilesMissing = await findMissingCacheTiles(ofp, mapData);
             }
             cacheMaxValue = tilesMissing.length;
-            await fetchSimultaneously(tilesMissing, () => cacheValue++);
+            await fetchSimultaneously(tilesMissing, () => {
+                if (cacheValue >= 0) cacheValue++; // < 0 means fetch was aborted, so do nothing
+            });
             if (cacheValue>=cacheMaxValue){
                 caches[selectedProjection.id] = true;
-                caches=caches;
-                tilesMissing = [];
-                cacheMaxValue = 0;
-                cacheValue = -1;
             }else{
-                tilesMissing = await findMissingCacheTiles(ofp, mapData);
-                cacheError = true;
-                caches[selectedProjection.id] = false;
-                caches=caches;
+                throw new Error('incomplete download of the cache');
             }
+        }catch (err){
+            console.error(err);
+            cacheError = true;
+            caches[selectedProjection.id] = false;
         }finally{
             cacheButtonDisabled = false;
             cacheValue = -1;
+            caches=caches; //svelte internal
+            resetTilesMissing();
         }
     }
     let supportWebP = true;

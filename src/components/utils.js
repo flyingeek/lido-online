@@ -228,7 +228,7 @@ export async function fetchSimultaneously(urls, fetchCallback) {
     let currentRequests = 0;
     let i = 0;
 
-    return await new Promise(resolve => {
+    return await new Promise((resolve, reject) => {
 
         const fetcher = setInterval(async () => {
             if (queue.filter(url => url).length === 0) {
@@ -248,7 +248,10 @@ export async function fetchSimultaneously(urls, fetchCallback) {
             try {
                 await fetch(url);
                 if (fetchCallback) fetchCallback();
-            } catch(err) {console.error(err)}
+            } catch(err) {
+              clearInterval(fetcher);
+              reject(err);
+            }
             currentRequests--;
 
             // Set value of index to empty (undefined)
