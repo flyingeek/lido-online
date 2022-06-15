@@ -171,7 +171,7 @@
     <div class="projection">
         <MapProjectionSelect bind:selected={selectedProjection} ofp={ofp} on:change={projectionChange} disabled={cacheValue >= 0}></MapProjectionSelect>
         {#if (selectedProjection && window.indexedDB)}
-            {#if tilesMissing === undefined}
+            {#if tilesMissing === undefined && !!ofp}
             <div class="lds-dual-ring"></div>
             {:else}
             <div class="cacheButton"
