@@ -39,6 +39,8 @@
                 selected = cbMapOption;
             }else if (dep.distanceTo(dest, editolido.rad_to_nm) <=1500){
                 //pass (mercator)
+            }else if (ofp.route.points.filter(p => p.latitude >= 75).length > 0) { //above N75
+                selected = options.find(o => o.id === 'jb_stereo');
             }else if (dest.latitude > 30 && dep.latitude > 30){
                 selected = northOption;
             }else if (dest.longitude < -80 && dep.longitude < -80) {

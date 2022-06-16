@@ -29,6 +29,7 @@ const southId = 'southv3';
 const pacificId = 'pacificv1';
 const theworldId = 'theworldv2';
 const mercatorId = 'denizotjbv2';
+const stereoId = 'stereov1';
 const eqePhysicalFrId = 'eqephysicalfrv1';
 const namPhysicalMetersId = 'namphysicalmetersv1';
 const cbId = 'cb2022v1';
@@ -53,6 +54,7 @@ const U = {
   'CONF_NORTH': northId,
   'CONF_SOUTH': southId,
   'CONF_PACIFIC': pacificId,
+  'CONF_STEREO': stereoId,
   'CONF_THEWORLD': theworldId,
   'CONF_MERCATOR': mercatorId,
   'CONF_EQE_PHYSICAL_FR': eqePhysicalFrId,
@@ -71,6 +73,7 @@ const U = {
   'CONF_CB_TILES_BASE_URL': `https://ofp2map-${cbId}.netlify.app/${cbId}`,
   'CONF_EQE_POLITICAL_FR_TILES_BASE_URL': `https://ofp2map-${eqePoliticalFrId}.netlify.app/${eqePoliticalFrId}`,
   'CONF_ARTIC_TILES_BASE_URL': `https://ofp2map-${articId}.netlify.app/${articId}`,
+  'CONF_STEREO_TILES_BASE_URL': `https://ofp2map-${stereoId}.netlify.app/${stereoId}`,
   'CONF_NOAA_KP_JSON': 'https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json'
 };
 U.CONF_GRAMET_PROXY_ORIGIN = new URL(U.CONF_GRAMET_PROXY).origin;

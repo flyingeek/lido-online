@@ -115,6 +115,14 @@ Avant d'utiliser OFP2MAP en vol, il est préférable de lire la rubrique [Mode h
 
         Les parallèles sécants sont 30N et 15S, elles sont recommandées sous 30N
 
+    - **Stéréographique**
+
+        Une carte stéréographique polaire, son domaine d'utilisation est au dessus du 60N
+
+    - **Artic**
+
+        Une carte physique basée sur une projection azimutale équivalente de Lambert centrée sur le pôle nord
+
     - **The World**
 
         Un Atlas politique, c'est une projection Times. Les étiquettes sont en anglais.
@@ -130,10 +138,6 @@ Avant d'utiliser OFP2MAP en vol, il est préférable de lire la rubrique [Mode h
     - **NAM Physical**
 
         Un Atlas physique du continent Nord-Américain. Les étiquettes sont en anglais, les altitudes sont en mètres. C'est une projection azimutale de Lambert centrée sur 45N095W.
-
-    - **Artic**
-
-        Une carte physique basée sur une projection azimutale équivalente de Lambert centrée sur le pôle nord
 
     - **{cbName} 2022**
 

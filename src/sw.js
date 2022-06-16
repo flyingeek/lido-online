@@ -20,7 +20,8 @@ const maps = {
   'eqepoliticalfr': 'CONF_EQE_POLITICAL_FR',
   'cb202x': 'CONF_CB',
   'namphysicalmeters': 'CONF_NAM_PHYSICAL_METERS',
-  'artic': 'CONF_ARTIC'
+  'artic': 'CONF_ARTIC',
+  'stereo': 'CONF_STEREO',
 };
 // compute a host hash based on url origin
 // simply use first letters of url's origin
@@ -148,7 +149,7 @@ registerRoute(
   })
 );
 
-const tilesCache = new TilesCache('CONF_TILES_DB', 11, (open, evt) => {
+const tilesCache = new TilesCache('CONF_TILES_DB', 12, (open, evt) => {
     if (evt.oldVersion < 1) {
         open.result.createObjectStore(maps['theworld']);
     }
@@ -186,6 +187,9 @@ const tilesCache = new TilesCache('CONF_TILES_DB', 11, (open, evt) => {
     if (evt.oldVersion < 11) {
       open.result.createObjectStore('denizotjbv2_hd');
     }
+    if (evt.oldVersion < 12) {
+      open.result.createObjectStore(maps['stereo']);
+    }
 });
 
 registerRoute(
@@ -219,6 +223,10 @@ registerRoute(
 registerRoute(
   ({url}) => url.href.match(new RegExp('CONF_ARTIC_TILES_BASE_URL' + '/[0-5]/.*')),
   tilesCache.getCacheHandler(maps['artic'])
+);
+registerRoute(
+  ({url}) => url.href.match(new RegExp('CONF_STEREO_TILES_BASE_URL' + '/[0-4]/.*')),
+  tilesCache.getCacheHandler(maps['stereo'])
 );
 const baseMercator = `https://api.mapbox.com/v4/${maps['mercator'].slice(0,-2)}`;
 registerRoute(

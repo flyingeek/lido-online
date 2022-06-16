@@ -15,6 +15,7 @@ export const MERCATOR = 'mercator';
 export const NORTH = 'jb_north';
 export const SOUTH = 'jb_south';
 export const PACIFIC = 'jb_pacific';
+export const STEREO = 'jb_stereo';
 export const POLITICAL = 'jb_theworld';
 export const PHYSICAL = 'ed_eqe_physical_fr';
 export const POLITICALFR = 'ed_eqe_political_fr';
@@ -95,8 +96,49 @@ const options = [
         'interpolateMinZoom': 3,
         'allow180Crossing': true,
         'subLabel': 'recommandée au sud du 30N'
-    },
-    {
+    }
+    ,{
+      'label': 'Stéréographique',
+      'id': STEREO,
+      'extent': [-6193510.36815280, -5728703.23331308, 5748784.52059092, 6213591.65543064],
+      'proj4': '+proj=sterea +lat_0=90 +lat_ts=90 +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs ',
+      'mapboxOptions': {
+        'style': blankStyle,
+        'renderWorldCopies': false,
+        'maxZoom': 5.5
+      },
+      'tiles': ['CONF_STEREO_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
+      'cacheName': 'CONF_STEREO',
+      'cacheZoom': 4,
+      'cacheAll': true,
+      'tileSize': tilesResolution,
+      'interpolateMinZoom': 3,
+      'allow180Crossing': true,
+      'subLabel': 'recommandée au nord du 60N'
+    }
+    ,{
+        'label': 'Artic',
+        'id': ARTIC,
+        'copyright': 'Perry-Castañeda Library',
+        "ratio": [6486, 5619],
+        "extent": [-3402191.57410000, -2914604.22852291, 3372208.41558015, 2954244.60620000],
+        "proj4": "+proj=laea +lat_0=90 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs ",
+        // zoom6 available on netlify but to reduce size we limit to 5
+        'mapboxOptions': {
+            'style': blankStyle,
+            'renderWorldCopies': false,
+            'maxZoom': 4
+        },
+        'tiles': ['CONF_ARTIC_TILES_BASE_URL/{z}/{x}/{y}.webp'],
+        'matrix': [[1, 1], [2, 2], [4, 4], [8, 7], [16, 14], [32, 28]],
+        'cacheZoom': 5,
+        'cacheName': 'CONF_ARTIC',
+        'cacheAll': true,
+        'interpolateMinZoom': 1,
+        'allow180Crossing': true,
+        'tileSize': tilesResolution
+    }
+    ,{
         'label': 'The World',
         'id': POLITICAL,
         // for wide map
@@ -198,28 +240,6 @@ const options = [
         'cacheName': 'CONF_NAM_PHYSICAL_METERS',
         'cacheAll': true,
         'interpolateMinZoom': 2,
-        'allow180Crossing': true,
-        'tileSize': tilesResolution
-    }
-    ,{
-        'label': 'Artic',
-        'id': ARTIC,
-        'copyright': 'Perry-Castañeda Library',
-        "ratio": [6486, 5619],
-        "extent": [-3402191.57410000, -2914604.22852291, 3372208.41558015, 2954244.60620000],
-        "proj4": "+proj=laea +lat_0=90 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs ",
-        // zoom6 available on netlify but to reduce size we limit to 5
-        'mapboxOptions': {
-            'style': blankStyle,
-            'renderWorldCopies': false,
-            'maxZoom': 4
-        },
-        'tiles': ['CONF_ARTIC_TILES_BASE_URL/{z}/{x}/{y}.webp'],
-        'matrix': [[1, 1], [2, 2], [4, 4], [8, 7], [16, 14], [32, 28]],
-        'cacheZoom': 5,
-        'cacheName': 'CONF_ARTIC',
-        'cacheAll': true,
-        'interpolateMinZoom': 1,
         'allow180Crossing': true,
         'tileSize': tilesResolution
     }
