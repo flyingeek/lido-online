@@ -1,3 +1,4 @@
+/* global globalThis */
 import blankStyle from './blankStyle';
 // Pour réaliser les tiles dans Map Tiler
 // - Choisir Andvanced Tiles -> Continue
@@ -8,7 +9,7 @@ import blankStyle from './blankStyle';
 // - choisir "Advanced Options" -> séléctionner JPEG, laisser sur Sparse Output et OpenGIS -> Close
 // - choisir "Folder" -> Render
 const query = "(-webkit-min-device-pixel-ratio: 2), (min-device-pixel-ratio: 2), (min-resolution: 192dpi)";
-const tilesResolution = (matchMedia(query).matches) ? 256 : 512;
+const tilesResolution = (globalThis.matchMedia && globalThis.matchMedia(query).matches) ? 256 : 512;
 
 // PROJECTION ID
 export const MERCATOR = 'mercator';
@@ -130,7 +131,7 @@ const options = [
             'maxZoom': 4
         },
         'tiles': ['CONF_ARTIC_TILES_BASE_URL/{z}/{x}/{y}.webp'],
-        'matrix': [[1, 1], [2, 2], [4, 4], [8, 7], [16, 14], [32, 28]],
+        'matrix': [[1, 1], [2, 2], [4, 4], [8, 7], [16, 14], [32, 28]], //must be referenced in TilesCache
         'cacheZoom': 5,
         'cacheName': 'CONF_ARTIC',
         'cacheAll': true,
@@ -162,7 +163,7 @@ const options = [
             'maxZoom': 5
         },
         'tiles': ['CONF_THEWORLD_TILES_BASE_URL/{z}/{x}/{y}.webp'],
-        'matrix': [[1, 1], [2, 2], [4, 3], [8, 5], [16, 10], [32, 20], [64, 40]],
+        'matrix': [[1, 1], [2, 2], [4, 3], [8, 5], [16, 10], [32, 20], [64, 40]], //must be referenced in TilesCache
         'cacheZoom': 5,
         'cacheName': 'CONF_THEWORLD',
         'cacheAll': true,
@@ -184,7 +185,7 @@ const options = [
             'maxZoom': 6.5
         },
         'tiles': ['CONF_EQE_POLITICAL_FR_TILES_BASE_URL/{z}/{x}/{y}.jpg'],
-        'matrix': [[1, 1], [2, 2], [4, 3], [8, 5], [16, 9], [32, 17], [64, 34]],
+        'matrix': [[1, 1], [2, 2], [4, 3], [8, 5], [16, 9], [32, 17], [64, 34]], //must be referenced in TilesCache
         'cacheZoom': 6,
         'cacheName': 'CONF_EQE_POLITICAL_FR',
         'cacheAll': true,
@@ -214,7 +215,7 @@ const options = [
             'maxZoom': 5
         },
         'tiles': ['CONF_EQE_PHYSICAL_FR_TILES_BASE_URL/{z}/{x}/{y}.webp'],
-        'matrix': [[1, 1], [2, 2], [4, 3], [8, 5], [16, 9], [32, 18], [64, 36]],
+        'matrix': [[1, 1], [2, 2], [4, 3], [8, 5], [16, 9], [32, 18], [64, 36]], //must be referenced in TilesCache
         'cacheZoom': 5,
         'cacheName': 'CONF_EQE_PHYSICAL_FR',
         'cacheAll': true,
@@ -235,7 +236,7 @@ const options = [
             'maxZoom': 5
         },
         'tiles': ['CONF_NAM_PHYSICAL_METERS_TILES_BASE_URL/{z}/{x}/{y}.webp'],
-        'matrix': [[1, 1], [2, 2], [4, 4], [8, 8], [16, 16], [31, 32], [62, 64]],
+        'matrix': [[1, 1], [2, 2], [4, 4], [8, 8], [16, 16], [31, 32], [62, 64]], //must be referenced in TilesCache
         'cacheZoom': 5,
         'cacheName': 'CONF_NAM_PHYSICAL_METERS',
         'cacheAll': true,
@@ -256,7 +257,7 @@ const options = [
             'maxZoom': 5
         },
         'tiles': ['CONF_CB_TILES_BASE_URL/{z}/{x}/{y}.webp'],
-        'matrix': [[1, 1], [2, 2], [4, 4], [8, 8], [16, 16], [32, 31]],
+        'matrix': [[1, 1], [2, 2], [4, 4], [8, 8], [16, 16], [32, 31]], //must be referenced in TilesCache
         'cacheName': 'CONF_CB',
         'cacheZoom': 5,
         'cacheAll': true,
