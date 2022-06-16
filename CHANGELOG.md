@@ -3,6 +3,22 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.0] - 2022-06-16
+
+### Added
+
+- JB Denizot a créé une projection stéréographique polaire (carte par défaut si la route passe au nord du 75N)
+- Sur la Mercator, la route est cachée avec un zoom de niveau 7 (au lieu de 6) et les terrains de départ, destination et dégagement avec un zoom de 10. Pour limiter l'espace de stockage, le cache de niveau 7+ ne peut contenir qu'un seul vol, il est réinitialisé à chaque nouvelle mise en cache de la Mercator. Le téléchargement prend environ 1mn en fibre et 5mn en 3G. Une fois plusieurs vols mis en cache, il faudra 25s en fibre et 2mn en 3G.
+- L'indicateur de mise en cache de la carte est animé durant la validation du cache
+
+### Changed
+
+- AIRAC 2206
+
+### Fixed
+
+- Affichage des FIR-REG correct sur toutes les projections
+
 ## [1.18.3] - 2022-06-09
 
 ### Fixed
