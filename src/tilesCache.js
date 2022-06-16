@@ -1,5 +1,10 @@
 /* global mapboxgl */
+import mapOptions from "./components/mapboxgl/mapOptions";
+
 const FORCE_CACHE = '&force_cache';
+const storeName2MapMatrix = Object.fromEntries(mapOptions.map(o => [o.cacheName, o.matrix]));
+const imageIDRegex = /_(\d+)_(\d+)_(\d+)_/; // extract zoom,x, y from id
+
 export class TilesCache {
     constructor(dbName, version, callback) {
         this.dbName = dbName;
@@ -97,6 +102,14 @@ export class TilesCache {
     }
     async _cacheHandler(storeName, { request, url}) {
         const imageID = this.getImageIdFromURL(url);
+        const matrix = storeName2MapMatrix[storeName];
+        if (matrix) {
+          const [, zoom, x, y] = (imageIDRegex.exec(imageID) || []).map(v => parseInt(v, 10));
+          if (zoom === undefined) console.error('tilesCache bad ID:', {zoom, x, y, matrix}, imageID);
+          if (zoom && x > matrix[zoom][0] - 1 || y > matrix[zoom][1] - 1){
+            return new Response('', { "status" : 404 , "statusText" : "non existing tile (sw)"});
+          }
+        }
         return this.fetchImageFromDB(imageID, storeName).then((blob) => {
             if (blob) {
                 // If image is directly available in DB then return the blob as the response.
