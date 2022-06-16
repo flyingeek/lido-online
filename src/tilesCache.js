@@ -106,7 +106,7 @@ export class TilesCache {
         if (matrix) {
           const [, zoom, x, y] = (imageIDRegex.exec(imageID) || []).map(v => parseInt(v, 10));
           if (zoom === undefined) console.error('tilesCache bad ID:', {zoom, x, y, matrix}, imageID);
-          if (zoom && x > matrix[zoom][0] - 1 || y > matrix[zoom][1] - 1){
+          if (zoom && (x > matrix[zoom][0] - 1 || y > matrix[zoom][1] - 1)){
             return new Response('', { "status" : 404 , "statusText" : "non existing tile (sw)"});
           }
         }
