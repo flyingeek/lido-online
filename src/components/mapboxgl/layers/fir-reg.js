@@ -6,42 +6,39 @@ const redStripeLayer = `${folder}-red-stripe-layer`;
 const layers = [orangeStripeLayer, redStripeLayer, lineLayer];
 const source = `${folder}-source`;
 
-function alert180(coordinates) {
-  const results = [];
+function crossing180(coordinates) {
   for (let i = 0; i < coordinates.length; i++) {
     const diffLng = (i > 0) ? coordinates[i][0] - coordinates[i - 1][0] : 0;
     if (Math.abs(diffLng) > 180) { // cross 180 boundary
-      results.push([coordinates[i], coordinates[i-1]])
+      return true
     }
   }
-  return results;
+  return false;
 }
 export const addFirReg = (data) => {
     const {ofp, map, mapData, kmlOptions, mapOptions} = data;
     if (!ofp || firMapIdCondition(mapOptions)) return;
-    const {affineAndClamp} = mapData;
+    const {affineAndClamp, affineAndClip} = mapData;
     const visibility = kmlOptions.firDisplay && !kmlOptions.firHide.includes(mapOptions.id);
     fetch('data/fir-reg.CONF_AIRAC.geojson')
     .then(response => response.json())
     .then(data => {
-        if (affineAndClamp) { // TODO ugly fix
-            for (let i = 0; i<data.features.length; i++){
-                const points = data.features[i].geometry.coordinates[0];
-                const newCoordinates = points.map(v => affineAndClamp(v));
-                if ((mapOptions.id === 'jb_south' && newCoordinates.filter(p => p[0] < -179.8).length > 0)
-                    ||
-                    (mapOptions.id === 'jb_pacific'
-                    && (newCoordinates.filter(p => p[0] < -179.8).length === newCoordinates.length
-                        || newCoordinates.filter(p => p[0] > 179.8).length === newCoordinates.length
-                        || alert180(newCoordinates).length > 0)
-                    )
-                   ){
+        if (mapOptions.id === 'jb_south') {
+          for (let i = 0; i<data.features.length; i++){
+              const points = data.features[i].geometry.coordinates[0];
+              data.features[i].geometry.coordinates = affineAndClip(points.map(([longitude, latitude]) => ({latitude, longitude})), 'polygon');
+          }
+        }else if (affineAndClamp) {
+          for (let i = 0; i<data.features.length; i++){
+              const points = data.features[i].geometry.coordinates[0];
+              const newCoordinates = points.map(v => affineAndClamp(v));
+              if (mapOptions.id === 'jb_pacific' && (crossing180(newCoordinates))
+              ){
                   data.features[i].geometry.coordinates = [[]];
-                }else{
+              }else{
                   data.features[i].geometry.coordinates = [newCoordinates];
-                }
-                //data.features[i].geometry.coordinates = affineAndClip(points.map(([longitude, latitude]) => ({latitude, longitude})));
-            }
+              }
+          }
         }
         map.addSource(source, {
             type: 'geojson',

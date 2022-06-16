@@ -1,6 +1,6 @@
 /* global mapboxgl */
 
-import {clamp, isInside, lineclip, getBounds, throttle, focusMap} from '../utils';
+import {clamp, isInside, lineclip, getBounds, throttle, focusMap, polygonclip} from '../utils';
 import {loadMapLayers} from './layersManagement';
 import {focusMode, sidebar, showPlaneOnMap, mapZoom} from '../../stores';
 import times from './pj_times';
@@ -162,13 +162,19 @@ export function createMap(id, mapOptions, ofp, kmlOptions, aircraftType, onLoadC
                 return customXY2wgs84([X, Y]);
             }
         }
-        affineAndClip = (data) => {
+        affineAndClip = (data, geometry) => {
             if (data.length === 0) return [];
             let lines = optionalAnteMeridianSplitter(data);
             const results = [];
             for (let i = 0; i < lines.length; i++) {
               const points = lines[i].map(customXY);
-              results.push(lineclip(points, mapOptions.extent).map(l => l.map(XY => customXY2wgs84(XY))));
+              let sublines;
+              if (geometry === 'polygon') {
+                sublines = [polygonclip(points, mapOptions.extent)];
+              }else{
+                sublines = lineclip(points, mapOptions.extent);
+              }
+              results.push(sublines.map(l => l.map(XY => customXY2wgs84(XY))));
             }
             return results.flat();
         }
