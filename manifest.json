@@ -38,6 +38,12 @@
       "purpose": "any maskable"
     },
     {
+      "src": "./images/ofp2map-icons/icon-180x180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
       "src": "./images/ofp2map-icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
