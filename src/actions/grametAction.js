@@ -198,7 +198,7 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
         allowImgScroll = (viewportWidth <= iWidth * scale);
         placePlane(plane, position, level);
     }
-    
+
     if (position <= 0 || position >= 100) {
         // flight is not yet progress or finished
         if (iWidth === 0){
@@ -209,7 +209,7 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
         y = 0;
     } else {
         // flight is in progress
-        scale = cHeight / (gInnerHeight);
+        scale = (cHeight - 11) / (gInnerHeight); // 11 due to a bottom margin of 10 on container and 1 more to see the border
         y = - grametTop * scale;
     }
     if (viewportWidth > iWidth * scale) {
