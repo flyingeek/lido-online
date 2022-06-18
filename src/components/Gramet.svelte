@@ -29,11 +29,17 @@
     }
     svg {
         position:absolute;
-        width: 40px;
-        height: 40px;
+        width: 28px;
+        height: 28px;
         top:60px;
         left: 0;
         color: var(--plane-color);
+    }
+    @media (min-width: 768px) {
+        svg {
+            width: 40px;
+            height: 40px;
+        }
     }
     /* .warning {
         position: absolute;

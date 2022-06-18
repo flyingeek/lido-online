@@ -5,6 +5,7 @@ export const grametStatus = writable();
 export const grametResponseStatus = writable({});
 const grametMargin = 65; // left and right margin to the "inner gramet" image in px
 const grametTop = 33;// top margin to the "inner gramet" image in px
+const grametBottom = 37;// bottom margin to show when flight is in progress
 
 export function grametThumbAction(container, {ofp, pos, fl}){
     const plane = document.getElementById('gt-plane');
@@ -209,7 +210,7 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
         y = 0;
     } else {
         // flight is in progress
-        scale = (cHeight - 11) / (gInnerHeight); // 11 due to a bottom margin of 10 on container and 1 more to see the border
+        scale = (cHeight - 11) / (gInnerHeight + grametBottom); // 11 due to a bottom margin of 10 on container and 1 more to see the border
         y = - grametTop * scale;
     }
     if (viewportWidth > iWidth * scale) {
