@@ -42,7 +42,6 @@
             navigator.serviceWorker.addEventListener('message', grametSourceUpdate);
     }
     onDestroy(() => {
-        console.log('destroy gramet trigger');
         if (navigator && navigator.serviceWorker){
             navigator.serviceWorker.removeEventListener('message', grametSourceUpdate);
         }
@@ -77,7 +76,7 @@
         <button slot="parent" class="btn btn-light" let:toggle on:click={toggle}>
             <svg class="gramet-error"><use xlink:href="#info-symbol"/></svg>
         </button>
-    
+
         <div slot="content" let:close style="width: 350px;">
             <div class="card" style="position: absolute">
                 <div class="card-header">

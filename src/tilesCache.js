@@ -217,7 +217,7 @@ export const findMissingCacheTiles = async (ofp, mapData) => {
         }
         if (tilesCount >= tilesMax.reduce((a, b) => a + b, 0)) {
             tilesCaches.close();
-            console.log('map is fully cached', tilesMax);
+            // console.log('map is fully cached', tilesMax);
             caches[mapOptions.id] = true;
             return [];
         }
