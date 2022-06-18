@@ -7,7 +7,14 @@ const grametMargin = 65; // left and right margin to the "inner gramet" image in
 const grametTop = 33;// top margin to the "inner gramet" image in px
 const grametBottom = 37;// bottom margin to show when flight is in progress
 
+function revokeURL(src) {
+  URL.revokeObjectURL(src);
+  // console.groupCollapsed(`${src} revoked`);
+  // console.trace(); // hidden in collapsed group
+  // console.groupEnd();
+}
 export function grametThumbAction(container, {ofp, pos, fl}){
+    container.id = 'grametTrigger';
     const plane = document.getElementById('gt-plane');
     let objectURL;
     let position = parseFloat(pos);
@@ -53,7 +60,15 @@ export function grametThumbAction(container, {ofp, pos, fl}){
         clone.crossOrigin = "anonymous"; // otherwise sw does not cache
         clone.addEventListener('load', cloneLoadListener); // Safari required the clone to be loaded before adding it to pinchzoom
         clone.addEventListener('error', errorListener);
+        let prevClone = document.getElementById('grametImg');
         document.body.appendChild(clone);
+        if (prevClone){ // should not happen but...
+          prevClone.removeEventListener('load', cloneLoadListener);
+          prevClone.removeEventListener('error', errorListener);
+          prevClone.remove(); // keeps only one
+          prevClone = undefined;
+          console.warn('prevClone found and removed from DOM');
+        }
         img.style.height = `${(gHeight/gInnerHeight) * viewportHeight}px`; // 700 is the full gramet height, 380 is the real gramet height
         img.style.objectFit = 'contain';
         img.style.position =  'absolute';
@@ -79,17 +94,22 @@ export function grametThumbAction(container, {ofp, pos, fl}){
         grametStatus.set('error');
     };
     const cleanup = () => {
-        if (img) img.removeEventListener('load', loadListener);
-        if (img) img.removeEventListener('error', errorListener);
-        if (img) img.remove();
-        showGramet.set(false);
-        if (clone) clone.removeEventListener('load', cloneLoadListener);
-        if (clone) clone.removeEventListener('error', errorListener);
-        if (clone) clone.remove();
-        clone = undefined;
+      if (img) {
+        img.removeEventListener('load', loadListener);
+        img.removeEventListener('error', errorListener);
+        img.remove();
         img = undefined;
-        if(objectURL) URL.revokeObjectURL(objectURL);
-        objectURL = undefined;
+      }
+      showGramet.set(false);
+      if (clone) {
+        clone.removeEventListener('load', cloneLoadListener);
+        clone.removeEventListener('error', errorListener);
+        clone.remove();
+        clone = undefined;
+      }
+      if(objectURL) revokeURL(objectURL);
+      objectURL = undefined;
+
     }
     const createImg = async (ofp) => {
         img = document.createElement('img')
@@ -238,7 +258,8 @@ export const setGramet = (pinchZoom, {pos, fl}) => {
         },
         destroy(){
             img.style.display = 'none';
-            document.body.appendChild(img);
+            // save image only if Trigger has not been destroyed
+            if(document.getElementById('grametTrigger')) document.body.appendChild(img);
             pinchZoom.removeEventListener("change", pinchzoomChange);
         }
     }
