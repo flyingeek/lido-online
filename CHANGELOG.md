@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.2] - 2022-06-26
+
+### Changed
+
+- [OFP2MAP-FTL v9](https://www.icloud.com/shortcuts/b1acb7e4402d49d191ef840eacb87b45) affiche la marge pour lever toute ambiguïté.
+- retour visuel ajouté lorsque l'on clique sur 🧩
+
 ## [1.19.1] - 2022-06-18
 
 ### Fixed
