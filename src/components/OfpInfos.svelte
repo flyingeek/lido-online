@@ -6,7 +6,7 @@
     /**
      * standalone app and safari share the same app cache
      * This is an attempt to read a share_cache/share-shortcut fake endpoint
-     * 
+     *
      * It is not yet functional
      */
     const getShortcutName = async () => {
@@ -45,6 +45,8 @@
     export const shareOFP = async (e) => {
         if (!shareShortcut) e.preventDefault();
         if (!(navigator && navigator.share)) {e.preventDefault(); return false;}
+        const linkElement = (e.target.closest('a') || e.target);
+        linkElement.classList.add('animate');
         const ofp = $ofp;
         const takeOffTime = $takeOffTime;
         const excluded = ['EEP', 'EXP', 'raltPoints', 'inFlightStart', 'inFlightReleased', 'levels', 'rawFPL'];
@@ -78,6 +80,7 @@
             try {
                 await navigator.share(shareData)
             } catch(err) {
+                linkElement.classList.remove('animate');
                 console.log(err);
             }
             return false;
@@ -122,6 +125,9 @@
         flex-direction: column;
         color: inherit;
         cursor: default;
+        -webkit-transition : -webkit-filter 0 linear;
+        transition : filter 0 linear;
+        filter: brightness(1);
     }
     .details, .details:hover{
         text-decoration: none;
@@ -153,5 +159,34 @@
         width:20px;
         height: 20px;
         vertical-align: bottom;
+        -webkit-transition : transform 0 linear;
+        transition : transform 0 linear;
+        display: inline-block;
     }
+    :global(.details.animate) .plugin {
+        transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -webkit-transition : transform 0.5s linear;
+        transition : transform 0.5s linear;
+    }
+    :global(.details.animate) {
+        -webkit-transition : -webkit-filter 0.1s linear;
+        transition : filter 0.1s linear;
+        -webkit-filter: brightness(0.8);
+        filter: brightness(0.8);
+    }
+    @keyframes flash {
+    0%   {
+        filter: brightness(1);
+        -webkit-filter: brightness(1);
+    }
+    50%  {
+        filter: brightness(0.6);
+        -webkit-filter: brightness(0.6);
+    }
+    100% {
+        filter: brightness(1);
+        -webkit-filter: brightness(1);
+    }
+}
 </style>
