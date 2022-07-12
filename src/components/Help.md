@@ -2,6 +2,7 @@
     import Link from '../components/Link.svelte';
     import CircleProgress from '../components/CircleProgress.svelte';
     import EmbeddedVideo from '../components/EmbeddedVideo.svelte';
+    import Speak from '../components/Speak.svelte';
     import {ofp, online} from '../stores.js';
     import plugins from "../plugins.json";
     $: ogimetURL = ($ofp) ? $ofp.ogimetData.url: 'http://www.ogimet.com';
@@ -12,7 +13,7 @@
 
 ## Préambule
 
-OFP2MAP est une application PWA (ou Web Application), elle peut être lancée soit depuis un navigateur, soit depuis l'écran d'accueil de l'iPad. Initialement, simple convertisseur de l'OFP en KML, OFP2MAP est devenu une vraie application de cartographie. OFP2MAP nécessite des navigateurs récents pour fonctionner. Safari 14 iOS/Mac est compatible, Chrome 83 fonctionne aussi.
+OFP2MAP <Speak value="oefpé`toumape">[ofpˈtumæp]</Speak> est une application PWA (ou Web Application), elle peut être lancée soit depuis un navigateur, soit depuis l'écran d'accueil de l'iPad. Initialement, simple convertisseur de l'OFP en KML, OFP2MAP est devenu une vraie application de cartographie. OFP2MAP nécessite des navigateurs récents pour fonctionner. Safari 14 iOS/Mac est compatible, Chrome 83 fonctionne aussi.
 
 L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au plus 21 stations météo) est transmise à l'hébergeur du proxy (voir plus bas) puis à Ogimet.com pour récupérer le Gramet. L'app ne collecte aucune donnée.
 
@@ -208,7 +209,7 @@ Trois boutons permettent la sauvegarde, la restauration ou un retour aux valeurs
 
 > Pour vous entraîner, je vous recommande de modifier la couleur des terrains en vert/rouge sur LC ou bleu/vert/rouge sur MC, et de sauvegarder votre choix.
 
-### Mode FOCUS&#8239;
+**Mode FOCUS&#8239;**
 
 C'est un mode pensé pour basculer rapidement sur d'autres réglages pour un usage ponctuel. Par défaut le mode FOCUS n'affiche que la route. Il s'active en cliquant sur FOCUS dans le champ ROUTE. Pour quitter ce mode, réaffichez les réglages et cliquez à nouveau sur le bouton.
 
