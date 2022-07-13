@@ -9,9 +9,12 @@
     }
 </script>
 <!-- svelte-ignore a11y-missing-attribute -->
-<a on:click={speak}><slot>Hello World</slot></a>
+<a on:click|preventDefault={speak}><slot>Hello World</slot></a>
 <style>
 a::after {
   content: "🔊";
+}
+a {
+    text-decoration: none;
 }
 </style>
