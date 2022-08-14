@@ -164,6 +164,8 @@ Pour partager le lien vers OFP2MAP, utilisez le bouton situé en haut sur cette 
 
 À noter que parfois, des bugs d'affichage peuvent apparaître&#8239;:  lorsque l'on retourne sur l'app, l'app est zoomée, il faut alors juste dézoomer en utilisant un pinch de deux doigts sur la barre de menu. Il est aussi possible de fermer (tuer) l'app,  même en mode déconnecté, pour la relancer.
 
+Depuis ios15 un <Link href="https://bugs.webkit.org/show_bug.cgi?id=238318">bug génant</Link> existe dans l'application: il est parfois impossible de changer de carte ou de mofifier l'heure de décollage. Il faut tuer l'app et la relancer.
+
 > Sur un iPhone, sous iOS15, il est recommandé d'installer OFP2MAP sur l'écran d'accueil
 
 </section>

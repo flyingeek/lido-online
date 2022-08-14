@@ -3,6 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.4] - 2022-08-14
+
+### Info
+
+- Si vous ne pouvez pas changer de carte ou modifier l'heure de décollage, tuez l'app et relancez la. Lien sur le bug ios15 ajouté dans l'aide au niveau des Particularités de l'iPad.
+
+### Changed
+
+- AIRAC 2208
+
 ## [1.19.3] - 2022-07-15
 
 ### Changed

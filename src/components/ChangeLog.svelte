@@ -64,8 +64,8 @@
         "REMOVED": "text-white",
         "SECURITY": "text-white"
     }
-    export const badgeColor = (category) => badgeColors[category.toUpperCase()] || 'light';
-    export const badgeTextColor = (category) => badgeTextColors[category.toUpperCase()] || 'text-dark';
+    export const badgeColor = (category) => badgeColors[category.toUpperCase()] || 'dark';
+    export const badgeTextColor = (category) => badgeTextColors[category.toUpperCase()] || 'text-light';
 </script>
 <script>
     import { onMount } from 'svelte';
