@@ -48,7 +48,7 @@ function parseGlobal() {
             //console.log(result);
             const data = result.data;
             //console.log(data)
-            if (data.length < 63) {
+            if (data.length < 64) {
                 if (data.length > 1) console.log("skipping (length < 63)", data);
                 return;
             }
