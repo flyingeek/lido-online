@@ -128,7 +128,7 @@
             window.location.hash = '#/map'; //TODO must be here and not in the then promise below to avoid map centering issues. Why ?
             return getOFP(file).then((ofp) => {
                 $ofpStore = ofp;
-                $selectedAircraftType = undefined;
+                $selectedAircraftType = ofp.infos.aircraftType;
                 $ofpStatus = 'success';
                 $takeOffTime = new Date(ofp.infos.ofpOFF.getTime());
             }).catch((err) => {
