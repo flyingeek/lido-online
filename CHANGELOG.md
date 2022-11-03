@@ -3,6 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.7] - 2022-11-03
+
+### Fixed
+
+- [OFP2MAP-FTL v10](https://www.icloud.com/shortcuts/e84fc0d62fdb4243b005c0443281f1b0) corrige un bug d'affichage des blocs le jour d'un changement d'heure.
+
+### Changed
+
+- AIRAC 2211
+
 ## [1.19.6] - 2022-10-05
 
 ### Changed
