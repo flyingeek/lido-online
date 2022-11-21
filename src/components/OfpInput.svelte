@@ -165,7 +165,7 @@
                 }, 100);//TODO uses setTimeout to avoid map centering issues
             }).then(ofp => {
                 $ofpStore = ofp;
-                $selectedAircraftType = undefined;
+                $selectedAircraftType = ofp.infos.aircraftType;
                 $ofpStatus = 'success';
                 const previousTakeOFF = getPreviousTakeOFF(ofp);
                 $takeOffTime = (previousTakeOFF) ? new Date(previousTakeOFF) : new Date(ofp.infos.ofpOFF.getTime());
