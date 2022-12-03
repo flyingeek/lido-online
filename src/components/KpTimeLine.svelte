@@ -11,15 +11,14 @@
     {#if (flightKp.length > 0)}
         <svg width="100%" height="53px" xmlns="http://www.w3.org/2000/svg">
             {#each flightKp as {date, kp, relpos}, i}
-                <rect fill="{kpColor(kp)}"
+                <rect fill="{kpColor(Math.round(kp))}"
                     x="{xpos(minmax(relpos))}"
                     y="7"
                     width="{timelineSize * (minmax((i===0) ? 100 : flightKp[i - 1].relpos - 0.2) - minmax(relpos))}%"
                     height="14px"/>
-
                 <text fill="white" stroke="white" text-anchor="middle" font-size="0.7em"
                     x="{xpos((minmax(relpos) + minmax((i===0) ? 100 : flightKp[i - 1].relpos)) / 2)}"
-                    y="17">{kp}</text>
+                    y="17">{Math.round(kp)}</text>
                 {#if relpos > 5 && relpos < 95}
                     <text fill="gray"text-anchor="middle" font-size="0.7em"
                         x="{xpos(relpos)}"
@@ -27,17 +26,17 @@
                 {/if}
             {/each}
             <circle fill="#FCBF49" stroke="black" stroke-width="0.5"
-                cx="{xpos($flightProgress)}" 
+                cx="{xpos($flightProgress)}"
                 cy="20" r="2.5" />
             <text fill="black"text-anchor="middle"
                 x="5%"
                 y="49">{format($takeOffTime)}</text>
             <text fill="black" text-anchor="middle"
-                x="95%" 
+                x="95%"
                 y="49">{format($landingTime)}</text>
             {#if $aurora.length === 0 && !!$Kp}
                 <text fill="gray" text-anchor="middle" font-size="0.8em"
-                    x="50%" 
+                    x="50%"
                     y="49">aucune aurore boréale prévue sur la route</text>
             {/if}
         </svg>
