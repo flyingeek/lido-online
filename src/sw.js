@@ -92,6 +92,12 @@ registerRoute(
   new CacheFirst({
     cacheName: validCaches['airports'],
     plugins: [
+      new CacheableResponsePlugin({
+        statuses: [200],
+        headers: {
+          'content-type': 'application/geo+json',
+        }
+      }),
       new ExpirationPlugin({
         maxEntries: 2
       })
@@ -103,6 +109,12 @@ registerRoute(
   new CacheFirst({
     cacheName: validCaches['fir-reg'],
     plugins: [
+      new CacheableResponsePlugin({
+        statuses: [200],
+        headers: {
+          'content-type': 'application/geo+json',
+        }
+      }),
       new ExpirationPlugin({
         maxEntries: 2
       })
@@ -117,6 +129,9 @@ registerRoute(
     plugins: [
       new CacheableResponsePlugin({
         statuses: [200],
+        headers: {
+          'content-type': 'application/json',
+        }
       }),
       new BroadcastUpdatePlugin(),
       new ExpirationPlugin({
@@ -343,7 +358,11 @@ self.addEventListener('activate', function(event) {
         return cache.keys().then(function(keys) {
           return Promise.all(keys.filter(isOldRequest).map(request => cache.delete(request)));
         });
-    }).then(() => {
+    }).then(() => caches.open(validCaches['airports']))
+    .then((cache) => cache.add('data/airports.CONF_AIRAC.geojson').catch(()=>{}))
+    .then(() => caches.open(validCaches['fir-reg']))
+    .then((cache) => cache.add('data/fir-reg.CONF_AIRAC.geojson').catch(()=>{}))
+    .then(() => {
       try{
         //dbPromise.result.close();
         deprecatedDB.forEach((name) => {

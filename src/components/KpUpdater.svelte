@@ -40,7 +40,9 @@
                     const t = Date.parse(d.replace(' ', 'T') + 'Z'); // Safari needs the T
                     timetable.push([t, parseFloat(k)])
                 }
-                noaaKp.set(timetable);
+                if (timetable.length > 0) {
+                    noaaKp.set(timetable);
+                }
             } catch (error) {
                 console.error('kp store update error', error);
             }
