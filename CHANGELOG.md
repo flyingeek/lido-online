@@ -3,6 +3,18 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.10] - 2022-12-08
+
+### Info
+
+- J'ai fait le module FTL LC du e-S1... et je n'ai pas modifié OFP2MAP-FTL : on nous dit que le TSV FTL max PNC se baserait sur le repos mini AF (c'est absurde), et on nous dit le TSV FTL max des pilotes sur les vols retours non renforcés utiliserait 07.05.04.B (cela doit être programmé à l'avance)
+
+### Changed
+
+- Les fichiers FIR/Airports sont mis en cache immédiatement après la mise à jour de l'app pour couvrir un changement AIRAC. Ce sera utile pour ceux qui mettent à jour l'appli, mais qui ensuite attendent d'être en vol, et donc sans réseau pour charger l'OFP.
+- Migration des cartes de Netlify pour utiliser la "Focal build" (sans impact pour OFP2MAP).
+- Validation basique des fichiers Kp/FIR/Airports pour éviter une perte des données liée à la réponse WIFI de l'avion.
+
 ## [1.19.9] - 2022-12-07
 
 ### Fixed
