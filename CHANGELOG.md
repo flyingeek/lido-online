@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.11] - 2022-12-29
+
+### Changed
+
+- AIRAC 2213
+- [OFP2MAP-FTL v11](https://www.icloud.com/shortcuts/a4f679c90915403280bc866ec2587cf3) prend en compte la dernière révision du Manex pour vols les bi-tronçons. (première étape de moins de 2h et seconde étape de plus de 8h iso première étape de moins de 1h30).
+
 ## [1.19.10] - 2022-12-08
 
 ### Info
