@@ -12,11 +12,11 @@
     "OFP2MAP-FAA WIPs": {
         "version": 3,
         "url": "https://www.icloud.com/shortcuts/7e37cedd78d944bf8ceffb7477e356ec",
-        "description": "Affiche la carte des travaux sol sur les terrains US"
+        "description": "Affiche la carte des travaux sol sur les terrains US - NE FONCTIONNE PLUS -"
     },
     "OFP2MAP-FTL": {
-        "version": 11,
-        "url": "https://www.icloud.com/shortcuts/a4f679c90915403280bc866ec2587cf3",
+        "version": 12,
+        "url": "https://www.icloud.com/shortcuts/abff21a616a44b259135476770317b37",
         "description": "Calcul en réalisation des limitations TSV (AF & FTL) et des repos PNC"
     },
     "OFP2MAP-MENU": {
