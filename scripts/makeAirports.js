@@ -143,6 +143,9 @@ function parseGlobal() {
                     case 'BKPR':
                         tz = "Europe/Zagreb";
                         break;
+                    case 'OKKK':
+                        tz = "Asia/Kuwait";
+                        break;
                 }
             }
             if (tz) {
