@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.19.13] - 2023-04-01
+## [1.19.14] - 2023-04-01
 
 ### Info
 
@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - [OFP2MAP-FTL v12](https://www.icloud.com/shortcuts/abff21a616a44b259135476770317b37) corrige un bug d'affichage suite à la mise à jour d'iOS16 (le tableau des horaires de l'étape s'affichait en local iso utc).
+
+## [1.19.13] - 2023-02-02
+
+### Fixed
+
+- corrige un problème de cache offline sous ios 16.3
 
 ## [1.19.12] - 2023-01-27
 

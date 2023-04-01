@@ -303,7 +303,8 @@ export default [{
         "js/bundle.js",
         "svg/*.svg",
         "sdf/*.png",
-        "CHANGELOG.json"
+        "CHANGELOG.json",
+        "manifest.json"
       ]
     }),
     production && terser()
