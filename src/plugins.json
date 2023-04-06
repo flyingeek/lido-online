@@ -5,8 +5,8 @@
         "description": "NOAA Aurora Forecast 30-90mn et prévisions à 3 jours. Ce plugin affiche la prévision à court terme sur une carte, et une prévision à long terme (source différente de celle de l'app). Il permet de valider les prévisions de Kp affichées dans les éphémérides."
     },
     "OFP2MAP-ETOPS": {
-        "version": 7,
-        "url": "https://www.icloud.com/shortcuts/c3bd42f263bf4f02869959e8d9815ea1",
+        "version": 8,
+        "url": "https://www.icloud.com/shortcuts/a6b08496789943608ea28c15e359b64d",
         "description": "Affiche un cartouche ETOPS actualisé. Il est recommandé de ne plus utiliser ce plugin, Pilot\u00A0Mission/FlightLog/ETOPS fait la même chose."
     },
     "OFP2MAP-FAA WIPs": {
@@ -15,8 +15,8 @@
         "description": "Affiche la carte des travaux sol sur les terrains US - NE FONCTIONNE PLUS -"
     },
     "OFP2MAP-FTL": {
-        "version": 12,
-        "url": "https://www.icloud.com/shortcuts/abff21a616a44b259135476770317b37",
+        "version": 13,
+        "url": "https://www.icloud.com/shortcuts/eda9cdcdfcf241d0a4bbf976cc27d47f",
         "description": "Calcul en réalisation des limitations TSV (AF & FTL) et des repos PNC"
     },
     "OFP2MAP-MENU": {
