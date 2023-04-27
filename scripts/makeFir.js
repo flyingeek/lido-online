@@ -41,14 +41,14 @@ const transformer = (json) => {
     };
     return obj;
   };
-  const parsePlacemark = (obj, converter) => {
-    const name = obj.description || obj.name;
+  const parsePlacemark = (obj, converter, countryName=undefined) => {
+    const name = obj.description || obj.name || countryName;
     let coordinates;
     if (!name) console.log(obj);
     try {
       coordinates = obj.LineString.coordinates;
     } catch (err) {
-      coordinates = obj.Polygon.outerBoundaryIs.LinearRing.coordinates;
+      coordinates = obj.outerBoundaryIs.LinearRing.coordinates;
     }
     console.log({ name, clength: coordinates.length });
     if (converter) return converter({ name, coordinates });
@@ -88,7 +88,14 @@ const transformer = (json) => {
         }
       }
       if (folder.Document !== undefined) {
-        getData(folder.Document);
+        getData(folder.Document !== undefined);
+      }
+      if (folder.S_country && folder.S_country.MultiGeometry !== undefined && folder.S_country.MultiGeometry.Polygon !== undefined) {
+        folder.S_country.MultiGeometry.Polygon.forEach((polygon) => {
+          features.push(parsePlacemark(polygon, ({ name, coordinates }) => {
+              return feature(name, type, coordinates);
+            }, folder.S_country.name))
+        })
       }
     } else {
       for (let obj of folder.Placemark) {
