@@ -79,8 +79,8 @@ function parseGlobal() {
                     order[aircraft] = 3 - isDest; // 2-3 for status 3
                 } else if (cat === '2'){
                     order[aircraft] = 5 - isDest; // 4-5 for status 2
-                } else if (cat === 'E' || cat === 'R') {
-                    order[aircraft] = 7 - isDest; //6-7 for ERA which otherwise are status 2
+                } else if (cat === 'E' || cat === 'R' || cat === 'F') {
+                    order[aircraft] = 7 - isDest; //6-7 for ERA which otherwise are status 2 // F = Fuel and Go
                 } else if (cat === '1') {
                     order[aircraft] = 9 - isDest; // 8-9 for status 1
                 } else if (cat === '0') {
