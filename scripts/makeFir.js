@@ -90,12 +90,32 @@ const transformer = (json) => {
       if (folder.Document !== undefined) {
         getData(folder.Document !== undefined);
       }
-      if (folder.S_country && folder.S_country.MultiGeometry !== undefined && folder.S_country.MultiGeometry.Polygon !== undefined) {
-        folder.S_country.MultiGeometry.Polygon.forEach((polygon) => {
-          features.push(parsePlacemark(polygon, ({ name, coordinates }) => {
-              return feature(name, type, coordinates);
-            }, folder.S_country.name))
-        })
+      if (folder.S_country && Array.isArray(folder.S_country)) {
+        folder.S_country.forEach((country) => {
+          if (country && country.MultiGeometry !== undefined && country.MultiGeometry.Polygon !== undefined) {
+            country.MultiGeometry.Polygon.forEach((polygon) => {
+              features.push(parsePlacemark(polygon, ({ name, coordinates }) => {
+                return feature(name, type, coordinates);
+              }, country.name))
+            });
+          } else if (country && country.Polygon) {
+            features.push(parsePlacemark(country.Polygon, ({ name, coordinates }) => {
+                return feature(name, type, coordinates);
+              }, country.name))
+          }
+        });
+      } else if (folder.S_country) {
+          if (folder.S_country && folder.S_country.MultiGeometry !== undefined && folder.S_country.MultiGeometry.Polygon !== undefined) {
+            folder.S_country.MultiGeometry.Polygon.forEach((polygon) => {
+              features.push(parsePlacemark(polygon, ({ name, coordinates }) => {
+                return feature(name, type, coordinates);
+              }, folder.S_country.name))
+            });
+          } else if (folder.S_country && folder.S_country.Polygon) {
+            features.push(parsePlacemark(folder.S_country.Polygon, ({ name, coordinates }) => {
+                return feature(name, type, coordinates);
+              }, folder.S_country.name))
+          }
       }
     } else {
       for (let obj of folder.Placemark) {
