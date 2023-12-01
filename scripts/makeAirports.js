@@ -107,7 +107,8 @@ function parseGlobal() {
             const latitude = parseFloat(data[3]);
             const longitude = parseFloat(data[4]);
             const icao = data[0].trim();
-            const iata = data[2].trim();
+            let iata = data[2].trim();
+            if (icao=="UERP" && iata=="---") iata="PJY";
             const cc = (iata) ? iata2cc(iata) : null;
             if (!cc) console.error(`unknown country code for ${icao}/${iata}`);
             const emoji = countryCodeEmoji(cc);
@@ -177,15 +178,25 @@ function parseGlobal() {
                 recoCode += (reco === 'B') ? 2 : 4;
             }
             //if (recoCode > 0) console.log(`${icao}/${iata} reco type: ${reco}${(eao) ? ' EAO': ''}  ${recoCode}`);
+            let title = data[1].trim();
+            let lon = parseFloat(data[4]);
+            let lat = parseFloat(data[3]);
+            if (icao=="UERP") {
+              title="Polyarny";
+              lat = 66.416667;
+              lon = 112.05;
+              level = 0;
+              return; // airport is removed
+            }
             const feature = {
                 'type': 'Feature',
                 'geometry': {
                     'type': 'Point',
-                    'coordinates': [parseFloat(data[4]), parseFloat(data[3])]
+                    'coordinates': [lon, lat]
                 },
                 'properties': {
                     'name': icao,
-                    'title': data[1].trim(),
+                    'title': title,
                     iata,
                     cc,
                     'level': level,
