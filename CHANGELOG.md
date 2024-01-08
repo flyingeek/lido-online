@@ -3,6 +3,22 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.26] - 2024-01-08
+
+### Info
+
+- Problème avec les raccourcis sous ios 17 (iPad uniquement, iPhone ok): Les résultats d'un plugin ne s'affichent pas, il y a juste une barre blanche en haut de l'écran. **La solution temporaire est de faire une rotation de l'écran pour voir le résultat**.
+Vous pouvez relire cet avertissement sur la page Aide -> Changelog
+
+- Je recommande après avoir lancé OFP2MAP une première fois après la mise à jour sous ios 17.2 de forcer un
+redémarrage de l'ipad (Maintenir bouton on/off et appuyer sur volume +, faire éteindre puis rallumer l'iPad).
+
+- Après un changement d'iPad on m'a indiqué que vider l'historique de Safari pouvait être nécessaire (Réglages/Safari -> Effacer historique, données de site).
+
+### Changed
+
+- AIRAC 2313
+
 ## [1.19.25] - 2023-11-15
 
 ### Changed

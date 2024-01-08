@@ -164,9 +164,9 @@ Pour partager le lien vers OFP2MAP, utilisez le bouton situé en haut sur cette 
 
 À noter que parfois, des bugs d'affichage peuvent apparaître&#8239;:  lorsque l'on retourne sur l'app, l'app est zoomée, il faut alors juste dézoomer en utilisant un pinch de deux doigts sur la barre de menu. Il est aussi possible de fermer (tuer) l'app,  même en mode déconnecté, pour la relancer.
 
-Depuis ios15 un <Link href="https://bugs.webkit.org/show_bug.cgi?id=238318">bug génant</Link> existe dans l'application: il est parfois impossible de changer de carte ou de mofifier l'heure de décollage. Il faut tuer l'app et la relancer.
+Sous ios15 un <Link href="https://bugs.webkit.org/show_bug.cgi?id=238318">bug génant</Link> existe dans l'application: il est parfois impossible de changer de carte ou de mofifier l'heure de décollage. Il faut tuer l'app et la relancer.
 
-> Sur un iPhone, sous iOS15, il est recommandé d'installer OFP2MAP sur l'écran d'accueil
+> Sur un iPhone, sous iOS15+, il est recommandé d'installer OFP2MAP sur l'écran d'accueil
 
 </section>
 <section id="/help_offline">
@@ -324,6 +324,8 @@ Sur iPad, lors du téléchargement, l'export des fichiers KML affiche une page u
 <section id="/help_plugins">
 
 ## Plugins 🧩
+
+Bug: Sur un iPad en ios 17.2, il faut faire une rotation de l'écran pour voir le résultat d'un plugin.
 
 Il est possible de lancer un plugin depuis le pavé d'informations du vol dans la barre de menu. Les plugins sont des raccourcis qui doivent être installés au préalable. Si vous avez supprimé l'application Raccourcis, installez là depuis l'App Store et redémarrez votre iPad. Pour installer un plugin,
 cliquez sur le raccourci désiré, puis vous revenez sur OFP2MAP, cliquez sur 🧩 et faites défiler pour sélectionner le plugin. En cas d'alerte "raccourcis non fiables", consultez cette <Link href="https://www.youtube.com/watch?v=Y7QdgkLEMtI">vidéo</Link>.
