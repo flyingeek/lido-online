@@ -1,9 +1,9 @@
 {
   "name": "lido-svelte",
-  "version": "1.19.26",
+  "version": "1.19.27",
   "type": "module",
   "config": {
-    "AIRAC": "2313"
+    "AIRAC": "2401"
   },
   "scripts": {
     "build": "npm run clean && rollup -c",
@@ -50,7 +50,7 @@
     "workbox-build": "^6.1.1"
   },
   "dependencies": {
-    "@flyingeek/lidojs": "^1.6.54",
+    "@flyingeek/lidojs": "^1.6.56",
     "sirv-cli": "^1.0.0",
     "svelte-overlay": "^1.4.1",
     "workbox-window": "^6.1.1"

@@ -3,6 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.27] - 2024-02-07
+
+### Changed
+
+- AIRAC 2401
+
+### Fixed
+
+- WMO stations 04418 & 81003 removed
+
 ## [1.19.26] - 2024-01-08
 
 ### Info
