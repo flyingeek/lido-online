@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.30] - 2024-02-19
+
+### Fixed
+
+- Le cache du Kp causait une loupe infinie sous Safari (changement CORS du serveur NOAA)
+
 ## [1.19.29] - 2024-02-19
 
 ### Fixed

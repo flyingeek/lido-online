@@ -29,24 +29,25 @@
         }
     };
     export const noaaKp = writable();
+    const setNoaaKp = (data) => {
+        try {
+            const timetable = [];
+            for (let i=data.length - 1; i>=1; i--){
+                const [d, k] = data[i];
+                const t = Date.parse(d.replace(' ', 'T') + 'Z'); // Safari needs the T
+                timetable.push([t, parseFloat(k)])
+            }
+            if (timetable.length > 0) {
+                noaaKp.set(timetable);
+            }
+        } catch (error) {
+            console.error('kp store update error', error);
+        }
+    };
     const fetchNoaaKpAndSet = async () => {
         return fetch('CONF_NOAA_KP_JSON')
         .then(response => response.json())
-        .then(data => {
-            try {
-                const timetable = [];
-                for (let i=data.length - 1; i>=1; i--){
-                    const [d, k] = data[i];
-                    const t = Date.parse(d.replace(' ', 'T') + 'Z'); // Safari needs the T
-                    timetable.push([t, parseFloat(k)])
-                }
-                if (timetable.length > 0) {
-                    noaaKp.set(timetable);
-                }
-            } catch (error) {
-                console.error('kp store update error', error);
-            }
-        })
+        .then(data => setNoaaKp(data))
         .catch(function(error) {
             console.log('Could not update Kp store', error);
         });
@@ -162,7 +163,11 @@
             const {updatedURL} = event.data.payload;
             if (updatedURL === 'CONF_NOAA_KP_JSON') {
                 //console.log('loading noaa kp store (sw cache updated)');
-                fetchNoaaKpAndSet();
+                navigator.serviceWorker.removeEventListener('message', predictedKpUpdated);
+                fetch('CONF_NOAA_KP_JSON')
+                .then(response => response.json())
+                .then(data => setNoaaKp(data))
+                .finally(() => setTimeout( () => navigator.serviceWorker.addEventListener('message', predictedKpUpdated), 5000));
             }
         }
     };
