@@ -43,7 +43,7 @@
       "src": "./images/ofp2map-icons/icon-152x152.png",
       "sizes": "152x152",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "./images/ofp2map-icons/icon-180x180.png",
