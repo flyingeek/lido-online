@@ -292,7 +292,9 @@ export default [{
       "globPatterns": [
         "index.html",
         "images/ofp2map-icons/icon-180x180.png",
+        "images/ofp2map-icons/icon-180x180-maskable.png",
         "images/ofp2map-icons/icon-128x128.png",
+        "images/ofp2map-icons/icon-128x128-maskable.png",
         "images/map-help.webp",
         "images/layers-settings.webp",
         "images/ephemerides.webp",
