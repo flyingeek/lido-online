@@ -118,7 +118,7 @@
     <tr class="only_lc peq4"><td>PEQ4</td><td class="{$pairing.duty.maxTSV_PEQ4.rule}">{@html $pairing.duty.maxTSV_PEQ4.textOUT}</td></tr>
     {#if $pairing.duty.retardPNC}
         <tr class="only_lc"><th></th><th>Butée départ PNC à la base <cite>MANEX 07.09.06.B.b</cite></th></tr>
-        <tr class="only_lc"><td>PNC</td><td class="af">{$pairing.duty.retardPNC.textOUT}</td></tr>
+        <tr class="only_lc"><td>PNC</td><td class="af">{@html $pairing.duty.retardPNC.textOUT}</td></tr>
     {/if}
 </table>
 
