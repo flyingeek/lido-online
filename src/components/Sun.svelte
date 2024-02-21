@@ -10,7 +10,7 @@
     import {solar} from "./solarstore";
     import { focusMap } from "./utils";
 
-    
+
     const getWidgetEmojiWhenNoSunEvent = (departureSun, isMoonVisibleDuringFlight) => {
         if (departureSun.state === 'day') return '☀️';
         if (isMoonVisibleDuringFlight) return 'moon';
@@ -30,7 +30,7 @@
 </script>
 <KpUpdater/>
 {#if $ofp && $ofp.timeMatrix.length > 0}
-    <Overlay  position="bottom-center" isOpen={false} on:close={focusMap}>
+    <Overlay class="sun-overlay" position="bottom-center" isOpen={false} on:close={focusMap}>
         <div slot="parent" class="sun" class:aurora={$aurora.length > 0} let:toggle on:click={toggle}>
             <p class="icon">
                 {#if (widgetEmoji === 'moon')}
@@ -108,16 +108,16 @@
     :global(.overlay .content.bottom-bottom) { /*fix overlay misplacement*/
         top: 100%;
     }
+    :global(.overlay) {
+            z-index: 3 !important;/*above mapboxgl controls*/
+    }
     @media (max-width: 767px){
-        :global(.overlay .content-wrapper) { /*fix overlay misplacement*/
+        :global(.overlay.sun-overlay .content-wrapper) { /*fix overlay misplacement*/
             left: 0 !important;
         }
         :global(.overlay .content.bottom-center) { /*fix overlay misplacement*/
             left: 0.5vw !important;
             transform: none !important;
-        }
-        :global(.overlay) {
-            z-index: 3 !important;/*above mapboxgl controls*/
         }
     }
     @media (min-width: 768px){

@@ -1,108 +1,38 @@
 <script>
-    import {ofp, takeOffTime} from '../stores';
-    import plugins from "../plugins.json";
-    let shareURL;
-
-    /**
-     * standalone app and safari share the same app cache
-     * This is an attempt to read a share_cache/share-shortcut fake endpoint
-     *
-     * It is not yet functional
-     */
-    const getShortcutName = async () => {
-        const cache = await caches.open("share_cache");
-        const response = await cache.match('/share-shortcut');
-
-        if (!response) {
-        return null;
-        }
-
-        const responseBody = await response.json();
-        return responseBody['shortcutName'];
-    };
-    let shareShortcut;
-    getShortcutName()
-        .then(name => shareShortcut = name)
-        .catch(err => console.error(err));
+    import {slide} from "svelte/transition";
+    import Overlay from "svelte-overlay";
+    import { focusMap } from "./utils";
+    import {ofp} from '../stores';
+    import PluginMenu from "./PluginMenu.svelte";
 
     $: fuelMarginTime = $ofp.infos.minFuelMarginETOPS / ($ofp.infos.tripFuel/$ofp.infos.flightTime);
-
-    const getOfpRouteExport = (ofp) => {
-        if (ofp.timeMatrix.length > 0) {
-            return ofp.timeMatrix.map(([p, sum, fl]) => ({
-                "name": p.name,
-                "tte": sum,
-                fl,
-                "latitude":  p.latitude.toFixed(6),
-                "longitude":  p.longitude.toFixed(6)}));
-        }
-        return ofp.route.points.map(p => ({
-            "name": p.name,
-            "latitude":  p.latitude.toFixed(6),
-            "longitude":  p.longitude.toFixed(6)}));
-    };
-
-    export const shareOFP = async (e) => {
-        if (!shareShortcut) e.preventDefault();
-        if (!(navigator && navigator.share)) {e.preventDefault(); return false;}
-        const linkElement = (e.target.closest('a') || e.target);
-        linkElement.classList.add('animate');
-        const ofp = $ofp;
-        const takeOffTime = $takeOffTime;
-        const excluded = ['EEP', 'EXP', 'raltPoints', 'inFlightStart', 'inFlightReleased', 'levels', 'rawFPL'];
-        const filteredInfos = Object.fromEntries(
-            Object.entries(ofp.infos).filter(([key, val])=> !excluded.includes(key))
-        );
-        let filteredText;
-        try {
-            filteredText = (ofp.text.match(/^(?:.+?)Main OFP(?:.+?)(?:--ROUTE\/FL)/s).pop()||'') + '\n\n' + ofp.infos.rawFPL;
-        }catch(err){
-            console.error(err);
-            filteredText = ofp.text;
-        }
-        const shareData = {
-            'title': 'OFP2MAP',
-            'text': JSON.stringify({
-                ...filteredInfos,
-                lidoFPL: ofp.lidoRoute(false).join(' '),
-                'realOFF': takeOffTime,
-                "altnETOPS": ofp.infos.ralts,
-                'route': getOfpRouteExport(ofp),
-                plugins,
-                rawText: filteredText
-            })//.replace(/"(?:lati|longi)tude":"([0-9.]+)"/gu, (_, p1) => p1)
-        }
-
-        if (shareShortcut) {
-            shareURL = "shortcuts://run-shortcut?name=" + encodeURIComponent(shareShortcut) + "&input=text&text=" + encodeURIComponent(JSON.stringify(shareData));
-            return true;
-        }else{
-            try {
-                await navigator.share(shareData)
-            } catch(err) {
-                linkElement.classList.remove('animate');
-                console.log(err);
-            }
-            return false;
-        }
-    };
 
 </script>
 
 <div class="infos">
     {#if (fuelMarginTime < 20)}<p class="etops">ETOPS</p>{/if}
-    <a  href="{shareURL}" class="details"  class:cursor-pointer={(navigator && navigator.share)} on:click={shareOFP}>
-    <p><b>{$ofp.infos.flightNo}</b> {$ofp.infos.depICAO}-{$ofp.infos.destICAO}</p>
-    <p>{$ofp.infos.ofpTextDate} {($ofp.infos.ofp.includes('/')) ? '' : 'ofp: '}{$ofp.infos.ofp}
-        {#if (navigator && navigator.share)}<span class="plugin">🧩</span>{/if}
-    </p>
+    <Overlay  position="bottom-center" isOpen={false} on:close={focusMap} closeOnClickOutside>
+    <a  href="#top" slot="parent" class="details cursor-pointer" let:toggle on:click|preventDefault={toggle}>
+        <p><b>{$ofp.infos.flightNo}</b> {$ofp.infos.depICAO}-{$ofp.infos.destICAO}</p>
+        <p>{$ofp.infos.ofpTextDate} {($ofp.infos.ofp.includes('/')) ? '' : 'ofp: '}{$ofp.infos.ofp}
+        <span class="plugin">🧩</span>
+        </p>
     </a>
+    <div slot="content" style="cursor: pointer; width: 190px" class="menu" let:close in:slide={{ duration: 200 }}>
+        <PluginMenu close={close}/>
+    </div>
+    </Overlay>
 </div>
 <div class="pluginonly">
     {#if (fuelMarginTime < 20)}<p class="etops">ETOPS</p>{/if}
-    <a class="details" href="{shareURL}" class:cursor-pointer={(navigator && navigator.share)} on:click={shareOFP}>
-        {#if (navigator && navigator.share)}<span class="plugin">🧩</span>{/if}
-    </a>
+    <Overlay  position="bottom-center" isOpen={false} on:close={focusMap} closeOnClickOutside>
+        <a slot="parent" class="details cursor-pointer" href="#top" let:toggle on:click|preventDefault={toggle}>
+            <span class="plugin">🧩</span>
+        </a>
+        <div slot="content" style="cursor: pointer; width: 190px; translate: -50%;" class="menu" let:close in:slide={{ duration: 200 }}>
+            <PluginMenu close={close}/>
+        </div>
+    </Overlay>
 </div>
 <style>
     .infos, .pluginonly{

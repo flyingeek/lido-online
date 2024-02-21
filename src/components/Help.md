@@ -254,7 +254,7 @@ OFP2MAP peut aussi utiliser un GPS. En cliquant sur <svg><use xlink:href="#geolo
 
 ## ETOPS
 
-La capacité ETOPS est determinée depuis l'OFP et les cercles sont tracés. Un drapeau <span style="background-color: var(--bs-warning); padding: 0 3px; font-size: 9px;">ETOPS</span> apparait dans le pavé d'information de l'OFP si le carburant est limitatif (20mn, soit environ 2T de marge sur 777). Pour avoir plus d'informations, consultez Pilot&#xA0;Mission/FlightLog/ETOPS.
+La capacité ETOPS est determinée depuis l'OFP et les cercles sont tracés. Un drapeau <span style="background-color: var(--bs-warning); padding: 0 3px; font-size: 9px;">ETOPS</span> apparait dans le pavé d'information de l'OFP si le carburant est limitatif (20mn, soit environ 2T de marge sur 777). La marge minimum de carburant ETOPS est affiché si vous cliquez sur le pavé d'information. Pour avoir plus d'informations, consultez Pilot&#xA0;Mission/FlightLog/ETOPS.
 
 Les appuis ETOPS sont affichés avec l'icône <span class="big" style="color: #FC2403FF;">▲</span> (dans la couleur des cercles ETOPS). Les adéquats d'entrée et de sortie ETOPS avec le symbole <span class="big" style="color: #095;">▲</span> (dans la couleur des adéquats du style utilisé). La couleur des cercles des points d'entrée et de sortie est celle de la route.
 
@@ -321,13 +321,31 @@ Sur iPad, lors du téléchargement, l'export des fichiers KML affiche une page u
  Un raccourci peut être lancé depuis la page Export, il recevra les fichiers KML, la route Lido et le Gramet. Le nom du raccourci est modifiable, il faut que le raccourci soit installé avant de le lancer.
 
 </section>
+<section id="/help_ftl">
+
+## FTL
+
+Le calcul FTL est effectué uniquement à partir de la rotation CDB incluse dans l'OFP.
+
+La Page FTL calcule les limitations de TSV en réalisation conformément au Manex. OFP2MAP ne peut calculer que les limitations standard ou avec repos en vol (MANEX 07.05.04.A ou 07.05.04.C). Pilot Mission sur la page Equipage vous donnera (parfois) les limitations satisfaisant le MANEX 07.05.04.A ou 07.05.04.B.
+
+Pour rappel dans le cas 07.05.04B (TSV avec prolongation sans repos envol), la marge CDB ne doit s'appliquer qu'en faisant le calcul standard (07.05.04A). Autrement dit **le calcul en incluant les marges d'OFP2MAP est toujours juste** puisqu'à ce jour AF ne fait pas se service fractionné (07.05.04.D).
+
+**Concernant les PNC**, la butée n'est pas calculée car c'est inutile: Au départ de Paris, il y a une butée horaire de départ (la marge CDB ne s'applique pas), et sur les vols retours, le TSV AF peut être dépassé sous réserve d'adaptation du service et/ou de repos additionnel (RADD). Enfin, le TSV FTL max des PNC est toujours (à rotation identique) le TSV FTL max des pilotes, seul le repos devant être pris à bord change. OFP2MAP vous indique le repos PNC mini pour le TSV max FTL. Il est à noter que les limitations PNC de Pilot Mission sont calculées en considérant un repos à bord d'une durée correspondante au repos mini PNC AF, ce qui est peu utile...
+
+</section>
 <section id="/help_plugins">
 
 ## Plugins 🧩
 
-Bug: Sur un iPad en ios 17.2, il faut faire une rotation de l'écran pour voir le résultat d'un plugin.
+Bug: Sur un iPad en ios 17.2, il faut faire une rotation de l'écran pour voir le résultat d'un plugin. Pour cette raison les plugins de base sont à présent intégrés à OFP2MAP.
 
-Il est possible de lancer un plugin depuis le pavé d'informations du vol dans la barre de menu. Les plugins sont des raccourcis qui doivent être installés au préalable. Si vous avez supprimé l'application Raccourcis, installez là depuis l'App Store et redémarrez votre iPad. Pour installer un plugin,
+Il reste néanmoins possible de lancer un plugin depuis le pavé d'informations du vol dans la barre de menu, en choisissant Plugins dans le menu.
+
+<details>
+    <summary tabindex="-1"><b>Cliquez ici</b> pour afficher l'ancienne documentation sur les plugins</summary>
+    <div>
+Les plugins sont des raccourcis qui doivent être installés au préalable. Si vous avez supprimé l'application Raccourcis, installez là depuis l'App Store et redémarrez votre iPad. Pour installer un plugin,
 cliquez sur le raccourci désiré, puis vous revenez sur OFP2MAP, cliquez sur 🧩 et faites défiler pour sélectionner le plugin. En cas d'alerte "raccourcis non fiables", consultez cette <Link href="https://www.youtube.com/watch?v=Y7QdgkLEMtI">vidéo</Link>.
 
 <EmbeddedVideo tabindex="-1" src="https://p169.p3.n0.cdn.getcloudapp.com/items/yAu14LGP/55eed601-f463-4eee-8d47-87d290d3ceb2.mp4" title="Installation\nPLUGIN" forcePreview={false} figcaption="🎥 Installation d'un plugin (internet requis)"/>
@@ -343,6 +361,9 @@ OFP2MAP-ETOPS et OFP2MAP-FTL fonctionnent en mode offline. Les autres plugins n�
 > Pour un accès plus rapide aux plugins, je recommande d'installer OFP2MAP-MENU. Il faut ensuite le remonter dans le menu contextuel qui s'affiche en cliquant 🧩.
 
 <EmbeddedVideo tabindex="-1" src="https://p169.p3.n0.cdn.getcloudapp.com/items/KouJeA4l/42ec3a9e-a573-41cb-bd34-763da10c514c.mp4" title="Utilisation\nOFP2MAP-MENU" forcePreview={false} figcaption="🎥 plugin OFP2MAP-MENU (internet requis)"/>
+</div>
+</details>
+
 
 </section>
 <section id="/help_updates">

@@ -57,6 +57,12 @@
       <span>EXPORT</span></a>
     </li>
     {/if}
+    {#if  ($ofp) || $route === '/ftl'}
+    <li class="nav-item" class:active={$route === '/ftl'}>
+      <a class="nav-link" href="#/ftl" on:click={collapse}>
+      <span>FTL</span></a>
+    </li>
+    {/if}
     <li class="nav-item" class:active={$route === '/help'}>
       <a class="nav-link" href="{contextualHelpLink.href}" on:click={collapse}>
       <span>AIDE{#if contextualHelpLink.name}<small class="d-none d-lg-inline-block text-small-caps">/{contextualHelpLink.name}</small>{/if}</span></a>

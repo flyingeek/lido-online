@@ -2,6 +2,7 @@
     import { fade } from "svelte/transition";
     export let hidden=undefined;
     export let maxWidth=undefined;
+    export let width=undefined;
     export let overflowY='auto';
     const fadeif = (node, animation, params) => {
         if(hidden === undefined) {
@@ -10,7 +11,7 @@
     }
 </script>
 
-<page in:fadeif style="overflow-y: {overflowY};{(maxWidth) ? `max-width: ${maxWidth}; align-self: center;` : ``}" class:fadein={hidden===false} class:d-none={hidden===true}>
+<page in:fadeif style="overflow-y: {overflowY};{(maxWidth) ? `max-width: ${maxWidth}; align-self: center;` : ``}{width ? `width: ${width}; align-self: center;` : ''}" class:fadein={hidden===false} class:d-none={hidden===true}>
     <slot></slot>
 </page>
 

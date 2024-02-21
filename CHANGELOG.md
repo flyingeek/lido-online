@@ -3,6 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.1] - 2024-02-21
+
+### Changed
+
+- Intégration des plugins de base dans OFP2MAP: nouvel onglet FTL et nouveau menu d'accès aux plugins (toujours en cliquant sur le pavé d'informations de l'OFP en haut à droite).
+- Sur les vols ETOPS, la marge carburant mini ETOPS est directement affiché dans ce nouveau menu (le flag ETOPS jaune apparait toujours si le carburant est proche des limitations).
+- Nouvelle documentation pour les FTL et pour les plugins
+
+
 ## [1.19.30] - 2024-02-19
 
 ### Fixed

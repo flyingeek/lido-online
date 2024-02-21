@@ -8,6 +8,7 @@
   import OfpInput from './components/OfpInput.svelte';
   import Page from "./components/Page.svelte";
   import Help from "./components/Help.svelte";
+  import FTL from "./components/FTL.svelte";
   import SWUpdate from "./components/SWUpdate.svelte";
   import {storage, stores, validate, setHistory, storeSettingsFromURL} from "./components/mapSettings/storage.js";
   import {swDismiss, sidebar, route, checkSwOnVisibilityChange, ofp, ofpStatus, aircraftType} from "./stores.js";
@@ -56,6 +57,10 @@
         <Page maxWidth="1400px">
           <Export {kmlOptions} on:save={() => setHistory(kmlOptions)} />
           <LidoRoute />
+        </Page>
+      {:else if ($route === '/ftl') && $ofpStatus === 'success'}
+        <Page maxWidth="1400px" width="100%">
+          <FTL />
         </Page>
       {:else if $route === '/'}
         <Page maxWidth="1400px">

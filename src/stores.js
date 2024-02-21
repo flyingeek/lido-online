@@ -1,6 +1,8 @@
+/* global editolido */
 import { writable, readable, derived } from 'svelte/store';
 import {aircraftTypes} from "./constants";
 import {binarysearch, runningOnIpad} from "./components/utils";
+import {pairingData} from "./components/pairingParser";
 
 export const previousAppVersionKey = 'previousAppVersion';
 export function resetable(resetValue) {
@@ -50,6 +52,14 @@ export const aircraftType = derived([ofp, selectedAircraftType], ([$ofp, $select
     }
     if (!aircraft || aircraftTypes.indexOf(aircraft) === -1) return undefined;
     return aircraft;
+});
+export const pairing = derived([ofp], ([$ofp]) => {
+    try {
+        return pairingData(editolido.extract($ofp.text, 'CREW PAIRING', 'Generated'), $ofp.infos);
+    } catch (error) {
+        console.error(error);
+    }
+    return undefined;
 });
 
 let swLastUpdateDate = new Date();
