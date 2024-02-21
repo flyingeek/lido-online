@@ -12,7 +12,7 @@
 <p>Rotation équipage absente ou erreur de traitement</p>
 </div>
 {:else}
-<div>
+<div class="scrollContainer">
 <div class="duty {$pairing.duty.rules} PEQ{$pairing.pilotCount} {$pairing.duty.steps.some(str => str.includes('class="error"')) ? 'invalid' : ''}">
 <h2> ( {$ofp.infos.depIATA} > {$ofp.infos.destIATA} vol {$pairing.duty.isCargo ? 'CARGO' : 'PAX'} )</h2>
 <table>
@@ -134,6 +134,12 @@
 </div>
 {/if}
 <style>
+    .scrollContainer {
+        overflow-y: scroll;
+        z-index: 1;
+        position: relative;
+        background-color: white;
+    }
     :global(.duty.invalid:before) {
           content: "Erreur détectée (consultez le détail des calculs)";
           color: red;

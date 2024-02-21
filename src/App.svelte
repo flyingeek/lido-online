@@ -59,7 +59,7 @@
           <LidoRoute />
         </Page>
       {:else if ($route === '/ftl') && $ofpStatus === 'success'}
-        <Page maxWidth="1400px" width="100%">
+        <Page maxWidth="1400px" overflowY="hidden" width="100%">
           <FTL />
         </Page>
       {:else if $route === '/'}
