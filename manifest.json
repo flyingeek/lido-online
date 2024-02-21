@@ -9,8 +9,7 @@
   "orientation": "any",
   "lang": "fr",
   "dir": "ltr",
-  "scope": "/lido-online/",
-  "Scope": "/lido-online/",
+  "scope": "./",
   "start_url": "./index.html",
   "launch_handler": {
     "client_mode": ["navigate-existing", "auto"]
