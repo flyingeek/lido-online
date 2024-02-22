@@ -3,12 +3,22 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.2] - 2024-02-22
+
+### Added
+
+- Prévisions de turbulences `turbli` ajoutées au menu du pavé d'informations de l'OFP. `turbli` n'a pas d'historique: ça ne fonctionne qu'avec les vols du jour. À voir s’il y a une plus-value par rapport au Gramet...
+
+### Changed
+
+- AIRAC 2402
+
 ## [1.20.1] - 2024-02-21
 
 ### Added
 
 - Intégration des plugins de base dans OFP2MAP: nouvel onglet FTL et nouveau menu d'accès aux plugins (toujours en cliquant sur le pavé d'informations de l'OFP en haut à droite).
-- Sur les vols ETOPS, la marge carburant mini ETOPS est directement affiché dans ce nouveau menu (le flag ETOPS jaune apparait toujours si le carburant est proche des limitations).
+- Sur les vols ETOPS, la marge carburant mini ETOPS est directement affichée dans ce nouveau menu (le flag ETOPS jaune apparaît toujours si le carburant est proche des limitations).
 - Nouvelle documentation pour les FTL et pour les plugins
 
 
@@ -51,8 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Problème avec les raccourcis sous ios 17 (iPad uniquement, iPhone ok): Les résultats d'un plugin ne s'affichent pas, il y a juste une barre blanche en haut de l'écran. **La solution temporaire est de faire une rotation de l'écran pour voir le résultat**.
 Vous pouvez relire cet avertissement sur la page Aide -> Changelog
 
-- Je recommande après avoir lancé OFP2MAP une première fois après la mise à jour sous ios 17.2 de forcer un
-redémarrage de l'ipad (Maintenir bouton on/off et appuyer sur volume +, faire éteindre puis rallumer l'iPad).
+- Je recommande après avoir lancé OFP2MAP une première fois après la mise à jour sous ios 17.2 de forcer un redémarrage de l'ipad (Maintenir bouton on/off et appuyer sur volume +, faire éteindre puis rallumer l'iPad).
 
 - Après un changement d'iPad on m'a indiqué que vider l'historique de Safari pouvait être nécessaire (Réglages/Safari -> Effacer historique, données de site).
 
@@ -713,7 +722,7 @@ IOS v15.2 est là! La vitesse d'execution des plugins est revenue à la normale,
 ### Added
 
 - possibilité de choisir entre les noms ICAO (par défaut) et IATA pour les aéroports
-- un mode FOCUS apparait dans les réglages des calques. Par défaut il n'affiche que la route. Il est pensé pour utilisation de bascule rapide et ponctuelle. Ce mode peut aussi être utilisé comme un deuxième jeu de réglages, voir l'aide [RÉGLAGES DES CALQUES](#/help_reglages_des_calques).
+- un mode FOCUS apparaît dans les réglages des calques. Par défaut il n'affiche que la route. Il est pensé pour utilisation de bascule rapide et ponctuelle. Ce mode peut aussi être utilisé comme un deuxième jeu de réglages, voir l'aide [RÉGLAGES DES CALQUES](#/help_reglages_des_calques).
 - il est possible de ne pas afficher les nouveautés lors des mises à jour. On peut changer d'avis à tout moment dans le CHANGELOG.
 
 ### Fixed

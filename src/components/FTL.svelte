@@ -9,7 +9,7 @@
 </script>
 {#if ! $pairing}
 <div class="fatal-error">
-<p>Rotation équipage absente ou erreur de traitement</p>
+<p>Rotation CDB absente de l'OFP ou erreur de traitement</p>
 </div>
 {:else}
 <div class="scrollContainer">
