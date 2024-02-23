@@ -378,6 +378,7 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
     //let previousMatch;
     let duty = {"legs": []};
     let hasError = false;
+    let sampOutputDone = false;
     for (match of pairingText.matchAll(pattern)) {
         //console.log(match)
         const m = parseInt(match[2], 10); // 1-12
@@ -386,7 +387,6 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
         const y = (m < month) ? year + 1 : year;
         const scheduledOut = new Date(Date.UTC(y, m - 1, d, parseInt(match[7], 10), parseInt(match[8], 10))); // month must be 0-11
         if (previousScheduledOut && scheduledOut.toISOString() === previousScheduledOut.toISOString()) {
-          //steps.push(`${error("Attention: rotation CDB de l'OFP non cohérente")}<br><samp>${previousMatch[0]}<br>${match[0]}</samp>`);
           hasError = true;
         }
         previousScheduledOut = scheduledOut;
@@ -420,10 +420,7 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
     }
 
     if (duty.legs.length > 0) duties.push(addDutyMeta(duty, flightTypeAircraft, base, tzdb));
-    if (hasError || scheduledBlockTimeOFP > duty.scheduledBlockTime) {
-      //steps.push(`${error("Attention: rotation CDB de l'OFP non cohérente")}<br><samp>${previousMatch[0]}<br>${match[0]}</samp>`);
-      steps.push(`${error("Attention: rotation CDB de l'OFP incohérente:")}<br>${sampRot()}`);
-    }
+
     try{
         baseTZ = duties[0].reportingAF.tz;
     }catch(e){
@@ -438,10 +435,12 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
     if (['PAR', 'TLS', 'MRS', 'NCE', 'PTP'].includes(base)){
         steps.push(`base ${base}`);
         if (!Array.isArray(duties) || !duty || !Array.isArray(duty.legs) || duties.length === 0 || duty.legs.length === 0 || (duties.length === 1 && duty.legs.length === 1)){
-            steps.push(error(`L'OFP ne contient pas la rotation complète ou erreur d'analyse:<br>${sampRot()}`));
+            if (!sampOutputDone) steps.push(error(`L'OFP ne contient pas la rotation complète ou erreur d'analyse:<br>${sampRot()}`));
+            sampOutputDone = true;
         }
     }else{
-        steps.push(error(`base ${base} -> l'OFP ne contient pas la rotation complète ou erreur d'analyse:<br>${sampRot()}`));
+        if (!sampOutputDone) steps.push(error(`base ${base} -> l'OFP ne contient pas la rotation complète ou erreur d'analyse:<br>${sampRot()}`));
+        sampOutputDone = true;
     }
     if (!aircraftType || aircraftType === '???') steps.push(error('Type avion inconnu'));
     steps.push(`type avion ${aircraftType} -> règles ${flightTypeAircraft}`);
@@ -450,6 +449,12 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
         steps.push(`${aircraftType} LC / config ${aircraftOpsVersion} / ${pncCount} PNC -> vol ${(isCargo) ? 'CARGO' : 'PAX'}`);
     }
     duty = getDutyWithFTL(addAcclimatization(duties), {base, flightTypeAircraft, baseTZ, flightTypePNT, isCargo}, steps);
+
+    if (hasError || scheduledBlockTimeOFP > duty.scheduledBlockTime) {
+      //steps.push(`${error("Attention: rotation CDB de l'OFP non cohérente")}<br><samp>${previousMatch[0]}<br>${match[0]}</samp>`);
+      if (!sampOutputDone) steps.push(`${error("Attention: rotation CDB de l'OFP incohérente:")}<br>${sampRot()}`);
+      sampOutputDone = true;
+    }
     const FORBIDDEN = 'interdit';
     return {
         base,
