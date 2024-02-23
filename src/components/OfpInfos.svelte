@@ -30,7 +30,7 @@
             <span class="plugin">🧩</span>
         </a>
         <div slot="content" style="cursor: pointer; width: 190px; translate: -50%;" class="menu" let:close in:slide={{ duration: 200 }}>
-            <PluginMenu close={close}/>
+            <PluginMenu close={close} addInfos=true/>
         </div>
     </Overlay>
 </div>
@@ -41,13 +41,28 @@
         max-height: 38px;
         cursor: none;
         align-items: center;
+        white-space: nowrap;
+    }
+    :global(.map .pluginonly){
+        display: flex;
+    }
+    :global(.map .infos) {
+        display: none;
+    }
+    @media (max-width: 499px){
+        :global(.map .infos) {
+            display: none !important;
+        }
+        :global(.map .pluginonly) {
+            display: flex !important;
+        }
     }
     .pluginonly{
-        display: flex;
+        display: none;
         margin-right: 0.5rem;
     }
     .infos{
-        display: none;
+        display: flex;
         margin-right: 1rem;
     }
     .details{

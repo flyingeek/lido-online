@@ -3,6 +3,21 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.3] - 2024-02-23
+
+### Added
+
+- AF flight status et l'indispensable Pile ou Face ajoutés au menu du pavé d'informations
+
+### Changed
+
+- Lien Aurora renommé Space Weather
+
+### Fixed
+
+- FTL: détection de rotation inconhérente améliorée
+- diverses améliorations de présentation pour les petites tailles d'écran
+
 ## [1.20.2] - 2024-02-22
 
 ### Added

@@ -141,11 +141,17 @@
         background-color: white;
     }
     :global(.duty.invalid:before) {
-          content: "Erreur détectée (consultez le détail des calculs)";
-          color: red;
-          text-align: center;
-          display: block;
-          margin: 1rem auto;
+        content: "Erreur détectée (consultez le détail des calculs)";
+        color: white;
+        text-align: center;
+        display: block;
+        background-color: red;
+        margin: 1rem auto;
+        width: 80%;
+        font-weight: bold;
+     }
+     :global(.duty samp) {
+        font-size: small;
      }
      .fatal-error {
         display: flex;

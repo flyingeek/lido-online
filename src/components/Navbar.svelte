@@ -152,7 +152,7 @@
         border-left: none;
       }
     }
-    @media (min-width: 830px){
+    @media (min-width: 870px){
       :global(nav > div > div) {
         margin-right: 1.6rem !important;
       }

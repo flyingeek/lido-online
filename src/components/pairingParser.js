@@ -336,7 +336,7 @@ const getDutyWithFTL = ([duties, acclimatizationStep], {base, flightTypeAircraft
     return {...duty, reposPNC, 'retardPNC': retardPNC || '', maxTSV_PEQ2, maxTSV_PEQ3, maxTSV_PEQ4, maxTSVFTL, maxTSVAF};
 };
 
-export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flightTypePNT, tzdb, ofpOUT, ofpOFF, ofpON, ofpIN, scheduledIN, blockTime: blockTimeOFP, flightTime}) => {
+export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flightTypePNT, tzdb, ofpOUT, ofpOFF, ofpON, ofpIN, scheduledIN, blockTime: blockTimeOFP, flightTime, scheduledBlockTime: scheduledBlockTimeOFP}) => {
     let base, baseTZ, isCargo = false;
     let duties = [];
     let steps = [];
@@ -371,9 +371,13 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
     match = pattern.exec(pairingText);
     const aircraftOpsVersion = (match) ? match[1] : '';
     pattern = /(\d{2})\/(\d{2})\s\S+(\sX)?\s(\S{3})\s>\s(\S{3})\s\(([-+\dh]+)\)\s(\d{2}):(\d{2})\s(?:\d{2}:\d{2})\s(\d{2}):(\d{2})/gu;
+    const sampRot = () => `<samp>${Array.from(pairingText.matchAll(pattern), m => m[0]).join('<br>')}</samp>`;
     // eslint-disable-next-line init-declarations
     let previousDestTZ;
+    let previousScheduledOut;
+    //let previousMatch;
     let duty = {"legs": []};
+    let hasError = false;
     for (match of pairingText.matchAll(pattern)) {
         //console.log(match)
         const m = parseInt(match[2], 10); // 1-12
@@ -381,6 +385,12 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
         const isMep = !!match[3];
         const y = (m < month) ? year + 1 : year;
         const scheduledOut = new Date(Date.UTC(y, m - 1, d, parseInt(match[7], 10), parseInt(match[8], 10))); // month must be 0-11
+        if (previousScheduledOut && scheduledOut.toISOString() === previousScheduledOut.toISOString()) {
+          //steps.push(`${error("Attention: rotation CDB de l'OFP non cohérente")}<br><samp>${previousMatch[0]}<br>${match[0]}</samp>`);
+          hasError = true;
+        }
+        previousScheduledOut = scheduledOut;
+        //previousMatch = match;
         const blockTime = parseInt(match[10], 10) + parseInt(match[9], 10) * 60;
         const scheduledIN = new Date(scheduledOut.getTime() + 60000 * blockTime);
         const depIATA = match[4];
@@ -408,7 +418,12 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
         });
         previousDestTZ = destTZ;
     }
+
     if (duty.legs.length > 0) duties.push(addDutyMeta(duty, flightTypeAircraft, base, tzdb));
+    if (hasError || scheduledBlockTimeOFP > duty.scheduledBlockTime) {
+      //steps.push(`${error("Attention: rotation CDB de l'OFP non cohérente")}<br><samp>${previousMatch[0]}<br>${match[0]}</samp>`);
+      steps.push(`${error("Attention: rotation CDB de l'OFP incohérente:")}<br>${sampRot()}`);
+    }
     try{
         baseTZ = duties[0].reportingAF.tz;
     }catch(e){
@@ -423,10 +438,10 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
     if (['PAR', 'TLS', 'MRS', 'NCE', 'PTP'].includes(base)){
         steps.push(`base ${base}`);
         if (!Array.isArray(duties) || !duty || !Array.isArray(duty.legs) || duties.length === 0 || duty.legs.length === 0 || (duties.length === 1 && duty.legs.length === 1)){
-            steps.push(error("L'OFP ne contient pas la rotation complète ou erreur d'analyse"));
+            steps.push(error(`L'OFP ne contient pas la rotation complète ou erreur d'analyse:<br>${sampRot()}`));
         }
     }else{
-        steps.push(error("base ${base} -> l'OFP ne contient pas la rotation complète ou erreur d'analyse."));
+        steps.push(error(`base ${base} -> l'OFP ne contient pas la rotation complète ou erreur d'analyse:<br>${sampRot()}`));
     }
     if (!aircraftType || aircraftType === '???') steps.push(error('Type avion inconnu'));
     steps.push(`type avion ${aircraftType} -> règles ${flightTypeAircraft}`);
