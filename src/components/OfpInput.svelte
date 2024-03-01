@@ -195,7 +195,8 @@
     function ofpPostInit(ofp) {
         const wmoGrid = new editolido.GeoGridIndex();
         wmoGrid.data = window['WMO'];
-        const data = editolido.ogimetData(ofp, wmoGrid);
+        const excluded = [];
+        const data = editolido.ogimetData(ofp, wmoGrid, 'xtd', excluded);
         data.proxyImg = `CONF_GRAMET_PROXY`;
         data.route.description = data.wmo.join(' ');
         ofp.ogimetData = data;
