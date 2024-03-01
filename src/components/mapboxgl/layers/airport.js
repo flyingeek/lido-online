@@ -528,8 +528,17 @@ export const addAirports = (data) => {
             }
             const isMedical = e.features[0].properties.h === 1 && statusNum !== "0";
             const cc = e.features[0].properties.cc;
+            const tzOffset = editolido.tzOffset(iata, (new Date()).toISOString());
+            let tzOffsetAsLabel = '';
+            if (tzOffset) {
+              if (tzOffset !== '-0') {
+                tzOffsetAsLabel = `UTC${tzOffset}`;
+              } else {
+                tzOffsetAsLabel = 'UTC';
+              }
+            }
             let html = `<div class="airport${(ofp) ? '' : ' no-ofp'}">`
-            html += `<h1><span class="title">${icao}/${iata}</span><span class="flag">${countryCodeEmoji(cc)}</span><span class="cc">${countryCodeName(cc)}</span></h1>`;
+            html += `<h1><span class="title">${icao}/${iata}</span><span class="flag">${countryCodeEmoji(cc)}</span><span class="cc">${countryCodeName(cc)}<br><span class="tz">${tzOffsetAsLabel}</span></span></h1>`;
             html += `<h2>${title}${(isMedical) ? ' <b>🄷</b>' : ''}</h2>`;
             if (ofp) html +=  `<p class="status status-${statusNum.charAt(0)}">STATUT ${statusNum}</p>`;
             if(ofp && security > 0) html += `<p class="security-${security}">${(security==1) ? 'ORANGE' : 'RED'}</p>`;

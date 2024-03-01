@@ -333,6 +333,9 @@
     :global(.mapboxgl-popup-content .airport .title){
         flex: 1 1 auto;
     }
+    :global(.mapboxgl-popup-content .tz){
+        font-size: smaller;
+    }
     :global(.mapboxgl-popup-content .flag){
         font-size: 1.78rem;
         margin-left: auto;
