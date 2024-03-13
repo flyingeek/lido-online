@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.7] - 2024-03-13
+
+### Changed
+
+- Toujours les WMO: possibilité à la compilation de mettre à jour la liste des stations WMO reconnues par Ogimet.
+- Les aurores boréales sont considérées comme improbable au delà d'une latitude géomagnétique de 85N (centre de l'ovale).
+
 ## [1.20.6] - 2024-03-08
 
 ### Fixed

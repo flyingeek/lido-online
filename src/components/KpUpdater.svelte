@@ -149,8 +149,9 @@
     // }
     export const geoMagneticPoleLatLng = [80.7, -72.7]; // sufficent precision for us
     export const minKpAtPoint = (p) => {
-        if (p.latitude <= 40) return [-90, 99]; // no need to compute
+        if (p.latitude <= 40) return 99; // no need to compute
         const mlat = 90 - p.distanceTo(new editolido.GeoPoint(geoMagneticPoleLatLng), editolido.rad_to_deg);
+        if (mlat > 85 ) return 99; // no need to compute
         return (mlat > 66.5) ? 0 : (66.5 - mlat) / 2; // https://www.swpc.noaa.gov/content/tips-viewing-aurora
     };
 </script>

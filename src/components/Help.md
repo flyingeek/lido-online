@@ -338,7 +338,7 @@ Pour rappel dans le cas 07.05.04B (TSV avec prolongation sans repos envol), la m
 
 ## Plugins 🧩
 
-Bug: Sur un iPad en ios 17.2, il faut faire une rotation de l'écran pour voir le résultat d'un plugin. Pour cette raison les plugins de base sont à présent intégrés à OFP2MAP.
+Bug: Sur un iPad en ios 17 (iPadOS < 17.4), il faut faire une rotation de l'écran pour voir le résultat d'un plugin. Pour cette raison les plugins de base sont à présent intégrés à OFP2MAP.
 
 Il reste néanmoins possible de lancer un plugin depuis le pavé d'informations du vol dans la barre de menu, en choisissant Plugins dans le menu.
 
