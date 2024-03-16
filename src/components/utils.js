@@ -389,11 +389,18 @@ export const getPreviousTakeOFF = ofp => {
 export const getPreviousOFPText = () => {
     return getPrevious(previousOFPKey, null);
 };
+export const isPreviousOFPExpired = (delayMs=0) => {
+    const previousExpiration = localStorage.getItem(previousOFPExpirationKey);
+    if (previousExpiration) {
+      return (parseInt(previousExpiration, 10) + delayMs) < Date.now();
+    }
+    return true;
+};
 export const savePreviousOFP = (ofp) => {
     if (localStorage && ofp) {
         localStorage.setItem(previousOFPUIDKey, ofpUID(ofp));
         localStorage.setItem(previousOFPKey, ofp.text);
-        localStorage.setItem(previousOFPExpirationKey, ofp.infos.ofpIN.getTime());
+        localStorage.setItem(previousOFPExpirationKey, Math.max(Date.now() + 1800000, ofp.infos.ofpIN.getTime()));
         localStorage.setItem(previousTakeOFFKey, ofp.infos.ofpOFF.getTime());
         localStorage.removeItem(previousMapProjectionKey);
     }

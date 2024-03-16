@@ -33,15 +33,15 @@
   });
 </script>
 
-<main class="container {$route.substr(1) || 'home'}">
+<main class="container {$route.substring(1) || 'home'}">
   <div class="content">
     {#if ($route === '/install')}
       <HomePwaInstall/>
     {:else}
+      <SWUpdate />
       <Navbar>
         <OfpInput {kmlOptions} on:change={ofpChange} />
       </Navbar>
-      <SWUpdate prompt={!!$ofp}/>
       {#if ($ofp || $aircraftType) && $ofpStatus === 'success'}
         <Page hidden={$route !== '/map'} overflowY="hidden">
           <Map id="map" bind:kmlOptions ofp={$ofp} on:save={() => setHistory(kmlOptions)}/>

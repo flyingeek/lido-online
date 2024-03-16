@@ -55,7 +55,7 @@
 </script>
 <script>
     import { createEventDispatcher, onMount } from 'svelte';
-    import {showGramet, ofp as ofpStore, ofpStatus, selectedAircraftType, takeOffTime} from '../stores';
+    import {showGramet, ofp as ofpStore, ofpStatus, selectedAircraftType, takeOffTime, swUpdated} from '../stores';
     import {focusMap, savePreviousOFP, deletePreviousOFP, getPreviousOFPText, getPreviousTakeOFF} from './utils';
     export let kmlOptions;
     let disabled = false;
@@ -227,7 +227,7 @@
     }
     onMount(() => {
         const ofpText = getPreviousOFPText();
-        if (ofpText) reload(ofpText);
+        if (!$swUpdated && ofpText) reload(ofpText);
     });
 </script>
 <form class="form-inline" on:submit|preventDefault>
