@@ -1,9 +1,11 @@
 <script>
+    import {deletePreviousOFP} from "./utils";
     const reload = () => {
-    window.location.hash = '#/';
-    console.log('reload page');
-    window.location.reload();
-};
+        deletePreviousOFP();
+        window.location.hash = '#/';
+        console.log('reload page');
+        window.location.reload();
+    };
 </script>
 
 <button class="reload btn btn-outline-secondary btn-sm" on:click={reload}><!-- Recharger --></button>
