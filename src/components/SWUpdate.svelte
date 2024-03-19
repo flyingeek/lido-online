@@ -1,6 +1,6 @@
 <script context="module">
     import {writable} from 'svelte/store';
-    import {swDismiss, swUpdated, majorUpdate, previousAppVersionKey} from '../stores';
+    import {swDismiss, swUpdated, majorUpdate} from '../stores';
     import {isPatchUpdate} from '../components/utils';
     export const swRegistration = writable();
 
@@ -15,10 +15,10 @@
     };
 </script>
 <script>
-    import {wb, route} from '../stores';
+    import {wb, route, ofp} from '../stores';
     import { fade } from 'svelte/transition';
     import ChangeLogModal, {showChangelogOnUdate, getPreviousAppVersion, setPreviousAppVersion} from './ChangeLogModal.svelte';
-    import {semverCompare} from './utils'; 
+    import {semverCompare, isPreviousOFPExpired} from './utils';
     let installLabel = 'Installer';
     const isAppUpdated = () => {
         const previous = getPreviousAppVersion();
@@ -26,10 +26,17 @@
         return semverCompare('APP_VERSION', previous) > 0;
     }
 
+    /* Only show a prompt if an ofp is loaded and if the ofp will not reload automatically */
+    const shouldShowPrompt = (ofp) => {
+        return !!ofp && isPreviousOFPExpired(10000); // ensure the ofp is valid in the next 10S
+    }
+
     $swDismiss = false;
     export let prompt = false;
-    
+
     $: showChangeLog = isAppUpdated($swUpdated) && showChangelogOnUdate($swUpdated);
+    $: prompt = shouldShowPrompt($ofp);
+
     const install = (delay=0) => {
         if (delay) console.debug('automatic install ')
         // $swRegistration.waiting check is needed to the 'reload the page' fallback
@@ -118,8 +125,8 @@
     .blinking{
         animation:blink 1s infinite;
     }
-    @keyframes blink 
-    {  
+    @keyframes blink
+    {
         0% { opacity: 1.0; }
         50% { opacity: 0.0; }
         100% { opacity: 1.0; }
