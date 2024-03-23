@@ -74,8 +74,9 @@ export const checkSWUpdate = () => {
                         reg.update();
                     } else {
                         // service worker quit while in background ?
-                        swUpdated.set(true);
-                        majorUpdate.set(true); // show immediatly
+                        //swUpdated.set(true);
+                        //majorUpdate.set(true); // show immediatly
+                        reg.waiting.postMessage('SKIP_WAITING');
                     }
                     swDismiss.set(false);
                     swLastUpdateDate = new Date();
