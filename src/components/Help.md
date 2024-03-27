@@ -6,6 +6,7 @@
     import {ofp, online} from '../stores.js';
     import plugins from "../plugins.json";
     $: ogimetURL = ($ofp) ? $ofp.ogimetData.url: 'http://www.ogimet.com';
+    $: wmoWorldMapURL = 'https://flyingeek.github.io/scrapy-ogimet/' + (($ofp) ? '#' + $ofp.ogimetData.wmo.join('_') : '');
     const cbName = window.atob("Q2FydGFCb3NzeQ==");
 </script>
 
@@ -228,7 +229,8 @@ Si nécessaire, un bouton permet de revenir aux valeurs par défaut.
 
 Le GRAMET est un météogramme représentant le temps et l'espace. Il indique, en tout point de la route, et à l'heure de passage estimée, une coupe verticale de la météo prévue.
 Le GRAMET est réalisé par <Link href="{ogimetURL}">ogimet.com</Link> à partir d'une route calculée. Il est possible d'afficher le GRAMET et sa route sur la carte. La route est particulièrement utile lors des vols océaniques car il n'y a aucune station en mer.
-Pour construire la route du GRAMET, on utilise non pas les waypoints, mais au plus 21 stations météo (WMO). Il y a au total 13000 WMO dans le monde. Le GRAMET débute toujours à l'heure hh:00. Pour un decollage à 19h30, il débutera à 19h, pour un décollage à 19h31, il débutera à 20h. Pour les OFP anciens, c'est l'heure actuelle qui est envoyée. En mode déconnecté, OFP2MAP utilise la version du GRAMET qu'il a mis en cache pendant 48h. Après l'heure de décollage initialement prévue, vous pouvez forcer une mise à jour, soit en rechargeant l'ofp, soit en changeant brièvement de page.
+
+Pour construire la route du GRAMET, on utilise non pas les waypoints, mais au plus 21 stations météo (WMO). Il y a au total (<Link href="{wmoWorldMapURL}">13000 WMO dans le monde</Link>).Le GRAMET débute toujours à l'heure hh:00. Pour un decollage à 19h30, il débutera à 19h, pour un décollage à 19h31, il débutera à 20h. Pour les OFP anciens, c'est l'heure actuelle qui est envoyée. En mode déconnecté, OFP2MAP utilise la version du GRAMET qu'il a mis en cache pendant 48h. Après l'heure de décollage initialement prévue, vous pouvez forcer une mise à jour, soit en rechargeant l'ofp, soit en changeant brièvement de page.
 
 Pour afficher le Gramet, cliquez sur sa miniature dans la barre de menu. Pour afficher la route, direction le réglage des calques de la carte. Par défaut elle est affichée en bleu. En fonction de l'heure de décollage (modifiable), le Gramet et sa miniature affichent la position avion. Avant l'horaire prévu de décollage, un bouton play <span class="btn-simulator-play" style="font-size: 24px; line-height:24px; --stroke-width: 2px"></span> permet de lancer une animation.
 

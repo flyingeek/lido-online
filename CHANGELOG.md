@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.10] - 2024-03-27
+
+### Fixed
+
+- La base Ogimet des WMO était incomplète. Brésil et Iran manquaient. Je m'en suis rendu compte en créant une carte des WMO disponible sur [mon github](https://flyingeek.github.io/scrapy-ogimet). Il y a un lien dans l'aide dans le chapitre sur le GRAMET.
+
 ## [1.20.9] - 2024-03-23
 
 ### Fixed
