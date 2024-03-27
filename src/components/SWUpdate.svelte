@@ -29,8 +29,7 @@
     /* Only show a prompt if an ofp is loaded and if the ofp will not reload automatically */
     const shouldShowPrompt = (ofp) => {
         return !!ofp && isPreviousOFPExpired(10000); // ensure the ofp is valid in the next 10S
-    }
-
+    };
     $swDismiss = false;
     export let prompt = false;
 
