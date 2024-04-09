@@ -676,16 +676,16 @@ const flightRestTimePNCAF = (flightTime) => { //MANEX 07.09.05.F
 };
 const maxFDPWithRest = (legs, numberOfPilots, preUsable=true) => {
     const numberOfLegs = ftlNumberOfLegs(legs);
-    let hasOneSectorOf9hours = false;
+    let hasOneSectorOfMoreThan9hours = false;
     const reducer = (p, leg) => Math.max(p, leg.blockTime);
     if (numberOfLegs <= 2) {
         if (numberOfLegs < legs.length) { //first is a MEP
-            hasOneSectorOf9hours = legs.slice(1).reduce(reducer, 0) >= 540;
+            hasOneSectorOfMoreThan9hours = legs.slice(1).reduce(reducer, 0) > 540;
         }else{
-            hasOneSectorOf9hours = legs.reduce(reducer, 0) >= 540;
+            hasOneSectorOfMoreThan9hours = legs.reduce(reducer, 0) > 540;
         }
     }
-    if (numberOfLegs <= 2 && hasOneSectorOf9hours) {
+    if (numberOfLegs <= 2 && hasOneSectorOfMoreThan9hours) {
         if (numberOfPilots === 3) {
             return (preUsable) ? 17 : 16;
         }else if (numberOfPilots >= 4) {

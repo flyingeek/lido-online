@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.12] - 2024-04-09
+
+### Fixed
+
+- Limitations TSV FTL PEQ3/PEQ4, l'extension de TSV d'une heure n'est appliquée que si une des étapes est strictement supérieure à 9h de vol (précédemment 9h ou plus).
+
 ## [1.20.11] - 2024-04-04
 
 ### Fixed
