@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Limitations TSV FTL PEQ3/PEQ4, l'extension de TSV d'une heure n'est appliquée que si une des étapes est strictement supérieure à 9h de vol (précédemment 9h ou plus).
+- Limitations TSV FTL PEQ3/PEQ4, l'extension de TSV d'une heure n'est appliquée que si une des étapes est strictement supérieure à 9h (précédemment 9h ou plus).
 
 ## [1.20.11] - 2024-04-04
 
