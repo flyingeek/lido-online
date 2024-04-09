@@ -329,7 +329,7 @@ Sur iPad, lors du téléchargement, l'export des fichiers KML affiche une page u
 
 Le calcul FTL est effectué uniquement à partir de la rotation CDB incluse dans l'OFP.
 
-La Page FTL calcule les limitations de TSV en réalisation conformément au Manex. OFP2MAP ne peut calculer que les limitations standard ou avec repos en vol (MANEX 07.05.04.A ou 07.05.04.C). Pilot Mission sur la page Equipage vous donnera (parfois) les limitations satisfaisant le MANEX 07.05.04.A ou 07.05.04.B.
+La Page FTL calcule les limitations de TSV en réalisation conformément au Manex. OFP2MAP ne peut calculer que les limitations standard ou avec repos en vol (MANEX 07.05.04.A ou 07.05.04.C). Pilot Mission sur la page Equipage vous donnera (parfois) les limitations satisfaisant le MANEX 07.05.04.A/B/C
 
 Pour rappel dans le cas 07.05.04B (TSV avec prolongation sans repos envol), la marge CDB ne doit s'appliquer qu'en faisant le calcul standard (07.05.04A). Autrement dit **le calcul en incluant les marges d'OFP2MAP est toujours juste** puisqu'à ce jour AF ne fait pas se service fractionné (07.05.04.D).
 
