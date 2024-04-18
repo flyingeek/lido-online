@@ -110,6 +110,7 @@
     <ChangeLogModal version={getPreviousAppVersion()} title="NOUVEAUTÉS"/>
 {/if}
 
+
 <style>
     .modal {
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
