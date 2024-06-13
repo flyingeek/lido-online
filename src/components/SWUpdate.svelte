@@ -45,7 +45,7 @@
                 //console.debug('controller change')
                 if (refreshing) return;
                 refreshing = true;
-                console.debug('SWUpdate: controllerchange reload');
+                console.debug('SWUpdate: controllerchange reload ');
                 (delay) ? setTimeout(() => window.location.reload(), delay) : window.location.reload();
             });
             //This does not fire when Workbox mark event as isExternal (note should be fixed now in v6.2)
