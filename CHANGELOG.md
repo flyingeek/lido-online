@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.15] - 2024-06-20
+
+### Fixed
+
+- Amélioration de la précision du lever/coucher lorsque le soleil tangente l'horizon entre deux points.
+
 ## [1.20.14] - 2024-06-13
 
 ### Changed

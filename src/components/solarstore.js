@@ -6,7 +6,7 @@ function* iterateSegment({prev, next, takeOffTime, flightTime, segmentLength, ge
     let prevState = prev.state;
     const min2ms = 60000;
     const lowerLimit = prev.sum * min2ms;
-    const upperLimit = next.sum * min2ms; 
+    const upperLimit = next.sum * min2ms;
     for(let m = lowerLimit + increment; m <= upperLimit; m= m + increment){
         let fl = prev.fl;
         if (m >= upperLimit) fl = next.fl;
@@ -51,18 +51,22 @@ export const solar = derived(
                 let fl = level;
                 if (i === 0 || i === last) fl = 0;
                 const date = new Date(takeOffTime + sum * 60000);
-                const state = object.getState(date, p, fl).state;
-                const next = {p, sum, fl, state};
-                if (prev && state !== prev.state) {
+                const {state, elevation} = object.getState(date, p, fl);
+                let slope = 0;
+                if (prev) {
+                  slope = (prev.elevation - elevation <= 0) ? 1 : -1;
+                }
+                const next = {p, sum, fl, state, elevation, slope};
+                if (prev && (state !== prev.state || (state === prev.state && slope !== prev.slope))) {
                     const segmentLength = distanceMatrix[i][1] - distanceMatrix[i-1][1];
                     const params = {
-                        prev, 
-                        next, 
+                        prev,
+                        next,
                         takeOffTime,
                         flightTime,
-                        segmentLength, 
-                        getState: object.getState, 
-                        stateMap: object.stateMap, 
+                        segmentLength,
+                        getState: object.getState,
+                        stateMap: object.stateMap,
                         increment: (object.name === 'sun') ? 30000 : 60000
                     };
                     for (const data of iterateSegment(params)) {
