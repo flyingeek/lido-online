@@ -26,6 +26,12 @@ const iata2cc = (iata) => {
             cc = 'JP';
         }else if (cc == 'NY'){
             cc = 'US';
+        }else if (cc == 'VV' || cc == 'VT') { // Vancouver, Toronto
+            cc = 'CA';
+        } else if (cc == 'NV') { // Abuja, Lagos, Port Harcourt
+            cc = 'NG';
+        } else if (cc == 'VL') { // Lomé
+            cc = 'TG';
         }
         return cc;
     }
@@ -109,6 +115,7 @@ function parseGlobal() {
             const icao = data[0].trim();
             let iata = data[2].trim();
             if (icao=="UERP" && iata=="---") iata="PJY";
+            if (icao=="LFBF" && iata=="---") iata="QYF";
             const cc = (iata) ? iata2cc(iata) : null;
             if (!cc) console.error(`unknown country code for ${icao}/${iata}`);
             const emoji = countryCodeEmoji(cc);
