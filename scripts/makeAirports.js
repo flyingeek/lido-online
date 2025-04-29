@@ -115,6 +115,7 @@ function parseGlobal() {
             const icao = data[0].trim();
             let iata = data[2].trim();
             if (icao=="UERP" && iata=="---") iata="PJY";
+            if (icao=="LFBF") console.log(`${icao} ${iata}`);
             if (icao=="LFBF" && iata=="---") iata="QYF";
             const cc = (iata) ? iata2cc(iata) : null;
             if (!cc) console.error(`unknown country code for ${icao}/${iata}`);
