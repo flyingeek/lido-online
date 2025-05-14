@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.22] - 2025-05-14
+
+### Fixed
+
+- iOS 18.4.1 rendait l'utilisation hors ligne impossible, mise à jour du Service Worker pour tenter de réparer le dysfonctionnement. (MAJ faite depuis CUN où j'ai des problèmes de connexion pour tester, à suivre...)
+
 ## [1.20.20] - 2025-04-29
 
 ### Changed
