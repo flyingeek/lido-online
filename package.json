@@ -3,7 +3,7 @@
   "version": "1.20.22",
   "type": "module",
   "config": {
-    "AIRAC": "2504"
+    "AIRAC": "2506"
   },
   "scripts": {
     "build": "npm run clean && rollup -c",
@@ -50,7 +50,7 @@
     "workbox-build": "^6.5.4"
   },
   "dependencies": {
-    "@flyingeek/lidojs": "^1.6.77",
+    "@flyingeek/lidojs": "^1.6.78",
     "sirv-cli": "^1.0.0",
     "svelte-overlay": "^1.4.1",
     "workbox-window": "^6.5.4"
