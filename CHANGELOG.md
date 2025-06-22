@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Les OFP intégrant un OFP additionel n'était pas reconnu (AF279/20Jun2025)
+- Les OFP intégrant un OFP additionel n'étaient pas reconnus (AF279/20Jun2025)
 - Mise à jour de la base de données des points Ogimet
 
 ## [1.20.21] - 2025-05-14
