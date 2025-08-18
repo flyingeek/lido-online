@@ -3,6 +3,19 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.24] - 2025-08-18
+
+### Changed
+
+- AIRAC 2508
+- Ajoût d'une mise en garde dans l'Aide sur le Wifi AF à la PPV qui bloque certaines fonctionnalités, il faut utiliser le partage de connexion de son téléphone perso.
+- OFP2MAP devrait être compatible avec l'export PDF du vol disponible dans l'onglet "Plus" de Pilot Mission, y compris pour le calcul des FTL.
+
+### Fixed
+
+- Les waypoints peuvent ne pas être uniques (ex RBT sur SID et RBT VOR). La routine récupérant les estimées a du être corrigée.
+
+
 ## [1.20.23] - 2025-06-22
 
 ### Changed

@@ -20,6 +20,8 @@ L'OFP ne transite sur aucun serveur, seule une route calculée (basée sur au pl
 
 Avant d'utiliser OFP2MAP en vol, il est préférable de lire la rubrique [Mode hors ligne](#/help_offline). Ensuite le mémo visuel devrait vous permettre de vous débrouiller. Vos retours seront appréciés pour faire évoluer l'app. En cas de problèmes, merci de m'envoyer l'OFP concerné par mail.
 
+**Attention**, le Wifi de la cité AF bloque l'accès aux fonds de carte, au Gramet, utilisez le partage de connexion de votre téléphone perso pour disposer d'une connexion internet complète à la PPV.
+
 </section>
 
 <section id="/help_memovisuel">
@@ -182,9 +184,9 @@ Le bouton affiche la progression du téléchargement&#8239;: <span class="cacheB
 
 Les premières mises en cache peuvent prendre du temps&#8239;: sur la Mercator, un vol LC peut nécessiter le téléchargement de 70Mo de données. Les caches des autres projections utilisent&#8239;: 7Mo pour la NORTH, 4Mo pour la PACIFIC, 7Mo pour la SOUTH, 32Mo pour THE WORLD, 32Mo pour NAM Physical, 40Mo pour =Physique=, 45Mo pour =Politique=, 14Mo pour Artic, et 48Mo pour {cbName}.
 
-Si vous êtes connecté à un réseau limité (4G AF, Wifi en vol), le cache peut ne pas se charger, dans ce cas, désactivez temporairement le réseau, fermez (tuez) l'application et rechargez l'OFP.
+Si vous êtes connecté à un réseau limité (4G AF, Wifi en vol, Wifi AF), le cache peut ne pas se charger, dans ce cas, désactivez temporairement le réseau, fermez (tuez) l'application et rechargez l'OFP.
 
-> Il faut penser à mettre en cache la Mercator à chaque vol et il n'est pas possible d'utiliser la 4G AF ou le Wifi PN en vol.
+> Il faut penser à mettre en cache la Mercator à chaque vol et il n'est pas possible d'utiliser la 4G AF ou le Wifi PN en vol. Le Wifi AF à la cité est également problématique.
 
 </section>
 <section id="/help_reglages_des_calques">
@@ -386,7 +388,7 @@ Après une mise à jour, les dernières nouveautés d'OFP2MAP s'affichent. Le bo
 - <Link href="https://equal-earth.com/physical/">=Physique=</Link>, <Link href="http://equal-earth.com">=Politique=</Link> et <Link href="http://www.shadedrelief.com/north-america/">NAM Physical</Link> sont des cartes mises dans le domaine public par Tom Patterson.
 - Artic est une carte de <Link href="https://maps.lib.utexas.edu/maps/polar.html">The Perry-Castañeda Library</Link>
 - La dernière version de la carte {cbName} est disponible sur le site <Link href="{`https://www.${cbName.toLowerCase()}.com`}">{cbName}.com</Link>
-- Les autres cartes sont de Jean-Baptiste Denizot (OPL 777) forum Yammer/QGIS & Avenza Maps
+- Les autres cartes sont de Jean-Baptiste Denizot (~~OPL 777~~ CDB 220) forum Yammer/QGIS & Avenza Maps
 - Le GRAMET provient du site ogimet.com
 - Le site est développé en javascript à l'aide du framework SVELTE, les principales librairies utilisées sont PDFJS (conversion pdf en texte), MapboxGL (moteur de carte), proj4js (transformation de cooordonnées), Workbox (service workers).
 - La partie serveur (un simple proxy pour pouvoir récupérer l'image du GRAMET) est en python.
