@@ -370,7 +370,7 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
     pattern = /OPERATION VERSION\s(.+?)\s\d+\sNB PAX/u;
     match = pattern.exec(pairingText);
     const aircraftOpsVersion = (match) ? match[1] : '';
-    pattern = /(\d{2})\/(\d{2})\s\S+(\sX)?\s(\S{3})\s>\s(\S{3})\s\(([-+\dh]+)\)\s(\d{2}):(\d{2})\s(?:\d{2}:\d{2})\s(\d{2}):(\d{2})/gu;
+    pattern = /(\d{2})\/(\d{2})\s?\S+(\sX)?\s?(\S{3})\s>\s(\S{3})\s?\(([-+\dh]+)\)\s?(\d{2}):(\d{2})\s?(?:\d{2}:\d{2})\s?(\d{2}):(\d{2})/gu;
     const sampRot = () => `<samp>${Array.from(pairingText.matchAll(pattern), m => m[0]).join('<br>')}</samp>`;
     // eslint-disable-next-line init-declarations
     let previousDestTZ;
