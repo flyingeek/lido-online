@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.26] - 2025-11-02
+
+### Added
+
+- Le code AIRAC s'affiche en rouge s'il n'est pas à jour (en bas de la carte à droite dans le champ d'attribution).
+
 ## [1.20.25] - 2025-11-01
 
 ### Changed

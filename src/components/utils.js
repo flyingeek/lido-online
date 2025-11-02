@@ -414,3 +414,32 @@ export const deletePreviousOFP = () => {
         localStorage.removeItem(previousMapProjectionKey);
     }
 };
+
+export const getAiracCycle = (date = new Date()) => {
+  //ChatGPT function
+  // 1er cycle AIRAC connu du système actuel : 29 janvier 1998 (jeudi)
+  const refDate = new Date(Date.UTC(1998, 0, 29)); // UTC
+  const inputDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+
+  const MS_PER_DAY = 1000 * 60 * 60 * 24;
+  const dayDiff = Math.floor((inputDate - refDate) / MS_PER_DAY);
+  const cycleNumber = Math.floor(dayDiff / 28);
+  const cycleStart = new Date(refDate.getTime() + cycleNumber * 28 * MS_PER_DAY);
+  const cycleEnd = new Date(cycleStart.getTime() + 27 * MS_PER_DAY);
+
+  // Trouver le numéro de cycle dans l’année (1 à 13)
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  const cyclesSinceYearStart = Math.floor((cycleStart - yearStart) / (28 * MS_PER_DAY)) + 1;
+  const cycleOfYear = Math.min(Math.max(cyclesSinceYearStart, 1), 13);
+
+  // Format officiel : YYCC (année sur 2 chiffres + cycle 01–13)
+  const airacCode = `${cycleStart.getUTCFullYear().toString().slice(-2)}${cycleOfYear
+    .toString()
+    .padStart(2, "0")}`;
+
+  return {
+    airacCode,
+    cycleStart: cycleStart.toISOString().split("T")[0],
+    cycleEnd: cycleEnd.toISOString().split("T")[0],
+  };
+};

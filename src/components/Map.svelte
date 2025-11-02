@@ -3,7 +3,7 @@
     import {createMap, token} from './mapboxgl/mapManagement';
     import {updateMapLayers} from './mapboxgl/layersManagement';
     import {showGramet, simulate, aircraftType, showPlaneOnMap, route} from "../stores.js";
-    import {promiseTimeout, fetchSimultaneously, focusMap, savePreviousMapProjection} from './utils';
+    import {promiseTimeout, fetchSimultaneously, focusMap, savePreviousMapProjection, getAiracCycle} from './utils';
     import { createEventDispatcher, onMount, onDestroy, tick} from 'svelte';
     import {get} from 'svelte/store';
     import {findMissingCacheTiles, purgeHDCache} from '../tilesCache';
@@ -60,10 +60,16 @@
         }
         //console.log(tilesMissing);
         const attribution = document.querySelector(`#${id} .mapboxgl-ctrl-attrib-inner`);
+        const airacTag = document.createElement('span');
+        airacTag.classList.add('airac');
+        if ("CONF_AIRAC".substring(0,4) != getAiracCycle().airacCode) {
+            airacTag.classList.add('outdated');
+        }
         if (attribution) {
             attribution.appendChild(document.createTextNode(' | '));
             attribution.appendChild(aircraftTypeSelectElement);
-            attribution.appendChild(document.createTextNode(`${"CONF_AIRAC".substring(0,2)}.${"CONF_AIRAC".substring(2,4)}`));
+            airacTag.innerText = "CONF_AIRAC".substring(0,2) + "." + "CONF_AIRAC".substring(2,4);
+            attribution.appendChild(airacTag);
         }
     }
 
@@ -431,5 +437,10 @@
         border-right: none;
         line-height: 30px;
         border-bottom-left-radius: 10px;
+    }
+    :global(.airac.outdated) {
+        color: red;
+        font-weight: bold;
+        outline: 1px solid red;
     }
 </style>
