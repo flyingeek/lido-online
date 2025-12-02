@@ -3,6 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.27] - 2025-12-02
+
+### Changed
+
+- AIRAC 2512
+
+### Fixed
+
+- En cas de QRF sol, la page FTL tente d'afficher les limitations. Comme l'OFP est assez incohérent dans ce cas là, un warning reste présent pour vérifier que c'est bien l'heure du vol initialement programmé qui est utilisée.
+
 ## [1.20.26] - 2025-11-02
 
 ### Added
