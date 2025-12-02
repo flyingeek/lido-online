@@ -336,7 +336,7 @@ const getDutyWithFTL = ([duties, acclimatizationStep], {base, flightTypeAircraft
     return {...duty, reposPNC, 'retardPNC': retardPNC || '', maxTSV_PEQ2, maxTSV_PEQ3, maxTSV_PEQ4, maxTSVFTL, maxTSVAF};
 };
 
-export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flightTypePNT, tzdb, ofpOUT, ofpOFF, ofpON, ofpIN, scheduledIN, blockTime: blockTimeOFP, flightTime, scheduledBlockTime: scheduledBlockTimeOFP}) => {
+export const pairingData = (pairingText, {flightNo, aircraftType, flightTypeAircraft, flightTypePNT, tzdb, ofpOUT, ofpOFF, ofpON, ofpIN, scheduledIN, blockTime: blockTimeOFP, flightTime, scheduledBlockTime: scheduledBlockTimeOFP}) => {
     let base, baseTZ, isCargo = false;
     let duties = [];
     let steps = [];
@@ -344,6 +344,7 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
     let pattern, match;
     let pncCount;
     let pilotCount;
+
     pattern = /TSV\s+-\s+(\d{2}):(\d{2})/u;
     match = pattern.exec(pairingText);
     scheduledTSV = (match) ? parseInt(match[2], 10) + parseInt(match[1], 10) * 60 : 0; //in minutes
@@ -370,7 +371,7 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
     pattern = /OPERATION VERSION\s(.+?)\s\d+\sNB PAX/u;
     match = pattern.exec(pairingText);
     const aircraftOpsVersion = (match) ? match[1] : '';
-    pattern = /(\d{2})\/(\d{2})\s?\S+(\sX)?\s?(\S{3})\s>\s(\S{3})\s?\(([-+\dh]+)\)\s?(\d{2}):(\d{2})\s?(?:\d{2}:\d{2})\s?(\d{2}):(\d{2})/gu;
+    pattern = /(\d{2})\/(\d{2})\s?(\S+)(\sX)?\s?(\S{3})\s>\s(\S{3})\s?\(([-+\dh]+)\)\s?(\d{2}):(\d{2})\s?(?:\d{2}:\d{2})\s?(\d{2}):(\d{2})/gu;
     const sampRot = () => `<samp>${Array.from(pairingText.matchAll(pattern), m => m[0]).join('<br>')}</samp>`;
     // eslint-disable-next-line init-declarations
     let previousDestTZ;
@@ -379,31 +380,49 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
     let duty = {"legs": []};
     let hasError = false;
     let sampOutputDone = false;
+    let QRPInitialBlock;
+    let previousScheduledIn, previousDepIATA, previousDestIATA;
+
     for (match of pairingText.matchAll(pattern)) {
         //console.log(match)
         const m = parseInt(match[2], 10); // 1-12
         const d = parseInt(match[1], 10);
-        const isMep = !!match[3];
+        const isMep = !!match[4];
         const y = (m < month) ? year + 1 : year;
-        const scheduledOut = new Date(Date.UTC(y, m - 1, d, parseInt(match[7], 10), parseInt(match[8], 10))); // month must be 0-11
+        const scheduledOut = new Date(Date.UTC(y, m - 1, d, parseInt(match[8], 10), parseInt(match[9], 10))); // month must be 0-11
         if (previousScheduledOut && scheduledOut.toISOString() === previousScheduledOut.toISOString()) {
           hasError = true;
         }
-        previousScheduledOut = scheduledOut;
         //previousMatch = match;
-        const blockTime = parseInt(match[10], 10) + parseInt(match[9], 10) * 60;
-        const scheduledIN = new Date(scheduledOut.getTime() + 60000 * blockTime);
-        const depIATA = match[4];
-        const destIATA = match[5];
+        let blockTime = parseInt(match[11], 10) + parseInt(match[10], 10) * 60;
+        let scheduledIN = new Date(scheduledOut.getTime() + 60000 * blockTime);
+        const depIATA = match[5];
+        const destIATA = match[6];
+
         if (!base) base = (parisBase.includes(depIATA)) ? 'PAR' : depIATA;
-        const destTZ = tzDec(match[6]);
-        const depTZ = tzOffsetLite(depIATA, `${y}-${match[2]}-${match[1]}T${match[7]}:${match[8]}Z`, tzdb) || previousDestTZ;
+        const destTZ = tzDec(match[7]);
+        const depTZ = tzOffsetLite(depIATA, `${y}-${match[2]}-${match[1]}T${match[8]}:${match[9]}Z`, tzdb) || previousDestTZ;
 
         if (duty.legs.length !== 0 && scheduledOut - duty.legs[duty.legs.length - 1].IN > 36000000) { // more than 10 hours
             duties.push(addDutyMeta(duty, flightTypeAircraft, base, tzdb));
             duty = {"legs": []};
         }
-        const isOFP = scheduledOut.toISOString() === ofpOUT.toISOString();
+        let isOFP = scheduledOut.toISOString() === ofpOUT.toISOString();
+        if (
+          depIATA === previousDepIATA &&
+          destIATA === previousDestIATA &&
+          previousScheduledIn.getTime() == scheduledIN.getTime() &&
+          previousScheduledOut.getTime() == scheduledOut.getTime() &&
+          match[3] == flightNo
+        ) {
+          // QRP
+          QRPInitialBlock = scheduledOut;
+          duty.legs.pop();
+          isOFP = true;
+          // override blocktime and scheduledIN to have correct calulculations
+          scheduledIN = new Date(scheduledOut.getTime() + scheduledBlockTimeOFP*60000);
+          blockTime = scheduledBlockTimeOFP;
+        }
         duty.legs.push({
             "depIATA": depIATA,
             "destIATA": destIATA,
@@ -417,6 +436,10 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
             "isMEP": isMep,
         });
         previousDestTZ = destTZ;
+        previousDepIATA = depIATA;
+        previousDestIATA = destIATA;
+        previousScheduledIn = scheduledIN;
+        previousScheduledOut = scheduledOut;
     }
 
     if (duty.legs.length > 0) duties.push(addDutyMeta(duty, flightTypeAircraft, base, tzdb));
@@ -452,7 +475,11 @@ export const pairingData = (pairingText, {aircraftType, flightTypeAircraft, flig
 
     if (hasError || scheduledBlockTimeOFP > duty.scheduledBlockTime) {
       //steps.push(`${error("Attention: rotation CDB de l'OFP non cohérente")}<br><samp>${previousMatch[0]}<br>${match[0]}</samp>`);
-      if (!sampOutputDone) steps.push(`${error("Attention: rotation CDB de l'OFP incohérente:")}<br>${sampRot()}`);
+      let extraText ='';
+      if (QRPInitialBlock) {
+        extraText = `<br><strong>Si vous avez fait un QRP sol et que l'horaire programmé du vol était bien ${QRPInitialBlock.toISOString().slice(11,16)}z, alors les calculs sont justes.</strong>`
+      }
+      if (!sampOutputDone) steps.push(`${error("Attention: rotation CDB de l'OFP incohérente:")}<br>${sampRot()}` + extraText);
       sampOutputDone = true;
     }
     const FORBIDDEN = 'interdit';
