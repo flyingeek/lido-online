@@ -155,6 +155,9 @@ function parseGlobal() {
                     case 'OKKK':
                         tz = "Asia/Kuwait";
                         break;
+                    case 'VVLT':
+                        tz = "Asia/Ho_Chi_Minh";
+                        break;
                 }
             }
             if (tz) {

@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.30] - 2026-04-04
+
+### Changed
+
+- AIRAC 2603
+
 ## [1.20.29] - 2026-01-31
 
 ### Changed
