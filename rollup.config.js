@@ -19,10 +19,18 @@ import Mustache from 'mustache';
 import dotenv from 'dotenv'
 dotenv.config();
 import child_process from 'child_process';
+import { SourceMapConsumer } from 'source-map';
 
 const production = !process.env.ROLLUP_WATCH;
 const debugWorkbox = !!process.env.DEBUG_WORKBOX;
 const disableLiveReload = !!process.env.DISABLE_LIVERELOAD || debugWorkbox;
+
+// Initialize SourceMapConsumer only in dev or debug mode
+if (!production || debugWorkbox) {
+  SourceMapConsumer.initialize({
+    'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
+  });
+}
 
 const northId = 'northv3';
 const southId = 'southv3';
@@ -118,7 +126,7 @@ function serve() {
 export default [{
   input: 'src/main.js',
   output: {
-    sourcemap: true,
+    sourcemap: !production,
     format: 'iife',
     name: 'app',
     dir: 'public',
@@ -269,7 +277,7 @@ export default [{
 {
   input: 'src/sw.js',
   output: {
-    sourcemap: true,
+    sourcemap: !production,
     format: 'iife',
     name: 'sw',
     file: 'public/sw.js'
