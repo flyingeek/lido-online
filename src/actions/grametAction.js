@@ -1,11 +1,55 @@
-import {writable} from 'svelte/store';
-import {showGramet} from '../stores';
+import {get, writable} from 'svelte/store';
+import {showGramet, takeOffTime, grametImageTimestamp} from '../stores';
 
 export const grametStatus = writable();
 export const grametResponseStatus = writable({});
+const GRAMET_DEBUG = true;
+const grametCacheName = 'lido-gramet2';
 const grametMargin = 65; // left and right margin to the "inner gramet" image in px
 const grametTop = 33;// top margin to the "inner gramet" image in px
 const grametBottom = 37;// bottom margin to show when flight is in progress
+
+const utcDateKey = (date) => `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
+
+const isTakeoffBeforeToday = () => {
+    const takeoff = get(takeOffTime);
+    return takeoff && utcDateKey(takeoff) < utcDateKey(new Date());
+};
+
+const stripTakeoff = (url) => {
+    const normalizedURL = new URL(url);
+    normalizedURL.searchParams.delete('takeoff');
+    return normalizedURL.toString();
+};
+
+const getCachedGrametResponse = async (fetchURL) => {
+    if (!("caches" in window)) return undefined;
+    const cache = await caches.open(grametCacheName);
+    return cache.match(stripTakeoff(fetchURL));
+};
+
+const updateGrametTimestampFromResponse = (response) => {
+    const imageTimestamp = response.headers.get('X-Gramet-Timestamp');
+    if (imageTimestamp) {
+        const timestamp = parseInt(imageTimestamp, 10);
+        if (!Number.isNaN(timestamp)) {
+            grametImageTimestamp.set(timestamp * 1000); // convert seconds to ms
+        }
+    }
+    return imageTimestamp;
+};
+
+const buildGrametFetchURL = (proxyImg) => {
+    const fetchURL = new URL(proxyImg);
+    const takeoff = get(takeOffTime);
+    if (takeoff) {
+        fetchURL.searchParams.set('takeoff', Math.floor(takeoff.getTime() / 1000));
+    }
+    if (GRAMET_DEBUG) {
+        console.debug('[gramet] fetch url', fetchURL.toString());
+    }
+    return fetchURL.toString();
+};
 
 function revokeURL(src) {
   URL.revokeObjectURL(src);
@@ -115,17 +159,49 @@ export function grametThumbAction(container, {ofp, pos, fl}){
         img = document.createElement('img')
         grametStatus.set('loading');
         plane.style.display = 'none';
-        fetch(ofp.ogimetData.proxyImg).then(function(response) {
-            if(response.ok) {
-                grametResponseStatus.set({status: response.status, text: response.statusText || 'OK'});
-                response.blob().then((blob) => {
-                    if (img) { // img could be empty if grametTrigger was destroyed before receiving Gramet (page change)
-                        objectURL = URL.createObjectURL(blob);
-                        img.addEventListener('load', loadListener);
-                        img.addEventListener('error', errorListener);
-                        img.src = objectURL;
-                    }
+        const fetchURL = buildGrametFetchURL(ofp.ogimetData.proxyImg);
+        const setImageFromResponse = async (response) => {
+            grametResponseStatus.set({status: response.status, text: response.statusText || 'OK'});
+            const imageTimestamp = updateGrametTimestampFromResponse(response);
+            if (GRAMET_DEBUG) {
+                console.debug('[gramet] response headers', {
+                    status: response.status,
+                    etag: response.headers.get('ETag') || response.headers.get('X-ETag'),
+                    grametTimestamp: imageTimestamp || null
                 });
+            }
+            if (!imageTimestamp && GRAMET_DEBUG) {
+                console.debug('[gramet] missing X-Gramet-Timestamp header');
+            }
+            const blob = await response.blob();
+            if (img) { // img could be empty if grametTrigger was destroyed before receiving Gramet (page change)
+                objectURL = URL.createObjectURL(blob);
+                img.addEventListener('load', loadListener);
+                img.addEventListener('error', errorListener);
+                img.src = objectURL;
+            }
+        };
+        if (isTakeoffBeforeToday()) {
+            try {
+                const cachedResponse = await getCachedGrametResponse(fetchURL);
+                if (GRAMET_DEBUG) {
+                    console.debug('[gramet] old takeoff cache lookup', {
+                        cacheName: grametCacheName,
+                        cacheKey: stripTakeoff(fetchURL),
+                        hit: !!cachedResponse
+                    });
+                }
+                if (cachedResponse) {
+                    await setImageFromResponse(cachedResponse);
+                    return;
+                }
+            } catch (error) {
+                if (GRAMET_DEBUG) console.warn('[gramet] old takeoff cache lookup failed', error);
+            }
+        }
+        fetch(fetchURL).then(function(response) {
+            if(response.ok) {
+                return setImageFromResponse(response);
             } else {
                 errorListener();
                 if (response.headers) {

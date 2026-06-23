@@ -23,6 +23,7 @@ export const sidebar = writable(false);
 export const focusMode = writable(false);
 
 export const showGramet = writable(false);
+export const grametImageTimestamp = writable(); // timestamp in seconds from X-Gramet-Timestamp header
 export const showPlaneOnMap = resetable(true);
 export const grametPosition = writable(100);
 export const mapZoom = writable(0);

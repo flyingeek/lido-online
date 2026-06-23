@@ -67,6 +67,13 @@ const lidoUrls = [
     'CONF_WMO_JS'
 ];
 const allUrls = thirdPartyUrls.concat(lidoUrls);
+const grametCacheKeyPlugin = {
+  cacheKeyWillBeUsed: async ({request}) => {
+    const cacheKeyURL = new URL(request.url);
+    cacheKeyURL.searchParams.delete('takeoff');
+    return cacheKeyURL.toString();
+  }
+};
 
 registerRoute(
     /.+\/(bootstrap\.min\.css|pdf\.min\.js|pdf\.worker\.min\.js|proj4\.min\.js|mapbox-gl\.js|mapbox-gl\.css|lidojs.+\.js|wmo.+\.var\.js|pinch-zoom-min\.js)$/,
@@ -149,6 +156,7 @@ registerRoute(
     cacheName: validCaches['gramet'],
     fetchOptions: {cache: 'default'},
     plugins: [
+      grametCacheKeyPlugin,
       new CacheableResponsePlugin({
         statuses: [200],
       }),
