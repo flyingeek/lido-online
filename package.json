@@ -1,9 +1,9 @@
 {
   "name": "lido-svelte",
-  "version": "1.20.30",
+  "version": "1.20.31",
   "type": "module",
   "config": {
-    "AIRAC": "2603"
+    "AIRAC": "2607"
   },
   "scripts": {
     "build": "npm run clean && rollup -c",
@@ -16,7 +16,7 @@
     "clean": "rimraf public/**",
     "makeAirports": "node scripts/makeAirports.js",
     "makeFir": "node scripts/makeFir.js",
-    "refresh-lock": "npm install --package-lock-only --ignore-scripts"
+    "refresh-lock": "npm install --package-lock-only --ignore-scripts --legacy-peer-deps"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^18.0.0",
